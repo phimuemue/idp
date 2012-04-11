@@ -1,0 +1,44 @@
+with(linalg);
+with(LinearAlgebra);
+with(ListTools);
+
+# basic definitions
+F:=U->vector([
+ vector([U[2],U[3]]),
+ vector([U[2]/U[1],U[3]/U[1]])*U[2]+1/2*g*U[1]^2*vector([1,0]),
+ vector([U[2]/U[1],U[3]/U[1]])*U[3]+1/2*g*U[1]^2*vector([0,1])
+]);
+
+U:=vector([h,v_x*h,v_y*h]);
+Uu:=vector([h,u_x,u_y]);
+
+F(U);
+
+# now the jacobian matrix
+F_u:=subs({v_x=u_x/h,v_y=u_y/h},eval(F(U)));
+mathelper:=(y,x)->col(seq(jacobian(F_u[i],[h,u_x,u_y]),i=1..3)[y],x);
+dF_dU:=Matrix(3,3,mathelper);
+dF_dU_v:=subs({u_x=v_x*h,u_y=v_y*h},dF_dU);
+# splitting to x and y-components, respectively
+dF_dU_x:=map(x->x[1],dF_dU_v);
+dF_dU_y:=map(x->x[2],dF_dU_v);
+Eigenvalues(dF_dU_x);
+Eigenvalues(dF_dU_y);
+
+# now discretizing!
+phi[1]:=(x,y)->1-2/c*y;
+phi[2]:=(x,y)->-1+2/c*x+2/c*y;
+phi[3]:=(x,y)->1-2/c*x;
+
+# proving the properties for the basis functions
+seq(integrate(integrate(phi[i](x,y),x=0..c-y),y=0..c),i=1..3);
+matrix(3,3,[seq(seq(integrate(integrate(phi[i](x,y)*phi[j](x,y),x=0..c-y),y=0..c),i=1..3),j=1..3)]);
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,19 @@
+# here we do the stuff!
+gimme_func_from_a_to_b:=proc(a,b)
+ description "Returns a function [0,1]->[a,b] linearly mapped.":
+ local res:
+ res := x -> (1-x)*a + x*b;
+end proc;
+
+parametrize_edge := proc(a_x,a_y,b_x,b_y)
+ description "Gives parametrisations [0,1] -> [a_x,b_x]x[a_y,b_y] linearly mapped.":
+ local x, y:
+ x,y := gimme_func_from_a_to_b(a_x,b_x), gimme_func_from_a_to_b(a_y,b_y);
+end proc;
+
+line_integral_over_edge := proc(a_x,a_y,b_x,b_y,f)
+ description "Computes the line integral of f along the edge (ax,ay)-(bx,by).":
+ local x,y,res:
+ x,y := parametrize_edge(a_x,a_y,b_x,b_y):
+ res := integrate(f(x(t),y(t))*sqrt(diff(x(t),t)^2+diff(y(t),t)^2),t=0..1);
+end proc;
