@@ -31,8 +31,14 @@ phi[2]:=(x,y)->-1+2/c*x+2/c*y;
 phi[3]:=(x,y)->1-2/c*x;
 
 # proving the properties for the basis functions
+# integration property
 seq(integrate(integrate(phi[i](x,y),x=0..c-y),y=0..c),i=1..3);
+# orthogonality
 matrix(3,3,[seq(seq(integrate(integrate(phi[i](x,y)*phi[j](x,y),x=0..c-y),y=0..c),i=1..3),j=1..3)]);
+# edge-properties
+read "basis_functions_edge_properties.txt";
+matrix(3,3,[seq(seq(line_integral_over_edge(E[i],phi[j]),i=1..3),j=1..3)]);
+matrix(3,3,[seq(seq(line_integral_over_edge(E[k],(sum(phi[i]*phi[j],j=1..3))),i=1..3),k=1..3)]);
 
 
 
