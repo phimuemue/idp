@@ -2,6 +2,8 @@ with(linalg);
 with(LinearAlgebra);
 with(ListTools);
 
+read "helpers.txt";
+
 # basic definitions
 F:=U->vector([
  vector([U[2],U[3]]),
@@ -42,7 +44,9 @@ E[2]:=0,c,c,0;
 E[3]:=0,0,0,c;
 matrix(3,3,[seq(seq(line_integral_over_edge(E[i],phi[j]),i=1..3),j=1..3)]);
 matrix(3,3,[seq(seq(line_integral_over_edge(E[k],(sum(phi[i]*phi[j],j=1..3))),i=1..3),k=1..3)]);
-
+# nable properties
+matrix(3,3,[seq(seq(integrate(integrate(phi[j](x,y)*diff(phi[i](x,y),x),x=0..c-y),y=0..c),i=1..3),j=1..3)]);
+matrix(3,3,[seq(seq(integrate(integrate(phi[j](x,y)*diff(phi[i](x,y),y),x=0..c-y),y=0..c),i=1..3),j=1..3)]);
 
 
 
