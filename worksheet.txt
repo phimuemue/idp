@@ -58,6 +58,6 @@ tmp:=map(f->Nabla(f,[x,y]), u_approx_xy(t,x,y));
 st1:=simplify(integral_over_triangle(c,sum(U_[j](t)[2]*phi[j](x,y),j=1..3)*diff(phi[i](x,y),[x])));
 st2:=simplify(integral_over_triangle(c,sum(U_[j](t)[3]*phi[j](x,y),j=1..3)*diff(phi[i](x,y),[y])));
 vector(3, k->simplify(eval(subs(i=k, st1+st2))));
-
+# stiffness matrix, second and third line
 
 

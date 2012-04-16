@@ -1,0 +1,5 @@
+integral_over_triangle:=proc(c,f)
+ description "Computes the integral over the triangle (0,0)-(c,0)-(0,c).":
+ local res:
+ res := integrate(integrate(f,x=0..c-y),y=0..c);
+end proc;
