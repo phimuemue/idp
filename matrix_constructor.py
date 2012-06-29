@@ -7,7 +7,6 @@ import re
 
 for mat in glob.glob("./*.matrix"):
     print ("Processing " +  mat + " ...")
-    f.write ("T " + os.path.basename(mat).split(".matrix")[0] + " = {\n")
     # collect stuff from file
     contents = []
     for line in open(mat):
@@ -26,6 +25,7 @@ for mat in glob.glob("./*.matrix"):
     for [x,y,c] in contents:
         realcontents[x][y] = c
     # write stuff to matrices.h
+    f.write ("T " + os.path.basename(mat).split(".matrix")[0] + "[%d][%d] = {\n"%(maxx+1,maxy+1))
     for i in realcontents:
         f.write("\t{" + ",".join(i) + "},\n")
 
