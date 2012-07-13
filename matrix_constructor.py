@@ -1,6 +1,8 @@
 #/usr/bin/python
 
 f=open("matrices.h","w")
+f.write ("T c = cat_length;\n\n")
+
 
 import glob, os
 import re
@@ -24,13 +26,15 @@ for mat in glob.glob("./*.matrix"):
     realcontents = [[0 for y in xrange(maxy+1)] for x in xrange(maxx+1)]
     for [x,y,c] in contents:
         realcontents[x][y] = c
-    # write stuff to matrices.h
+    # write stuff to matrices.h    
     f.write ("T " + os.path.basename(mat).split(".matrix")[0] + "[%d][%d] = {\n"%(maxx+1,maxy+1))
+    replacements = [("vx", "qx"), ("vy","qy"), ("cg", "c")]
     for i in realcontents:
-        f.write("\t{" + ",".join(i) + "},\n")
+        linetowrite="\t{" + ",".join(i) + "},\n"
+        for (src,dest) in replacements:
+            linetowrite = linetowrite.replace(src,dest)
+        f.write(linetowrite)
 
     f.write("};\n")
 f.close()
-
-
 
