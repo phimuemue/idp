@@ -28,13 +28,15 @@ for mat in glob.glob("./*.matrix"):
         realcontents[x][y] = c
     # write stuff to matrices.h    
     f.write ("T " + os.path.basename(mat).split(".matrix")[0] + "[%d][%d] = {\n"%(maxx+1,maxy+1))
-    replacements = [("vx", "qx"), ("vy","qy"), ("cg", "c")]
+    replacements = [("vx", "qx"), ("vy","qy"), ("cg", "c"), ("(double)", "(T)")]
     for i in realcontents:
         linetowrite="\t{" + ",".join(i) + "},\n"
         for (src,dest) in replacements:
             linetowrite = linetowrite.replace(src,dest)
+        linetowrite = re.sub(r'0\.(\d+)e(\d+)', lambda match: match.group(1) if(len(match.group(1)) == int(match.group(2))) else float(match.group(0)), linetowrite)
+        linetowrite = re.sub(r'pow\(\s*?(.*?),\s*?(\-\d+?)\s*?\)', lambda match: '(1./('+'*'.join([match.group(1)] * abs(int(match.group(2))))+'))', linetowrite)
+        linetowrite = re.sub(r'pow\(\s*?(.*?),\s*?(\d+?)\s*?\)', lambda match: '('+'*'.join([match.group(1)] * int(match.group(2)))+')', linetowrite)
         f.write(linetowrite)
 
     f.write("};\n")
 f.close()
-
