@@ -1,0 +1,1035 @@
+\documentclass{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{tikz}
+\usepackage{subfigure}
+\usepackage{geometry}
+
+\usepackage{cite}
+
+\usetikzlibrary{decorations.pathmorphing}
+
+\bibliographystyle{plain}
+
+\geometry{margin=3.5cm, bottom=2cm}
+
+\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
+%\newcommand{\todo}[1]{}
+\newcommand{\korrektur}[1]{\textcolor{red}{\textbf{Korrektur:} #1}}
+\newcommand{\reals}{\mathbb{R}}
+
+\newcommand{\zoomfactor}{0.5}
+\newcommand{\autozoomfactor}{0.15}
+
+\newcommand{\figurepage}[1]{
+  %\newgeometry{top=0cm, bottom=0cm}
+  \input{#1}
+  %\restoregeometry
+}
+
+% for me, this looks better. uncomment these lines if you don't like it that small
+%\renewcommand{\zoomfactor}{0.3}
+%\renewcommand{\autozoomfactor}{0.075}
+
+\title{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrich-Flux}
+\author{Stjepan Bakrac \and Philipp M\"uller}
+\date{}
+
+\newcommand{\partialderivative}[1]{\dfrac{\partial}{\partial #1}}
+\newcommand{\pd}[2]{\dfrac{\partial #1}{\partial #2}}
+\newcommand{\totalderivative}[1]{\dfrac{d}{d #1}}
+\newcommand{\naturals}{\mathbb{N}}
+
+\renewcommand{\phi}{\varphi}
+
+\newcommand\intend{\mathrm{d}}
+
+\DeclareMathOperator{\divergence}{div}
+
+\begin{document}
+
+\todo{NetPoly umbenennen}
+\todo{Ist $M$ invertierbar, falls nur unterschiedliche Basisfunktionen?}
+\todo{Plots mit Definitionslücken durchrechnen}
+
+\part{Deriving necessary equations}
+\label{part:introduction}
+
+\section{Problem statement}
+\label{sec:problem-statement}
+
+We want to simulate wave propagation along a certain area. There are several equations, suited for different situations, that deal with those kind of problems (\todo{Referenzen, SWE, Navier-Stokes, etc.}). The main problem for computer simulation is that the entire domain has to be discretized, usually in sets of triangles that all contain several fields of information (such as mass/height, velocity, etc.). But even without discretization problems, accurately simulating wave propagation is a challenging task, because several of the involved factors are very hard to calculate. Especially in tsunami-related environments even non-local factors like bathymetry information, tidal forces and the coriolis effect have to be considered to get accurate results.
+
+In this documentation we will focus mainly on the derivation of the shallow water equations, which serve as a starting point for calculating wave propagation, along with an analysis of the discretization problem, as well as numerical solutions for it.
+
+\section{Adaptive triangle grid}
+\label{sec:triangles}
+
+For our purposes we use an adaptive triangle grid. In areas with many variations, the grid adapts to a finer resolution, allowing for more detailed calculations, while not wasting unnecessary computation time in areas with lower variation.
+
+Using this scheme, we can simplify a few steps in the calculation process. With a suitable library for coordinate projection, we can rotate triangles and edges into a space that's relevant for us. So instead of having to adjust how we apply the functions, based on which edges the triangles are touching on (because different edges suggest different positions in space), we just rotate the triangles into a certain space, so we only need to consider this space when applying funtions and algorithms.
+
+In addition to rotating, we can also scale the edges of the triangles to always be in a certain shape. We'll use that to scale the catheses to length 1 and hence the hypothenuse to length $\sqrt{2}$. This will help with further calculations, because some of them will rely on the length of an edge, which can be conveniently omitted (or set to the constant $\sqrt{2}$ respectively).
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}[scale=1.5]
+    \draw (-2.5,1.5) -- node[above]{$c$} (-1,1.5) -- node[right]{$c$} (-1,0) -- node[below left]{$\sqrt{2}c$} (-2.5,1.5);
+    \draw[->,semithick,decorate,decoration=snake] (-0.3,0.5) -- node[above,yshift=.5em]{Projection} (0.3,0.5);
+    \begin{scope}[xshift=2.5em]
+      \draw (0,0) -- node[left]{1} (0,1) -- node[right]{$\sqrt{2}$} (1,0) -- node[below]{1} (0,0);
+    \end{scope}
+
+  \end{tikzpicture}
+  \caption{A sample triangle rotated into normal space and scaled down to cathetus length 1.}
+  \label{fig:triangle-projection}
+\end{figure}
+
+For further reference, we will be calling the domain of the entire triangle $T$ (the set of all points on the triangle), and the set of edges $E$, enumerated with $e_i$, $\forall i \in {1,2,3}$. Points on the triangle (both on the edge and inside) will be denoted by $p$. In the implementation we will be referring to the edges \texttt{left}, \texttt{hyp} and \texttt{right} by $e_1$, $e_2$ and $e_3$ respectively.
+
+\begin{figure}[ht]
+  \centering
+  \subfigure[Degree 0]{
+    \begin{tikzpicture}[scale=2]
+      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.33333333, 0.3333333333) circle (0.01);
+    \end{tikzpicture}
+  }
+  \subfigure[Degree 1]{
+    \begin{tikzpicture}[scale=2]
+      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.5, 0) circle (0.01);
+      \draw[fill=black] (0, 0.5) circle (0.01);
+      \draw[fill=black] (0.5, 0.5) circle (0.01);
+    \end{tikzpicture}
+  }
+  \subfigure[Degree 2]{
+    \begin{tikzpicture}[scale=2]
+      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.5, 0) circle (0.01);
+      \draw[fill=black] (0, 0.5) circle (0.01);
+      \draw[fill=black] (0.5, 0.5) circle (0.01);
+      \draw[fill=black] (0, 0) circle (0.01);
+      \draw[fill=black] (1, 0) circle (0.01);
+      \draw[fill=black] (0, 1) circle (0.01);
+    \end{tikzpicture}
+  }
+  \subfigure[Degree 3]{
+    \begin{tikzpicture}[scale=2]
+      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.501426509658179, 0.24928674517091) circle (0.01);
+      \draw[fill=black] (0.24928674517091, 0.24928674517091) circle (0.01);
+      \draw[fill=black] (0.24928674517091, 0.501426509658179) circle (0.01);
+      \draw[fill=black] (0.873821971016996, 0.063089014491502) circle (0.01);
+      \draw[fill=black] (0.063089014491502, 0.063089014491502) circle (0.01);
+      \draw[fill=black] (0.063089014491502, 0.873821971016996) circle (0.01);
+      \draw[fill=black] (0.053145049844817, 0.310352451033784) circle (0.01);
+      \draw[fill=black] (0.310352451033784, 0.636502499121399) circle (0.01);
+      \draw[fill=black] (0.636502499121399, 0.053145049844817) circle (0.01);
+      \draw[fill=black] (0.310352451033784, 0.053145049844817) circle (0.01);
+    \end{tikzpicture}
+  }
+  \caption{Triangles containing a support points for polynomial degrees 0 through 3.}
+  \label{fig:triangle-support-points-var-degrees}
+\end{figure}
+
+The points in the triangle are support points. The number depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is impossible to calculate the propagation exactly, we need to find a numerical approximation. This will be done with the discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin}. However, for each test function used for the method we will need one point in the triangle to save the calculated information to. They can be regarded as sample points that are representative for the values within the triangle. The higher polynomial degree we operate on, the more support points we will have. While this increases accuracy, it has a negative impact on efficiency, so a proper balance is desired.
+
+Another set of points are \emph{Gaussian quadrature} points, which we will use later on to approximate integrals along the edges. Accordingly, they will also be located on the respective edges. They will be explained in more detail in section \ref{sec:border-integral}.
+
+\section{Choice of basis functions}
+\label{sec:basis-functions-choice}
+
+For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $n$. The name already gives away the nature of these functions, because they are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $n$ as a linear combination of these basis functions.
+
+A relatively simple way of constructing basis functions is to use Lagrange interpolation:
+\begin{itemize}
+\item Choose a certain set of $n$ points $p_1$ through $p_n$ (see \ref{sec:choice-support-points}).
+\item Construct function $\phi_i$ such that $\phi_i(p_j) = \delta_{ij} \  \forall i,j \in \{1 \dots n\}$ using Lagrange polynomials (with $\delta_{ij}$ being the Kronecker delta function).
+\end{itemize}
+
+The (minimum) number of basis functions is not arbitrary, but it depends on the degree of the polynomials. If we only employ polynomials of degree 0 (i.e.\,constants), we only need one basis function. Increasing the degree by 1 involves introducing variables $x$ and $y$. Thus, we need three polynomials to construct every polynomial of degree 1, one to create polynomials containing $x$, one to create polynomials containing $y$ and one to create other constant polynomials.
+
+Generalizing this scheme we observe the following: if we want to use polynomials of degree $n$, a polynomial can contain terms $x^a y^b$ with $a+b \leq n$. A simple combinatorial arguments indicates that we need $\frac{(n+2) \cdot (n+1)}{2}$ basis functions to span the function space containing all the polynomials up to degree $n$.
+
+\subsection{Choice of support points}
+\label{sec:choice-support-points}
+
+As mentioned before, we construct the basis functions with the help of some support points. However, arbitrary choosing those can lead to accuracy loss in the best case, and malconditioned matrices, which can prevent precomputing arrays in the worst.
+
+For low degree polynomials, we choose specific distribution of the support points within the triangle:
+\begin{description}
+\item[Degree 0] We choose the support point at the center of the triangle (at $\left(\frac{1}{3}, \frac{1}{3}\right)$).
+\item[Degree 1] We choose the support points at the center of each edge.
+\item[Degree 2] We choose the support points at the triangle corners and at the center of each edge.
+\end{description}
+
+For higher degree, we choose the points derived by Dunavant (see \cite{dunavant1985high}). The distributions of support points are illustrated in figure \ref{fig:triangle-support-points-var-degrees}.
+
+\section{Discontinuous Galerkin}
+\label{sec:discontinuous-galerkin}
+
+The numerical method we are using to solve the shallow water equations on our grid is the discontinuous Galerkin method (DG). It combines ideas from the finite element method and the finite volume method. The first suggests computing solutions for each element locally, which is what the DG method also does. However, it lets adjacent elements communicate relevant information with each other by numerically calculating a flux function, which determines how much of each stored quantity is passed along between elements, which is a method borrowed from finite volume schemes. We can apply this to the general continuity equation, which looks like this in its differential form:
+
+\begin{equation}
+  \label{eq:general-continuity-equation}
+  \pd{\mathbf{q}}{t} + \nabla \cdot F(\mathbf{q}) = r
+\end{equation}
+
+\begin{itemize}
+\item[$\mathbf{q}$] The state vector, containing all relevant information for any given point in space.
+\item[$F$] The flux function, applied to $\mathbf{q}$ it results in a vector describing the spatial transport of the quantities stored in $\mathbf{q}$.
+\item[$r$] A source term, which is used to offset the calculated quantities. What this quantity means can differ depending on the situation.
+\end{itemize}
+
+Similar to the finite element method, we multiply the equation by a test function, then integrate over the entire domain. This can be done with more than one function as well, and we will use several, depending on the degree of the functions we use. These functions happen to be the basis functions we mentioned in section \ref{sec:basis-functions-choice}. Essentially, what we obtain is the following (with $\phi_i$ being the basis function):
+
+\begin{equation}
+  \label{eq:general-continuity-equation-discontinuous-galerkin}
+  \int_\Omega \pd{\mathbf{q}}{t} \phi_i \,d\Omega + \int_\Omega \nabla \cdot F(\mathbf{q}) \phi_i \,d\Omega = \int_\Omega r \phi \,d\Omega
+\end{equation}
+
+We will later use this to transform the shallow water equations into a different form which is easier to compute.
+
+\section{Shallow water equations}
+\label{sec:shallow-water-equations}
+
+The shallow water equations can be applied to the general continuity equation by choosig appropriate variables. For the state vector $\mathbf{q}$ we use the following:
+
+\begin{eqnarray*}
+  \mathbf{q} =
+  \begin{pmatrix}
+    h \\ h v_x \\ h v_y
+  \end{pmatrix}
+\end{eqnarray*}
+
+Here $h$ is the height of the water at that point, which is proportional to the mass. $v_x$ and $v_y$ are the velocities in the $x$ and $y$ direction. Note that we will occasionally use $\mathbf{v}$, which means a two-dimensional vector consisting of $\begin{pmatrix} v_x \\ v_y \end{pmatrix}$. Next, the flux function can be defined like so:
+
+\begin{eqnarray*}
+  F(\mathbf{q}) =
+  \begin{pmatrix}
+    h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
+  \end{pmatrix}
+\end{eqnarray*}
+
+This takes into account gravitic effects for the respective $x$ and $y$ components. This is accomplished by $e_x$ and $e_y$, which are $\begin{pmatrix} 1 \\ 0 \end{pmatrix}$ and $\begin{pmatrix} 0 \\ 1 \end{pmatrix}$ respectively, thus only adding the gravitational terms where necessary.
+
+As for the source term, we can interpret it to be the bathymetry in our case, to offset our calculated results from the state and flux function. For simplicity, we will use $r=
+\begin{pmatrix}
+  0 \\ 0\\ 0
+\end{pmatrix}$ (i.e.\,assuming constant even bathymetry).
+
+Having defined those terms to suit our purpose, we can rewrite the above as follows:
+
+\begin{eqnarray*}
+  \mathbf{q} =
+  \begin{pmatrix}
+    h \\ u_x \\ u_y
+  \end{pmatrix} \quad
+  F(\mathbf{q}) =
+  \begin{pmatrix}
+    \mathbf{u} \\ \frac{u_x}{h}\mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h}\mathbf{u} + \frac{1}{2} g h^2 e_y
+  \end{pmatrix}
+\end{eqnarray*}
+
+Here we replaced the velocity $\mathbf{v}$ by the impulse $\mathbf{u}$, which, similarly, consists of two dimensions, one in each direction (referred to by $u_x$ and $u_y$). Occasionally we will need only the $x$ components (or $y$ components) from that vector, for which we will write $F^x$ (and $F^y$ respectively):
+
+\begin{eqnarray*}
+  F^x(\mathbf{q}) =
+  \begin{pmatrix}
+    u_x \\ \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+  \end{pmatrix}
+  \quad
+  F^y(\mathbf{q}) =
+  \begin{pmatrix}
+    u_y \\ \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+  \end{pmatrix}
+\end{eqnarray*}
+
+At this point we apply the discontinuous Galerkin method as mentioned above. We obtain the following, called the weak form:
+
+\begin{equation}
+  \label{eq:shallow-water-weak-form}
+  \int_T \pd{\mathbf{q}}{t} \phi \,dT + \int_T \nabla \cdot F(\mathbf{u}) \phi \,dT = 0
+\end{equation}
+
+The operator $\nabla \cdot$ is the divergence, which computes the sum of the $x$ derivative of the first component and the $y$ derivative of the second component. Using the operator $\nabla$ and applying the Gaussian divergence theorem, we can transform the above into the following set of equations:
+
+\begin{equation}
+  \label{eq:shallow-water-weak-form-div-applied}
+  \int_T \pd {\mathbf{q}}{t} \phi \, dT +
+  \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds -
+  \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
+\end{equation}
+
+Note at this point, that these are actually six equations, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates. The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result. The last integral contains the symbol $\nabla$. This operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
+
+The second integral in that equation is a border integral around our triangle. The $\mathbf{n}$ in there denotes the (outward facing) normal at that point. We write $ds$ to denote integration over the $(x,y)$ values along the border. Since it is a border integral of a triangle, we can split it up into three integrals (one for each edge of the triangle), which will aid in computation of the term. This also implies splitting the normal vector $\mathbf{n}$ into three vectors, one for each edge. This helps as well, because the normal vector is constant within each edge.
+
+\begin{equation}
+  \label{eq:border-integral-sum}
+  \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds = \sum_{e \in E} \int_{e} F(\mathbf{q}) \cdot \mathbf{n}_e \, \phi \, ds = \sum_{e \in E} \int_{e} F^e \phi \, ds =: \text{Border integral}
+\end{equation}
+
+We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a standardized space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:triangles}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
+
+\begin{equation}
+  \label{eq:shallow-water-weak-form-div-applied-approximation}
+  \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
+  \sum_{e \in E} \int_{e} F^e \phi_i \, ds  -
+  \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
+  \quad \forall i \in {1 \dots n}
+\end{equation}
+
+\section{Matrix extraction}
+\label{sec:matrix-extraction}
+
+Equation \ref{eq:shallow-water-weak-form-div-applied-approximation} gives a lot of room to improve regarding efficiency. Upon closer examination, some terms stand out as being constant, or independent of the values at specific points, which means we can extract them and precompute them to save computation time while the program is running. For that, we will try to extract as much information as possible into matrices.
+
+To do that, we first have to get rid of the various terms containing $\mathbf{q}$. Since $\mathbf{q}$ depends on the position, and that is what we integrate over, we cannot extract it from the integral. To achieve this regardless, we use the following approximation over all support points and corresponding basis functions:
+
+\begin{equation}
+  \label{eq:support-point-approximation}
+  \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i\left(x,y\right)
+\end{equation}
+
+$\mathbf{q}_i$ are the $\mathbf{q}$ values at the corresponding support points. Since those don't depend on the position, it allows us to move them out of the integral, leaving integrals over various combinations of basis functions, which are all independant of $\mathbf{q}$, and hence can be precomputed.
+
+\subsection{Mass matrix}
+\label{sec:mass-matrix}
+
+The first integral of (\ref{eq:shallow-water-weak-form-div-applied-approximation}) shows exactly how this works. As only the basis functions $\phi_i$ are dependent on $(x,y)$, we can extract $\mathbf{q}$ and obtain a constant term:
+
+\begin{eqnarray*}
+  \int_T \pd {\mathbf{q}}{t} \phi_i \, dT & \approx &
+  \int_T \pd {\left( \sum_{j=1}^n \mathbf{q}_j \phi_j \right) }{t} \phi_i \, dT = \\
+  & = & \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{m_{ij}} \pd{\mathbf{q}_j}{t}
+\end{eqnarray*}
+
+The elements $m_{ij}$ form the $n \times n$ mass matrix $M$. That means we have a product between $M$ and a vector containing all $\mathbf{q}$ components differentiated by $t$. For a shorthand notation, we can define $\tilde{\mathbf{q}} := \begin{pmatrix} \mathbf{q}_1 \\ \vdots \\ \mathbf{q}_n \end{pmatrix}$. Using this, we can now translate the above into the following formula:
+
+\begin{equation*}
+  \int_T \pd {\mathbf{q}}{t} \phi_i \, dT \approx
+  M \cdot \pd{
+    \tilde{\mathbf{q}}}{t}
+\end{equation*}
+
+\subsection{Stiffness matrix}
+\label{sec:stiffness-matrix}
+
+We will skip the second integral for now and move to the third. We need to treat each of the three components differently. In this section we will see the state vector array splitting up by their coordinates and giving us different results for the $x$ and $y$ components. This means we will be using the $F^x\left(\mathbf{q}\right)$ and $F^y\left(\mathbf{q}\right)$ terms defined in \ref{sec:shallow-water-equations} for simpler notation.
+
+\subsubsection{First line}
+\label{sec:stiffness-matrix-first-line}
+
+Using the same method as in \ref{sec:mass-matrix}, we obtain:
+
+\begin{eqnarray*}
+  \int_T F_1(\mathbf{q}) \cdot \nabla \phi \, dT & = &
+  \int_T
+  \begin{pmatrix}
+    u_x \\ u_y
+  \end{pmatrix}
+  \cdot \nabla \phi_i \, dT \approx \\
+  &=& \int_T
+  \begin{pmatrix}
+    \sum_{j=1}^n u_{x,j} \phi_j \\
+    \sum_{j=1}^n u_{y,j} \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_i}{x} \\
+    \pd{\phi_i}{y}
+  \end{pmatrix} dT \\
+  & = & \sum_{j=1}^n u_{x,j} \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{s_{ij}^x} + \sum_{j=1}^n u_{y,j} \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{s_{ij}^y}
+\end{eqnarray*}
+
+Again we obtain matrices, denoted by the elements $s_{ij}^x$ and $s_{ij}^y$, stored in $S^x$ and $S^y$ respectively (called the stiffness matrices). As before, this computation can also be regarded as a matrix multiplication.
+
+\subsubsection{Second line}
+\label{sec:stiffness-second-line}
+
+An analogous approach to the second and third line gives us:
+
+\begin{eqnarray}
+  \label{sec:third-integral-second-line-1}
+  \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = &
+  \int_T
+  \begin{pmatrix}
+    \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+  \end{pmatrix}
+  \cdot \nabla \phi_i \, dT \approx \\
+  \label{sec:third-integral-second-line-2}
+  & = &
+  \int_T
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_i}{x} \\
+    \pd{\phi_i}{y}
+  \end{pmatrix} dT \\
+  & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+  & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+\end{eqnarray}
+
+The resulting terms here, $\int_T \phi_j \pd{\phi_i}{x} \, dT$ and $\int_T \phi_j \pd{\phi_i}{y} \, dT$, are the same stiffness matrices we computed before, $S^x$ and $S^y$ respectively.
+
+\paragraph{Explanation: Point-wise approximation}
+
+The transition from (\ref{sec:third-integral-second-line-1}) to (\ref{sec:third-integral-second-line-2}) is used as an approximation to simplify further computation. To compute a function $f(h, u_x, u_y)$, instead of computing
+\begin{equation*}
+  f\left(\sum_{i=1}^n h_i \phi_i,
+    \sum_{i=1}^n u_{x,i} \phi_i,
+    \sum_{i=1}^n u_{y,i} \phi_i\right),
+\end{equation*}
+we compute the value
+\begin{equation*}
+  \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
+\end{equation*}
+
+The accuracy of this varies depending on $f$, so we will introduce an error here. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin.
+
+\subsubsection{Stiffness matrix, third line}
+
+The third line is computationally equivalent to the previous, with the respective values switched. The terms $S^x$ and $S^y$ appear again:
+
+\begin{eqnarray*}
+  \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
+  \int_T
+  \begin{pmatrix}
+    \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+  \end{pmatrix}
+  \cdot \nabla \phi_i \, dT \approx \\
+  & = & \int_T
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_i}{x} \\
+    \pd{\phi_i}{y}
+  \end{pmatrix} dT \\
+  & = & \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+  & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+\end{eqnarray*}
+
+\subsection{Inspecting the border integral}
+\label{sec:border-integral}
+
+Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because the term $F^e$ depends on the edge, and hence cannot be moved out of the integral, so the same techniques employed with the previous two integrals will not work here. Instead, we employ a Gaussian quadrature and integrate numerically. To do that we substitute the inner integral as follows:
+\begin{equation}
+  \int_{e} F^e \phi_i \, ds \approx \sum_{k=1}^{m} F^e\left(p_k\right) \underbrace{\phi_i\left(p_k\right) \cdot w_k}_{w_{ik}^\prime},
+\end{equation}
+where $m$ is the number of integration points and $w_k$ denotes the Gauss weight for point $p_k$ (consisting of $x$ and $y$ coordinates). This also contains the edge length (which was normalized to 1, but the hypotenuse still has length $\sqrt{2}$ in that case), which is why it has to be stored seperately for every edge. Similar to the previous examples, the values $\phi_i(p_k) \cdot w_k$ can be precomputed as well, and added onto the term $F^e\left(p_k\right)$ when required. $F^e\left(p_k\right)$ itself is called the \emph{numerical flux} and can be computed in different ways, which we will get to in part \ref{part:polynomial-comparison}.
+
+\section{Matrix listing}
+\label{sec:matrix-listing}
+
+The matrices we obtained from section \ref{sec:matrix-extraction} are the following:
+
+\begin{description}
+\item[Mass matrix]
+  \begin{equation}
+    \label{eq:mass-matrix}
+    M = [m_{ij}]_{n \times n} = \int_T \phi_i \phi_j \ dT
+  \end{equation}
+\item[Stiffness matrices]
+  \begin{equation}
+    \label{eq:stiffness-matrix}
+    S^x = [s_{ij}^x]_{n \times n} = \int_T \phi_j \pd{\phi_i}{x} \quad
+    S^y = [s_{ij}^y]_{n \times n} = \int_T \phi_j \pd{\phi_i}{y}
+  \end{equation}
+\item[Weight matrix]
+  \begin{equation}
+    \label{eq:weight-matrix}
+    W = [w_{ik}^\prime]_{n \times m} = \phi_i(p_k) \cdot w_k
+  \end{equation}
+\end{description}
+
+Using the approximation $\mathbf{q} \approx \sum_{j=1}^n \mathbf{q}_i \phi_i\left(x,y\right)$, along with the previously defined $\tilde{\mathbf{q}}$ (see section \ref{sec:mass-matrix}), we can transform our equation \ref{eq:shallow-water-weak-form-div-applied-approximation} using the matrices defined above to look like this:
+
+\begin{equation}
+  \label{eq:swe-matrix-form}
+  M \cdot \pd{\tilde{\mathbf{q}}}{t} +
+  \sum_{e \in E} \tilde{F^e} W -
+  \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
+    F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
+\end{equation}
+
+Here $\tilde{F^e}$ means a vector of all calculated $F_k^e$, similarly to $\tilde{\mathbf{q}}$. This now has the advantage of being easier to handle, both mathematically as well computationally.
+
+\section{Computing the integrals}
+\label{sec:computing-integrals}
+
+\subsection{Explicit Euler}
+\label{subsec:explicit-euler}
+
+Given an equation of the form
+\begin{eqnarray}
+  \label{eq:euler-method-setting}
+  \pd{x(t)}{t} & = & f(t, x(t)), \\
+  x(t_0) & = & x_0
+\end{eqnarray}
+we want to have a calculate $x(t)$ (as shown in \cite{schwaiger08adaptive}).
+
+This is evaluated iteratively by considering a certain timestep size, $\tau$. The smaller the timestep size, the more accurately the resulting values will approximate the exact solution. However, the timestep is left variable because it can be adjusted to be lower when confronted with highly variable state vectors (for example large observed velocities on a small grid), whereas it can be left higher during phases with little variation or similar velocities to save computation time. The new time is calculated simply by adding the variable timestep on the current time: $t_{k+1} = t_k + \tau$.
+
+The state vector for the next timestep is based on the same vector in the current timestep. It can be regarded as taking a small timestep in the direction of the development of the state vector, where the direction is given by $\pd{x(t)}{t}$. We obtain the final term for the new state variable $x$:
+
+\begin{equation}
+  \label{eq:euler-step-solution}
+  x_{k+1} = x_k + \tau f(t_k, x_k), \quad k=0,1,2,\dots
+\end{equation}
+
+\subsection{Applying the euler method to our integrals}
+\label{subsec:euler-method-applied}
+
+We can apply this method to our modified equation (\ref{eq:swe-matrix-form}) once we solve for our desired quantity $\tilde{\mathbf{q}}$:
+
+\begin{equation*}
+  \pd{\tilde{\mathbf{q}}}{t} =
+  M^{-1} \cdot \left(
+    F^x(\tilde{\mathbf{q}}) \cdot S^x +
+    F^y(\tilde{\mathbf{q}}) \cdot S^y -
+    \sum_{e \in E} \tilde{F^e} W\right
+  )
+\end{equation*}
+
+This can only be done if $M$ is actually invertible, \todo{Referenz, Cockburn?} which is something we can not be sure of. The matrix $M$ depends heavily on the chosen basis functions $\phi_1,\dots,\phi_n$. A diagonal matrix can be acchieved by using \emph{orthogonal} polynomials. For polynomial degree 1, it is no problem to obtain orthogonal polynomials using the technique described in section \ref{sec:basis-functions-choice}.
+
+We can see that this has the form we are looking for to apply the euler step. The result looks like this:
+
+\begin{equation*}
+  \label{eq:swe-euler-step-solution}
+  \tilde{\mathbf{q}}_{k+1} =
+  \tilde{\mathbf{q}}_{k} +
+  \tau \cdot M^{-1} \cdot \left(
+    F^x(\tilde{\mathbf{q}}) \cdot S^x +
+    F^y(\tilde{\mathbf{q}}) \cdot S^y -
+    \sum_{e \in E} \tilde{F^e} W\right
+  )
+\end{equation*}
+
+We have to keep in mind that equation (\ref{eq:swe-euler-step-solution}) is actually a collection for the equations for $\mathbf{q}_1$ through $\mathbf{q}_n$, and each $\mathbf{q}_i$ contains three components ($h$, $u_x$, $u_y$), which means we obtain a set of $3n$ equations in total. The equation for $\mathbf{q}_i$ is then used for updating support point $i$.
+
+\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrich-Flux}
+\label{part:polynomial-comparison}
+
+\section{Setting}
+\label{sec:setting}
+
+When analyzing wave propagation along a grid of triangles, it's essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it's determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and impulse ($u$, proportional to velocity $q$), where the impulse is a vector for every spatial dimension. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
+
+This may sometimes be acquired by exact means, however those computations are long and complex and can result in absurd computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We want to analyze what kind of accuracy loss that implies and if it's a suitable method for realistic computation.
+
+We have two adjacent triangles (called $R$ and $L$ respectively, although the direction doesn't matter), sharing a common edge $E$. Each triangle has its own polynomial for every component ($h$ and $u$), evaluated over coordinates on the triangle. After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and triangle, resulting in four polynomials. What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places.
+
+\subsection{Flux function}
+\label{sec:flux-function-intro}
+
+Since we are dealing with a one dimensional problem, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function:
+
+\begin{equation}
+  \label{eq:flux-function-definition}
+  F\left(
+    \begin{pmatrix}
+      h \\ u
+    \end{pmatrix}
+  \right) = 
+  \begin{pmatrix}
+    u \cdot h \\
+    \frac{1}{2} g h^2 + u^2 \cdot h
+  \end{pmatrix}
+\end{equation}
+
+\subsection{Lax-Friedrich-Flux}
+\label{sec:lax-friedrich-definition}
+
+The Lax-Friedrich-Flux is defined as follows:
+\begin{equation}
+  \label{eq:lax-friedrich-definition}
+  F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
+\end{equation}
+
+In (\ref{eq:lax-friedrich-definition}), $p^R$ and $p^L$ stand for the height and velocity along the right and the left edge, respectively. The term $F(p)$ is defined as in equation (\ref{eq:flux-function-definition}), and $p$ is a two-component vector. $p^R$ and $p^L$ might be simple static vectors or polynomials depending on a variable ($x$ and $y$).
+
+To be precise when it comes to these polynomials, they are containing two components (for height and impulse). Note that then $p$ is a function $[0,1]\rightarrow\reals$, thus we -- being precise -- should write $p(x)$ and $F(p(x))$. For simplicity, we alter this cumbersome notation and simply use $p$ and $F(p)$ respectively.
+
+\subsection{Original situation: A 2d-problem}
+\label{sec:original-situation-2d-problem}
+
+The original problem arises when two adjacent triangles share one edge. Each triangle has several support points, that are interpolated to obtain a polynomial for the corresponding triangle.
+
+Figure \ref{fig:two-triangles-and-some-support-points} shows two adjacent triangles and exemplary positions of the support points. In the case shown we would use six support points, resulting in a two-variable polynomial of degree 2. We could use more support points, thereby increasing the degree of the resulting polynomial.
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[scale=2]
+    \begin{scope}[xshift=-.1em,yshift=-.1em]
+      \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
+      \draw[fill=black] (0,0) circle (0.02);
+      \draw[fill=black] (0.5,0) circle (0.02);
+      \draw[fill=black] (1,0) circle (0.02);
+      \draw[fill=black] (0.5,0.5) circle (0.02);
+      \draw[fill=black] (0,1) circle (0.02);
+      \draw[fill=black] (0,0.5) circle (0.02);
+    \end{scope}
+    \draw[->,thick] (0,1.075) -- node[right]{$x$} (1.075,0);
+    \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
+      \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
+      \draw[fill=black] (0,0) circle (0.02);
+      \draw[fill=black] (0.5,0) circle (0.02);
+      \draw[fill=black] (1,0) circle (0.02);
+      \draw[fill=black] (0.5,0.5) circle (0.02);
+      \draw[fill=black] (0,1) circle (0.02);
+      \draw[fill=black] (0,0.5) circle (0.02);
+    \end{scope}    
+  \end{tikzpicture}
+  \caption{Two adjacent triangles with support points}
+  \label{fig:two-triangles-and-some-support-points}
+\end{figure}
+
+Since we are interested in the situation along the adjacent edges, which is a linear curve, we can remodel the problem to one dimension, which will reduce the computational complexity. This means that we do not actually construct two-variable polynomials for the whole triangles, but instead consider just polynomials that depend on one variable $x \in [0,1]$. The variable $x$ simultaneously traverses both adjacent edges.
+
+\subsection{Constructing the polynomials}
+\label{sec:constructing-polynomials}
+
+As stated in the introduction, we have to construct $p^L$ and $p^R$, the polynomials describing the height and impulse of the right and left triangle, respectively. We construct these polynomials by interpolating some points.
+
+We do so as well for the left as the right triangle, and for the height and the impulse. We call the points we've chosen the \emph{support points} for the left and right triangle. For convenience, we have decided to use a naming convention for these points. Assume that we have $n$ points for each triangle. Then we call the (components of the) points of the left triangle 
+\begin{equation*}
+\left(x_1,\begin{pmatrix}
+    h_1^R \\ u_1^R
+  \end{pmatrix}\right), \dots , \left(x_n, \begin{pmatrix}
+    h_n^R \\ u_n^R
+  \end{pmatrix}\right)
+\end{equation*}
+and the points for the right triangle 
+\begin{equation*}
+\left(x_1,\begin{pmatrix}
+    h_1^L \\ u_1^L
+  \end{pmatrix}\right), \dots , \left(x_n,\begin{pmatrix}
+    h_n^L \\ u_n^L
+  \end{pmatrix}\right),
+\end{equation*}
+i.e.\,we introduce a superscript indicating whether we are dealing with points within the left or the right triangle.
+% NOTE: Hab h_1 in h_1^R und H_1 in h_1^L umbenannt, was haeltst du davon? Gross- und Kleinschreibung find ich persoenlich etwas verwirrend wenn man nur schnell hinschaut, und R und L haben wir oben auch schon so benutzt beim p^R/p^L. Das einzige Problem waere, wie wir das im Programm umsetzen, aber dazu habe ich eine Idee.
+As you can see, each point consists of two components, first a position on the edge ($x_i, i \in \{1 \dots n\}$) and second a vector with the corresponding height and impulse, ($h_i^R$ and $u_i^R$ for the left triangle and $h_i^L$ and $u_i^L$ for the right, with $i \in \{1 \dots n\}$).
+
+At first one may think the support points should be equidistant to each other, but there are better ways to approach that problem. Eventually we'll need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we'll employ the Gaussian quadrature. This method requires its own support points to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}.
+
+However, we also investigated the situation for an equidistant distribution of support points. You find the corresponding results in \ref{sec:equidistant-distribution-of-support-points}. A short explanation on why this setting might be useful is given there, as well.
+
+To construct the polynomials assume we have a routine $interpolate(\{(x_i,y_i) \mid i \in \{1 \dots n\}\})$. This routine takes a set of points $(x_1,y_1),\dots,(x_n,y_n)$ and returns the polynomial of degree $n-1$ that goes through all the points within the set (in practice this can be e.g. a Lagrange-Interpolation-Routine, in Maple there's \texttt{CurveFitting[PolynomialInterpolation]}). Here we introduce a notational shorthand for this cumbersome construct by simply writing $interpolate(x,y)$ for $interpolate(\{(x_i,y_i) \mid i \in \{1 \dots n\}\})$.
+
+We then generate four polynomials as follows:
+
+\begin{itemize}
+\item $p^L_h(x) := interpolate (x,h^L)$. Polynomial interpolating the height values for the left triangle.
+\item $p^L_u(x) := interpolate (x,u^L)$. Polynomial interpolating the impulse values for the left triangle.
+\item $p^R_h(x) := interpolate (x,h^R)$. Polynomial interpolating the height values for the right triangle.
+\item $p^R_u(x) := interpolate (x,u^R)$. Polynomial interpolating the impulse values for the right triangle.
+\end{itemize}
+
+We then combine two polynomials into one to obtain the following:
+
+\begin{equation*}
+  p^L(x) :=
+  \begin{pmatrix}
+    p^L_h(x) \\ p^L_u(x)
+  \end{pmatrix}, \quad
+  p^R(x) :=
+  \begin{pmatrix}
+    p^R_h(x) \\ p^R_u(x)
+  \end{pmatrix}
+\end{equation*}
+
+Even if $p^L$ and $p^R$ are -- strictly speaking -- functions that map $x \in [0,1]$ onto a vector containing the values of the height and the impulse polynomial for the respective triangle, we still call $p^L$ and $p^R$ polynomials.
+
+\subsection{What do we want to know?}
+\label{sec:goal-intro}
+
+What we eventually would like to do is to compare the following two things with each other:
+
+\begin{description}
+\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrich-Flux, and compute its exact value. The resulting values are again polynomials depending on $x$. We call these polynomials $N(x)$ (a vector which has a polynomial for the height as its first component, while the second component represents the impulse).
+
+\item[Approximate solution] We supply the support points into the Lax-Friedrich-Flux directly, and compute the resulting values. I.e.\,we compute the following for $i \in \{1 \dots n\}$ (remember: $n$ points along each adjacent edge):
+  \begin{equation*}
+    F_{LF}\left(
+      \begin{pmatrix}
+        h_i^R \\ u_i^R
+      \end{pmatrix},
+      \begin{pmatrix}
+        h_i^L \\ u_i^L
+      \end{pmatrix}
+    \right) :=
+    \begin{pmatrix}
+      h_i^F \\ u_i^F
+    \end{pmatrix} = x_i^F
+  \end{equation*}
+
+  % NOTE: Hier LF_i in X_i umbenannt, da es ja wieder den Punkten x_i entspricht (also fuer jeden Punkt einen Vektor), mit aehnlicher Notation wie oben.
+
+  We introduce shorthand notation $x_i^F$ for the resulting values. Each $x_i^F$ has the same structure as the $x_i$, only it's evaluated by the flux function, hence the $F$ superscript. Next we interpolate the points (i.e.\,we interpolate the first components to obtain one polynomial, and we interpolate the second components to obtain another polynomial). The resulting polynomials are called $NetPoly(x)$ (interpreted like $N(x)$ as explained above).
+
+  % NOTE: Wollen wir NetPoly in N' oder N_num oder so benennen? Ist einfacher zu schreiben und ist von der Notation her "mathematischer", da Mathematiker gerne einen Buchstaben pro Objekt nehmen.
+
+  That is, we set
+  \begin{equation*}
+    NetPoly(x) :=
+    \begin{pmatrix}
+      interpolate(x,h^F) \\ interpolate(x,u^F)
+    \end{pmatrix}
+  \end{equation*}
+
+\end{description}
+
+Our goal will then be to compare $N(x)$ against $NetPoly(x)$ (component-wise, of course). We compare the quality of an approximation by considering the following term:
+
+\begin{equation}
+  \label{eq:integral-norm-definition}
+  I := \int\limits_{x=0}^1 | N(x) - NetPoly(x) |\  dx,
+\end{equation}
+where the integration is to be understood component-wise.
+
+\subsection{How to evaluate $I$?}
+\label{sec:how-to-eval-I}
+
+It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-norm-definition}). Even if we delegate most of the work to the symbolic math program \emph{Maple}, we experienced some pitfalls while evaluating the exact approach.
+
+The main problem with exact integration seems to be that Maple basically has to compute the zeroes of $N(x)-NetPoly(x)$, which is, depending upon the degree of the polynomials, a time consuming task.
+
+There are several possibilities to overcome this problem. Here are the two we took into account:
+
+\begin{itemize}
+\item $N(x)$ and $NetPoly(x)$ intersect when supplied the support points, i.e.\,
+  \begin{equation*}
+    N(x_i^F) = NetPoly(x_i^F), \forall i \in \{1 \dots n\}.
+  \end{equation*}
+
+Knowing this, we can already derive \emph{some} zeroes (but possibly not all). If we compute
+  \begin{equation*}
+    \sum\limits_{i=1}^{n-1} \int\limits_{x=x_i}^{x_{i+1}}\left| N(x) - NetPoly(x) \right|\  dx,
+  \end{equation*}
+  we get a more accurate result as an approximation for $I$ compared to simply computing the integral over $[0,1]$. 
+
+  If we moreover divide each interval $[x_i,x_{i+1}]$ into several smaller sub-intervals, and simply integrate over them, we can reduce the error ad libitum.
+
+  While we can tweak this method by simply evaluating more and more sub-intervals, this comes at the price of more computations.
+\item Another approach was to use Maple's numerical integration facilities. If we tell Maple to
+  \begin{center}
+    \texttt{evalf(Int(abs(N(x)-NetPoly(x)),x=0..1))},
+  \end{center}
+  we get a good result -- if we wait long enough.
+
+  We experimented with random polynomials and tried a few of them out, comparing the \texttt{evalf}-result to the exact integration. We experienced that the \texttt{evalf}-result was always equal to the actual result within an error of 0.001.
+
+  However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
+\item Finally, there's an approach that is tought in school. We subdivide the function 
+  \begin{equation*}
+    \left| N(x)-NetPoly(x) \right|
+  \end{equation*}
+into several stripes, and ``manually compute'' the area of these stripes. The more stripes we have, the better the result will be. This -- of course -- comes at the price of more expensive computation
+\end{itemize}
+
+We finally went for the third of the three approaches. It should also be possible to use the second or first one -- if one is able to tell Maple that \emph{first} all necessary substitutions are made, and \emph{second} the plot is done. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we didn't explore this option further.
+
+You can find some more information about the developed tool in section \ref{sec:making-the-whole-thing-interactive}.
+
+\section{Visualizing the error term $I$}
+\label{sec:making-the-whole-thing-interactive}
+
+We are now going to plot (the two components of) the term $I$ as described in equation (\ref{eq:integral-norm-definition}). First, we have to do some considerations concerning plotting of such a complicated term. Afterwards, we present our tool that was developed to simplify plotting as much as possible.
+
+\subsection{Some considerations to take into account}
+\label{sec:some-considerations}
+
+Please recall from section \ref{sec:constructing-polynomials}, that the terms $p^L$ and $p^R$ depend upon the chosen support points. Moreover, $N(x)$ depends on these polynomials. Thus, the term $N(x)-NetPoly(x)$ also depends on the polynomials and -- in turn -- upon the support points. This means, we have $4n$ variables\footnote{We have $n$ points for each of the two adjacent edges, each point consisting of a height and a impulse component, resulting in $4n$ variables.} in this term -- quite a large number.
+% NOTE: Letzter Satz etwas ungenau, nicht klar wie man den am schoensten umschreiben kann.
+This implies that $I$ (see equation (\ref{eq:integral-norm-definition})) also depends on the single points $
+\begin{pmatrix}
+  h_1^L \\ u_1^L
+\end{pmatrix},\dots,
+\begin{pmatrix}
+  h_n^L \\ u_n^L
+\end{pmatrix},
+\begin{pmatrix}
+  h_1^R \\ u_1^R
+\end{pmatrix},\dots,
+\begin{pmatrix}
+  h_n^R \\ u_n^R
+\end{pmatrix}$. When it comes to plotting, the sheer amount of variables requires us to later ``mask out'' some of them to be able to obtain useful plots.
+
+So, we can interpret $I$ as a function over these $4n$ values onto a two-component vector containing the integral from the $h$- and $u$-components. If we were precise, we then would write it in function notation $I\left(\begin{pmatrix}
+    h_1^L \\ u_1^L
+  \end{pmatrix},\dots,
+  \begin{pmatrix}
+    h_n^L \\ u_n^L
+  \end{pmatrix},
+  \begin{pmatrix}
+    h_1^R \\ u_1^R
+  \end{pmatrix},\dots,
+  \begin{pmatrix}
+    h_n^R \\ u_n^R
+  \end{pmatrix}\right)$ instead of simply $I$. However, most of the time we'll prefer $I$, since we are interested in notational simplicity.
+
+We decided to use 3d-plots, where we have two axes representing two of the $4n$ variables. All the other variables are fixed to certain values.
+% Later we will explain how we can visualize $I$. Since there are many variables to choose, we decided to fix all but one point and visualize the result.
+For example, if we fixed all points to $
+\begin{pmatrix}
+  10 \\ 0
+\end{pmatrix}
+$ except the first point, this would mean we are interested in 
+\begin{equation*}
+  I\left(
+    \begin{pmatrix}
+      h_1^L \\ u_1^L
+    \end{pmatrix},
+    \begin{pmatrix}
+      10 \\ 0
+    \end{pmatrix}, \dots,
+    \begin{pmatrix}
+      10 \\ 0
+    \end{pmatrix}
+  \right).
+\end{equation*}
+
+We then could use a 3d-plot whose $x$-axis resembles $h_1^L$ and whose $y$-axis resembles $u_1^L$. The $z$-value would then represent the value of $I$.
+
+% NOTE: Das hier to-dos?
+% Since we want to be able to leave exactly one point unfixed, but want to be able to specify this point dynamically, we introduce the following notational shorthand:
+
+% What we basically have done when we visualized this stuff, is that we fixed all but one support point. Then, we iterate over the $h$- and $u$-component of the one unfixed point and plot the values.
+
+\subsection{Plotting tool}
+\label{sec:plotting-tool-intro}
+
+As you might know, Maple supports kind of ``dynamic plotting''. That is, you get a window containing one slider for each variable in a mathematical expression. You can then plot this expression and adjust the parameters accordingly.
+
+However, we quickly had to recognize that this method has some downsides. First of all, we always are interested in plotting two error values: One for the height and one for the impulse (remember: $I$ has two components). While it is still possible to have two dynamic plots in parallel in Maple, it turned out to be very cumbersome.
+
+Moreover, we wanted to be able to quickly switch the coordinate axes, so that we can compare plots with each other. Last, Maple's user interface is not intended to be used with that many variables (remember that we are talking about $4n$ variables in the term $I$).
+
+So we decided to develop a tool that helps us visualizing our data properly. We implemented a simple program that is capable of doing the following:
+
+\begin{itemize}
+\item Read two functions from a file: In our case these functions will be the ``raw components'' of $I$. To be more precise: It will be the contents of $N(x)-NetPoly(x)$ (i.e.\,the integrand within the integral of $I$). This file is generated by Maple in our case, but it can be user-written as well, of course.
+\item Extract variable names from the mathematical expressions extracted from the file (in our case, this will be mainly the variables $u_i$ and $h_i$ -- of course in a suitable string representation\footnote{We decided to use a simple scheme for the ``string''-variable names: $u_1^L$ becomes \texttt{u\_1}, while $u_1^R$ becomes \texttt{U\_1}. Similarily, $h_3^L$ becomes \texttt{h\_3} and $h_4^R$ becomes \texttt{H\_4}.}). Moreover, the variable $x$ is treated in a special way since this is the variable that we want to integrate over to compute $I$.
+\item Offer a way to dynamically change the values of the variables (i.e. the $u_i$'s and $h_i$'s). This is acchieved by some sliders (see figure \ref{subfig:plotting-tool-variables}).
+\item Numerically evaluate $I$ for the given functions: This is acchieved using the technique described in section \ref{sec:how-to-eval-I}.
+\item Choose any of the variables to be used as $x$- resp. $y$-coordinates for a 2d- or 3d-plot.
+\item Plot $I$ using gnuplot.
+\item Export plots and generate a proper tex-file to include in this report.
+\end{itemize}
+
+While our program surely will win no beauty competition, it prooved to be very useful and a real time-saver. You can see what the tool looks like in figure \ref{fig:plotting-tool}.
+
+\begin{figure}[ht]
+  \centering
+  \subfigure[Adjusting variables and axes]{
+    \label{subfig:plotting-tool-variables}
+    \includegraphics[scale=0.5]{simpleplotter_screen1.png}
+  }
+  \subfigure[Gnuplot settings/Settings for numerical integration]{
+    \label{subfig:plotting-tool-gnuplot}
+    \includegraphics[scale=0.5]{simpleplotter_screen2.png}
+  }
+  \caption{Plotting tool window.}
+  \label{fig:plotting-tool}
+\end{figure}
+
+Subfigure \ref{subfig:plotting-tool-variables} shows the page that is used to adjust the variables. As you can see, the tool has detected variables \texttt{u\_1}, \texttt{h\_1}, \texttt{U\_1}, and so on. Moreover you can see that e.g.\, the parameter \texttt{u\_2} is set to a value of 3.2, while \texttt{u\_1} is set to 0.0.
+
+The radio buttons determine which variables are used as axes. In subfigure \ref{subfig:plotting-tool-variables}, in the first option row, the column for \texttt{u\_1} is selected, while in the second row, we chose \texttt{h\_1}. This means that the plotter uses \texttt{u\_1} as $x$-axis, and \texttt{h\_1} as $y$-axis for the (3d)-plot.
+
+Subfigure \ref{subfig:plotting-tool-gnuplot} shows exemplary settings for plotting. Samples and isosamples are gnuplot-specific parameters that basically determine how fine-grained gnuplot is plotting the curve. A hundred samples and ten isosamples have shown to be a good balance between a nice looking result and acceptable waiting times. The settings for lower and upper $x$/$y$-values determine the range that is plotted by gnuplot.
+
+Last (and possibly most important), the parameter ``stripes'' determines how many stripes are used to numerically evaluate the integral $I$. Again, we tried some values and found out that using less than five stripes is quite inaccurate. We recognized that using five or more stripes does not significantly affect the result.
+
+\subsection{How to interpret the pictures}
+\label{sec:how-to-interpret-pictures}
+
+As mentioned before, all the plots are generated using our tool. We said that our tool reads two functions from a file and plots (result of some computation involving) them. Moreover we said that the program obtains the two components of $N(x)-NetPoly(x)$. The tool generates two plots that are labelled ``0. Function'' and ``1. Function''. So, in our case ``0. Function'' represents the error in the $h$-component (height), while ``1. Function'' stands for the error in the $u$-component (impulse).
+
+To understand how our plots work, we can take a look at figure \ref{fig:two-points-all-the-same}. In this example, we used 2 points on each triangle and edge. That is, we have four (relevant) points in total, \emph{two of which} we have plotted here. This is why figure \ref{fig:two-points-all-the-same} has \emph{two} sub-figures.
+
+Looking at sub-figure \ref{subfig:two-points-p1-height-impulse}, its caption says that point $p_1^L$ is varying. To be precise, its height and impulse vary along the plot axes.
+
+The first part of this caption tells us that we are fixing \emph{all points except} $p_1^L$ to a specific value (in this case it was $
+\begin{pmatrix}
+  10 \\ 0
+\end{pmatrix}
+$), i.e.\,we are considering the term $I\left(
+  \begin{pmatrix}
+    10 \\ 0
+  \end{pmatrix},
+  \begin{pmatrix}
+    h_2^R \\ u_2^R
+  \end{pmatrix}, 
+  \begin{pmatrix}
+    10 \\ 0
+  \end{pmatrix},
+  \begin{pmatrix}
+    10 \\ 0
+  \end{pmatrix}
+\right)$.
+
+% In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3d-plot showing this function. Please remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
+
+The orientation of the axes is displayed in figure \ref{fig:orientation-of-axes}.
+
+\begin{figure}[th]
+  \centering
+  \begin{tikzpicture}
+    \draw[->,semithick] (0,0) -- (0,1) node[above]{Value of $I$}; % z
+    \draw[->,semithick] (0,0) -- +(-30:1) node[below right]{$u$}; % x
+    \draw[->,semithick] (0,0) -- +(210:1) node[below left]{$h$}; % y
+  \end{tikzpicture}
+  \caption{Orientation of the axes used throughout the 3d-plots}
+  \label{fig:orientation-of-axes}
+\end{figure}
+
+To plot $u$ and $h$ we need to know their respective ranges as well. This is noted in the caption of the whole figure. For example, in figure \ref{fig:two-points-all-the-same}, the values for $u$ are in $[8, 12]$ and the values for $h$ in $[-4,4]$.
+
+% Looking back at the caption of the subfigure, which had ``1/0.04'' in the latter part (subfigure \ref{subfig:fixing-p2-in-first-example}). This tells us the range of the values of $I$ (i.e.\,the ``$z$ axis''). To be precise, the firs part tells us that the maximal plotted value for the h component is 1, while the maximal $u$ component value is 0.04. A single number indicates a range between 0 and that number, while an explicit range indicates the given range (for an example, see \ref{subfig:example-with-range}, where the $h$ component plot range goes from 0.25 to 0.55, and the $u$ component from 0 to 0.03).
+
+\section{Results: Distribution of support points according to Gaussian quadrature}
+\label{sec:results}
+
+We implemented several scenarios and present the outcome of some of them using the support points one would use when doing a Gaussian quadrature. The $x$ values of these support points are summed up in table \ref{tab:x-coordinates-gauss-quadrature} and can be read in any book on Gaussian quadrature.
+
+\begin{table}[ht]
+  \renewcommand\arraystretch{1.5}
+  \centering
+  \begin{tabular}[ht]{cl}
+    Order & $x$-coordinates \\
+    \hline
+    2 & $\frac{1}{2}-\frac{1}{6}\cdot \sqrt{3}, \frac{1}{2}+\frac{1}{6}\cdot \sqrt{3}$ \\
+    3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} , 0.5, \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ \\
+    \hline 
+  \end{tabular}
+  \caption{$x$-coordinates of support points for Gauss-Quadrature}
+  \label{tab:x-coordinates-gauss-quadrature}
+\end{table}
+
+\subsection{Setting all support points to the same value}
+\label{sec:setting-all-support-points-to-the-same-value}
+
+First we set all support points to one single value ensuring homogenous height and impulse. Then, we tackle each point individually and let it's values range over a certain domain.
+
+\input{2_punkte_alles_10_0/tex.tex}
+
+Figure \ref{fig:two-points-all-the-same} shows the case for two points on each adjacent edge. The sub-figures are interpreted the following way: Each subfigure shows what happens if we fix all but one specific support point. For example, subfigure \ref{subfig:fixing-p2-in-first-example} shows what happens if we fix all support points except $p_2$ (containing the variables $h_2$ and $u_2$) and let range $h_2$ from 8 to 12 and $u_2$ from -4 to 4. The left part of subfigure \ref{subfig:fixing-p2-in-first-example} shows the error in the $h$-component, while the right half depicts the error in the $u$ component. As you can see, the error in the $h$-component is always zero (to be precise about $10^{-15}$) in the range depicted here. From now on, we will omit plots that plot ``zeroes only''.
+
+As you can see, the error for the $h$ component ranges up to 2.5.
+
+Of course it would be interesting to inspect the same thing for more support points along each edge. So we did for three support points along each edge. You can see the results in figure \ref{fig:three-points-equal}. Please note that the structure of the error plots seems to be the quite similar: The error in the height component is almost zero, while the error in the impulse component looks similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
+
+\input{3_punkte_gleich/tex.tex}
+
+\subsection{One point variation}
+\label{sec:one-point-variation}
+
+Up to now, we saw what the plots look like if all points (except the one point whose $u$- and $h$-coordinates are to be plottet, of course) have the same value. We are now goint to inspect what happens if the single points have different values.
+
+\subsubsection{Decreasing the height of $p_1$}
+\label{sec:decreasing-height-p1}
+
+Now we alter the previously described experiment in one detail. We fix all points as before, but we alter \emph{one} single point slightly. We do this in order to find out if specific points might have more impact than others.
+
+We start off by using three points per edge, setting each point to $
+\begin{pmatrix}
+  10 \\ 0
+\end{pmatrix}$ except $p_1$ wich is set to $
+\begin{pmatrix}
+  9 \\ 0
+\end{pmatrix}
+$ (i.e.\,we decrease the height-component of $p_1$).
+
+\input{3_punkte_1_geschwindigkeit_verringert/tex.tex}
+
+You see the results of this experiment in figure \ref{fig:three-points-h1-}. 
+
+Comparing figure \ref{fig:three-points-equal} and \ref{fig:three-points-h1-} it's worth noting that especially the plots for $p_2$, $p_3$ and -- surprisingly -- $P_3$ differ strongly. Additionally, it can be seen that the structure differs as well as the range of the error.
+
+\subsubsection{Decreasing the impulse of $p_1$}
+\label{sec:decreasing-impulse-p1}
+
+While we changed the height in subsection \ref{sec:decreasing-height-p1}, we are now going to change the impulse. The results are shown in figure \ref{fig:three-points-u1-}
+
+\input{3_punkte_1_impuls_verringert/tex.tex}
+
+\subsubsection{Decreasing the height of $p_2$}
+\label{sec:decreasing-height-p2}
+
+Now we are going to examine if it makes a difference if we decrease the height of another point, namely $p_2$. We show the results in figure \ref{fig:three-points-h2-}. In this case, in particular the graphs for points $p_1$ and $p_3$ catch one's eye.
+
+\todo{Diese Bilder genauer untersuchen, ob wir da den Ausschnitt zu früh abschneiden und es zu DefLücken kommt!}
+\figurepage{3_punkte_2_hoehe_verringert/tex.tex}
+
+\subsubsection{Decreasing the impulse of $p_2$}
+\label{sec:decreasing-impulse-of-p2}
+
+Decreasing the impulse of point $p_2$ results in the plots depicted in figure \ref{fig:three-points-u2-}. In particular, the graphs for $p_1$ and $p_3$ show significant structural differences.
+
+\figurepage{3_punkte_2_impuls_verringert/tex.tex}
+
+\subsection{Random values}
+\label{sec:random-values}
+
+And now for something completely different. Up to now, we assigned specific values to the points and looked what happened. But it might be interesting as well what happens if we supply random values to the points.
+
+\subsubsection{Two random points}
+\label{sec:two-random-points}
+
+Let's start out with two random points. We see the results of random assignment of values in figure \ref{fig:two-points-random}. As you can see, there are heavy structural differences. The maximum error concerning the height is about 6.
+
+\input{2_random_new/tex.tex}
+
+\subsubsection{Three random points}
+\label{sec:three-random-points}
+
+Same game for three random points is shown in figure \ref{fig:three-points-random}. As you can see, it differs strongly from figure \ref{fig:three-points-equal}, where we set all points to the same value.
+
+\input{3_random_new/tex.tex}
+
+\section{Equidistant distribution of support points}
+\label{sec:equidistant-distribution-of-support-points}
+
+When one considers the figures depicted in section \ref{sec:results}, it seems convenient to assume that the error grows if the values for $h$ and $u$ get ``more exotic'' (i.e.\,if they diverge more from the average).
+
+One suspicion why this is the case was because of the fact that the polynomials $N(x)$ and $NetPoly(x)$ might diverge towards the borders of $[0,1]$.
+
+So, we chose the support points equidistant over the interval $[0,1]$ and conducted some experiments. When we choose the support points equidistant over this interval, 0 and 1 are surely support points and we can be sure that $N(x)$ and $NetPoly(x)$ coincide at the values 0 and 1 (i.e.\,$N(0)=NetPoly(0)$ and $N(1)=NetPoly(1)$).
+
+In this section, we show some results that were obtained by choosing the support points equidistant along the edge.
+
+\subsection{Three fixed support points}
+\label{sec:equidistant-three-fixed}
+
+We started as in section \ref{sec:setting-all-support-points-to-the-same-value} and set all support points to $
+\begin{pmatrix}
+  10 \\ 0
+\end{pmatrix}$. You can see the resulting plots in figure \ref{fig:three-equidistant-all-fixed}. Interestingly, these plots -- at least somewhat -- look like the ones depicted in figure \ref{fig:three-points-equal}, where we considered the same situation for Gauss-Quadrature support points. Even the range of the error is not very different.
+
+\input{3_punkte_equidist_alles_gleich/tex.tex}
+
+\section{Conclusions from the things seen}
+\label{sec:conslusions}
+
+What all plots have in common is the fact that it looks as if towards the borders the error grows. Trying to derive an exact statement of how large the error is depending upon the support point values seems a bit witless since there are too many variables that interact with each other.
+
+\bibliography{bibliography}
+
+\end{document}
+

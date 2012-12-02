@@ -1,0 +1,1255 @@
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.10.10)  26 NOV 2012 16:04
+entering extended mode
+ %&-line parsing enabled.
+**\input tex.tex
+(./tex.tex
+
+! LaTeX Error: Environment figure undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.3 \begin{figure}
+                  [ht]
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.3 \begin{figure}[
+                   ht]
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no h in font nullfont!
+Missing character: There is no t in font nullfont!
+Missing character: There is no ] in font nullfont!
+! Undefined control sequence.
+l.5   \subfigure
+                [] {
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no ] in font nullfont!
+! Undefined control sequence.
+l.6     \includegraphics
+                        [scale=\zoomfactor]{{{3_random_new/x_y_-1.3_11.3_1.7...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+! Undefined control sequence.
+l.6     \includegraphics[scale=\zoomfactor
+                                          ]{{{3_random_new/x_y_-1.3_11.3_1.7...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 3 in font nullfont!
+! Missing $ inserted.
+<inserted text> 
+                $
+l.6     \includegraphics[scale=\zoomfactor]{{{3_
+                                                random_new/x_y_-1.3_11.3_1.7...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 6.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 6.
+! Double subscript.
+l.6 ...hics[scale=\zoomfactor]{{{3_random_new/x_y_
+                                                  -1.3_11.3_1.7_8.6_3.5_11.9...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.6 ...11.3_1.7_8.6_3.5_11.9_-3.2_11.4_-3.8_8.7f0}
+                                                  }}
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.6 ...1.3_1.7_8.6_3.5_11.9_-3.2_11.4_-3.8_8.7f0}}
+                                                  }
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.6 ....3_1.7_8.6_3.5_11.9_-3.2_11.4_-3.8_8.7f0}}}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Undefined control sequence.
+l.7     \includegraphics
+                        [scale=\zoomfactor]{{{3_random_new/x_y_-1.3_11.3_1.7...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.7     \includegraphics[scale=\zoomfactor
+                                          ]{{{3_random_new/x_y_-1.3_11.3_1.7...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Double subscript.
+l.7 ...hics[scale=\zoomfactor]{{{3_random_new/x_y_
+                                                  -1.3_11.3_1.7_8.6_3.5_11.9...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.8   }
+       
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.9 
+    
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 3--9
+ [] 
+ []
+
+
+Overfull \hbox (273.47302pt too wide) in paragraph at lines 3--9
+ []\OML/cmm/m/it/10 andom[]ew=x[][]\OT1/cmr/m/n/10 1\OML/cmm/m/it/10 :\OT1/cmr/
+m/n/10 3[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/
+10 7[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 6[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 5[
+]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 9[]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2[]1\
+OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4[]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 8[]\OML/
+cmm/m/it/10 :\OT1/cmr/m/n/10 7\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 0[\OML/cmm/m/it
+/10 scale \OT1/cmr/m/n/10 = 
+ []
+
+
+Overfull \hbox (245.77974pt too wide) in paragraph at lines 3--9
+ \OT1/cmr/m/n/10 ][]$ 
+ []
+
+! Undefined control sequence.
+l.10   \subfigure
+                 [] {
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.10   \subfigure[
+                  ] {
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no ] in font nullfont!
+! Undefined control sequence.
+l.11     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+! Undefined control sequence.
+l.11     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 3 in font nullfont!
+! Missing $ inserted.
+<inserted text> 
+                $
+l.11     \includegraphics[scale=\zoomfactor]{{{3_
+                                                 random_new/3.9_11.0_-1.3_11...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Double subscript.
+l.11 ...ctor]{{{3_random_new/3.9_11.0_-1.3_11.3_x_
+                                                  y_3.5_11.9_-3.2_11.4_-3.8_...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Double subscript.
+l.11 ...or]{{{3_random_new/3.9_11.0_-1.3_11.3_x_y_
+                                                  3.5_11.9_-3.2_11.4_-3.8_8....
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.11 ....3_11.3_x_y_3.5_11.9_-3.2_11.4_-3.8_8.7f0}
+                                                  }}
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.11 ...3_11.3_x_y_3.5_11.9_-3.2_11.4_-3.8_8.7f0}}
+                                                  }
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.11 ..._11.3_x_y_3.5_11.9_-3.2_11.4_-3.8_8.7f0}}}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Undefined control sequence.
+l.12     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.12     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Double subscript.
+l.12 ...ctor]{{{3_random_new/3.9_11.0_-1.3_11.3_x_
+                                                  y_3.5_11.9_-3.2_11.4_-3.8_...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Double subscript.
+l.12 ...or]{{{3_random_new/3.9_11.0_-1.3_11.3_x_y_
+                                                  3.5_11.9_-3.2_11.4_-3.8_8....
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.13   }
+        
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.14 
+     
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (278.30638pt too wide) in paragraph at lines 10--14
+ []\OML/cmm/m/it/10 andom[]ew=\OT1/cmr/m/n/10 3\OML/cmm/m/it/10 :\OT1/cmr/m/n/1
+0 9[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3
+[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3[][][]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 5
+[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 9[]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2[]1
+\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4[]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 8[]\OML
+/cmm/m/it/10 :\OT1/cmr/m/n/10 7\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 0[\OML/cmm/m/i
+t/10 scale \OT1/cmr/m/n/10 = 
+ []
+
+
+Overfull \hbox (250.6131pt too wide) in paragraph at lines 10--14
+ \OT1/cmr/m/n/10 ][]$ 
+ []
+
+! Undefined control sequence.
+l.15   \subfigure
+                 [] {
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.15   \subfigure[
+                  ] {
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no ] in font nullfont!
+! Undefined control sequence.
+l.16     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+! Undefined control sequence.
+l.16     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 3 in font nullfont!
+! Missing $ inserted.
+<inserted text> 
+                $
+l.16     \includegraphics[scale=\zoomfactor]{{{3_
+                                                 random_new/3.9_11.0_-1.3_11...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Double subscript.
+l.16 ...new/3.9_11.0_-1.3_11.3_1.7_8.6_3.5_11.9_x_
+                                                  y_-3.8_8.7f0}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Double subscript.
+l.16 ...w/3.9_11.0_-1.3_11.3_1.7_8.6_3.5_11.9_x_y_
+                                                  -3.8_8.7f0}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.16 ...-1.3_11.3_1.7_8.6_3.5_11.9_x_y_-3.8_8.7f0}
+                                                  }}
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.16 ...1.3_11.3_1.7_8.6_3.5_11.9_x_y_-3.8_8.7f0}}
+                                                  }
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.16 ....3_11.3_1.7_8.6_3.5_11.9_x_y_-3.8_8.7f0}}}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Undefined control sequence.
+l.17     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.17     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Double subscript.
+l.17 ...new/3.9_11.0_-1.3_11.3_1.7_8.6_3.5_11.9_x_
+                                                  y_-3.8_8.7f1}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Double subscript.
+l.17 ...w/3.9_11.0_-1.3_11.3_1.7_8.6_3.5_11.9_x_y_
+                                                  -3.8_8.7f1}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.18   }
+        
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.19 
+     
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (266.04247pt too wide) in paragraph at lines 15--19
+ []\OML/cmm/m/it/10 andom[]ew=\OT1/cmr/m/n/10 3\OML/cmm/m/it/10 :\OT1/cmr/m/n/1
+0 9[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3
+[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 7[]\O
+ML/cmm/m/it/10 :\OT1/cmr/m/n/10 6[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 5[]1\OML/c
+mm/m/it/10 :\OT1/cmr/m/n/10 9[][][]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 8[]\OML/c
+mm/m/it/10 :\OT1/cmr/m/n/10 7\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 0[\OML/cmm/m/it/
+10 scale \OT1/cmr/m/n/10 = 
+ []
+
+
+Overfull \hbox (238.34918pt too wide) in paragraph at lines 15--19
+ \OT1/cmr/m/n/10 ][]$ 
+ []
+
+! Undefined control sequence.
+l.20   \subfigure
+                 [] {
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.20   \subfigure[
+                  ] {
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no ] in font nullfont!
+! Undefined control sequence.
+l.21     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_x_y_1.7...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+! Undefined control sequence.
+l.21     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_x_y_1.7...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 3 in font nullfont!
+! Missing $ inserted.
+<inserted text> 
+                $
+l.21     \includegraphics[scale=\zoomfactor]{{{3_
+                                                 random_new/3.9_11.0_x_y_1.7...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Double subscript.
+l.21 ...le=\zoomfactor]{{{3_random_new/3.9_11.0_x_
+                                                  y_1.7_8.6_3.5_11.9_-3.2_11...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Double subscript.
+l.21 ...=\zoomfactor]{{{3_random_new/3.9_11.0_x_y_
+                                                  1.7_8.6_3.5_11.9_-3.2_11.4...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.21 ...x_y_1.7_8.6_3.5_11.9_-3.2_11.4_-3.8_8.7f0}
+                                                  }}
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.21 ..._y_1.7_8.6_3.5_11.9_-3.2_11.4_-3.8_8.7f0}}
+                                                  }
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.21 ...y_1.7_8.6_3.5_11.9_-3.2_11.4_-3.8_8.7f0}}}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Undefined control sequence.
+l.22     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_x_y_1.7...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.22     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_x_y_1.7...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Double subscript.
+l.22 ...le=\zoomfactor]{{{3_random_new/3.9_11.0_x_
+                                                  y_1.7_8.6_3.5_11.9_-3.2_11...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Double subscript.
+l.22 ...=\zoomfactor]{{{3_random_new/3.9_11.0_x_y_
+                                                  1.7_8.6_3.5_11.9_-3.2_11.4...
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.23   }
+        
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.24 
+     
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (266.04247pt too wide) in paragraph at lines 20--24
+ []\OML/cmm/m/it/10 andom[]ew=\OT1/cmr/m/n/10 3\OML/cmm/m/it/10 :\OT1/cmr/m/n/1
+0 9[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0[][][]\OML/cmm/m/it/10 :\OT1/cmr/m/n/1
+0 7[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 6[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 5[]
+1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 9[]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2[]1\O
+ML/cmm/m/it/10 :\OT1/cmr/m/n/10 4[]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 8[]\OML/c
+mm/m/it/10 :\OT1/cmr/m/n/10 7\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 0[\OML/cmm/m/it/
+10 scale \OT1/cmr/m/n/10 = 
+ []
+
+
+Overfull \hbox (238.34918pt too wide) in paragraph at lines 20--24
+ \OT1/cmr/m/n/10 ][]$ 
+ []
+
+! Undefined control sequence.
+l.25   \subfigure
+                 [] {
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.25   \subfigure[
+                  ] {
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no ] in font nullfont!
+! Undefined control sequence.
+l.26     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+! Undefined control sequence.
+l.26     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 3 in font nullfont!
+! Missing $ inserted.
+<inserted text> 
+                $
+l.26     \includegraphics[scale=\zoomfactor]{{{3_
+                                                 random_new/3.9_11.0_-1.3_11...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Double subscript.
+l.26 ...3_random_new/3.9_11.0_-1.3_11.3_1.7_8.6_x_
+                                                  y_-3.2_11.4_-3.8_8.7f0}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Double subscript.
+l.26 ...random_new/3.9_11.0_-1.3_11.3_1.7_8.6_x_y_
+                                                  -3.2_11.4_-3.8_8.7f0}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.26 ...1.3_11.3_1.7_8.6_x_y_-3.2_11.4_-3.8_8.7f0}
+                                                  }}
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.26 ....3_11.3_1.7_8.6_x_y_-3.2_11.4_-3.8_8.7f0}}
+                                                  }
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.26 ...3_11.3_1.7_8.6_x_y_-3.2_11.4_-3.8_8.7f0}}}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Undefined control sequence.
+l.27     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.27     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Double subscript.
+l.27 ...3_random_new/3.9_11.0_-1.3_11.3_1.7_8.6_x_
+                                                  y_-3.2_11.4_-3.8_8.7f1}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Double subscript.
+l.27 ...random_new/3.9_11.0_-1.3_11.3_1.7_8.6_x_y_
+                                                  -3.2_11.4_-3.8_8.7f1}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.28   }
+        
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.29 
+     
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (273.30637pt too wide) in paragraph at lines 25--29
+ []\OML/cmm/m/it/10 andom[]ew=\OT1/cmr/m/n/10 3\OML/cmm/m/it/10 :\OT1/cmr/m/n/1
+0 9[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3
+[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 7[]\O
+ML/cmm/m/it/10 :\OT1/cmr/m/n/10 6[][][]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2[]1\
+OML/cmm/m/it/10 :\OT1/cmr/m/n/10 4[]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 8[]\OML/
+cmm/m/it/10 :\OT1/cmr/m/n/10 7\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 0[\OML/cmm/m/it
+/10 scale \OT1/cmr/m/n/10 = 
+ []
+
+
+Overfull \hbox (245.61308pt too wide) in paragraph at lines 25--29
+ \OT1/cmr/m/n/10 ][]$ 
+ []
+
+! Undefined control sequence.
+l.30   \subfigure
+                 [] {
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.30   \subfigure[
+                  ] {
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no ] in font nullfont!
+! Undefined control sequence.
+l.31     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no [ in font nullfont!
+Missing character: There is no s in font nullfont!
+Missing character: There is no c in font nullfont!
+Missing character: There is no a in font nullfont!
+Missing character: There is no l in font nullfont!
+Missing character: There is no e in font nullfont!
+Missing character: There is no = in font nullfont!
+! Undefined control sequence.
+l.31     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Missing character: There is no ] in font nullfont!
+Missing character: There is no 3 in font nullfont!
+! Missing $ inserted.
+<inserted text> 
+                $
+l.31     \includegraphics[scale=\zoomfactor]{{{3_
+                                                 random_new/3.9_11.0_-1.3_11...
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Double subscript.
+l.31 ....0_-1.3_11.3_1.7_8.6_3.5_11.9_-3.2_11.4_x_
+                                                  yf0}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.31 ...1.3_11.3_1.7_8.6_3.5_11.9_-3.2_11.4_x_yf0}
+                                                  }}
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.31 ....3_11.3_1.7_8.6_3.5_11.9_-3.2_11.4_x_yf0}}
+                                                  }
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Extra }, or forgotten $.
+l.31 ...3_11.3_1.7_8.6_3.5_11.9_-3.2_11.4_x_yf0}}}
+                                                  
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Undefined control sequence.
+l.32     \includegraphics
+                         [scale=\zoomfactor]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.32     \includegraphics[scale=\zoomfactor
+                                           ]{{{3_random_new/3.9_11.0_-1.3_11...
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Double subscript.
+l.32 ....0_-1.3_11.3_1.7_8.6_3.5_11.9_-3.2_11.4_x_
+                                                  yf1}}}
+I treat `x_1_2' essentially like `x_1{}_2'.
+
+! Extra }, or forgotten $.
+l.33   }
+        
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+! LaTeX Error: \caption outside float.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.34 \caption
+             {Three random points.}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: \begin{document} ended by \end{figure}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.36 \end{figure}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.36 \end{figure}
+                 
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+Overfull \hbox (271.04248pt too wide) in paragraph at lines 30--37
+[]\OML/cmm/m/it/10 andom[]ew=\OT1/cmr/m/n/10 3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10
+ 9[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 0[]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3[
+]1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 3[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 7[]\OM
+L/cmm/m/it/10 :\OT1/cmr/m/n/10 6[]\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 5[]1\OML/cm
+m/m/it/10 :\OT1/cmr/m/n/10 9[]3\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 2[]1\OML/cmm/m
+/it/10 :\OT1/cmr/m/n/10 4[][]\OML/cmm/m/it/10 f\OT1/cmr/m/n/10 0[\OML/cmm/m/it/
+10 scale \OT1/cmr/m/n/10 =
+ []
+
+
+Overfull \hbox (335.75752pt too wide) in paragraph at lines 30--37
+\OT1/cmr/m/n/10 ][][][]$ 
+ []
+
+)
+! Emergency stop.
+<*> \input tex.tex
+                  
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 9 strings out of 494617
+ 160 string characters out of 1172294
+ 47840 words of memory out of 3000000
+ 3322 multiletter control sequences out of 15000+50000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 289 hyphenation exceptions out of 8191
+ 18i,4n,12p,156b,85s stack positions out of 5000i,500n,10000p,200000b,50000s
+!  ==> Fatal error occurred, no output PDF file produced!
