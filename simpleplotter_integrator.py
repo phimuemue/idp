@@ -45,9 +45,9 @@ class SimplePlotter:
                 texfile.write("  \\subfigure[] {\n")
                 texfile.write("    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n"%f[:-(len(self.img_extension)+1)])
                 texfile.write("  }\n")
-        texfile.write("\\caption{}\n")
-        texfile.write("\\label{}\n")
-        texfile.write("\\end{figure}\n")
+            texfile.write("\\caption{}\n")
+            texfile.write("\\label{}\n")
+            texfile.write("\\end{figure}\n")
         gtk.main_quit()
 
     def redraw(self, adj, data=None):
@@ -361,8 +361,9 @@ if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("--urange", default="[-5:5]")
     parser.add_option("--hrange", default="[8:12]")
+    parser.add_option("-f", "--file", default="norm_stuff.txt")
     opts, args = parser.parse_args()
-    stuff = read_file("norm_stuff.txt")
+    stuff = read_file(opts.file)
     simpleplotter = SimplePlotter(
                                   prettify_function(stuff[0]), prettify_function(stuff[1]),
                                   urange=opts.urange, hrange=opts.hrange
