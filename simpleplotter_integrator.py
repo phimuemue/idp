@@ -81,6 +81,8 @@ class SimplePlotter:
         for f in self.func:
             tmp = ["+abs((%s)*(%f))"%(f.replace("x",str(midpoint)), stripe_width)
                    for midpoint in stripe_midpoints]
+            tmp[0] = tmp[0] + "*0.5"
+            tmp[-1] = tmp[-1] + "*0.5"
             tmp = "".join(tmp)
             self.tfunc.append(tmp)
         # determine variables
