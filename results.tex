@@ -971,7 +971,7 @@ Decreasing the impulse of point $p_2^L$ results in the plots depicted in figure 
 
 \input{3_punkte_2_impuls_verringert/tex.tex}
 
-\subsection{Discontinouities?}
+\subsection{Discontinuities?}
 \label{sec:discontinuities}
 
 When we look at figure \ref{subfig:fixing-p2-in-first-example}, we see that the error in the impulse component looks somewhat like a parabola with respect to the variable $h_1$. However, if we plot a wider range, we are likely to be surprised.
@@ -982,13 +982,28 @@ Figure \ref{fig:two-points-p1-wider-range} shows what happens here. As you can s
 
 The plots in figure \ref{fig:two-points-p1-wider-range} are plotted with all points being $(10,0)$. We are now going to inspect what the terms used in the function look like.
 
-Without going into too much detail (since the formulae are huge and -- let's say -- ``don't look nice''), if we expand $N(x)-NetPoly(x)$ and view its second component (describing the error in the impulse component), we recognize that there is a fraction involved that looks (approximately due to floating point rounding) as follows:
+Without going into too much detail (since the formulae are huge and -- let's say -- ``don't look nice''): If we use two support points for each edge (all points except $p_1^l$ are $(10,0)$), expand the term $N(x)-N'(x)$ and view its second component (describing the error in the impulse component), we recognize that there is a fraction involved that looks (approximately due to floating point rounding) as follows (numerator omitted for simplicity):
 
 \newcommand{\badfrac}{\mathtt{bad}}
 
 \begin{equation*}
-  -0.5 \cdot \frac{ ((  -1.7321 h_1 + 1.7321)\cdot x + 1.3660 u_1)^2}{(-1.7321 h_1 + 1.7321) x + 1.3660 h_1 - 3.6603} =: \badfrac(x)
+  \frac{1}{h_1\cdot(1.732 h_1 \cdot x - 17.320 x - 1.366 h_1 + 3.660)}
 \end{equation*}
+
+Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N(x)-N'(x)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). To be precise, we can calculate that we have a singularity at
+\begin{equation*}
+  x_0=\frac{683\, h_1 - 1830}{866\, h_1 - 8600}.
+\end{equation*}
+
+Since we take the integral between 0 and 1, it is of particular interest if the value $x_0$ can be within the interval $\left[ 0,1 \right]$, since in this case we would integrate over a singularity where the integral is not (or at least might not be) properly defined.
+
+It is no hard problem to solve this: We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. That is, for this particular case, we see that we may have singularities only if the value of $h_1$ differs extremely from all other values for the height (that are in this case set to 10) -- a very unlikely case.
+
+That means: We have seen that there actually \emph{are} singularities (an inevitable fact if $x$ occurs in the denominator), but that these singularities might only occur for very exotic values for $h_1$.
+
+Of course, it would be great to devise some general rule that allows us to exclude singularities for usual values for arbitrary support points. However, due to the large amount of variables and -- even more important -- the fact that we might have more support points, this is a very complicated task.
+
+We did some calculations in Maple for three support points for each edge that yielded similar results to the ones obtained for two points per edge. Unfortunately we had to find out that for four support points, root finding is too complicated to be practicable.
 
 \newcommand{\fracsumme}{\mathtt{approx\_int}}
 
