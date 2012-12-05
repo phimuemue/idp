@@ -40,11 +40,8 @@
 
 \begin{document}
 
-\part{Introduction}
-\label{par:introduction-0}
-
-\section{Introduction}
-\label{sec:introduction-0}
+\part{Derivation of stuff.}
+\label{part:introduction}
 
 \begin{frame}
   \frametitle{Introduction}
@@ -56,13 +53,8 @@
   \end{itemize}
 \end{frame}
 
-\part{Derivation of stuff.}
-\label{part:introduction}
-
 \section{Discontinuous Galerkin Method}
 \label{sec:basis-functions-intro}
-
-\section{Another try!}
 
 \begin{frame}
   \frametitle{Shallow Water Equations}
@@ -696,7 +688,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
 
 \begin{frame}
   \frametitle{Goal}
-  \begin{block}{Comparison of $N(x)$ and $NetPoly(x)$}
+  \begin{block}{Comparison of $N(x)$ and $N'(x)$}
     \begin{description}
     \item[Exact solution] $N(x) := F_{LF}(p^R(x),p^L(x))$
     \item[Approximate solution] \todo{Hier stimmts im Skript noch nicht! Das muss $y_i^F$ heißen.}
@@ -715,7 +707,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
       \end{equation*}
 
       \begin{equation*}
-        NetPoly(x) :=
+        N'(x) :=
         \begin{pmatrix}
           interpolate(x,h^F) \\ interpolate(x,u^F)
         \end{pmatrix}
@@ -723,7 +715,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
     \end{description}
   \end{block}
   $\Rightarrow$ Comparison by 
-  $I := \int\limits_{x=0}^1 | N(x) - NetPoly(x) |\  dx$
+  $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\  dx$
 
 \end{frame}
 
@@ -731,15 +723,15 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
   \frametitle{Evaluating $I$}
   \begin{itemize}
   \item Complicated analycital solution (absolute value/rational function)
-  \item Possibility 1: Approximate $I$ by $\int\limits_{x=0}^1 N(x) - NetPoly(x) \  dx$
+  \item Possibility 1: Approximate $I$ by $\int\limits_{x=0}^1 N(x) - N'(x) \  dx$
     \begin{itemize}
     \item Not good.
     \end{itemize}
-  \item Fact: $N(x_i) = NetPoly(x_i)$ 
-    $\Rightarrow$ $N(x_i) - NetPoly(x_i) = 0$
+  \item Fact: $N(x_i) = N'(x_i)$ 
+    $\Rightarrow$ $N(x_i) - N'(x_i) = 0$
   \item Piecewise integration between the $x_i$'s: \todo{Sollten im Skript die Betragsstriche nicht anders stehen (so wie hier)?}
     \begin{equation*}
-      \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N(x) - NetPoly(x) \  dx\ \right|
+      \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N(x) - N'(x) \  dx\ \right|
     \end{equation*}
     \begin{itemize}
     \item Seems quite good, but really, really, really slow
@@ -753,7 +745,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
   \begin{itemize}
   \item Maple's intrinsic integration:  
     \begin{center}
-      \texttt{evalf(Int(abs(N(x)-NetPoly(x)),x=0..1))}
+      \texttt{evalf(Int(abs(N(x)-N'(x)),x=0..1))}
     \end{center}
     works, but takes much too long for general parameters!
   \item Old-school: Numerical integration using the ``Streifenmethode'' \todo{Wie heißt das auf Englisch?} \todo{Im Skript diese Methode nachreichen!}
@@ -763,7 +755,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
 \begin{frame}
   \frametitle{Some Considerations}
   \begin{itemize}
-  \item $N(x)-NetPoly(x)$ depends upon $4n$ variables
+  \item $N(x)-N'(x)$ depends upon $4n$ variables
     \begin{itemize}
     \item Two edges
     \item $n$ points on each edge
@@ -1179,9 +1171,9 @@ Same game for three random points is shown in figure \ref{fig:three-points-rando
 
 When one considers the figures depicted in section \ref{sec:results}, it seems convenient to assume that the error grows if the values for $h$ and $u$ get ``more exotic'' (i.e. if they diverge more from the average).
 
-One suspicion why this is the case was because of the fact that the polynomials $N(x)$ and $NetPoly(x)$ might diverge towards the borders of $[0,1]$.
+One suspicion why this is the case was because of the fact that the polynomials $N(x)$ and $N'(x)$ might diverge towards the borders of $[0,1]$.
 
-So, we chose the support points equidistant over the interval $[0,1]$ and conducted some experiments. When we choose the support points equidistant over this interval, 0 and 1 are surely support points and we can be sure that $N(x)$ and $NetPoly(x)$ coincide at the values 0 and 1 (i.e. $N(0)=NetPoly(0)$ and $N(1)=NetPoly(1)$).
+So, we chose the support points equidistant over the interval $[0,1]$ and conducted some experiments. When we choose the support points equidistant over this interval, 0 and 1 are surely support points and we can be sure that $N(x)$ and $N'(x)$ coincide at the values 0 and 1 (i.e. $N(0)=N'(0)$ and $N(1)=N'(1)$).
 
 In this section, we show some results that were obtained by choosing the support points equidistant along the edge.
 
