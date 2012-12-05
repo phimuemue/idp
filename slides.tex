@@ -40,8 +40,11 @@
 
 \begin{document}
 
-\par{Introduction}
+\part{Introduction}
 \label{par:introduction-0}
+
+\section{Introduction}
+\label{sec:introduction-0}
 
 \begin{frame}
   \frametitle{Introduction}
@@ -65,17 +68,17 @@
   \frametitle{Shallow Water Equations}
   \begin{equation}
     \label{eq:shallow-water-raw}
-    \pd{\mathbf{u}}{t} + \divergence F(\mathbf{u}) = r = \begin{pmatrix}
+    \pd{\mathbf{q}}{t} + \divergence F(\mathbf{q}) = r = \begin{pmatrix}
       0 \\ 0\\ 0
     \end{pmatrix}
   \end{equation}
 
   \begin{block}{Two variants for $F$:}
     \begin{eqnarray*}
-      \mathbf{u} =
+      \mathbf{q} =
       \begin{pmatrix}
         h \\ h v_x \\ h v_y
-      \end{pmatrix} \quad F(\mathbf{u}) =
+      \end{pmatrix} \quad F(\mathbf{q}) =
       \begin{pmatrix}
         h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
         v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
@@ -83,43 +86,60 @@
     \end{eqnarray*}
 
     \begin{eqnarray*}
-      \mathbf{u} =
+      \mathbf{q} =
       \begin{pmatrix}
         h \\ u_x \\ u_y
-      \end{pmatrix} \quad F(\mathbf{u}) =
+      \end{pmatrix} \quad F(\mathbf{q}) =
       \begin{pmatrix}
-        u \\ \frac{u_x}{h} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} +
+        \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
         \frac{1}{2} g h^2 e_y
-      \end{pmatrix}
+      \end{pmatrix},
     \end{eqnarray*}
+    where $\mathbf{u}=
+    \begin{pmatrix}
+      u_x \\ u_y
+    \end{pmatrix}$ and $\mathbf{v} =
+    \begin{pmatrix}
+      v_x \\ v_y
+    \end{pmatrix}$
   \end{block}
-
- 
 \end{frame}
 
 \begin{frame}
   \frametitle{$x$- and $y$-Direction}
 
   \begin{equation*}
-    \pd{\mathbf{u}}{t} + \divergence F(\mathbf{u}) = r = \begin{pmatrix}
+    \pd{\mathbf{q}}{t} + \divergence F(\mathbf{q}) = r = \begin{pmatrix}
       0 \\ 0\\ 0
     \end{pmatrix}
   \end{equation*}
 
   \begin{eqnarray*}
-    \mathbf{u} =
+    \mathbf{q} =
     \begin{pmatrix}
       h \\ u_x \\ u_y
-    \end{pmatrix} \quad F(\mathbf{u}) =
+    \end{pmatrix} \quad F(\mathbf{q}) =
     \begin{pmatrix}
-      u \\ \frac{u_x}{h} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} +
+      u \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u} +
       \frac{1}{2} g h^2 e_y
     \end{pmatrix}
   \end{eqnarray*}
 
+  \begin{eqnarray*}
+    F^x(\mathbf{q}) =
+    \begin{pmatrix}
+      u_x \\ \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+    \end{pmatrix}
+    \quad
+    F^y(\mathbf{q}) =
+    \begin{pmatrix}
+      u_y \\ \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+    \end{pmatrix}
+  \end{eqnarray*}
+  
   \begin{block}{Remarks:}
     \begin{itemize}
-    \item Difference between $\mathbf{u}$ and $u=(u_x,u_y)$.
+    \item Difference between $\mathbf{q}$ and $u=(u_x,u_y)$.
     \item Each line consists of 2 sub-lines ($x$- and $y$-direction).
     \item $\divergence
       \begin{pmatrix}
@@ -135,14 +155,14 @@
   \frametitle{Weak Form}
   \begin{equation}
     \label{eq:shallow-water-weak-form}
-    \int_T \pd {\mathbf{u}}{t} \phi \, dT + \int_T \nabla \cdot F(\mathbf{u}) \phi \, dT = 0
+    \int_T \pd {\mathbf{q}}{t} \phi \, dT + \int_T \nabla \cdot F(\mathbf{q}) \phi \, dT = 0
   \end{equation}
   
   \begin{block}{Remarks:}
     \begin{itemize}
     \item Galerkin method: Multiply equation (\ref{eq:shallow-water-raw}) by $\phi$ and integrate over triangle $T$
     \item Integral works line by line (i.e. for components $h$, $u_x$ and $u_y$)
-    \item $\nabla \cdot F(\mathbf{u}) = \divergence F(\mathbf{u})$
+    \item $\nabla \cdot F(\mathbf{q}) = \divergence F(\mathbf{q})$
     %\item $T$ is a single triangle
     \end{itemize}
   \end{block}
@@ -150,9 +170,9 @@
 
   Gaussian Divergence Theorem yields:
   \begin{equation*}
-    \int_T \pd {\mathbf{u}}{t} \phi \, dT +
-    \int_{\partial T} F(\mathbf{u}) \cdot n \phi \, ds -
-    \int_T F(\mathbf{u}) \cdot \nabla \phi \, dT = 0
+    \int_T \pd {\mathbf{q}}{t} \phi \, dT +
+    \int_{\partial T} F(\mathbf{q}) \cdot n \phi \, ds -
+    \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
   \end{equation*}
 
 \end{frame}
@@ -161,9 +181,9 @@
   \frametitle{Weak Form -- Some Explanations}
   \begin{equation}
     \label{eq:shallow-water-weak-form-div-applied}
-    \int_T \pd {\mathbf{u}}{t} \phi \, dT +
-    \int_{\partial T} F(\mathbf{u}) \cdot n \phi \, ds -
-    \int_T F(\mathbf{u}) \cdot \nabla \phi \, dT = 0
+    \int_T \pd {\mathbf{q}}{t} \phi \, dT +
+    \int_{\partial T} F(\mathbf{q}) \cdot n \phi \, ds -
+    \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
   \end{equation}
   
   \begin{block}{Remarks:}
@@ -180,7 +200,7 @@
         a \\ b
       \end{pmatrix} =\left( \pd{a}{x}, \pd{b}{y} \right) ^T$
     \item ``Multiplications'': $(a,b)\cdot(c,d) = ac+bd$
-    \item Goal: Find solution for $\mathbf{u}$
+    \item Goal: Find solution for $\mathbf{q}$
     \end{itemize}
   \end{block}
 \end{frame}
@@ -189,16 +209,16 @@
   \frametitle{Galerkin Method}
   \begin{itemize}
   \item Have several functions $\phi_i$ (for $i=1:n$) -- will be defined later
-  \item Approximation of $\mathbf{u}$: 
-    $u \approx \sum_{i=1}^n \mathbf{u}_i \phi_i(x,y)$.
+  \item Approximation: 
+    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$.
   \item Only $\phi_i$ depending on $x,y$!
   \end{itemize}
 
   \begin{equation}
     \label{eq:shallow-water-weak-form-div-applied-approximation}
-    \int_T \pd {\mathbf{u}}{t} \phi_i \, dT +
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
     \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds  -
-    \int_T F(\mathbf{u}) \cdot \nabla \phi_i \, dT = 0
+    \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
   \end{equation}
 \end{frame}
 
@@ -208,9 +228,9 @@
   \frametitle{First Integral: Mass Matrix}
 
   \begin{eqnarray*}
-    \int_T \pd {\mathbf{u}}{t} \phi_i \, dT &\approx& 
-    \int_T \pd {\left( \sum_{j=1}^n \mathbf{u}_j \phi_j \right) }{t} \phi_i \, dT = \\
-    &=& \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{M_{ij}} \pd{\mathbf{u}_j}{t}
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT &\approx& 
+    \int_T \pd {\left( \sum_{j=1}^n \mathbf{q}_j \phi_j \right) }{t} \phi_i \, dT = \\
+    &=& \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{M_{ij}} \pd{\mathbf{q}_j}{t}
   \end{eqnarray*}
   
   \begin{block}{}
@@ -221,9 +241,9 @@
   \end{block}
 
   \begin{equation*}
-    \int_T \pd {\mathbf{u}}{t} \phi_i \, dT \approx
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT \approx
     M \cdot \pd{
-        \left( \mathbf{u}_1 , \dots , \mathbf{u}_n  \right)^T }
+        \left( \mathbf{q}_1 , \dots , \mathbf{q}_n  \right)^T }
       {t}
   \end{equation*}
 \end{frame}
@@ -231,7 +251,7 @@
 \begin{frame}
   \frametitle{Third Integral: Stiffness matrix -- $h$-component}
   \begin{eqnarray*}
-    \int_T F_1(\mathbf{u}) \cdot \nabla \phi_i \, dT &=&
+    \int_T F_1(\mathbf{q}) \cdot \nabla \phi_i \, dT &=&
     \int_T
     \begin{pmatrix}
       u_x \\ u_y
@@ -250,11 +270,11 @@
         \pd{\phi_i}{y} 
       \end{pmatrix} dT 
     }\\
-    &=& \sum_{j=1}^n u_{x,j} \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{Sx_{ij}} + \sum_{j=1}^n u_{y,j} \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{Sy_{ij}}
+    &=& \sum_{j=1}^n u_{x,j} \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{S^x_{ij}} + \sum_{j=1}^n u_{y,j} \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{S^y_{ij}}
   \end{eqnarray*}
   \begin{block}{}
     \begin{itemize}
-    \item $Sx$ and $Sy$ are $n \times n$-matrices
+    \item $S^x$ and $S^y$ are $n \times n$-matrices
     \item Interpret sums as matrix multiplications
     \end{itemize}
   \end{block}
@@ -271,8 +291,9 @@
       h_i \\ u_{x,i} \\ u_{y,i}
     \end{pmatrix}
     \phi_i$
-  \item   We would like to compute 
+  \item   We would like to compute function value
     \begin{equation*}
+      f(\mathbf{q}) \approx 
       f\left(\sum_{i=1}^n h_i \phi_i,
         \sum_{i=1}^n u_{x,i} \phi_i,
         \sum_{i=1}^n u_{y,i} \phi_i\right),
@@ -288,7 +309,7 @@
   \frametitle{Third Integral: Stiffness matrix -- $u_x$-component}
   \begin{eqnarray*}
     \label{sec:third-integral-second-line-1}
-    \int_T F_2(\mathbf{u}) \cdot \nabla \phi_i \, dT &=&
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT &=&
     \int_T
     \begin{pmatrix}
       \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
@@ -318,7 +339,7 @@
 \begin{frame}
   \frametitle{Third Integral: Stiffness matrix -- $u_y$-component}
   \begin{eqnarray*}
-    \int_T F_3\left(\mathbf{u}\right) \cdot \nabla \phi_i \, dT &=&
+    \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi_i \, dT &=&
     \int_T
     \begin{pmatrix}
       \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2 
@@ -345,7 +366,7 @@
   Split into triangle edges:
   \begin{equation}
     \label{eq:border-integral-sum}
-    \int_{\partial T} F(\mathbf{u}) \cdot n \phi_i \, ds = \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds =: BI
+    \int_{\partial T} F(\mathbf{q}) \cdot n \phi_i \, ds = \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds =: BI
   \end{equation}
   \begin{itemize}
   \item Normals are incorporated in $F^e$
@@ -357,7 +378,7 @@
     Compute $\sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds$ by Gauss-Quadrature:
 
 \begin{equation}
-  \int_{e} F^e \phi_i \, ds \approx \sum_{k=0}^{m} F^e(p_k) \underbrace{\phi_i(p_k) \cdot w_k}_{E_{ik}},
+  \int_{e} F^e \phi_i \, ds \approx \sum_{k=0}^{m} F^e(p_k) \underbrace{\phi_i(p_k) \cdot w_k}_{W_{ik}},
 \end{equation}
 \todo{Sollte das $F^e_j$ heißen?}
 \begin{block}{Remarks}
@@ -365,7 +386,7 @@
   \item $m$: Number of support points for Gaussian quadrature
   \item $p_k$: Gauss-support point with index $k$
   \item $w_k$: corresponding Gauss weight
-  \item $E_{ik}$: $n\times m$ matrix; can be pre-computed!
+  \item $W_{ik}$: $n\times m$ matrix; can be pre-computed!
   \item $F^e$: Numerical flux (several possibilities)
   \end{itemize}
 \end{block}
@@ -383,16 +404,33 @@
   \item[Stiffness matrices] Stiffness matrices have dimension $(n\times n)$. They are computed as follows:
     \begin{equation}
       \label{eq:stiffness-matrix-overview}
-      Sx_{ij} = \int_T \phi_j \pd{\phi_i}{x} \quad
-      Sy_{ij} = \int_T \phi_j \pd{\phi_i}{y}
+      S^x_{ij} = \int_T \phi_j \pd{\phi_i}{x} \quad
+      S^y_{ij} = \int_T \phi_j \pd{\phi_i}{y}
     \end{equation}
   \item[``Weight matrix''] This matrix has dimensions $n\times m$, and is computed as follows:
     \begin{equation}
       \label{eq:edge-matrix}
-      E_{ik} = \phi_i(p_k)\cdot w_k
+      W_{ik} = \phi_i(p_k)\cdot w_k
     \end{equation}
   \end{description}
+\end{frame}
 
+\begin{frame}
+  \frametitle{Rewriting Equations}
+  Remember:
+  \begin{equation*}
+    \int_T \pd {\mathbf{q}}{t} \phi \, dT +
+    \int_{\partial T} F(\mathbf{q}) \cdot n \phi \, ds -
+    \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
+  \end{equation*}
+  Using matrices $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{F^e}=(F^e(p_1),\dots,F^e(p_n))$, \todo{Stimmt die Definition von $\tilde{F^e}$?}we can rewrite:
+  
+  \begin{equation*}
+    M \cdot \pd{\tilde{\mathbf{q}}}{t} +
+    \sum_{e \in E} \tilde{F^e} W -
+    \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
+      F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
+  \end{equation*}
 \end{frame}
 
 \begin{frame}
@@ -489,58 +527,36 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
 
 \begin{frame}
   \frametitle{Solving the Equation}
-  \todo{Sollten wir hier das Subscript $_j$ rausnehmen, um zu vereinfachen? Müsste sonst das Subskript nicht auch noch zu der Ableitung auf der linken Seite?}
-  One equation for each component $j$ (i.e.\, for $h$, $u_x$, $u_y$):
   \begin{equation*}
-    \int_T \pd {\mathbf{u}_j}{t} \phi_i \, dT +
-    \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F_j^e \phi_i \, ds  -
-    \int_T F_j(\mathbf{u}) \cdot \nabla \phi_i \, dT = 0
+    M \cdot \pd{\tilde{\mathbf{q}}}{t} +
+    \sum_{e \in E} \tilde{F^e} W -
+    \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
+      F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
   \end{equation*}
-
-  Reformulate:
+  Rearrange and left-multiply with $M^{-1}$, afterwards Euler:
   \begin{equation*}
-    M \cdot \pd{
-        \left( \mathbf{u}_1 , \dots , \mathbf{u}_n \right)
-    }{t} = 
-    \int_T F_j(\mathbf{u}) \cdot \nabla \phi_i \, dT 
-    - \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F_j^e \phi_i \, ds
+    \pd{\tilde{\mathbf{q}}}{t} =
+    M^{-1} \cdot \left(
+      F^x(\tilde{\mathbf{q}}) \cdot S^x +
+      F^y(\tilde{\mathbf{q}}) \cdot S^y -
+      \sum_{e \in E} \tilde{F^e} W\right
+    )
   \end{equation*}
-
-  Left-multiply with $M^{-1}$:
-  
   \begin{equation*}
-    \pd{
-      \left(
-        \mathbf{u}_1 , \dots , \mathbf{u}_n
-      \right)^T}{t} = M^{-1} \cdot \left[
-      \int_T F_j(\mathbf{u}) \cdot \nabla \phi_i \, dT 
-      - \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F_j^e \phi_i \, ds
-    \right]
+    \Rightarrow \quad
+    \tilde{\mathbf{q}}_{k+1} =
+    \tilde{\mathbf{q}}_{k} +
+    \tau \cdot M^{-1} \cdot \left(
+      F^x(\tilde{\mathbf{q}}) \cdot S^x +
+      F^y(\tilde{\mathbf{q}}) \cdot S^y -
+      \sum_{e \in E} \tilde{F^e} W\right
+    ),
   \end{equation*}
-  
-\end{frame}
+  where $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{\mathbf{q}}_k$ is the value of $\tilde{\mathbf{q}}$ at time $k$.
 
-\begin{frame}
-  \frametitle{Applying Euler}
-  \begin{equation*}
-    \pd{
-      \left(
-        \mathbf{u}_1 , \dots , \mathbf{u}_n
-      \right)^T}{t} = M^{-1} \cdot \left[
-      \int_T F_j(\mathbf{u}) \cdot \nabla \phi_i \, dT 
-      - \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F_j^e \phi_i \, ds
-    \right]
-  \end{equation*}
-  matches desired format $\Rightarrow$ apply Euler
-
-  \begin{block}{Remarks:}
-    \begin{itemize}
-    \item Each $\mathbf{u_i}$ has 3 components, so $3n$ equations in total
-    \end{itemize}
+  \begin{block}{Remark}
+    Actually a collection of $3n$ equations!
   \end{block}
-
-  \todo{Obacht: $\mathbf{u}_i$ muss noch irgendwie anzeigen, dass es für den Zeitschritt $k+1$ gilt! Im Skript ausbessern und hier angleichen.Das stimmt hier noch gar nicht!}
-
 \end{frame}
 
 \part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrich-Flux}
