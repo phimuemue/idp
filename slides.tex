@@ -40,6 +40,19 @@
 
 \begin{document}
 
+\par{Introduction}
+\label{par:introduction-0}
+
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item Wave simulation
+  \item (Adaptive) triangulation of the whole area
+  \item How can we model the flux between triangles?
+  \item Model continuous equations within these triangles
+  \end{itemize}
+\end{frame}
+
 \part{Derivation of stuff.}
 \label{part:introduction}
 
@@ -85,7 +98,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{$x$- and $y$-Coordinates}
+  \frametitle{$x$- and $y$-Direction}
 
   \begin{equation*}
     \pd{\mathbf{u}}{t} + \divergence F(\mathbf{u}) = r = \begin{pmatrix}
@@ -127,9 +140,10 @@
   
   \begin{block}{Remarks:}
     \begin{itemize}
+    \item Galerkin method: Multiply equation (\ref{eq:shallow-water-raw}) by $\phi$ and integrate over triangle $T$
     \item Integral works line by line (i.e. for components $h$, $u_x$ and $u_y$)
     \item $\nabla \cdot F(\mathbf{u}) = \divergence F(\mathbf{u})$
-    \item $T$ is a single triangle
+    %\item $T$ is a single triangle
     \end{itemize}
   \end{block}
   \todo{Erklärung von Stjepan bezgl. Dreiecke auch in Slides bringen!}
@@ -155,7 +169,7 @@
   \begin{block}{Remarks:}
     \begin{itemize}
     \item $dT$ and $ds$: abbreviations for $dx\ dy$
-    \item First integral: Straightforward!
+    %\item First integral: Straightforward!
     \item Second integral:
       \begin{itemize}
       \item Border integral ``around'' triangle
@@ -172,20 +186,12 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Second Integral}
-  Split into triangle edges:
-  \begin{equation}
-    \label{eq:border-integral-sum}
-    \int_{\partial T} F(\mathbf{u}) \cdot n \phi \, ds = \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi \, ds =: BI
-  \end{equation}
-  \todo{Wo sind die Normalen hin?}
-\end{frame}
-
-\begin{frame}
   \frametitle{Galerkin Method}
   \begin{itemize}
-  \item Multiply with test function $\phi_i$ (for $i=1:n$)\todo{$n$/Basisfunktionen irgendwo reinhauen}
-  \item Integrate over triangle
+  \item Have several functions $\phi_i$ (for $i=1:n$) -- will be defined later
+  \item Approximation of $\mathbf{u}$: 
+    $u \approx \sum_{i=1}^n \mathbf{u}_i \phi_i(x,y)$.
+  \item Only $\phi_i$ depending on $x,y$!
   \end{itemize}
 
   \begin{equation}
@@ -194,11 +200,6 @@
     \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds  -
     \int_T F(\mathbf{u}) \cdot \nabla \phi_i \, dT = 0
   \end{equation}
-
-  Approximation of $\mathbf{u}$: 
-  $u \approx \sum_{i=1}^n \mathbf{u}_i \phi_i(x,y)$.
-
-  Only $\phi_i$ depending on $x,y$!
 \end{frame}
 
 \section{Matrices, matrices, matrices}
@@ -230,7 +231,7 @@
 \begin{frame}
   \frametitle{Third Integral: Stiffness matrix -- $h$-component}
   \begin{eqnarray*}
-    \int_T F_1(\mathbf{u}) \cdot \nabla \phi \, dT &=&
+    \int_T F_1(\mathbf{u}) \cdot \nabla \phi_i \, dT &=&
     \int_T
     \begin{pmatrix}
       u_x \\ u_y
@@ -242,13 +243,15 @@
       \sum_{j=1}^n u_{y,j} \phi_j \\
     \end{pmatrix}
     \cdot 
-    \begin{pmatrix}
-      \pd{\phi_i}{x} \\
-      \pd{\phi_i}{y} 
-    \end{pmatrix} dT \\
+    {
+      \renewcommand\arraystretch{2}
+      \begin{pmatrix}
+        \pd{\phi_i}{x} \\
+        \pd{\phi_i}{y} 
+      \end{pmatrix} dT 
+    }\\
     &=& \sum_{j=1}^n u_{x,j} \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{Sx_{ij}} + \sum_{j=1}^n u_{y,j} \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{Sy_{ij}}
   \end{eqnarray*}
-  \todo{Zeilenabstand in pmatrix!}
   \begin{block}{}
     \begin{itemize}
     \item $Sx$ and $Sy$ are $n \times n$-matrices
@@ -259,28 +262,33 @@
 
 \begin{frame}
   \frametitle{Intermezzo: Point-wise Approximation}
-
-  $\mathbf{u}\approx \sum_{i=1}^n \mathbf{u}_i \phi_i$
-
-  We want to compute $f(h, u_x, u_y)$.
-  
-  \begin{equation*}
-    f\left(\sum_{i=1}^n h_i \phi_i,
-      \sum_{i=1}^n u_{x,i} \phi_i,
-      \sum_{i=1}^n u_{y,i} \phi_i\right),
-  \end{equation*}
-  is too complex. Thus, we compute the following:
-  \begin{equation*}
-    \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
-  \end{equation*}
-
+  \begin{itemize}
+  \item   $\mathbf{q}\approx \sum_{i=1}^n \mathbf{q}_i \phi_i$, i.e.\,$
+    \begin{pmatrix}
+      h \\ u_x \\ u_y
+    \end{pmatrix} = \sum_{i=1}^n
+    \begin{pmatrix}
+      h_i \\ u_{x,i} \\ u_{y,i}
+    \end{pmatrix}
+    \phi_i$
+  \item   We would like to compute 
+    \begin{equation*}
+      f\left(\sum_{i=1}^n h_i \phi_i,
+        \sum_{i=1}^n u_{x,i} \phi_i,
+        \sum_{i=1}^n u_{y,i} \phi_i\right),
+    \end{equation*}
+  \item   Too complex $\Rightarrow$ compute the following:
+    \begin{equation*}
+      \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
+    \end{equation*}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Third Integral: Stiffness matrix -- $u_x$-component}
   \begin{eqnarray*}
     \label{sec:third-integral-second-line-1}
-    \int_T F_2(\mathbf{u}) \cdot \nabla \phi \, dT &=&
+    \int_T F_2(\mathbf{u}) \cdot \nabla \phi_i \, dT &=&
     \int_T
     \begin{pmatrix}
       \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
@@ -310,7 +318,7 @@
 \begin{frame}
   \frametitle{Third Integral: Stiffness matrix -- $u_y$-component}
   \begin{eqnarray*}
-    \int_T F_3\left(\mathbf{u}\right) \cdot \nabla \phi \, dT &=&
+    \int_T F_3\left(\mathbf{u}\right) \cdot \nabla \phi_i \, dT &=&
     \int_T
     \begin{pmatrix}
       \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2 
@@ -333,20 +341,32 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{Second Integral}
+  Split into triangle edges:
+  \begin{equation}
+    \label{eq:border-integral-sum}
+    \int_{\partial T} F(\mathbf{u}) \cdot n \phi_i \, ds = \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds =: BI
+  \end{equation}
+  \begin{itemize}
+  \item Normals are incorporated in $F^e$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
     \frametitle{Border Integral}
-    Compute $\sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F_j^e \phi_i \, ds$ by Gauss-Quadrature:
+    Compute $\sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds$ by Gauss-Quadrature:
 
 \begin{equation}
-  \int_{e} F_j^e \phi_i \, ds \approx \sum_{k=0}^{m} F_j^e \underbrace{\phi_i(p_k) \cdot w_k}_{E_{ik}},
+  \int_{e} F^e \phi_i \, ds \approx \sum_{k=0}^{m} F^e(p_k) \underbrace{\phi_i(p_k) \cdot w_k}_{E_{ik}},
 \end{equation}
-
+\todo{Sollte das $F^e_j$ heißen?}
 \begin{block}{Remarks}
   \begin{itemize}
   \item $m$: Number of support points for Gaussian quadrature
   \item $p_k$: Gauss-support point with index $k$
   \item $w_k$: corresponding Gauss weight
   \item $E_{ik}$: $n\times m$ matrix; can be pre-computed!
-  \item $F_j^e$: Numerical flux (several possibilities)
+  \item $F^e$: Numerical flux (several possibilities)
   \end{itemize}
 \end{block}
     
@@ -376,7 +396,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Choice of Basis Functions}
+  \frametitle{Choice of Basis Functions $\phi_i$}
   \begin{itemize}
   \item Polynomial basis functions (in two variables $x$ and $y$)
   \item Basis function have to \emph{span} space of all polynomials up to a certain degree
@@ -386,13 +406,10 @@
   \item Grab a certain set of $n$ points $p_1$ through $p_{n}$.
   \item Construct basis function $\phi_i$ such that $\forall i=1:n \  \forall j=1:n. \ \phi_i(p_j) = \delta_{ij}$ using lagrange polynomials (the term $\delta_{ij}$ denotes Kronecker-Delta).
   \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Number of basis functions}
-  Polynomials of degree $d$ imply having $\binom{d+2}{2}$ basis functions.
-
-  Number of support points equals number of basis functions!
+  Consequences:
+  \begin{itemize}
+  \item Polynomials of degree $d$ $\Rightarrow$ $\binom{d+2}{2}$ basis functions resp. support points
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -406,6 +423,51 @@
     \end{itemize}
   \item Higher degree: ``Dunavant-Method'' \todo{Genauer erklären?}\todo{Referenz.}
   \end{itemize}
+
+\begin{figure}[ht]
+  \centering
+  \subfigure[Degree 0]{
+    \begin{tikzpicture}[scale=1.5]
+      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.33333333, 0.3333333333) circle (0.01);
+    \end{tikzpicture}
+  }
+  \subfigure[Degree 1]{
+    \begin{tikzpicture}[scale=1.5]
+      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.5, 0) circle (0.01);
+      \draw[fill=black] (0, 0.5) circle (0.01);
+      \draw[fill=black] (0.5, 0.5) circle (0.01);
+    \end{tikzpicture}
+  }
+  \subfigure[Degree 2]{
+    \begin{tikzpicture}[scale=1.5]
+      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.5, 0) circle (0.01);
+      \draw[fill=black] (0, 0.5) circle (0.01);
+      \draw[fill=black] (0.5, 0.5) circle (0.01);
+      \draw[fill=black] (0, 0) circle (0.01);
+      \draw[fill=black] (1, 0) circle (0.01);
+      \draw[fill=black] (0, 1) circle (0.01);
+    \end{tikzpicture}
+  }
+  \subfigure[Degree 3]{
+    \begin{tikzpicture}[scale=1.5]
+      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.501426509658179, 0.24928674517091) circle (0.01);
+      \draw[fill=black] (0.24928674517091, 0.24928674517091) circle (0.01);
+      \draw[fill=black] (0.24928674517091, 0.501426509658179) circle (0.01);
+      \draw[fill=black] (0.873821971016996, 0.063089014491502) circle (0.01);
+      \draw[fill=black] (0.063089014491502, 0.063089014491502) circle (0.01);
+      \draw[fill=black] (0.063089014491502, 0.873821971016996) circle (0.01);
+      \draw[fill=black] (0.053145049844817, 0.310352451033784) circle (0.01);
+      \draw[fill=black] (0.310352451033784, 0.636502499121399) circle (0.01);
+      \draw[fill=black] (0.636502499121399, 0.053145049844817) circle (0.01);
+      \draw[fill=black] (0.310352451033784, 0.053145049844817) circle (0.01);
+    \end{tikzpicture}
+  }
+\end{figure}
+
 \end{frame}
 
 \begin{frame}
@@ -427,6 +489,8 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
 
 \begin{frame}
   \frametitle{Solving the Equation}
+  \todo{Sollten wir hier das Subscript $_j$ rausnehmen, um zu vereinfachen? Müsste sonst das Subskript nicht auch noch zu der Ableitung auf der linken Seite?}
+  One equation for each component $j$ (i.e.\, for $h$, $u_x$, $u_y$):
   \begin{equation*}
     \int_T \pd {\mathbf{u}_j}{t} \phi_i \, dT +
     \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F_j^e \phi_i \, ds  -
@@ -436,9 +500,8 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
   Reformulate:
   \begin{equation*}
     M \cdot \pd{
-      \begin{pmatrix}
-        \mathbf{u}_1 \\ \vdots \\ \mathbf{u}_n
-      \end{pmatrix}}{t} = 
+        \left( \mathbf{u}_1 , \dots , \mathbf{u}_n \right)
+    }{t} = 
     \int_T F_j(\mathbf{u}) \cdot \nabla \phi_i \, dT 
     - \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F_j^e \phi_i \, ds
   \end{equation*}
@@ -476,7 +539,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
     \end{itemize}
   \end{block}
 
-  \todo{Obacht: $\mathbf{u}_i$ muss noch irgendwie anzeigen, dass es für den Zeitschritt $k+1$ gilt! Im Skript ausbessern und hier angleichen.}
+  \todo{Obacht: $\mathbf{u}_i$ muss noch irgendwie anzeigen, dass es für den Zeitschritt $k+1$ gilt! Im Skript ausbessern und hier angleichen.Das stimmt hier noch gar nicht!}
 
 \end{frame}
 
