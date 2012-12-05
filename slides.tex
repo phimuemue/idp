@@ -748,7 +748,12 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
       \texttt{evalf(Int(abs(N(x)-N'(x)),x=0..1))}
     \end{center}
     works, but takes much too long for general parameters!
-  \item Old-school: Numerical integration using the ``Streifenmethode'' \todo{Wie heißt das auf Englisch?} \todo{Im Skript diese Methode nachreichen!}
+  \item Old-school: Numerical integration using the ``Streifenmethode'':\todo{Wie heißt das auf Englisch?} \todo{Im Skript diese Methode nachreichen!}
+    
+    \begin{equation*}
+      \int\limits_{x=0}^1 N(x)-N'(x)\,dx \approx \sum_{i=0}^{s-1} \left| N\left(\frac{1}{2s} + \frac{i}{s}\right) - N'\left(\frac{1}{2s} + \frac{i}{s}\right) \right| \cdot \frac{1}{s}
+    \end{equation*}
+    \todo{Skizze dazu unbedingt nötig!}
   \end{itemize}
 \end{frame}
 
@@ -766,8 +771,6 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
 \end{frame}
 
 \begin{comment}
-
-
 \subsection{Some considerations to take into account}
 \label{sec:some-considerations}
 
