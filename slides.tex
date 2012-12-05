@@ -793,55 +793,43 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
       \texttt{evalf(Int(abs(N(x)-N'(x)),x=0..1))}
     \end{center}
     works, but takes much too long for general parameters!
-  \item Old-school: Numerical integration using the ``Streifenmethode'':\todo{Wie heißt das auf Englisch?} \todo{Im Skript diese Methode nachreichen!}
+  \item Old-school: Numerical integration using the ``Streifenmethode'' using $s$ stripes:
+    % \todo{Wie heißt das auf Englisch?} \todo{Im Skript diese Methode nachreichen!}
+    % \begin{equation*}
+    %   \int\limits_{x=0}^1 N(x)-N'(x)\,dx \approx \sum_{i=0}^{s-1} \left| N\left(\frac{1}{2s} + \frac{i}{s}\right) - N'\left(\frac{1}{2s} + \frac{i}{s}\right) \right| \cdot \frac{1}{s}
+    % \end{equation*}
+    % \todo{Skizze dazu unbedingt nötig!}
     
-    \begin{equation*}
-      \int\limits_{x=0}^1 N(x)-N'(x)\,dx \approx \sum_{i=0}^{s-1} \left| N\left(\frac{1}{2s} + \frac{i}{s}\right) - N'\left(\frac{1}{2s} + \frac{i}{s}\right) \right| \cdot \frac{1}{s}
-    \end{equation*}
-    \todo{Skizze dazu unbedingt nötig!}
+    \begin{center}
+      \begin{tikzpicture}[scale=1.5]
+        \draw[help lines, -] (0,0) node[below,color=black]{0} -- (0,2.25);
+        \draw[help lines, -] (2,0) node[below,color=black]{1} -- (2,2.25);
+        \draw[-] (-0.5,0) -- (2.5,0);
+        \draw[domain=-0.2:2.1] plot (\x, {\x*\x*\x-2*\x*\x+2});
+        \draw[color=lightgray,-] (0,0) -- (0,1.890625) -- (0.5,1.890625) -- (0.5,0);
+        \draw[color=lightgray,-] (0.5,0) -- (0.5,1.296875) -- (1,1.296875) -- (1,0);
+        \draw[color=lightgray,-] (1,0) -- (1,0.828125) -- (1.5,0.828125) -- (1.5,0);
+        \draw[color=lightgray,-] (1.5,0) -- (1.5,1.234375) -- (2,1.234375) -- (2,0);
+        \draw[fill=blue] (0.25,1.890625) circle (0.02);
+        \draw[fill=blue] (0.75,1.296875) circle (0.02);
+        \draw[fill=blue] (1.25,0.828125) circle (0.02);
+        \draw[fill=blue] (1.75,1.234375) circle (0.02);
+        \draw[decorate,decoration=brace,-] (1,-0.05) -- node[below]{\scriptsize{$\frac{1}{s}$}} (0.5,-0.05);
+      \end{tikzpicture}
+    \end{center}
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Numerical integration -- example}
-  $s=4$, meaning four stripes.
+  \frametitle{Demonstration}
   \begin{center}
-    \begin{tikzpicture}[scale=1.6]
-      \draw[help lines, -] (0,0) node[below,color=black]{0} -- (0,2.25);
-      \draw[help lines, -] (2,0) node[below,color=black]{1} -- (2,2.25);
-      \draw[-] (-0.5,0) -- (2.5,0);
-      \draw[domain=-0.2:2.1] plot (\x, {\x*\x*\x-2*\x*\x+2});
-      \draw[color=lightgray,-] (0,0) -- (0,1.890625) -- (0.5,1.890625) -- (0.5,0);
-      \draw[color=lightgray,-] (0.5,0) -- (0.5,1.296875) -- (1,1.296875) -- (1,0);
-      \draw[color=lightgray,-] (1,0) -- (1,0.828125) -- (1.5,0.828125) -- (1.5,0);
-      \draw[color=lightgray,-] (1.5,0) -- (1.5,1.234375) -- (2,1.234375) -- (2,0);
-      \draw[fill=blue] (0.25,1.890625) circle (0.02);
-      \draw[fill=blue] (0.75,1.296875) circle (0.02);
-      \draw[fill=blue] (1.25,0.828125) circle (0.02);
-      \draw[fill=blue] (1.75,1.234375) circle (0.02);
-      \draw[decorate,decoration=brace,-] (1,-0.05) -- node[below]{\scriptsize{$\frac{1}{s}$}} (0.5,-0.05);
-    \end{tikzpicture}
+    \Large{Interactive Demo}
   \end{center}
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Some Considerations}
-  \begin{itemize}
-  \item $N(x)-N'(x)$ depends upon $4n$ variables
-    \begin{itemize}
-    \item Two edges
-    \item $n$ points on each edge
-    \item Each point has height and impulse
-    \end{itemize}
-  \item $\Rightarrow$ Visualization: Fix all but at most 2 variables
-  \end{itemize}
 \end{frame}
 
 \begin{comment}
 \subsection{Some considerations to take into account}
 \label{sec:some-considerations}
-
 
 Later we will explain how we can visualize $I$. Since there are many variables to choose, we decided to fix all but one point and visualize the result.
 
