@@ -53,8 +53,6 @@
 
 \begin{document}
 
-\todo{Plots mit Definitionslücken durchrechnen}
-
 \part{Deriving necessary equations}
 \label{part:introduction}
 
@@ -738,6 +736,59 @@ We eventually went for the last of these approaches. It is just as well possible
 
 You can find some more information about the developed tool in section \ref{sec:making-the-whole-thing-interactive}.
 
+\subsection{Singularities?}
+\label{sec:discontinuities}
+
+If we take a look at the second component of $I$, we recognize that we have to deal with a fraction (this is due to the Flux function that involved a fraction). This means, that there are possibly some singularities involved. If we integrate, we should pay attention to these singularities.
+
+Without going into too much detail (since the formulae are huge and -- let's say -- ``don't look nice''): If we use two support points for each edge (all points except $p_1^l$ are $(10,0)$), expand the term $N(x)-N'(x)$ and view its second component (describing the error in the impulse component), we recognize that there is a fraction involved that looks (approximately due to floating point rounding) as follows (numerator omitted for simplicity):
+
+\newcommand{\badfrac}{\mathtt{bad}}
+
+\begin{equation*}
+  \frac{1}{h_1\cdot(1.732 h_1 \cdot x - 17.320 x - 1.366 h_1 + 3.660)}
+\end{equation*}
+
+Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N(x)-N'(x)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). To be precise, we can calculate that we have a singularity at
+\begin{equation*}
+  x_0=\frac{683\, h_1 - 1830}{866\, h_1 - 8600}.
+\end{equation*}
+
+Since we take the integral between 0 and 1, it is of particular interest if the value $x_0$ can be within the interval $\left[ 0,1 \right]$, since in this case we would integrate over a singularity where the integral is not (or at least might not be) properly defined.
+
+It is no hard problem to solve this: We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. That is, for this particular case, we see that we may have singularities only if the value of $h_1$ differs extremely from all other values for the height (that are in this case set to 10) -- a very unlikely case.
+
+That means: We have seen that there actually \emph{are} singularities (an inevitable fact if $x$ occurs in the denominator), but that these singularities might only occur for very exotic values for $h_1$.
+
+Of course, it would be great to devise some general rule that allows us to exclude singularities for usual values for arbitrary support points. However, due to the large amount of variables and -- even more important -- the fact that we might have more support points, this is a very complicated task.
+
+We did some calculations in Maple for three support points for each edge that yielded similar results to the ones obtained for two points per edge. Unfortunately we had to find out that for four support points, root finding is too complicated to be practicable.
+
+We will later see some plots exposing these singularities.
+
+\newcommand{\fracsumme}{\mathtt{approx\_int}}
+
+% It is convenient to research this fraction and look what happens if we set $h_1$ approximately to 1.6. Let us -- for simplicity -- assume that we numerically approximate this component of $I$ using five stripes (i.e. we take the function values at $x\in\left\{ 0, 0.25, 0.5, 0.75, 1 \right\}$. So, we can consider $\fracsumme(h_1,u_1) := \sum_{i=0}^4 \badfrac(\frac{i}{4})$ which is a part of what is plotted in figure \ref{fig:two-points-p1-wider-range}.
+
+%If we evaluate this for corresponding values for $h_1$ and $u_1$ (i.e.\,in particular for $h_1\approx 1.6$ and $h_1\approx 0$), we obtain results summed up in table
+
+% \begin{table}[ht]
+%   \centering
+%   \begin{tabular}[ht]{ll}
+%     \hline
+%     $\fracsumme(0,0)$ & -2.6 \\
+%     $\fracsumme(0,1)$ & -11.3 \\
+%     $\fracsumme(0,0)$ & -27.0 \\
+%     $\fracsumme(0,0)$ & -49.7 \\
+%     $\fracsumme(1.6,0)$ & -0.87 \\
+%     $\fracsumme(1.6,1)$ & -2.52 \\
+%     $\fracsumme(1.6,2)$ & -13.9 \\
+%     $\fracsumme(1.6,3)$ & -34.9 \\
+%   \end{tabular}
+%   \caption{Selected values for the term $\fracsumme$ depending upon $h_1$ and $u_1$}
+%   \label{tab:selected-values-for-fracsumme}
+% \end{table}
+
 \section{Visualizing the error term $I$}
 \label{sec:making-the-whole-thing-interactive}
 
@@ -924,6 +975,17 @@ We did the same thing for three support points along each edge (and it can be do
 
 \input{3_punkte_gleich/tex.tex}
 
+\subsection{Singularities}
+\label{sec:plots-discontinuities}
+
+When we look at figure \ref{subfig:fixing-p2-in-first-example}, we see that the error in the impulse component looks somewhat like a parabola with respect to the variable $h_1$. We see a smooth curve.
+
+Remember that we saw in section \ref{sec:discontinuities} that there might be singularities. We will now see a plot that exposes these singularities to us.
+
+\input{2_points_def_luecke/tex.tex}
+
+Figure \ref{fig:two-points-p1-wider-range} shows a plot that was created using two points per edge, each point having coordinates $(10,0)$. We use the coordinates of $p_1^L$ as axes (i.e.\,$h_1$ and $u_1$). But this plot's axes now have a wider range than the ones in previous plots. As you can see there, the error suddendly grows to about 200 -- a much larger value t han the one we have seen before! We realize that these discontinuities arise if $h_1$ takes a values of about 1.6 and 0. In fact, there are even more discontinuities that can not be seen here since they occur at more distant values for $h_1$.
+
 \subsection{One point variation}
 \label{sec:one-point-variation}
 
@@ -961,7 +1023,6 @@ While we changed the height in subsection \ref{sec:decreasing-height-p1}, we are
 
 Now we are going to examine if it makes a difference when we decrease the height of another point, namely $p_2^L$. We show the results in figure \ref{fig:three-points-h2-}. In this case, the graphs for points $p_1^L$ and $p_3^L$ in particular are noteworthy.
 
-\todo{Diese Bilder genauer untersuchen, ob wir da den Ausschnitt zu früh abschneiden und es zu DefLücken kommt!}
 \input{3_punkte_2_hoehe_verringert/tex.tex}
 
 \subsubsection{Decreasing the impulse of $p_2^L$}
@@ -970,64 +1031,6 @@ Now we are going to examine if it makes a difference when we decrease the height
 Decreasing the impulse of point $p_2^L$ results in the plots depicted in figure \ref{fig:three-points-u2-}. In particular, the graphs for $p_1^L$ and $p_3^L$ show significant structural differences.
 
 \input{3_punkte_2_impuls_verringert/tex.tex}
-
-\subsection{Discontinuities?}
-\label{sec:discontinuities}
-
-When we look at figure \ref{subfig:fixing-p2-in-first-example}, we see that the error in the impulse component looks somewhat like a parabola with respect to the variable $h_1$. However, if we plot a wider range, we are likely to be surprised.
-
-\input{2_points_def_luecke/tex.tex}
-
-Figure \ref{fig:two-points-p1-wider-range} shows what happens here. As you can see there, the error suddendly grows to about 200 -- a much larger value t han the one we have seen before! Of course it is interesting to ask what happens here. To inspect this problem, we first realize that these discontinuities arise if $h_1$ takes a values of about 1.6 and 0.
-
-The plots in figure \ref{fig:two-points-p1-wider-range} are plotted with all points being $(10,0)$. We are now going to inspect what the terms used in the function look like.
-
-Without going into too much detail (since the formulae are huge and -- let's say -- ``don't look nice''): If we use two support points for each edge (all points except $p_1^l$ are $(10,0)$), expand the term $N(x)-N'(x)$ and view its second component (describing the error in the impulse component), we recognize that there is a fraction involved that looks (approximately due to floating point rounding) as follows (numerator omitted for simplicity):
-
-\newcommand{\badfrac}{\mathtt{bad}}
-
-\begin{equation*}
-  \frac{1}{h_1\cdot(1.732 h_1 \cdot x - 17.320 x - 1.366 h_1 + 3.660)}
-\end{equation*}
-
-Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N(x)-N'(x)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). To be precise, we can calculate that we have a singularity at
-\begin{equation*}
-  x_0=\frac{683\, h_1 - 1830}{866\, h_1 - 8600}.
-\end{equation*}
-
-Since we take the integral between 0 and 1, it is of particular interest if the value $x_0$ can be within the interval $\left[ 0,1 \right]$, since in this case we would integrate over a singularity where the integral is not (or at least might not be) properly defined.
-
-It is no hard problem to solve this: We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. That is, for this particular case, we see that we may have singularities only if the value of $h_1$ differs extremely from all other values for the height (that are in this case set to 10) -- a very unlikely case.
-
-That means: We have seen that there actually \emph{are} singularities (an inevitable fact if $x$ occurs in the denominator), but that these singularities might only occur for very exotic values for $h_1$.
-
-Of course, it would be great to devise some general rule that allows us to exclude singularities for usual values for arbitrary support points. However, due to the large amount of variables and -- even more important -- the fact that we might have more support points, this is a very complicated task.
-
-We did some calculations in Maple for three support points for each edge that yielded similar results to the ones obtained for two points per edge. Unfortunately we had to find out that for four support points, root finding is too complicated to be practicable.
-
-\newcommand{\fracsumme}{\mathtt{approx\_int}}
-
-% It is convenient to research this fraction and look what happens if we set $h_1$ approximately to 1.6. Let us -- for simplicity -- assume that we numerically approximate this component of $I$ using five stripes (i.e. we take the function values at $x\in\left\{ 0, 0.25, 0.5, 0.75, 1 \right\}$. So, we can consider $\fracsumme(h_1,u_1) := \sum_{i=0}^4 \badfrac(\frac{i}{4})$ which is a part of what is plotted in figure \ref{fig:two-points-p1-wider-range}.
-
-%If we evaluate this for corresponding values for $h_1$ and $u_1$ (i.e.\,in particular for $h_1\approx 1.6$ and $h_1\approx 0$), we obtain results summed up in table
-
-% \begin{table}[ht]
-%   \centering
-%   \begin{tabular}[ht]{ll}
-%     \hline
-%     $\fracsumme(0,0)$ & -2.6 \\
-%     $\fracsumme(0,1)$ & -11.3 \\
-%     $\fracsumme(0,0)$ & -27.0 \\
-%     $\fracsumme(0,0)$ & -49.7 \\
-%     $\fracsumme(1.6,0)$ & -0.87 \\
-%     $\fracsumme(1.6,1)$ & -2.52 \\
-%     $\fracsumme(1.6,2)$ & -13.9 \\
-%     $\fracsumme(1.6,3)$ & -34.9 \\
-%   \end{tabular}
-%   \caption{Selected values for the term $\fracsumme$ depending upon $h_1$ and $u_1$}
-%   \label{tab:selected-values-for-fracsumme}
-% \end{table}
-
 
 \subsection{Random values}
 \label{sec:random-values}
