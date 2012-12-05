@@ -669,10 +669,10 @@ What we eventually would like to do is to compare the following two things with 
     \right) :=
     \begin{pmatrix}
       h_i^F \\ u_i^F
-    \end{pmatrix} = x_i^F
+    \end{pmatrix} = F_i
   \end{equation*}
 
-  We introduce shorthand notation $x_i^F$ for the resulting values. Each $x_i^F$ has the same structure as the $x_i$, only it's evaluated by the flux function, hence the $F$ superscript. Next we interpolate the points (i.e.\,we interpolate the first components to obtain one polynomial, and we interpolate the second components to obtain another polynomial). The resulting polynomials are called $N'\left(x\right)$ (interpreted like $N\left(x\right)$ as explained above).
+  We introduce shorthand notation $F_i$ for the resulting values. Each $F_i$ has the same structure as the $x_i$, only it's evaluated by the flux function. Next we interpolate the points (i.e.\,we interpolate the first components to obtain one polynomial, and we interpolate the second components to obtain another polynomial). The resulting polynomials are called $N'\left(x\right)$ (interpreted like $N\left(x\right)$ as explained above).
 
   That is, we set
   \begin{equation*}
@@ -709,7 +709,7 @@ There are several possibilities to overcome this problem. Here are the three we 
 
   Knowing this, we can derive some zeroes (but possibly not all). If we compute
   \begin{equation*}
-    \sum\limits_{i=1}^{n-1} \int\limits_{x=x_i}^{x_{i+1}}\left| N\left(x\right) - N'\left(x\right) \right|\  dx,
+    \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N\left(x\right) - N'\left(x\right)\ dx \right|,
   \end{equation*}
   we get a more accurate result as an approximation for $I$ compared to simply computing the integral over $[0,1]$. 
 
@@ -725,7 +725,7 @@ There are several possibilities to overcome this problem. Here are the three we 
   We experimented with random polynomials and tried a few of them out, comparing the \texttt{evalf}-result to the exact integration. We experienced that the \texttt{evalf}-result was always equal to the actual result within an error of 0.001.
 
   However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
-\item The last approach we tried was to divide the function 
+\item The last approach we tried was to divide the area under the function 
   \begin{equation*}
     \left| N\left(x\right)-N'\left(x\right) \right|
   \end{equation*}

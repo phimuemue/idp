@@ -315,10 +315,13 @@
       \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
     \end{pmatrix}
     \cdot 
-    \begin{pmatrix}
-      \pd{\phi_i}{x} \\
-      \pd{\phi_i}{y} 
-    \end{pmatrix} dT \\
+    {
+      \renewcommand{\arraystretch}{2}
+      \begin{pmatrix}
+        \pd{\phi_i}{x} \\
+        \pd{\phi_i}{y} 
+      \end{pmatrix} dT 
+    } \\
     &=& \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\ 
     &&+ \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
   \end{eqnarray*}
@@ -343,10 +346,13 @@
       \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
     \end{pmatrix}
     \cdot 
-    \begin{pmatrix}
-      \pd{\phi_i}{x} \\
-      \pd{\phi_i}{y} 
-    \end{pmatrix} dT \\
+    {
+      \renewcommand{\arraystretch}{2}
+      \begin{pmatrix}
+        \pd{\phi_i}{x} \\
+        \pd{\phi_i}{y} 
+      \end{pmatrix} dT 
+    } \\
     &=& \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
     &&+ \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
   \end{eqnarray*}
@@ -458,42 +464,42 @@
   \centering
   \subfigure[Degree 0]{
     \begin{tikzpicture}[scale=1.5]
-      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-      \draw[fill=black] (0.33333333, 0.3333333333) circle (0.01);
+      \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.33333333, 0.3333333333) circle (0.05);
     \end{tikzpicture}
   }
   \subfigure[Degree 1]{
     \begin{tikzpicture}[scale=1.5]
-      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-      \draw[fill=black] (0.5, 0) circle (0.01);
-      \draw[fill=black] (0, 0.5) circle (0.01);
-      \draw[fill=black] (0.5, 0.5) circle (0.01);
+      \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.5, 0) circle (0.05);
+      \draw[fill=black] (0, 0.5) circle (0.05);
+      \draw[fill=black] (0.5, 0.5) circle (0.05);
     \end{tikzpicture}
   }
   \subfigure[Degree 2]{
     \begin{tikzpicture}[scale=1.5]
-      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-      \draw[fill=black] (0.5, 0) circle (0.01);
-      \draw[fill=black] (0, 0.5) circle (0.01);
-      \draw[fill=black] (0.5, 0.5) circle (0.01);
-      \draw[fill=black] (0, 0) circle (0.01);
-      \draw[fill=black] (1, 0) circle (0.01);
-      \draw[fill=black] (0, 1) circle (0.01);
+      \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.5, 0) circle (0.05);
+      \draw[fill=black] (0, 0.5) circle (0.05);
+      \draw[fill=black] (0.5, 0.5) circle (0.05);
+      \draw[fill=black] (0, 0) circle (0.05);
+      \draw[fill=black] (1, 0) circle (0.05);
+      \draw[fill=black] (0, 1) circle (0.05);
     \end{tikzpicture}
   }
   \subfigure[Degree 3]{
     \begin{tikzpicture}[scale=1.5]
-      \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-      \draw[fill=black] (0.501426509658179, 0.24928674517091) circle (0.01);
-      \draw[fill=black] (0.24928674517091, 0.24928674517091) circle (0.01);
-      \draw[fill=black] (0.24928674517091, 0.501426509658179) circle (0.01);
-      \draw[fill=black] (0.873821971016996, 0.063089014491502) circle (0.01);
-      \draw[fill=black] (0.063089014491502, 0.063089014491502) circle (0.01);
-      \draw[fill=black] (0.063089014491502, 0.873821971016996) circle (0.01);
-      \draw[fill=black] (0.053145049844817, 0.310352451033784) circle (0.01);
-      \draw[fill=black] (0.310352451033784, 0.636502499121399) circle (0.01);
-      \draw[fill=black] (0.636502499121399, 0.053145049844817) circle (0.01);
-      \draw[fill=black] (0.310352451033784, 0.053145049844817) circle (0.01);
+      \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+      \draw[fill=black] (0.501426509658179, 0.24928674517091) circle (0.05);
+      \draw[fill=black] (0.24928674517091, 0.24928674517091) circle (0.05);
+      \draw[fill=black] (0.24928674517091, 0.501426509658179) circle (0.05);
+      \draw[fill=black] (0.873821971016996, 0.063089014491502) circle (0.05);
+      \draw[fill=black] (0.063089014491502, 0.063089014491502) circle (0.05);
+      \draw[fill=black] (0.063089014491502, 0.873821971016996) circle (0.05);
+      \draw[fill=black] (0.053145049844817, 0.310352451033784) circle (0.05);
+      \draw[fill=black] (0.310352451033784, 0.636502499121399) circle (0.05);
+      \draw[fill=black] (0.636502499121399, 0.053145049844817) circle (0.05);
+      \draw[fill=black] (0.310352451033784, 0.053145049844817) circle (0.05);
     \end{tikzpicture}
   }
 \end{figure}
@@ -649,9 +655,25 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
   \begin{itemize}
   \item In principle: arbitrary
   \item In practice: Use support points from Gaussian quadrature since we'll apply it later
+    \begin{center}
+      \begin{tikzpicture}[scale=2]
+        \begin{scope}[xshift=-.1em,yshift=-.1em]
+          \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
+          \draw[fill=black] (0.113,0.887) circle (0.025); 
+          \draw[fill=black] (0.5,0.5) circle (0.025); 
+          \draw[fill=black] (0.887,0.113) circle (0.025); 
+        \end{scope}
+        \draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
+        \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
+          \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
+          \draw[fill=black] (0.113,0.887) circle (0.025); 
+          \draw[fill=black] (0.5,0.5) circle (0.025); 
+          \draw[fill=black] (0.887,0.113) circle (0.025); 
+        \end{scope}
+      \end{tikzpicture}
+    \end{center}
   \item We also tested equidistant support points
   \end{itemize}
-  \todo{Bild von support points auf Kante einfügen.}
 \end{frame}
 
 \begin{frame}
@@ -691,7 +713,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
   \begin{block}{Comparison of $N(x)$ and $N'(x)$}
     \begin{description}
     \item[Exact solution] $N(x) := F_{LF}(p^R(x),p^L(x))$
-    \item[Approximate solution] \todo{Hier stimmts im Skript noch nicht! Das muss $y_i^F$ heißen.}
+    \item[Approximate solution] 
       \begin{equation*}
         F_{LF}\left(
           \begin{pmatrix}
@@ -703,7 +725,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
         \right) :=
         \begin{pmatrix}
           h_i^F \\ u_i^F
-        \end{pmatrix} = y_i^F
+        \end{pmatrix} = F_i
       \end{equation*}
 
       \begin{equation*}
@@ -716,26 +738,44 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
   \end{block}
   $\Rightarrow$ Comparison by 
   $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\  dx$
+\end{frame}
 
+\begin{frame}
+  \frametitle{Some Considerations}
+  \begin{equation*}
+    I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
+  \end{equation*}
+  \begin{itemize}
+  \item $N(x)-N'(x)$ depends upon $4n$ variables
+    \begin{itemize}
+    \item Two edges
+    \item $n$ points on each edge
+    \item Each point has height and impulse
+    \end{itemize}
+  
+    $\Rightarrow$ $I$ depends upon $4n$ variables
+  \item General analytic calculations seem much too complicated
+  \item $\Rightarrow$ Alternative: Visualization -- Fix all but at most 2 variables
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Evaluating $I$}
+  \begin{equation*}
+    I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
+  \end{equation*}
   \begin{itemize}
   \item Complicated analycital solution (absolute value/rational function)
-  \item Possibility 1: Approximate $I$ by $\int\limits_{x=0}^1 N(x) - N'(x) \  dx$
-    \begin{itemize}
-    \item Not good.
-    \end{itemize}
+  \item Possibility 1: Approximate $I$ by $\int\limits_{x=0}^1 N(x) - N'(x) \  dx$. Bad!
   \item Fact: $N(x_i) = N'(x_i)$ 
     $\Rightarrow$ $N(x_i) - N'(x_i) = 0$
-  \item Piecewise integration between the $x_i$'s: \todo{Sollten im Skript die Betragsstriche nicht anders stehen (so wie hier)?}
+  \item Piecewise integration between the $x_i$'s:
     \begin{equation*}
       \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N(x) - N'(x) \  dx\ \right|
     \end{equation*}
     \begin{itemize}
-    \item Seems quite good, but really, really, really slow
     \item Accuracy can be improved by ``adding $x_i$'s''
+    \item Seems quite good, but really, really, really slow
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -754,19 +794,6 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
       \int\limits_{x=0}^1 N(x)-N'(x)\,dx \approx \sum_{i=0}^{s-1} \left| N\left(\frac{1}{2s} + \frac{i}{s}\right) - N'\left(\frac{1}{2s} + \frac{i}{s}\right) \right| \cdot \frac{1}{s}
     \end{equation*}
     \todo{Skizze dazu unbedingt nötig!}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Some Considerations}
-  \begin{itemize}
-  \item $N(x)-N'(x)$ depends upon $4n$ variables
-    \begin{itemize}
-    \item Two edges
-    \item $n$ points on each edge
-    \item Each point has height and impulse
-    \end{itemize}
-  \item $\Rightarrow$ Visualization: Fix all but at most 2 variables
   \end{itemize}
 \end{frame}
 
