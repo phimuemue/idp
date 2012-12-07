@@ -44,7 +44,7 @@
 
 \begin{document}
 
-\part{Derivation of stuff.}
+\part{Short Introduction to Shallow Water Equations.}
 \label{part:introduction}
 
 \begin{frame}
@@ -64,141 +64,63 @@
   \frametitle{Shallow Water Equations}
   \begin{equation}
     \label{eq:shallow-water-raw}
-    \pd{\mathbf{q}}{t} + \divergence F(\mathbf{q}) = r = \begin{pmatrix}
+    \pd{\mathbf{q}}{t} + \nabla \cdot F(\mathbf{q}) = r = \begin{pmatrix}
       0 \\ 0\\ 0
     \end{pmatrix}
   \end{equation}
 
-  \begin{block}{Two variants for $F$:}
-    \begin{eqnarray*}
-      \mathbf{q} =
-      \begin{pmatrix}
-        h \\ h v_x \\ h v_y
-      \end{pmatrix} \quad F(\mathbf{q}) =
-      \begin{pmatrix}
-        h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
-        v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
-      \end{pmatrix}
-    \end{eqnarray*}
-
-    \begin{eqnarray*}
-      \mathbf{q} =
-      \begin{pmatrix}
-        h \\ u_x \\ u_y
-      \end{pmatrix} \quad F(\mathbf{q}) =
-      \begin{pmatrix}
-        \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
-        \frac{1}{2} g h^2 e_y
-      \end{pmatrix},
-    \end{eqnarray*}
-    where $\mathbf{u}=
+  \begin{eqnarray*}
+    \mathbf{q} =
     \begin{pmatrix}
-      u_x \\ u_y
-    \end{pmatrix}$ and $\mathbf{v} =
+      h \\ h v_x \\ h v_y
+    \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
     \begin{pmatrix}
-      v_x \\ v_y
-    \end{pmatrix}$
-  \end{block}
-\end{frame}
-
-\begin{frame}
-  \frametitle{$x$- and $y$-Direction}
-
-  \begin{equation*}
-    \pd{\mathbf{q}}{t} + \divergence F(\mathbf{q}) = r = \begin{pmatrix}
-      0 \\ 0\\ 0
+      h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
+      v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
     \end{pmatrix}
-  \end{equation*}
+  \end{eqnarray*}
 
   \begin{eqnarray*}
     \mathbf{q} =
     \begin{pmatrix}
       h \\ u_x \\ u_y
-    \end{pmatrix} \quad F(\mathbf{q}) =
+    \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
     \begin{pmatrix}
-      u \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u} +
+      \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
       \frac{1}{2} g h^2 e_y
-    \end{pmatrix}
+    \end{pmatrix},
   \end{eqnarray*}
-
-  \begin{eqnarray*}
-    F^x(\mathbf{q}) =
-    \begin{pmatrix}
-      u_x \\ \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
-    \end{pmatrix}
-    \quad
-    F^y(\mathbf{q}) =
-    \begin{pmatrix}
-      u_y \\ \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
-    \end{pmatrix}
-  \end{eqnarray*}
-  
-  \begin{block}{Remarks:}
-    \begin{itemize}
-    \item Difference between $\mathbf{q}$ and $u=(u_x,u_y)$.
-    \item Each line consists of 2 sub-lines ($x$- and $y$-direction).
-    \item $\divergence
-      \begin{pmatrix}
-        a \\ b
-      \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
-    \end{itemize}
-  \end{block}
-  \todo{Erklären, dass man durch $\divergence$ insgesamt 3 Zeilen enthält.}
-  
+  where $\mathbf{u}=
+  \begin{pmatrix}
+    u_x \\ u_y
+  \end{pmatrix}$, $\mathbf{v} =
+  \begin{pmatrix}
+    v_x \\ v_y
+  \end{pmatrix}$ and $\nabla \cdot
+  \begin{pmatrix}
+    a \\ b
+  \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
 \end{frame}
 
 \begin{frame}
-  \frametitle{Weak Form}
+  \frametitle{Discontinuous Galerkin}
+  Multiply the equation by a test function $\phi$ and integrate over the domain:
+  
   \begin{equation}
     \label{eq:shallow-water-weak-form}
     \int_T \pd {\mathbf{q}}{t} \phi \, dT + \int_T \nabla \cdot F(\mathbf{q}) \phi \, dT = 0
   \end{equation}
-  
-  \begin{block}{Remarks:}
-    \begin{itemize}
-    \item Galerkin method: Multiply equation (\ref{eq:shallow-water-raw}) by $\phi$ and integrate over triangle $T$
-    \item Integral works line by line (i.e. for components $h$, $u_x$ and $u_y$)
-    \item $\nabla \cdot F(\mathbf{q}) = \divergence F(\mathbf{q})$
-    %\item $T$ is a single triangle
-    \end{itemize}
-  \end{block}
-  \todo{Erklärung von Stjepan bezgl. Dreiecke auch in Slides bringen!}
 
-  Gaussian Divergence Theorem yields:
-  \begin{equation*}
-    \int_T \pd {\mathbf{q}}{t} \phi \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot n \phi \, ds -
-    \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
-  \end{equation*}
+  Transform using the gaussian divergence theorem:
 
-\end{frame}
-
-\begin{frame}
-  \frametitle{Weak Form -- Some Explanations}
   \begin{equation}
-    \label{eq:shallow-water-weak-form-div-applied}
+    \label{eq:shallow-water-dg}
     \int_T \pd {\mathbf{q}}{t} \phi \, dT +
     \int_{\partial T} F(\mathbf{q}) \cdot n \phi \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
   \end{equation}
   
-  \begin{block}{Remarks:}
-    \begin{itemize}
-    \item $dT$ and $ds$: abbreviations for $dx\ dy$
-    %\item First integral: Straightforward!
-    \item Second integral:
-      \begin{itemize}
-      \item Border integral ``around'' triangle
-      \item $n$ denotes the normal (depending upon $x,y$-values)
-      \end{itemize}
-    \item Third integral: $\nabla
-      \begin{pmatrix}
-        a \\ b
-      \end{pmatrix} =\left( \pd{a}{x}, \pd{b}{y} \right) ^T$
-    \item ``Multiplications'': $(a,b)\cdot(c,d) = ac+bd$
-    \item Goal: Find solution for $\mathbf{q}$
-    \end{itemize}
-  \end{block}
+  Goal: Find solution for $\mathbf{q}$
 \end{frame}
 
 \begin{frame}
