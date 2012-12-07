@@ -63,23 +63,23 @@
 \begin{frame}
   \frametitle{Shallow Water Equations}
   \begin{equation}
-    \label{eq:shallow-water-raw}
+    \label{eq:shallow-water-basic}
     \pd{\mathbf{q}}{t} + \nabla \cdot F(\mathbf{q}) = r = \begin{pmatrix}
       0 \\ 0\\ 0
     \end{pmatrix}
   \end{equation}
 
-  \begin{eqnarray*}
-    \mathbf{q} =
-    \begin{pmatrix}
-      h \\ h v_x \\ h v_y
-    \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
-    \begin{pmatrix}
-      h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
-      v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
-    \end{pmatrix}
-  \end{eqnarray*}
-
+%  \begin{eqnarray*}
+%    \mathbf{q} =
+%    \begin{pmatrix}
+%      h \\ h v_x \\ h v_y
+%    \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
+%    \begin{pmatrix}
+%      h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
+%      v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
+%    \end{pmatrix}
+%  \end{eqnarray*}
+%
   \begin{eqnarray*}
     \mathbf{q} =
     \begin{pmatrix}
@@ -124,219 +124,69 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Galerkin Method}
+  \frametitle{Discontinuous Galerkin -- Remarks}
   \begin{itemize}
-  \item Have several functions $\phi_i$ (for $i=1:n$) -- will be defined later
-  \item Approximation: 
+  \item Analytical solution impossible $\rightarrow$ numerical approximation
+  \item Sample values at $n$ support points
+  \item A basis function $\phi_i$ for each support point $\rightarrow$ nodal basis
+  \item Approximate 
     $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$.
-  \item Only $\phi_i$ depending on $x,y$!
+  \item Result: $\mathbf{q}_i$ does not depend on $x$ and $y$ anymore
   \end{itemize}
 
   \begin{equation}
-    \label{eq:shallow-water-weak-form-div-applied-approximation}
+    \label{eq:shallow-water-phi-i}
     \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
-    \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds  -
+    \int_{\partial T} F(\mathbf{q}) \cdot n \phi_i \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
   \end{equation}
 \end{frame}
 
-\section{Matrices, matrices, matrices}
+\section{Matrices}
 
 \begin{frame}
-  \frametitle{First Integral: Mass Matrix}
-
-  \begin{eqnarray*}
-    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT &\approx& 
-    \int_T \pd {\left( \sum_{j=1}^n \mathbf{q}_j \phi_j \right) }{t} \phi_i \, dT = \\
-    &=& \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{M_{ij}} \pd{\mathbf{q}_j}{t}
-  \end{eqnarray*}
-  
-  \begin{block}{}
-    \begin{itemize}
-    \item Symmetric $n \times n$-matrix
-    \item Interpret the above as a matrix multiplication
-    \end{itemize}
-  \end{block}
+  \frametitle{Simplifying Integrals}
 
   \begin{equation*}
-    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT \approx
-    M \cdot \pd{
-        \left( \mathbf{q}_1 , \dots , \mathbf{q}_n  \right)^T }
-      {t}
+    \label{sec:first-integral}
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT \approx \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{m_{ij}} \pd{\mathbf{q}_j}{t}
   \end{equation*}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Third Integral: Stiffness matrix -- $h$-component}
+  
   \begin{eqnarray*}
-    \int_T F_1(\mathbf{q}) \cdot \nabla \phi_i \, dT &=&
-    \int_T
-    \begin{pmatrix}
-      u_x \\ u_y
-    \end{pmatrix}
-    \cdot \nabla \phi_i \, dT \approx \\
-    &=& \int_T 
-    \begin{pmatrix} 
-      \sum_{j=1}^n u_{x,j} \phi_j \\
-      \sum_{j=1}^n u_{y,j} \phi_j \\
-    \end{pmatrix}
-    \cdot 
-    {
-      \renewcommand\arraystretch{2}
-      \begin{pmatrix}
-        \pd{\phi_i}{x} \\
-        \pd{\phi_i}{y} 
-      \end{pmatrix} dT 
-    }\\
-    &=& \sum_{j=1}^n u_{x,j} \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{S^x_{ij}} + \sum_{j=1}^n u_{y,j} \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{S^y_{ij}}
-  \end{eqnarray*}
-  \begin{block}{}
-    \begin{itemize}
-    \item $S^x$ and $S^y$ are $n \times n$-matrices
-    \item Interpret sums as matrix multiplications
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Intermezzo: Point-wise Approximation}
-  \begin{itemize}
-  \item   $\mathbf{q}\approx \sum_{i=1}^n \mathbf{q}_i \phi_i$, i.e.\,$
-    \begin{pmatrix}
-      h \\ u_x \\ u_y
-    \end{pmatrix} = \sum_{i=1}^n
-    \begin{pmatrix}
-      h_i \\ u_{x,i} \\ u_{y,i}
-    \end{pmatrix}
-    \phi_i$
-  \item   We would like to compute function value
-    \begin{equation*}
-      f(\mathbf{q}) \approx 
-      f\left(\sum_{i=1}^n h_i \phi_i,
-        \sum_{i=1}^n u_{x,i} \phi_i,
-        \sum_{i=1}^n u_{y,i} \phi_i\right),
-    \end{equation*}
-  \item   Too complex $\Rightarrow$ compute the following:
-    \begin{equation*}
-      \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
-    \end{equation*}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Third Integral: Stiffness matrix -- $u_x$-component}
-  \begin{eqnarray*}
-    \label{sec:third-integral-second-line-1}
-    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT &=&
-    \int_T
-    \begin{pmatrix}
-      \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
-    \end{pmatrix}
-    \cdot \nabla \phi_i \, dT \approx \\        
-    \label{sec:third-integral-second-line-2}
-    &=& 
-    \int_T 
-    \begin{pmatrix}
-      \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
-      \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
-    \end{pmatrix}
-    \cdot 
-    {
-      \renewcommand{\arraystretch}{2}
-      \begin{pmatrix}
-        \pd{\phi_i}{x} \\
-        \pd{\phi_i}{y} 
-      \end{pmatrix} dT 
-    } \\
-    &=& \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\ 
-    &&+ \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
-  \end{eqnarray*}
-    \begin{itemize}
-    \item First to second line uses a point-wise approximation
-    \item We recognize the stiffness matrices $\Rightarrow$ interpret as matrix multiplication
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Third Integral: Stiffness matrix -- $u_y$-component}
-  \begin{eqnarray*}
-    \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi_i \, dT &=&
-    \int_T
-    \begin{pmatrix}
-      \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2 
-    \end{pmatrix}
-    \cdot \nabla \phi_i \, dT \approx \\
-    &=& \int_T 
-    \begin{pmatrix}
-      \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
-      \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
-    \end{pmatrix}
-    \cdot 
-    {
-      \renewcommand{\arraystretch}{2}
-      \begin{pmatrix}
-        \pd{\phi_i}{x} \\
-        \pd{\phi_i}{y} 
-      \end{pmatrix} dT 
-    } \\
-    &=& \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
-    &&+ \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+    \label{sec:third-integral}
+    \int_T F_k(\mathbf{q}) \cdot \nabla \phi_i \, dT \approx &
+    \sum_{j=1}^n F_k^x\left(\mathbf{q}_j\right) \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{s^x_{ij}} \\
+    {} & + \sum_{j=1}^n F_k^y\left(\mathbf{q}_j\right) \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{s^y_{ij}}
   \end{eqnarray*}
 
-\end{frame}
-
-\begin{frame}
-  \frametitle{Second Integral}
-  Split into triangle edges:
   \begin{equation}
-    \label{eq:border-integral-sum}
-    \int_{\partial T} F(\mathbf{q}) \cdot n \phi_i \, ds = \sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds =: BI
+    \label{eq:second-integral}
+    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi_i \, ds = \sum_{e \in E} \sum_{k=0}^{m} F^e(p_k^e) \underbrace{\phi_i(p_k^e) \cdot w_k}_{w_{ik}^e}
   \end{equation}
-  \begin{itemize}
-  \item Normals are incorporated in $F^e$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Border Integral}
-    Compute $\sum_{e\in\left\{ e_1,e_2,e_3 \right\}} \int_{e} F^e \phi_i \, ds$ by Gauss-Quadrature:
-
-\begin{equation}
-  \int_{e} F^e \phi_i \, ds \approx \sum_{k=0}^{m} F^e(p_k) \underbrace{\phi_i(p_k) \cdot w_k}_{W_{ik}},
-\end{equation}
-\todo{Sollte das $F^e_j$ heißen?}
-\begin{block}{Remarks}
-  \begin{itemize}
-  \item $m$: Number of support points for Gaussian quadrature
-  \item $p_k$: Gauss-support point with index $k$
-  \item $w_k$: corresponding Gauss weight
-  \item $W_{ik}$: $n\times m$ matrix; can be pre-computed!
-  \item $F^e$: Numerical flux (several possibilities)
-  \end{itemize}
-\end{block}
-    
 \end{frame}
 
 \begin{frame}
   \frametitle{Overview: Matrices}
   \begin{description}
-  \item[Mass matrix.] The mass matrix is a $(n\times n)$-matrix that has the following structure:
+  \item[Mass matrix.]
     \begin{equation}
       \label{eq:mass-matrix-overview}
-      M_{ij} = \int_T \phi_i \phi_j \ dT
+      M = \int_T \phi_i \phi_j \ dT
     \end{equation}
-  \item[Stiffness matrices] Stiffness matrices have dimension $(n\times n)$. They are computed as follows:
+  \item[Stiffness matrices]
     \begin{equation}
       \label{eq:stiffness-matrix-overview}
-      S^x_{ij} = \int_T \phi_j \pd{\phi_i}{x} \quad
-      S^y_{ij} = \int_T \phi_j \pd{\phi_i}{y}
+      S^x = \int_T \phi_j \pd{\phi_i}{x} \quad
+      S^y = \int_T \phi_j \pd{\phi_i}{y}
     \end{equation}
-  \item[``Weight matrix''] This matrix has dimensions $n\times m$, and is computed as follows:
+  \item[Edge matrices] $\forall e \in E$:
     \begin{equation}
-      \label{eq:edge-matrix}
-      W_{ik} = \phi_i(p_k)\cdot w_k
+      \label{eq:edge-matrices}
+      W^e = \phi_i\left(p_k^e\right) \cdot w_k
     \end{equation}
   \end{description}
+
+  All matrices independent of $x$ and $y$ $\rightarrow$ precomputable
 \end{frame}
 
 \begin{frame}
@@ -344,116 +194,115 @@
   Remember:
   \begin{equation*}
     \int_T \pd {\mathbf{q}}{t} \phi \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot n \phi \, ds -
+    \int_{\partial T} F\left(\mathbf{q}\right) \cdot n \phi \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
   \end{equation*}
-  Using matrices $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{F^e}=(F^e(p_1),\dots,F^e(p_n))$, \todo{Stimmt die Definition von $\tilde{F^e}$?}we can rewrite:
+  Using vectors $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$, we can rewrite it using our matrix definitions:
   
   \begin{equation*}
     M \cdot \pd{\tilde{\mathbf{q}}}{t} +
-    \sum_{e \in E} \tilde{F^e} W -
+    \sum_{e \in E} \tilde{F}^e W -
     \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
   \end{equation*}
 \end{frame}
 
 \begin{frame}
+  \frametitle{Choice of Support Points}
+  Goal: Invertible mass matrix $M$
+  \begin{itemize}
+  \item Low degree of basis functions: Choose specific support points
+  \item Higher degree: points derived by Dunavant
+  \end{itemize}
+
+  \begin{figure}[ht]
+    \centering
+    \subfigure[Degree 0]{
+      \begin{tikzpicture}[scale=1.5]
+        \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+        \draw[fill=blue] (0.33333333, 0.3333333333) circle (0.02);
+      \end{tikzpicture}
+    }
+    \subfigure[Degree 1]{
+      \begin{tikzpicture}[scale=1.5]
+        \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+        \draw[fill=blue] (0.5, 0) circle (0.02);
+        \draw[fill=blue] (0, 0.5) circle (0.02);
+        \draw[fill=blue] (0.5, 0.5) circle (0.02);
+      \end{tikzpicture}
+    }
+    \subfigure[Degree 2]{
+      \begin{tikzpicture}[scale=1.5]
+        \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+        \draw[fill=blue] (0.5, 0) circle (0.02);
+        \draw[fill=blue] (0, 0.5) circle (0.02);
+        \draw[fill=blue] (0.5, 0.5) circle (0.02);
+        \draw[fill=blue] (0, 0) circle (0.02);
+        \draw[fill=blue] (1, 0) circle (0.02);
+        \draw[fill=blue] (0, 1) circle (0.02);
+      \end{tikzpicture}
+    }
+    \subfigure[Degree 3]{
+      \begin{tikzpicture}[scale=1.5]
+        \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
+        \draw[fill=blue] (0.501426509658179, 0.24928674517091) circle (0.02);
+        \draw[fill=blue] (0.24928674517091, 0.24928674517091) circle (0.02);
+        \draw[fill=blue] (0.24928674517091, 0.501426509658179) circle (0.02);
+        \draw[fill=blue] (0.873821971016996, 0.063089014491502) circle (0.02);
+        \draw[fill=blue] (0.063089014491502, 0.063089014491502) circle (0.02);
+        \draw[fill=blue] (0.063089014491502, 0.873821971016996) circle (0.02);
+        \draw[fill=blue] (0.053145049844817, 0.310352451033784) circle (0.02);
+        \draw[fill=blue] (0.310352451033784, 0.636502499121399) circle (0.02);
+        \draw[fill=blue] (0.636502499121399, 0.053145049844817) circle (0.02);
+        \draw[fill=blue] (0.310352451033784, 0.053145049844817) circle (0.02);
+      \end{tikzpicture}
+    }
+  \end{figure}
+\end{frame}
+
+\begin{frame}
   \frametitle{Choice of Basis Functions $\phi_i$}
+  Goal:
   \begin{itemize}
-  \item Polynomial basis functions (in two variables $x$ and $y$)
-  \item Basis function have to \emph{span} space of all polynomials up to a certain degree
+  \item Polynomial functions that span the space of all polynomials up to a certain degree
   \end{itemize}
-  Simple way:
-  \begin{itemize}
-  \item Grab a certain set of $n$ points $p_1$ through $p_{n}$.
-  \item Construct basis function $\phi_i$ such that $\forall i=1:n \  \forall j=1:n. \ \phi_i(p_j) = \delta_{ij}$ using lagrange polynomials (the term $\delta_{ij}$ denotes Kronecker-Delta).
-  \end{itemize}
-  Consequences:
-  \begin{itemize}
-  \item Polynomials of degree $d$ $\Rightarrow$ $\binom{d+2}{2}$ basis functions resp. support points
-  \end{itemize}
-\end{frame}
 
-\begin{frame}
-  \frametitle{Support Points}
-  \begin{itemize}
-  \item Low degree of basis function: Specific support points
+  \begin{block}{Lagrange interpolation}
+    Construct function $\phi_i$ so that $\forall i,j \in \{1, \dots, n\}$:
+    \begin{equation*}
+      \phi_i(p_j) = \delta_{ij}
+    \end{equation*}
+    with $\delta_{ij}$ being the Kronecker delta function.
+
+    Result:
     \begin{itemize}
-    \item 0: Support point in center of triangle
-    \item 1: 3 points at the centers of the edges
-    \item 2: 6 points: center of edges and triangle corners
+    \item Polynomials of degree $d$ $\Rightarrow$ $\frac{(d+1)\cdot(d+2)}{2}$ nodal basis functions
     \end{itemize}
-  \item Higher degree: ``Dunavant-Method'' \todo{Genauer erklären?}\todo{Referenz.}
-  \end{itemize}
-
-\begin{figure}[ht]
-  \centering
-  \subfigure[Degree 0]{
-    \begin{tikzpicture}[scale=1.5]
-      \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-      \draw[fill=black] (0.33333333, 0.3333333333) circle (0.05);
-    \end{tikzpicture}
-  }
-  \subfigure[Degree 1]{
-    \begin{tikzpicture}[scale=1.5]
-      \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-      \draw[fill=black] (0.5, 0) circle (0.05);
-      \draw[fill=black] (0, 0.5) circle (0.05);
-      \draw[fill=black] (0.5, 0.5) circle (0.05);
-    \end{tikzpicture}
-  }
-  \subfigure[Degree 2]{
-    \begin{tikzpicture}[scale=1.5]
-      \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-      \draw[fill=black] (0.5, 0) circle (0.05);
-      \draw[fill=black] (0, 0.5) circle (0.05);
-      \draw[fill=black] (0.5, 0.5) circle (0.05);
-      \draw[fill=black] (0, 0) circle (0.05);
-      \draw[fill=black] (1, 0) circle (0.05);
-      \draw[fill=black] (0, 1) circle (0.05);
-    \end{tikzpicture}
-  }
-  \subfigure[Degree 3]{
-    \begin{tikzpicture}[scale=1.5]
-      \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-      \draw[fill=black] (0.501426509658179, 0.24928674517091) circle (0.05);
-      \draw[fill=black] (0.24928674517091, 0.24928674517091) circle (0.05);
-      \draw[fill=black] (0.24928674517091, 0.501426509658179) circle (0.05);
-      \draw[fill=black] (0.873821971016996, 0.063089014491502) circle (0.05);
-      \draw[fill=black] (0.063089014491502, 0.063089014491502) circle (0.05);
-      \draw[fill=black] (0.063089014491502, 0.873821971016996) circle (0.05);
-      \draw[fill=black] (0.053145049844817, 0.310352451033784) circle (0.05);
-      \draw[fill=black] (0.310352451033784, 0.636502499121399) circle (0.05);
-      \draw[fill=black] (0.636502499121399, 0.053145049844817) circle (0.05);
-      \draw[fill=black] (0.310352451033784, 0.053145049844817) circle (0.05);
-    \end{tikzpicture}
-  }
-\end{figure}
-
+  \end{block}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Intermezzo: Explicit Euler}
-\begin{eqnarray}
-  \label{eq:euler-method-setting}
-  \pd{x(t)}{t} &=& f(t, x(t)). \\
-  x(t_0) &=& x_0
-\end{eqnarray}
-
-Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
-
-\begin{equation}
-  \label{eq:euler-step-solution}
-  x_{k+1} = x_k + \tau f(t_k, x_k), \quad k=0,1,2,\dots
-\end{equation}
-
-\end{frame}
-
+%\begin{frame}
+%  \frametitle{Intermezzo: Explicit Euler}
+%  \begin{eqnarray}
+%    \label{eq:euler-method-setting}
+%    \pd{x(t)}{t} &=& f(t, x(t)). \\
+%    x(t_0) &=& x_0
+%  \end{eqnarray}
+%
+%  Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
+%
+%  \begin{equation}
+%    \label{eq:euler-step-solution}
+%    x_{k+1} = x_k + \tau f(t_k, x_k), \quad k=0,1,2,\dots
+%  \end{equation}
+%
+%\end{frame}
+%
 \begin{frame}
   \frametitle{Solving the Equation}
   \begin{equation*}
     M \cdot \pd{\tilde{\mathbf{q}}}{t} +
-    \sum_{e \in E} \tilde{F^e} W -
+    \sum_{e \in E} \tilde{F}^e W -
     \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
   \end{equation*}
@@ -463,7 +312,7 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
     M^{-1} \cdot \left(
       F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y -
-      \sum_{e \in E} \tilde{F^e} W\right
+      \sum_{e \in E} \tilde{F}^e W\right
     )
   \end{equation*}
   \begin{equation*}
@@ -473,14 +322,10 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
     \tau \cdot M^{-1} \cdot \left(
       F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y -
-      \sum_{e \in E} \tilde{F^e} W\right
+      \sum_{e \in E} \tilde{F}^e W\right
     ),
   \end{equation*}
   where $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{\mathbf{q}}_k$ is the value of $\tilde{\mathbf{q}}$ at time $k$.
-
-  \begin{block}{Remark}
-    Actually a collection of $3n$ equations!
-  \end{block}
 \end{frame}
 
 \part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrich-Flux}
@@ -519,20 +364,20 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
   \begin{center}
     \begin{tikzpicture}[scale=2]
       \begin{scope}[xshift=-.1em,yshift=-.1em]
-        \draw (0,0) -- (0,1) -- (1,0) -- (0,0); \draw[fill=black]
-        (0,0) circle (0.025); \draw[fill=black] (0.5,0) circle
-        (0.025); \draw[fill=black] (1,0) circle (0.025);
-        \draw[fill=black] (0.5,0.5) circle (0.025); \draw[fill=black]
-        (0,1) circle (0.025); \draw[fill=black] (0,0.5) circle
+        \draw (0,0) -- (0,1) -- (1,0) -- (0,0); \draw[fill=blue]
+        (0,0) circle (0.025); \draw[fill=blue] (0.5,0) circle
+        (0.025); \draw[fill=blue] (1,0) circle (0.025);
+        \draw[fill=blue] (0.5,0.5) circle (0.025); \draw[fill=blue]
+        (0,1) circle (0.025); \draw[fill=blue] (0,0.5) circle
         (0.025);
       \end{scope}
       \draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
       \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
-        \draw (0,0) -- (0,1) -- (1,0) -- (0,0); \draw[fill=black]
-        (0,0) circle (0.025); \draw[fill=black] (0.5,0) circle
-        (0.025); \draw[fill=black] (1,0) circle (0.025);
-        \draw[fill=black] (0.5,0.5) circle (0.025); \draw[fill=black]
-        (0,1) circle (0.025); \draw[fill=black] (0,0.5) circle
+        \draw (0,0) -- (0,1) -- (1,0) -- (0,0); \draw[fill=blue]
+        (0,0) circle (0.025); \draw[fill=blue] (0.5,0) circle
+        (0.025); \draw[fill=blue] (1,0) circle (0.025);
+        \draw[fill=blue] (0.5,0.5) circle (0.025); \draw[fill=blue]
+        (0,1) circle (0.025); \draw[fill=blue] (0,0.5) circle
         (0.025);
       \end{scope}
     \end{tikzpicture}
@@ -585,16 +430,16 @@ Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
       \begin{tikzpicture}[scale=2]
         \begin{scope}[xshift=-.1em,yshift=-.1em]
           \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-          \draw[fill=black] (0.113,0.887) circle (0.025); 
-          \draw[fill=black] (0.5,0.5) circle (0.025); 
-          \draw[fill=black] (0.887,0.113) circle (0.025); 
+          \draw[fill=blue] (0.113,0.887) circle (0.025); 
+          \draw[fill=blue] (0.5,0.5) circle (0.025); 
+          \draw[fill=blue] (0.887,0.113) circle (0.025); 
         \end{scope}
         \draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
         \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
           \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-          \draw[fill=black] (0.113,0.887) circle (0.025); 
-          \draw[fill=black] (0.5,0.5) circle (0.025); 
-          \draw[fill=black] (0.887,0.113) circle (0.025); 
+          \draw[fill=blue] (0.113,0.887) circle (0.025); 
+          \draw[fill=blue] (0.5,0.5) circle (0.025); 
+          \draw[fill=blue] (0.887,0.113) circle (0.025); 
         \end{scope}
       \end{tikzpicture}
     \end{center}
@@ -1180,4 +1025,174 @@ As you might know, Maple supports kind of ``dynamic plotting''. That is, you get
 
 \end{comment}
 
+\begin{comment}
+\begin{frame}
+  \frametitle{First Integral: Mass Matrix}
+
+  \begin{eqnarray*}
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT & \approx &
+    \int_T \pd {\left( \sum_{j=1}^n \mathbf{q}_j \phi_j \right) }{t} \phi_i \, dT \\
+    & = & \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{m_{ij}} \pd{\mathbf{q}_j}{t}
+  \end{eqnarray*}
+  
+  \begin{itemize}
+  \item Result: Mass matrix $M = [m_{ij}]_{n \times n}$
+  \item Interpret the above as a matrix multiplication
+  \end{itemize}
+
+  \begin{equation*}
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT \approx
+    M \cdot \pd{
+        \left( \mathbf{q}_1 , \dots , \mathbf{q}_n  \right)^T }
+      {t}
+  \end{equation*}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Third Integral: Stiffness matrix -- $h$ component}
+  \begin{eqnarray*}
+    \int_T F_1(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
+    \int_T
+    \begin{pmatrix}
+      u_x \\ u_y
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    & \approx & \int_T 
+    \begin{pmatrix} 
+      \sum_{j=1}^n u_{x,j} \phi_j \\
+      \sum_{j=1}^n u_{y,j} \phi_j \\
+    \end{pmatrix}
+    \cdot 
+    {
+      \renewcommand\arraystretch{2}
+      \begin{pmatrix}
+        \pd{\phi_i}{x} \\
+        \pd{\phi_i}{y} 
+      \end{pmatrix} dT 
+    }\\
+    & = & \sum_{j=1}^n u_{x,j} \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{s^x_{ij}} + \sum_{j=1}^n u_{y,j} \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{s^y_{ij}}
+  \end{eqnarray*}
+  \begin{itemize}
+  \item Result: Stiffness matrices $S^x = [s_{ij}^x]_{n \times n}$ and $S^y = [s_{ij}^y]_{n \times n}$
+  \item Interpret sums as matrix multiplications
+  \end{itemize}
+\end{frame}
+
+%\begin{frame}
+%  \frametitle{Intermezzo: Point-wise Approximation}
+%  \begin{itemize}
+%  \item   $\mathbf{q}\approx \sum_{i=1}^n \mathbf{q}_i \phi_i$, i.e.\,$
+%    \begin{pmatrix}
+%      h \\ u_x \\ u_y
+%    \end{pmatrix} = \sum_{i=1}^n
+%    \begin{pmatrix}
+%      h_i \\ u_{x,i} \\ u_{y,i}
+%    \end{pmatrix}
+%    \phi_i$
+%  \item   We would like to compute function value
+%    \begin{equation*}
+%      f(\mathbf{q}) \approx
+%      f\left(\sum_{i=1}^n h_i \phi_i,
+%        \sum_{i=1}^n u_{x,i} \phi_i,
+%        \sum_{i=1}^n u_{y,i} \phi_i\right),
+%    \end{equation*}
+%  \item   Too complex $\Rightarrow$ compute the following:
+%    \begin{equation*}
+%      \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
+%    \end{equation*}
+%  \end{itemize}
+%\end{frame}
+%
+\begin{frame}
+  \frametitle{Third Integral: Stiffness matrix -- $u_x$ component}
+  \begin{eqnarray*}
+    \label{sec:third-integral-second-line-1}
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
+    \int_T
+    \begin{pmatrix}
+      \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    \label{sec:third-integral-second-line-2}
+    & \approx &
+    \int_T 
+    \begin{pmatrix}
+      \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+      \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+    \end{pmatrix}
+    \cdot 
+    {
+      \renewcommand{\arraystretch}{2}
+      \begin{pmatrix}
+        \pd{\phi_i}{x} \\
+        \pd{\phi_i}{y} 
+      \end{pmatrix} dT 
+    } \\
+    & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\ 
+    & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+  \end{eqnarray*}
+    \begin{itemize}
+  \item Point-wise approximation in the second line
+  \item Same stiffness matrices $S^x$ and $S^y$ as before $\rightarrow$ interpret as matrix multiplication
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Third Integral: Stiffness matrix -- $u_y$ component}
+  \begin{eqnarray*}
+    \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi_i \, dT & = &
+    \int_T
+    \begin{pmatrix}
+      \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2 
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    & \approx & \int_T 
+    \begin{pmatrix}
+      \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+      \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \end{pmatrix}
+    \cdot 
+    {
+      \renewcommand{\arraystretch}{2}
+      \begin{pmatrix}
+        \pd{\phi_i}{x} \\
+        \pd{\phi_i}{y} 
+      \end{pmatrix} dT 
+    } \\
+    & = & \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+    & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+  \end{eqnarray*}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Second Integral: Border Integral}
+  Split into triangle edges:
+  \begin{equation}
+    \label{eq:border-integral-sum}
+    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi_i \, ds = \sum_{e \in E} \int_{e} F^e \phi_i \, ds
+  \end{equation}
+  \begin{itemize}
+  \item Normals are incorporated in $F^e$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Border Integral}
+  Compute $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ by Gaussian quadrature:
+
+  \begin{equation}
+    \int_{e} F^e \phi_i \, ds \approx \sum_{k=0}^{m} F^e(p_k^e) \underbrace{\phi_i(p_k^e) \cdot w_k}_{w_{ik}^e},
+  \end{equation}
+  Result: Edge matrices $W^e = [w_{ik}^e]_{n \times m} \quad \forall e \in E$
+  \begin{block}{Remarks}
+  \begin{itemize}
+  \item $m$: Number of support points for Gaussian quadrature
+  \item $p_k^e$: Support point with index $k$ on edge $e$
+  \item $w_k$: corresponding quadrature weight
+  \item $F^e$: Numerical flux function along that edge
+  \end{itemize}
+\end{block}
+    
+\end{frame}
+\end{comment}
 \end{document}

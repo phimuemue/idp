@@ -141,7 +141,7 @@ Another set of points are \emph{Gaussian quadrature} points, which we will use l
 \section{Choice of basis functions}
 \label{sec:basis-functions-choice}
 
-For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $n$. The name already gives away the nature of these functions, because they are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $n$ as a linear combination of these basis functions.
+For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$. The name already gives away the nature of these functions, because they are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $d$ as a linear combination of these basis functions.
 
 A relatively simple way of constructing basis functions is to use Lagrange interpolation:
 \begin{itemize}
@@ -149,9 +149,9 @@ A relatively simple way of constructing basis functions is to use Lagrange inter
 \item Construct function $\phi_i$ such that $\phi_i(p_j) = \delta_{ij} \  \forall i,j \in \{1 \dots n\}$ using Lagrange polynomials (with $\delta_{ij}$ being the Kronecker delta function).
 \end{itemize}
 
-The (minimum) number of basis functions is not arbitrary, but it depends on the degree of the polynomials. If we only employ polynomials of degree 0 (i.e.\,constants), we only need one basis function. Increasing the degree by 1 involves introducing variables $x$ and $y$. Thus, we need three polynomials to construct every polynomial of degree 1, one to create polynomials containing $x$, one to create polynomials containing $y$ and one to create other constant polynomials.
+The (minimum) number of basis functions $n$ is not arbitrary, but it depends on the degree of the polynomials. If we only employ polynomials of degree 0 (i.e.\,constants), we only need one basis function. Increasing the degree by 1 involves introducing variables $x$ and $y$. Thus, we need three polynomials to construct every polynomial of degree 1, one to create polynomials containing $x$, one to create polynomials containing $y$ and one to create other constant polynomials.
 
-Generalizing this scheme we observe the following: if we want to use polynomials of degree $n$, a polynomial can contain terms $x^a y^b$ with $a+b \leq n$. A simple combinatorial arguments indicates that we need $\frac{(n+2) \cdot (n+1)}{2}$ basis functions to span the function space containing all the polynomials up to degree $n$.
+Generalizing this scheme we observe the following: if we want to use polynomials of degree $d$, a polynomial can contain terms $x^a y^b$ with $a+b \leq d$. A simple combinatorial arguments indicates that we need $\frac{(d+2) \cdot (d+1)}{2}$ basis functions to span the function space containing all the polynomials up to degree $d$.
 
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
@@ -423,9 +423,9 @@ The third line is computationally equivalent to the previous, with the respectiv
 
 Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because the term $F^e$ depends on the edge, and hence cannot be moved out of the integral, so the same techniques employed with the previous two integrals will not work here. Instead, we employ a Gaussian quadrature and integrate numerically. To do that we substitute the inner integral as follows:
 \begin{equation}
-  \int_{e} F^e \phi_i \, ds \approx \sum_{k=1}^{m} F^e\left(p_k\right) \underbrace{\phi_i\left(p_k\right) \cdot w_k}_{w_{ik}^\prime},
+  \int_{e} F^e \phi_i \, ds \approx \sum_{k=1}^{m} F^e\left(p_k^e\right) \underbrace{\phi_i\left(p_k^e\right) \cdot w_k}_{w_{ik}^e},
 \end{equation}
-where $m$ is the number of integration points and $w_k$ denotes the Gauss weight for point $p_k$ (consisting of $x$ and $y$ coordinates). This also contains the edge length (which was normalized to 1, but the hypotenuse still has length $\sqrt{2}$ in that case), which is why it has to be stored separately for every edge. Similar to the previous examples, the values $\phi_i(p_k) \cdot w_k$ can be precomputed as well, and added onto the term $F^e\left(p_k\right)$ when required. $F^e\left(p_k\right)$ itself is called the \emph{numerical flux} and can be computed in different ways, which we will get to in part \ref{part:polynomial-comparison}.
+where $m$ is the number of integration points and $w_k$ denotes the Gauss weight for point $p_k$ (consisting of $x$ and $y$ coordinates). This also contains the edge length (which was normalized to 1, but the hypotenuse still has length $\sqrt{2}$ in that case), which is why it has to be stored separately for every edge. Similar to the previous examples, the values $\phi_i\left(p_k^e\right) \cdot w_k$ can be precomputed for every edge as well, and added onto the term $F^e\left(p_k\right)$ when required. $F^e\left(p_k\right)$ itself is called the \emph{numerical flux} and can be computed in different ways, which we will get to in part \ref{part:polynomial-comparison}.
 
 \section{Matrix listing}
 \label{sec:matrix-listing}
@@ -444,10 +444,10 @@ The matrices we obtained from section \ref{sec:matrix-extraction} are the follow
     S^x = [s_{ij}^x]_{n \times n} = \int_T \phi_j \pd{\phi_i}{x} \quad
     S^y = [s_{ij}^y]_{n \times n} = \int_T \phi_j \pd{\phi_i}{y}
   \end{equation}
-\item[Weight matrix]
+\item[Edge matrices]
   \begin{equation}
-    \label{eq:weight-matrix}
-    W = [w_{ik}^\prime]_{n \times m} = \phi_i(p_k) \cdot w_k
+    \label{eq:edge-matrix}
+    W^e = [w_{ik}^e]_{n \times m} = \phi_i(p_k^e) \cdot w_k
   \end{equation}
 \end{description}
 
@@ -456,7 +456,7 @@ Using the approximation $\mathbf{q} \approx \sum_{j=1}^n \mathbf{q}_i \phi_i\lef
 \begin{equation}
   \label{eq:swe-matrix-form}
   M \cdot \pd{\tilde{\mathbf{q}}}{t} +
-  \sum_{e \in E} \tilde{F^e} W -
+  \sum_{e \in E} \tilde{F^e} W^e -
   \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
     F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
 \end{equation}
@@ -496,7 +496,7 @@ We can apply this method to our modified equation (\ref{eq:swe-matrix-form}) onc
   M^{-1} \cdot \left(
     F^x(\tilde{\mathbf{q}}) \cdot S^x +
     F^y(\tilde{\mathbf{q}}) \cdot S^y -
-    \sum_{e \in E} \tilde{F^e} W\right
+    \sum_{e \in E} \tilde{F^e} W^e\right
   )
 \end{equation*}
 
@@ -511,7 +511,7 @@ We can see that this has the form we are looking for to apply the euler step. Th
   \tau \cdot M^{-1} \cdot \left(
     F^x(\tilde{\mathbf{q}}) \cdot S^x +
     F^y(\tilde{\mathbf{q}}) \cdot S^y -
-    \sum_{e \in E} \tilde{F^e} W\right
+    \sum_{e \in E} \tilde{F^e} W^e\right
   )
 \end{equation*}
 
