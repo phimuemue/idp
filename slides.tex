@@ -196,7 +196,7 @@
 \begin{frame}
   \frametitle{Overview: Matrices}
   \begin{description}
-  \item[Mass matrix.]
+  \item[Mass matrix]
     \begin{equation}
       \label{eq:mass-matrix-overview}
       M = \int_T \phi_i \phi_j \ dT
@@ -225,11 +225,18 @@
     \int_{\partial T} F\left(\mathbf{q}\right) \cdot n \phi \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
   \end{equation*}
-  Using vectors $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$, we can rewrite it using our matrix definitions:
+  % Using vectors $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$, we can rewrite it using our matrix definitions:
+  Using
+  \begin{itemize}
+  \item $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$
+  \item $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$
+  \item $F^x$ resp. $F^y$: $x$ resp. $y$-components of $F$,
+  \end{itemize}
+  we arrive at
   
   \begin{equation*}
     M \cdot \pd{\tilde{\mathbf{q}}}{t} +
-    \sum_{e \in E} \tilde{F}^e W -
+    \sum_{e \in E} \tilde{F}^e W^e -
     \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
   \end{equation*}
@@ -239,7 +246,7 @@
   \frametitle{Solving the Equation}
   \begin{equation*}
     M \cdot \pd{\tilde{\mathbf{q}}}{t} +
-    \sum_{e \in E} \tilde{F}^e W -
+    \sum_{e \in E} \tilde{F}^e W^e -
     \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
   \end{equation*}
@@ -249,17 +256,17 @@
     M^{-1} \cdot \left(
       F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y -
-      \sum_{e \in E} \tilde{F}^e W\right
+      \sum_{e \in E} \tilde{F}^e W^e\right
     )
   \end{equation*}
   \begin{equation*}
     \Rightarrow \quad
     \tilde{\mathbf{q}}_{k+1} =
-    \tilde{\mathbf{q}}_{k} +
+    \tilde{\mathbf{q}}_{k} \,+ \,
     \tau \cdot M^{-1} \cdot \left(
       F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y -
-      \sum_{e \in E} \tilde{F}^e W\right
+      \sum_{e \in E} \tilde{F}^e W^e\right
     ),
   \end{equation*}
   where $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{\mathbf{q}}_k$ is the value of $\tilde{\mathbf{q}}$ at time $k$.
