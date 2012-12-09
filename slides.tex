@@ -1,13 +1,150 @@
 \documentclass{beamer}
-
-\usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage{hyperref}
+\usepackage{ifpdf}
+%\usepackage{hyperref}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
 \usepackage{amsmath}
-\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
 \usepackage{graphicx}
-
 \usepackage{tikz}
+\usepackage{units}
+%\usepackage{multicol}
+%\usepackage{moreverb}
+\usepackage{listings}
+%\usepackage{color}
+%\usepackage{algorithm}
+%\usepackage{algorithmicx}
+%\usepackage{algpseudocode}
+%\usepackage{longtable}
+%\usepackage{geometry}
+%\geometry{margin=2cm}
+%\floatname{algorithm}{Algorithmus}
+
+\usetheme[compress]{Berlin}
+
+\newcommand{\beginbackup}{
+   \newcounter{framenumbervorappendix}
+   \setcounter{framenumbervorappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumbervorappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumbervorappendix}} 
+}
+
+%%% now my own formatting
+
+\useoutertheme{infolines} %% slick bottomline
+
+\setbeamertemplate{headline}
+{
+  \leavevmode
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.8cm,dp=-0.5pt]{page header}
+    \vspace{0.250cm}\insertsectionnavigationhorizontal{\textwidth}{\hskip0pt plus1filll}{}
+  \end{beamercolorbox}
+  \vspace{-.1cm}
+}
+
+\setbeamertemplate{title page}
+{
+  \vspace{-2.3cm}
+  \begin{beamercolorbox}[center,ht=.5\paperheight, wd=\paperwidth]{title}
+    \begin{beamercolorbox}[center,ht=.5\paperheight, wd=.8\paperwidth]{title}
+      \Large \inserttitle
+      
+      \normalsize\insertsubtitle
+      \vspace{1cm}
+      \hrule{}
+    \end{beamercolorbox}
+
+  \end{beamercolorbox}
+  \begin{center}
+    \insertauthor
+    \vspace{.25cm}
+
+    \insertinstitute
+    
+    \vspace{.25cm}
+    
+    \insertdate
+  \end{center}
+}
+
+\setbeamertemplate{footline}
+{
+  \hbox{
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0.2cm,dp=0.2cm]{page footer}
+      \begin{columns}
+        \begin{column}{.33\paperwidth}
+          \centering{}
+          \insertshortauthor
+        \end{column}
+        \begin{column}{.33\paperwidth}
+          \centering{}
+          \insertshorttitle
+        \end{column}
+        \begin{column}{.33\paperwidth}
+          \centering{}
+          \insertframenumber / \inserttotalframenumber
+        \end{column}
+      \end{columns}
+    \end{beamercolorbox}
+  }
+  \vskip0pt
+}
+\usenavigationsymbolstemplate{}
+
+\setbeamercovered{transparent}
+
+%\definecolor{pmmyellow}{HTML}{EFCC3C} %original from me
+\definecolor{pmmyellow}{HTML}{FFFFFF} %hack: no yellow, but white!
+\definecolor{pmmdarkblue}{HTML}{182B4B}
+
+\setbeamercolor{palette primary}{fg=white,bg=pmmdarkblue}
+
+\setbeamercolor{normal text}{bg=pmmyellow} %% background yellow
+
+\setbeamercolor{page header}{bg=pmmdarkblue}
+\setbeamercolor{page footer}{bg=pmmyellow}
+
+% \setbeamercolor{frametitle}{bg=pmmdarkblue}
+\setbeamercolor{block title}{bg=pmmdarkblue}
+\setbeamercolor{block body}{bg=pmmyellow!95!black}
+% \setbeamercolor{title}{bg=pmmdarkblue}
+% \setbeamercolor{separation line}{bg=pmmdarkblue, fg=pmmdarkblue}
+% \setbeamercolor{footline text}{fg=red}
+
+\setbeamercolor{description item}{fg=pmmdarkblue}
+\setbeamercolor{itemize item}{fg=pmmdarkblue}
+\setbeamercolor{itemize subitem}{fg=pmmdarkblue}
+\setbeamercolor{qed symbol}{fg=pmmdarkblue}
+\setbeamercolor{section number projected}{bg=pmmdarkblue}
+\setbeamercolor{section in toc}{fg=black}
+\setbeamercolor{subsection number projected}{bg=pmmdarkblue}
+
+\setbeamercolor{alerted text}{fg=red!70!black}
+
+
+%%% end of my own formatting
+
+\AtBeginPart{
+  \begin{frame}
+    \frametitle{Overview}
+    \tableofcontents[currentpart]
+  \end{frame}
+}
+
+% \documentclass{beamer}
+
+% \usepackage[english]{babel}
+% \usepackage[utf8]{inputenc}
+% \usepackage{hyperref}
+% \usepackage{amsmath}
+% \usepackage{amssymb}
+% \usepackage{graphicx}
+
+% \usepackage{tikz}
 \usepackage{subfigure}
 
 \usepackage{comment}
@@ -31,7 +168,7 @@
 \renewcommand{\zoomfactor}{0.3}
 \renewcommand{\autozoomfactor}{0.075}
 
-\title{Some aspects regarding shallow water equations in connection with the Lax-Friedrich-Flux}
+\title[Shallow Water Equations and Lax-Friedrich-Flux]{Some aspects regarding shallow water equations in connection with the Lax-Friedrich-Flux}
 \subtitle{Interdisciplinary project in Mathematics}
 \author[S. Bakrac, P. Müller]{Stjepan Bakrac \and Philipp Müller}
 \date{\today}
@@ -55,7 +192,7 @@
 \begin{document}
 
 \todo{Nicht vergessen, wieder reinzukommentieren!}
-%\frame{\titlepage}
+\frame{\titlepage}
 
 \part{Short Introduction to Shallow Water Equations}
 \label{part:introduction}
@@ -80,7 +217,7 @@
   \end{columns}
 \end{frame}
 
-\section{The Shallow Water Equations}
+%\section{Shallow Water Equations}
 
 \begin{frame}
   \frametitle{Shallow Water Equations}
@@ -127,7 +264,7 @@
   \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
 \end{frame}
 
-\section{Discontinuous Galerkin Method}
+\section{Discontinuous Galerkin}
 \label{sec:basis-functions-intro}
 
 \begin{frame}
@@ -170,7 +307,7 @@
   \end{equation}
 \end{frame}
 
-\section{Matrix Interpretation}
+\section{Matrices}
 
 \begin{frame}
   \frametitle{Simplifying Integrals}
@@ -226,20 +363,20 @@
     \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
   \end{equation*}
   % Using vectors $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$, we can rewrite it using our matrix definitions:
-  Using
-  \begin{itemize}
-  \item $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$
-  \item $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$
-  \item $F^x$ resp. $F^y$: $x$ resp. $y$-components of $F$,
-  \end{itemize}
-  we arrive at
-  
+  $\Rightarrow$ Reformulate to:
   \begin{equation*}
     M \cdot \pd{\tilde{\mathbf{q}}}{t} +
     \sum_{e \in E} \tilde{F}^e W^e -
     \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
       F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
   \end{equation*}
+  \begin{block}{Explanations}
+    \begin{itemize}
+    \item $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$
+    \item $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$
+    \item $F^x$ resp. $F^y$: $x$ resp. $y$-components of $F$
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}
@@ -272,7 +409,7 @@
   where $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{\mathbf{q}}_k$ is the value of $\tilde{\mathbf{q}}$ at time $k$.
 \end{frame}
 
-\section{Support Points and Basis Functions}
+\section{Basis Functions}
 \label{sec:support-points-and-basis-functions}
 
 \begin{frame}
@@ -332,29 +469,25 @@
 
 \begin{frame}
   \frametitle{Choice of Basis Functions $\phi_i$}
-  \begin{block}{Goal}
-    Polynomial functions that span the space of all polynomials up to a certain degree
-  \end{block}
-
-  \begin{block}{Lagrange interpolation}
-    Construct function $\phi_i$ so that 
-    $\forall i,j \in \{1, \dots, n\}$:
-    \begin{equation*}
-      \phi_i(p_j) = \delta_{ij}
-    \end{equation*}
-    with $\delta_{ij}$ being the Kronecker delta function.
-  \end{block}
-
-  \begin{block}{Result}
-    Polynomials of degree $d$ $\Rightarrow$
-    $\frac{(d+1)\cdot(d+2)}{2}$ nodal basis functions
+  \begin{block}{Polynomial basis functions}
+    \begin{itemize}
+    \item Polynomial functions that span the space of all polynomials up to a certain degree
+    \item Construct function $\phi_i$ so that 
+      $\forall i,j \in \{1, \dots, n\}$:
+      \begin{equation*}
+        \phi_i(p_j) = \delta_{ij}
+      \end{equation*}
+      with $\delta_{ij}$ being the Kronecker delta function.
+    \item Polynomials of degree $d$ $\Rightarrow$
+      $\frac{(d+1)\cdot(d+2)}{2}$ nodal basis functions
+    \end{itemize}
   \end{block}
 \end{frame}
 
 \part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrich-Flux}
 \label{part:polynomialstuff}
 
-\section{Interpretation as a 1d-Problem}
+\section{A 1d-Problem}
 \label{sec:interpretation-as-1d-problem}
 
 \newcommand{\twopoints}[3]{
@@ -432,7 +565,7 @@
   \end{block}
 \end{frame}
 
-\section{Constructing Polynomials}
+\section{Polynomials}
 \label{sec:constructing-polynomials}
 
 \begin{frame}
@@ -455,14 +588,16 @@
         h_n^L \\ u_n^L
       \end{pmatrix}\right)$.
   \item Assign height and impulse to each of the $2n$ points
-  \item Generate 4 polynomials by interpolation
-    \begin{itemize}
-    \item Height, right triangle: $(x_i, h_i^R)$
-    \item Impulse, right triangle: $(x_i, u_i^R)$
-    \item Height, left triangle: $(x_i, h_i^L)$
-    \item Impulse, left triangle: $(x_i, u_i^L)$
-    \end{itemize}
-  \item Group right polynomials into $p^R$, left polynomials into $p^L$
+    % \item Generate 4 polynomials by interpolation (height/impulse for left/right triangle)
+
+    %   $\Rightarrow$ Example: Impulse, right triangle: $(x_i, u_i^R)$
+    %   \begin{itemize}
+    %   \item Height, right triangle: $(x_i, h_i^R)$
+    %   \item Impulse, right triangle: $(x_i, u_i^R)$
+    %   \item Height, left triangle: $(x_i, h_i^L)$
+    %   \item Impulse, left triangle: $(x_i, u_i^L)$
+    %   \end{itemize}
+    % \item Group right polynomials into $p^R$, left polynomials into $p^L$
   \end{itemize}
 \end{frame}
 
@@ -483,7 +618,7 @@
   \item $p^L_h(x) := interpolate (x,h^L)$. Height for left triangle.
   \item $p^L_u(x) := interpolate (x,u^L)$. Impulse for left triangle.
   \item $p^R_h(x) := interpolate (x,h^R)$. Height for right triangle.
-  \item $p^R_u(x) := interpolate (x,u^L)$. Impulse for right triangle.
+  \item $p^R_u(x) := interpolate (x,u^R)$. Impulse for right triangle.
   \end{itemize}
 
   \begin{equation*}
@@ -551,15 +686,15 @@
   \end{itemize}
 \end{frame}
 
-\section{Comparing Approximation and Exact Result}
+\section{Approximation vs. Exact Result}
 \label{sec:comparing-approx-and-exact-result}
 
 \begin{frame}
   \frametitle{Comparison of $N(x)$ and $N'(x)$}
   \begin{columns}
-    \begin{column}{.4\textwidth}
+    \begin{column}{.5\textwidth}
       \begin{block}{Exact solution}
-        \vspace{-.5cm} % sorry
+        \vspace{-.3cm} % sorry
         \begin{equation*}
           N(x) := F_{LF}(p^R(x),p^L(x))
         \end{equation*}
@@ -588,9 +723,9 @@
         \end{equation*}        
       \end{block}
     \end{column}
-    \begin{column}{.5\textwidth}
+    \begin{column}{.4\textwidth}
       \begin{center}
-        \begin{tikzpicture}[scale=0.8]
+        \begin{tikzpicture}[scale=0.7]
           \draw[->] (0,0) -- (5.5,0) node[right]{$x$};
           \draw[->] (0,0) -- (0,5) node[above]{$y$};
           \draw (0,0) -- (0,-0.1) node[below]{0};
@@ -684,7 +819,7 @@
 \begin{frame}
   \frametitle{Demonstration}
   \begin{center}
-    \Large{Interactive Demo}
+    \Large{Demo}
   \end{center}
 \end{frame}
 
@@ -695,6 +830,7 @@
   \end{itemize}
 \end{frame}
 
+\beginbackup
 \appendix{}
 
 \frame{
@@ -1385,4 +1521,7 @@
   As you might know, Maple supports kind of ``dynamic plotting''. That is, you get a window containing one slider for each variable in a mathematical expression. You can then plot this expression
 
 \end{comment}
+
+\backupend
+
 \end{document}
