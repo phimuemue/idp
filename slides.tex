@@ -293,10 +293,13 @@
   \frametitle{Discontinuous Galerkin -- Remarks}
   \begin{itemize}
   \item Analytical solution for realistic scenarios still not found $\Rightarrow$ numerical approximation
+  \end{itemize}
+  We use nodal basis functions:
+  \begin{itemize}  
   \item Sample values at $n$ support points
   \item A basis function $\phi_i$ for each support point $\Rightarrow$ nodal basis
   \item Approximate 
-    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$.
+    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$ $\Rightarrow$ Error since flux function not linear \todo{Correct?}
   \item Result: $\mathbf{q}_i$ does not depend on $x$ and $y$ anymore
   \end{itemize}
 
@@ -333,26 +336,32 @@
 
 \begin{frame}
   \frametitle{Overview: Matrices}
-  \begin{description}
-  \item[Mass matrix]
-    \begin{equation}
-      \label{eq:mass-matrix-overview}
-      M = \int_T \phi_i \phi_j \ dT
-    \end{equation}
-  \item[Stiffness matrices]
-    \begin{equation}
-      \label{eq:stiffness-matrix-overview}
-      S^x = \int_T \phi_j \pd{\phi_i}{x} \quad
-      S^y = \int_T \phi_j \pd{\phi_i}{y}
-    \end{equation}
-  \item[Edge matrices] (one for each edge $e$) %$\forall e \in E$:
-    \begin{equation}
-      \label{eq:edge-matrices}
-      W^e = \phi_i\left(p_k^e\right) \cdot w_k
-    \end{equation}
-  \end{description}
-
-  All matrices independent of $x$ and $y$ $\Rightarrow$ precomputable
+  \vspace{-.3cm}
+  \begin{equation*}
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
+    \int_{\partial T} F(\mathbf{q}) \cdot n \phi_i \, ds -
+    \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
+  \end{equation*}
+  \begin{block}{\emph{Precomputable} matrices (independent of $x$ and $y$)}
+    \begin{description}
+    \item[Mass matrix]
+      \begin{equation}
+        \label{eq:mass-matrix-overview}
+        M = \int_T \phi_i \phi_j \ dT
+      \end{equation}
+    \item[Edge matrices] (one for each edge $e$) %$\forall e \in E$:
+      \begin{equation}
+        \label{eq:edge-matrices}
+        W^e = \phi_i\left(p_k^e\right) \cdot w_k
+      \end{equation}
+    \item[Stiffness matrices]
+      \begin{equation}
+        \label{eq:stiffness-matrix-overview}
+        S^x = \int_T \phi_j \pd{\phi_i}{x} \quad
+        S^y = \int_T \phi_j \pd{\phi_i}{y}
+      \end{equation}
+    \end{description}
+  \end{block}
 \end{frame}
 
 % \begin{frame}
@@ -520,20 +529,22 @@
         \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0); 
         \draw[thick] (0,1) -- (1,0);
       \end{scope}
+      \node[below, text width=3cm, align=center] at (.6,0) {\scriptsize{Parametrization $x\in\left[ 0,1 \right]$}};
     \end{tikzpicture}
     \begin{tikzpicture}[scale=2]
       \draw[draw=white] (-.1,-.3) rectangle (1.9,1.2);
       \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
       \draw[xshift=0.1cm,yshift=0.1cm] 
       (1,0) -- (0,1) -- (1,1) -- (1,0);
-      \twopoints{0}{1}{blue};
-      \twopoints{0.3}{0.7}{red};
-      \twopoints{0.8}{0.2}{yellow};
-      \begin{scope}[xshift=1.5cm,yshift=1cm]
-        \draw[fill=blue] (0,0) circle (0.05) node[right]{\,$x=0$};
-        \draw[fill=red] (0,-.3) circle (0.05) node[right]{\,$x=0.3$};
-        \draw[fill=yellow] (0,-.8) circle (0.05) node[right]{\,$x=0.8$};
-      \end{scope}
+      \twopoints{0.887}{1-0.887}{blue};
+      \twopoints{0.5}{0.5}{red};
+      \twopoints{1-0.887}{0.887}{yellow};
+      % \begin{scope}[xshift=1.5cm,yshift=1cm]
+      %   \draw[fill=blue] (0,0) circle (0.05) node[right]{\,$x=0$};
+      %   \draw[fill=red] (0,-.3) circle (0.05) node[right]{\,$x=0.3$};
+      %   \draw[fill=yellow] (0,-.8) circle (0.05) node[right]{\,$x=0.8$};
+      % \end{scope}
+      \node[below, text width=3cm, align=center] at (.6,0) {\scriptsize{Support points for Gauss quadrature}};
     \end{tikzpicture}
   \end{center}
 \end{frame}
@@ -577,18 +588,25 @@
   \end{equation*}
   \begin{itemize}
   \item Pick $n$ points for each of the edges: 
-    Points of the left triangle:
-    $\left(x_1,\begin{pmatrix}
+    % Points of the left triangle:
+    % $\left(x_1,\begin{pmatrix}
+    %     h_1^R \\ u_1^R
+    %   \end{pmatrix}\right), \dots , \left(x_n, \begin{pmatrix}
+    %     h_n^R \\ u_n^R
+    %   \end{pmatrix}\right)$ and the points for the right triangle 
+    % $\left(x_1,\begin{pmatrix}
+    %     h_1^L \\ u_1^L
+    %   \end{pmatrix}\right), \dots , \left(x_n,\begin{pmatrix}
+    %     h_n^L \\ u_n^L
+    %   \end{pmatrix}\right)$. (Each point has height and impulse.)
+  \item Right triangle points: $\left(x_1,\begin{pmatrix}
         h_1^R \\ u_1^R
       \end{pmatrix}\right), \dots , \left(x_n, \begin{pmatrix}
         h_n^R \\ u_n^R
-      \end{pmatrix}\right)$ and the points for the right triangle 
-    $\left(x_1,\begin{pmatrix}
-        h_1^L \\ u_1^L
-      \end{pmatrix}\right), \dots , \left(x_n,\begin{pmatrix}
-        h_n^L \\ u_n^L
-      \end{pmatrix}\right)$.
-  \item Assign height and impulse to each of the $2n$ points
+      \end{pmatrix}\right)$
+  \item Similar for left triangle
+  \item Each point has height ($h$) and impulse ($u$)
+  %\item Assign height and impulse to each of the $2n$ points
     % \item Generate 4 polynomials by interpolation (height/impulse for left/right triangle)
 
     %   $\Rightarrow$ Example: Impulse, right triangle: $(x_i, u_i^R)$
@@ -600,6 +618,50 @@
     %   \end{itemize}
     % \item Group right polynomials into $p^R$, left polynomials into $p^L$
   \end{itemize}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=1.5]
+      \begin{scope}[scale=0.8]
+        \begin{scope}[xshift=-.1em,yshift=-.1em]
+          \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
+          \draw[fill=blue] (0.113,0.887) circle (0.05); 
+          \draw[fill=blue] (0.5,0.5) circle (0.05); 
+          \draw[fill=blue] (0.887,0.113) circle (0.05); 
+          \node at (0.3,0.3) {$L$};
+        \end{scope}
+        % \draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
+        \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
+          \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
+          \draw[fill=blue] (0.113,0.887) circle (0.05); 
+          \draw[fill=blue] (0.5,0.5) circle (0.05); 
+          \draw[fill=blue] (0.887,0.113) circle (0.05); 
+          \node at (0.3, 0.3) {$R$};
+        \end{scope}
+      \end{scope}
+      \draw[decorate,decoration=snake,->]
+      (1.2,.51) -- (1.7,.51);
+      \begin{scope}[xshift=2cm]
+        \draw[->](0,0)--node[below]{edge$_L$}(1.2,0) node[right]{$x$};
+        \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
+        \draw(0,0) -- (0,-.032) node[below]{0};
+        \draw(1,0) -- (1,-.032) node[below]{1};
+        \draw[] (0.,0.3) parabola bend (0.4,0.1) (1,0.9);
+        \draw[fill=blue] (0.113, 0.205) circle (0.025);
+        \draw[fill=blue] (0.500, 0.125) circle (0.025);
+        \draw[fill=blue] (0.887, 0.63) circle (0.025);
+      \end{scope}
+      \begin{scope}[xshift=3.5cm]
+        \draw[->](0,0)--node[below]{edge$_R$}(1.2,0) node[right]{$x$};
+        \draw[->](0,0)--(0,1) node[above]{Imp.$_R$};
+        \draw(0,0) -- (0,-.032) node[below]{0};
+        \draw(1,0) -- (1,-.032) node[below]{1};
+        \draw[] (0.,0.5) parabola bend (1,0.8) (1,0.8);
+        \draw[fill=blue] (0.113, 0.56) circle (0.025);
+        \draw[fill=blue] (0.500, 0.72) circle (0.025);
+        \draw[fill=blue] (0.887, 0.8) circle (0.025);
+      \end{scope}
+    \end{tikzpicture}
+  \end{center}
 \end{frame}
 
 \begin{frame}
@@ -752,7 +814,7 @@
   \end{columns}
   
   \begin{center}
-    $\Rightarrow$ Quality of approximation measured by $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$
+    $\Rightarrow$ Quality of approximation measured by $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$ \todo{Hier wollte der Martin $L^1$-Norm drinstehen haben. Zu wenig Platz}
   \end{center}
 \end{frame}
 
@@ -762,17 +824,19 @@
     I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
   \end{equation*}
   \begin{itemize}
-  \item $N$ might have discontinuities (w.r.t. $x$ -- depending upon $h_i$ and $u_i$) 
+  \item $N$ might have singularities (w.r.t. $x$ -- depending upon $h_i$ and $u_i$) 
 
     $\Rightarrow$ Not in $[0,1]$ for reasonable values of $h_i$ and $u_i$
   \item $N(x)-N'(x)$ depends upon $4n$ variables
+    
+    ($n$ support points $\Rightarrow$ $2n$ parameters per triangle)
     % \begin{itemize}
     % \item Two edges
     % \item $n$ points on each edge
     % \item Each point has height and impulse
     % \end{itemize}
     % $\Rightarrow$ $I$ depends upon $4n$ variables
-  \item General analytic calculations seem too complicated
+  \item Maple couldn't find general analytic solutions \todo{Rausnehmen?}
   \item $\Rightarrow$ Alternative: Visualization -- Fix all but at most 2 variables
   \end{itemize}
 \end{frame}
