@@ -229,6 +229,7 @@ As for the source term, we can interpret it to be the bathymetry in our case, to
 Having defined those terms to suit our purpose, we can rewrite the above as follows:
 
 \begin{eqnarray*}
+  \label{eqn:shallow-water-flux}
   \mathbf{q} =
   \begin{pmatrix}
     h \\ u_x \\ u_y
@@ -742,27 +743,25 @@ We eventually went for the last of these approaches. It is just as well possible
 
 You can find some more information about the developed tool in section \ref{sec:making-the-whole-thing-interactive}.
 
-\subsection{Singularities?}
-\label{sec:discontinuities}
+\subsection{Singularities}
+\label{sec:singularities}
 
-If we take a look at the second component of $I$, we recognize that we have to deal with a fraction (this is due to the Flux function that involved a fraction). This means, that there are possibly some singularities involved. If we integrate, we should pay attention to these singularities.
+If we take a look at the second component of $I$, we can see that it contains a fraction (this is due to the flux function \ref{eqn:shallow-water-flux}, which contained a fraction itself). This means that there could be some singularities involved. If we integrate, we need to pay attention to these singularities, although we will see that they will have no practical relevance for us.
 
-Without going into too much detail (since the formulae are huge and -- let's say -- ``don't look nice''): If we use two support points for each edge (all points except $p_1^l$ are $(10,0)$), expand the term $N(x)-N'(x)$ and view its second component (describing the error in the impulse component), we recognize that there is a fraction involved that looks (approximately due to floating point rounding) as follows (numerator omitted for simplicity):
-
-\newcommand{\badfrac}{\mathtt{bad}}
+If we use two support points for each edge (all points except $p_1^L$ are $(10,0)$) and expand the term $N(x)-N'(x)$, we can clearly see a fraction in its second component, i.e.\, the term describing the error in the impulse component. The fraction term in this example looks as follows (numerator omitted for simplicity):
 
 \begin{equation*}
   \frac{1}{h_1\cdot(1.732 h_1 \cdot x - 17.320 x - 1.366 h_1 + 3.660)}
 \end{equation*}
 
-Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N(x)-N'(x)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). To be precise, we can calculate that we have a singularity at
+Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N(x)-N'(x)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). We can calculate that we have a singularity at
 \begin{equation*}
   x_0=\frac{683\, h_1 - 1830}{866\, h_1 - 8600}.
 \end{equation*}
 
-Since we take the integral between 0 and 1, it is of particular interest if the value $x_0$ can be within the interval $\left[ 0,1 \right]$, since in this case we would integrate over a singularity where the integral is not (or at least might not be) properly defined.
+Since we take the integral between 0 and 1, it is of particular interest if the value $x_0$ can be within the interval $\left[ 0,1 \right]$, since in this case we would integrate over a singularity where the integral is not (or at least might not be) properly defined. If it is a pole, which is likely in this situation, we would obtain extremely high values from the numerical integration over that domain.
 
-It is no hard problem to solve this: We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. That is, for this particular case, we see that we may have singularities only if the value of $h_1$ differs extremely from all other values for the height (that are in this case set to 10) -- a very unlikely case.
+Fortunately, it is not a hard problem to solve this: We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. That is, for this particular case, we see that we may have singularities only if the value of $h_1$ differs extremely from all other values for the height (that are in this case set to 10) -- a very unlikely case.
 
 That means: We have seen that there actually \emph{are} singularities (an inevitable fact if $x$ occurs in the denominator), but that these singularities might only occur for very exotic values for $h_1$.
 
@@ -986,7 +985,7 @@ We did the same thing for three support points along each edge (and it can be do
 
 When we look at figure \ref{subfig:fixing-p2-in-first-example}, we see that the error in the impulse component looks somewhat like a parabola with respect to the variable $h_1$. We see a smooth curve.
 
-Remember that we saw in section \ref{sec:discontinuities} that there might be singularities. We will now see a plot that exposes these singularities to us.
+Remember that we saw in section \ref{sec:singularities} that there might be singularities. We will now see a plot that exposes these singularities to us.
 
 \input{2_points_def_luecke/tex.tex}
 
