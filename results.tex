@@ -32,7 +32,7 @@
   %\restoregeometry
 }
 
-% for me, this looks better. uncomment these lines if you don't like it that small
+% for me, this looks better. uncomment these lines if you do not like it that small
 %\renewcommand{\zoomfactor}{0.3}
 %\renewcommand{\autozoomfactor}{0.075}
 
@@ -52,7 +52,7 @@
 \DeclareMathOperator{\divergence}{div}
 
 \begin{document}
-
+t
 %\maketitle{}
 
 \begin{abstract}
@@ -301,7 +301,7 @@ To do that, we first have to get rid of the various terms containing $\mathbf{q}
   \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i\left(x,y\right)
 \end{equation}
 
-$\mathbf{q}_i$ are the $\mathbf{q}$ values at the corresponding support points. Since those don't depend on the position, it allows us to move them out of the integral, leaving integrals over various combinations of basis functions, which are all independant of $\mathbf{q}$, and hence can be precomputed.
+$\mathbf{q}_i$ are the $\mathbf{q}$ values at the corresponding support points. Since those do not depend on the position, it allows us to move them out of the integral, leaving integrals over various combinations of basis functions, which are all independant of $\mathbf{q}$, and hence can be precomputed.
 
 \subsection{Mass matrix}
 \label{sec:mass-matrix}
@@ -534,7 +534,7 @@ When analyzing wave propagation along a grid of triangles, it's essential to kno
 
 This may sometimes be acquired by exact means, however those computations are long and complex and can result in absurd computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We want to analyze what kind of accuracy loss that implies and if it's a suitable method for realistic computation.
 
-We have two adjacent triangles (called $R$ and $L$ respectively, although the direction doesn't matter), sharing a common edge $E$. Each triangle has its own polynomial for every component ($h$ and $u$), evaluated over coordinates on the triangle. After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and triangle, resulting in four polynomials. What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places.
+We have two adjacent triangles (called $R$ and $L$ respectively, although the direction does not matter), sharing a common edge $E$. Each triangle has its own polynomial for every component ($h$ and $u$), evaluated over coordinates on the triangle. After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and triangle, resulting in four polynomials. What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places.
 
 \subsection{Flux function}
 \label{sec:flux-function-intro}
@@ -565,7 +565,7 @@ The Lax-Friedrichs flux is defined as follows:
 
 In (\ref{eq:lax-friedrich-definition}), $p^R$ and $p^L$ stand for the height and velocity along the right and the left edge, respectively. The term $F(p)$ is defined as in equation (\ref{eq:flux-function-definition}), and $p$ is a two-component vector. $p^R$ and $p^L$ are polynomials depending on a variable ($x$ in our one dimensional case). These polynomials are containing two components (for height and impulse). $p$ is technically a function $[0,1]\rightarrow\reals$, thus we should write $p\left(x\right)$ and $F\left(p\left(x\right)\right)$. For simplicity, we will simply use $p$ and $F\left(p\right)$ respectively, but we need to remember that fact when we differentiate or integrate over $x$, because we cannot treat $p$ and $F\left(p\right)$ as constants.
 
-\subsection{Original situation: A 2d-problem}
+\subsection{Original situation: A 2D problem}
 \label{sec:original-situation-2d-problem}
 
 The original problem arises when two adjacent triangles share one edge. Each triangle has several support points which are interpolated to obtain a polynomial for the corresponding triangle.
@@ -679,11 +679,11 @@ What we eventually would like to do is to compare the following two things with 
     \end{pmatrix} = F_i
   \end{equation*}
 
-  We introduce shorthand notation $F_i$ for the resulting values. Each $F_i$ has the same structure as the $x_i$, only it's evaluated by the flux function. Next we interpolate the points (i.e.\,we interpolate the first components to obtain one polynomial, and we interpolate the second components to obtain another polynomial). The resulting polynomials are called $N'\left(x\right)$ (interpreted like $N\left(x\right)$ as explained above).
+  We introduce shorthand notation $F_i$ for the resulting values. Each $F_i$ has the same structure as the $x_i$, only it's evaluated by the flux function. Next we interpolate the points (i.e.\,we interpolate the first components to obtain one polynomial, and we interpolate the second components to obtain another polynomial). The resulting polynomials are called $N^\prime\left(x\right)$ (interpreted like $N\left(x\right)$ as explained above).
 
   That is, we set
   \begin{equation*}
-    N'\left(x\right) :=
+    N^\prime\left(x\right) :=
     \begin{pmatrix}
       interpolate\left(x,h^F\right) \\ interpolate\left(x,u^F\right)
     \end{pmatrix}
@@ -691,11 +691,11 @@ What we eventually would like to do is to compare the following two things with 
 
 \end{description}
 
-Our goal will then be to compare $N\left(x\right)$ against $N'\left(x\right)$ (component-wise, of course). We compare the quality of an approximation by considering the following term:
+Our goal will then be to compare $N\left(x\right)$ against $N^\prime\left(x\right)$ (component-wise, of course). We compare the quality of an approximation by considering the following term:
 
 \begin{equation}
   \label{eq:integral-norm-definition}
-  I := \int\limits_{x=0}^1 | N\left(x\right) - N'\left(x\right) |\  dx,
+  I := \int\limits_{x=0}^1 | N\left(x\right) - N^\prime\left(x\right) |\  dx,
 \end{equation}
 where the integration is to be understood component-wise.
 
@@ -704,19 +704,19 @@ where the integration is to be understood component-wise.
 
 It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-norm-definition}). Even if we delegate most of the work to the symbolic math program \emph{Maple}, we experienced some pitfalls while evaluating the exact approach.
 
-The main problem with exact integration is that Maple has to compute the zeroes of $N\left(x\right)-N'\left(x\right)$, which is, depending on the degree of the polynomials, a time consuming task.
+The main problem with exact integration is that Maple has to compute the zeroes of $N\left(x\right)-N^\prime\left(x\right)$, which is, depending on the degree of the polynomials, a time consuming task.
 
 There are several possibilities to overcome this problem. Here are the three we took into account:
 
 \begin{itemize}
-\item $N\left(x\right)$ and $N'\left(x\right)$ intersect when supplied the support points, i.e.\,
+\item $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
   \begin{equation*}
-    N\left(x_i^F\right) = N'\left(x_i^F\right), \forall i \in \{1 \dots n\}.
+    N\left(x_i^F\right) = N^\prime\left(x_i^F\right), \forall i \in \{1 \dots n\}.
   \end{equation*}
 
   Knowing this, we can derive some zeroes (but possibly not all). If we compute
   \begin{equation*}
-    \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N\left(x\right) - N'\left(x\right)\ dx \right|,
+    \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N\left(x\right) - N^\prime\left(x\right)\ dx \right|,
   \end{equation*}
   we get a more accurate result as an approximation for $I$ compared to simply computing the integral over $[0,1]$. 
 
@@ -725,7 +725,7 @@ There are several possibilities to overcome this problem. Here are the three we 
   While we can tweak this method by simply evaluating more and more sub-intervals, this comes at the price of more computations.
 \item Another approach was to use Maple's numerical integration facilities. If we tell Maple to
   \begin{center}
-    \texttt{evalf(Int(abs(N(x)-N'(x)),x=0..1))},
+    \texttt{evalf(Int(abs(N(x)-N(x)),x=0..1))},
   \end{center}
   we get a good result, if we wait long enough.
 
@@ -734,7 +734,7 @@ There are several possibilities to overcome this problem. Here are the three we 
   However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
 \item The last approach we tried was to divide the area under the function 
   \begin{equation*}
-    \left| N\left(x\right)-N'\left(x\right) \right|
+    \left| N\left(x\right)-N^\prime\left(x\right) \right|
   \end{equation*}
   into several stripes, and compute the area of these stripes. The more stripes we have, the more accurate our result will be, at the expense of computation time.
 \end{itemize}
@@ -748,28 +748,26 @@ You can find some more information about the developed tool in section \ref{sec:
 
 If we take a look at the second component of $I$, we can see that it contains a fraction (this is due to the flux function \ref{eqn:shallow-water-flux}, which contained a fraction itself). This means that there could be some singularities involved. If we integrate, we need to pay attention to these singularities, although we will see that they will have no practical relevance for us.
 
-If we use two support points for each edge (all points except $p_1^L$ are $(10,0)$) and expand the term $N(x)-N'(x)$, we can clearly see a fraction in its second component, i.e.\, the term describing the error in the impulse component. The fraction term in this example looks as follows (numerator omitted for simplicity):
+If we use two support points for each edge (all points except $p_1^L$ are $(10,0)$) and expand the term $N\left(x\right)-N^\prime\left(x\right)$, we can clearly see a fraction in its second component, i.e.\, the term describing the error in the impulse component. The fraction term in this example looks as follows (numerator omitted for simplicity):
 
 \begin{equation*}
   \frac{1}{h_1\cdot(1.732 h_1 \cdot x - 17.320 x - 1.366 h_1 + 3.660)}
 \end{equation*}
 
-Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N(x)-N'(x)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). We can calculate that we have a singularity at
+Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N\left(x\right)-N^\prime\left(x\right)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). We can calculate that we have a singularity at
 \begin{equation*}
   x_0=\frac{683\, h_1 - 1830}{866\, h_1 - 8600}.
 \end{equation*}
 
 Since we take the integral between 0 and 1, it is of particular interest if the value $x_0$ can be within the interval $\left[ 0,1 \right]$, since in this case we would integrate over a singularity where the integral is not (or at least might not be) properly defined. If it is a pole, which is likely in this situation, we would obtain extremely high values from the numerical integration over that domain.
 
-Fortunately, it is not a hard problem to solve this: We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. That is, for this particular case, we see that we may have singularities only if the value of $h_1$ differs extremely from all other values for the height (that are in this case set to 10) -- a very unlikely case.
+We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. So we see that for this particular case we have singularities only for values of $h_1$ that differ greatly from all other values for the height (that are in this case set to 10).
 
-That means: We have seen that there actually \emph{are} singularities (an inevitable fact if $x$ occurs in the denominator), but that these singularities might only occur for very exotic values for $h_1$.
+We tried these calculations for other scenarios, including a variation in support points. The results were always the same, that the height would have to differ in absurd levels to even approach the required region of the singularity.
 
-Of course, it would be great to devise some general rule that allows us to exclude singularities for usual values for arbitrary support points. However, due to the large amount of variables and -- even more important -- the fact that we might have more support points, this is a very complicated task.
+However, it is still important to note that these singularities do in fact occur. While they did not interfere with our calculations, similar application with largely differing sample values may encounter a problem at this point.
 
-We did some calculations in Maple for three support points for each edge that yielded similar results to the ones obtained for two points per edge. Unfortunately we had to find out that for four support points, root finding is too complicated to be practicable.
-
-We will later see some plots exposing these singularities.
+Analytically deriving a general formula for where these singularities occur is a difficult task due to the large number of variables. This is further complicated by the fact that the number of variables itself is not static but depends on the number of support points. We even encountered problems computing the exact $x$ values for the singularities for four support points, because of the complexity of the term, although they could still be found visually once the function was evaluated and plotted, coinciding with our previously computed results.
 
 \newcommand{\fracsumme}{\mathtt{approx\_int}}
 
@@ -802,7 +800,7 @@ We are now going to plot (the two components of) the term $I$ as described in eq
 \subsection{Some considerations to take into account}
 \label{sec:some-considerations}
 
-Recall from section \ref{sec:constructing-polynomials}, that the terms $p^L$ and $p^R$ depend on the chosen support points. Moreover, $N\left(x\right)$ depends on these polynomials. Thus, the term $N\left(x\right)-N'\left(x\right)$ also depends on the polynomials and by extension on the support points. This means, we have $4n$ variables\footnote{We have $n$ points for each of the two adjacent edges, each point consisting of a height and a impulse component, resulting in $4n$ variables.} in this term.
+Recall from section \ref{sec:constructing-polynomials}, that the terms $p^L$ and $p^R$ depend on the chosen support points. Moreover, $N\left(x\right)$ depends on these polynomials. Thus, the term $N\left(x\right)-N^\prime\left(x\right)$ also depends on the polynomials and by extension on the support points. This means, we have $4n$ variables\footnote{We have $n$ points for each of the two adjacent edges, each point consisting of a height and a impulse component, resulting in $4n$ variables.} in this term.
 This implies that $I$ (see equation (\ref{eq:integral-norm-definition})) also depends on the single points $
 \begin{pmatrix}
   h_1^L \\ u_1^L
@@ -861,12 +859,12 @@ To plot our results we considered several options. Maple supports dynamic plotti
 
 However, we realized that this method had some downsides. We always are interested in plotting two graphs, one for the height error and one for the impulse error (both components of $I$). Showing two plots simultaneously affected by the same sliders proved to be a challenge, and was not doable with the native plotting services due to limited customization. It may have been able to write a custom Maplet (interactive Maple applet) which did what we wanted, but that turned out to be just as cumbersome due to Maple's limited applet functionality.
 
-Moreover, we wanted to be able to quickly switch the coordinate axes, so that we can compare plots with each other in real time, which also didn't work with the native implementation. Finally, Maple's user interface is not intended to be used with that many variables, which posed a challenge for our $4n$ variables in $I$. The only alternative would have been to cut some of them out, which would make the tool less interactive.
+Moreover, we wanted to be able to quickly switch the coordinate axes, so that we can compare plots with each other in real time, which also did not work with the native implementation. Finally, Maple's user interface is not intended to be used with that many variables, which posed a challenge for our $4n$ variables in $I$. The only alternative would have been to cut some of them out, which would make the tool less interactive.
 
 So we decided to develop a tool that helps us visualizing our data properly. We implemented a simple program that is capable of doing the following:
 
 \begin{itemize}
-\item Read two functions from a file. In our case these functions will be the components of $I$, which are the contents of $N\left(x\right)-N'\left(x\right)$ (i.e.\,the integrand within the integral of $I$). This file is generated by Maple in our case, since we use it for most of our computations, but it can be created manually by the user as well.
+\item Read two functions from a file. In our case these functions will be the components of $I$, which are the contents of $N\left(x\right)-N^\prime\left(x\right)$ (i.e.\,the integrand within the integral of $I$). This file is generated by Maple in our case, since we use it for most of our computations, but it can be created manually by the user as well.
 \item Extract variable names from the mathematical expressions extracted from the file (in our case, this will be mainly the variables $u_i$ and $h_i$ in a suitable string representation\footnote{We decided to use a simple scheme for the internal variable names: $u_1^L$ becomes \texttt{u\_1} and $u_1^R$ becomes \texttt{U\_1}, while $h_3^L$ becomes \texttt{h\_3} and $h_4^R$ becomes \texttt{H\_4}.}). The variable $x$ is handled separately since this is the variable that we want to integrate over to compute $I$.
 \item Offer a way to dynamically change the values of the variables (i.e. the $u_i$ and $h_i$). This is achieved by a slider for each variable (see figure \ref{subfig:plotting-tool-variables}).
 \item Numerically evaluate $I$ for the given functions. This is achieved using the technique described in section \ref{sec:how-to-eval-I}.
@@ -902,7 +900,7 @@ The parameter ``stripes'' determines how many stripes are used to numerically ev
 \subsection{How to interpret the graphs}
 \label{sec:how-to-interpret-graphs}
 
-All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N'\left(x\right)$. The tool generates two plots that are labeled ``0. Function'' and ``1. Function''. In our case ``0. Function'' represents the error in the $h$ component (height), while ``1. Function'' stands for the error in the $u$ component (impulse).
+All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N^\prime\left(x\right)$. The tool generates two plots that are labeled ``0. Function'' and ``1. Function''. In our case ``0. Function'' represents the error in the $h$ component (height), while ``1. Function'' stands for the error in the $u$ component (impulse).
 
 To understand how our plots work, we can take a look at figure \ref{fig:two-points-all-the-same}. In this example, we used 2 points on each triangle and edge. That is, we have four (relevant) points in total, \emph{two of which} we have plotted here. This is why figure \ref{fig:two-points-all-the-same} has \emph{two} sub-figures.
 
@@ -927,7 +925,7 @@ $), i.e.\,we are considering the term $I\left(
   \end{pmatrix}
 \right)$.
 
-% In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3d-plot showing this function. Please remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
+% In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3D plot showing this function. Please remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
 
 The orientation of the axes is displayed in figure \ref{fig:orientation-of-axes}.
 
@@ -1061,9 +1059,9 @@ The same calculations for three random points is shown in figure \ref{fig:three-
 
 When one considers the figures depicted in section \ref{sec:results}, it seems intuitive to assume that the error grows if the values for $h$ and $u$ diverge further from the average.
 
-One suspicion that could explain that intuition is that because of the fact that the polynomials $N\left(x\right)$ and $N'\left(x\right)$ generally diverge towards the borders of $[0,1]$.
+One suspicion that could explain that intuition is that because of the fact that the polynomials $N\left(x\right)$ and $N^\prime\left(x\right)$ generally diverge towards the borders of $[0,1]$.
 
-So we chose the support points equidistant over the interval $[0,1]$ and conducted some experiments. When we choose the support points equidistant over this interval, 0 and 1 are support points and we can be sure that $N\left(x\right)$ and $N'\left(x\right)$ coincide at the values 0 and 1 (i.e.\,$N\left(0\right)=N'\left(0\right)$ and $N\left(1\right)=N'\left(1\right)$).
+So we chose the support points equidistant over the interval $[0,1]$ and conducted some experiments. When we choose the support points equidistant over this interval, 0 and 1 are support points and we can be sure that $N\left(x\right)$ and $N^\prime\left(x\right)$ coincide at the values 0 and 1 (i.e.\,$N\left(0\right)=N^\prime\left(0\right)$ and $N\left(1\right)=N^\prime\left(1\right)$).
 
 In this section, we show some results that were obtained by choosing the support points equidistant along the edge.
 
