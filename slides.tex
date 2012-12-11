@@ -207,9 +207,10 @@
       \begin{itemize}
       \item Wave simulation
       \item (Adaptive) triangulation of the whole area
-      \item How can we model the flux between triangles?
+      \item How can we calculate the flux between triangles?
       \item Model continuous equations within these triangles
-      \end{itemize}    
+      \item Problem: Discontinuous due to spatial discretization
+      \end{itemize}
     \end{column}
     \begin{column}{.4\textwidth}
       \includegraphics
@@ -229,17 +230,17 @@
     \end{pmatrix}
   \end{equation}
 
-  % \begin{eqnarray*}
-  %   \mathbf{q} =
-  %   \begin{pmatrix}
-  %     h \\ h v_x \\ h v_y
-  %   \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
-  %   \begin{pmatrix}
-  %     h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
-  %     v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
-  %   \end{pmatrix}
-  % \end{eqnarray*}
-  % 
+  \begin{eqnarray*}
+    \mathbf{q} =
+    \begin{pmatrix}
+      h \\ h v_x \\ h v_y
+    \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
+    \begin{pmatrix}
+      h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
+      v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
+    \end{pmatrix}
+  \end{eqnarray*}
+ 
   \begin{eqnarray*}
     \mathbf{q} =
     \begin{pmatrix}
@@ -259,10 +260,11 @@
   \end{pmatrix}$, $\mathbf{v} =
   \begin{pmatrix}
     v_x \\ v_y
-  \end{pmatrix}$ and $\nabla \cdot
-  \begin{pmatrix}
-    a \\ b
-  \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
+  \end{pmatrix}$ and $\mathbf{u} = h\mathbf{v}$
+%$\nabla \cdot
+%  \begin{pmatrix}
+%    a \\ b
+%  \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
 \end{frame}
 
 \section{Discontinuous Galerkin}
@@ -288,8 +290,8 @@
   
   \begin{itemize}
   \item $T$ is a single triangle
-  \item \todo{Dreiecke disjoint Menge}
-  \item Goal: Find solution for $\mathbf{q}$
+  \item Whole domain $\Omega$ is represented by finite set of disjunct triangles
+  \item Goal: Find solution for $\mathbf{q}$ $\forall \left(x,y\right) \in \Omega$
   \end{itemize}
 
 \end{frame}
@@ -297,14 +299,16 @@
 \begin{frame}
   \frametitle{Discontinuous Galerkin -- Remarks}
   \begin{itemize}
-  \item Analytical solution for realistic scenarios still not found $\Rightarrow$ numerical approximation
+  \item Analytical solution for realistic scenarios still not found
+
+  $\rightarrow$ numerical approximation
   \end{itemize}
   We use nodal basis functions:
   \begin{itemize}  
   \item Sample values at $n$ support points
-  \item A basis function $\phi_i$ for each support point $\Rightarrow$ nodal basis
+  \item A basis function $\phi_i$ for each support point $\rightarrow$ nodal basis
   \item Approximate 
-    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$ $\Rightarrow$ Error since flux function not linear \todo{Correct?}
+    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$ $\rightarrow$ Error since flux function not linear \todo{Correct?}
   \item Result: $\mathbf{q}_i$ does not depend on $x$ and $y$ anymore
   \end{itemize}
 
@@ -511,16 +515,16 @@
 }
 
 \begin{frame}
-  \frametitle{Original Situation: 2d-Problem}
+  \frametitle{Original Situation: 2D problem}
   \begin{itemize}
   %\item Two adjacent triangles
-  \item Height and impulse is an own polynomial function for \emph{each} triangle 
+  \item Height and impulse are separate polynomial functions for \emph{each} triangle 
 
-    $\Rightarrow$ Discontinuity along common edges
+    $\rightarrow$ Discontinuity along common edges
     % \item We are interested in the situation along the common edge
-  \item Simplification: Interpret as 1d-problem
+  \item Simplification: Interpret as 1D problem
     
-    $\Rightarrow$ Parametrize edge, such that we can choose $x\in \left[ 0,1 \right]$ and ``obtain everything just depending upon this single variable''
+    $\rightarrow$ Parametrize edge by $x\in \left[ 0,1 \right]$ to describe the edge depending only on one variable
   \end{itemize}
   \begin{center}
     \begin{tikzpicture}[scale=2]
@@ -555,7 +559,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{One-Dimensional (Lax-Friedrich-)Flux}
+  \frametitle{One dimensional (Lax-Friedrichs) flux}
   Flux function:
   \begin{equation}
     \label{eq:flux-function-definition}
@@ -569,7 +573,7 @@
       \frac{1}{2} \frac{u^2}{h} + g h^2 
     \end{pmatrix}
   \end{equation}
-  Lax-Friedrich:
+  Lax-Friedrichs flux:
   \begin{equation}
     \label{eq:lax-friedrich-definition}
     F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
@@ -577,7 +581,8 @@
   \begin{block}{Remarks:}
     \begin{itemize}
     \item $p^R, p^L$: Data from the right and left triangle, respectively, containing height and impulse ($h$ and $u$)
-    \item $p^R, p^L$ can be fix over the whole triangle or can be functions (e.g. polynomials) returning two components
+    \item $p^R, p^L$ can be fixed over the whole triangle or can be functions (e.g. polynomials) returning two components
+    \todo{Muesen wir das mit fixed ueberhaupt erwaehnen? Ist ja nur ein Spezialfall von Polynomen}
     \end{itemize}
   \end{block}
 \end{frame}
@@ -586,13 +591,65 @@
 \label{sec:constructing-polynomials}
 
 \begin{frame}
+  \frametitle{Choice of Support Points for Polynomials}
+  \begin{itemize}
+  \item In principle: arbitrary
+  \item In practice: Use support points from Gaussian quadrature since we'll apply it later
+  \item Sample values for $h$ and $u$ for those points.
+    \begin{center}
+      \begin{tikzpicture}[scale=2]
+        \begin{scope}[scale=0.8]
+          \begin{scope}[xshift=-.1em,yshift=-.1em]
+            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
+            \draw[fill=blue] (0.113,0.887) circle (0.05); 
+            \draw[fill=blue] (0.5,0.5) circle (0.05); 
+            \draw[fill=blue] (0.887,0.113) circle (0.05); 
+            \node at (0.3,0.3) {$L$};
+          \end{scope}
+          %\draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
+          \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
+            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
+            \draw[fill=blue] (0.113,0.887) circle (0.05); 
+            \draw[fill=blue] (0.5,0.5) circle (0.05); 
+            \draw[fill=blue] (0.887,0.113) circle (0.05); 
+            \node at (0.3, 0.3) {$R$};
+          \end{scope}
+        \end{scope}
+        \draw[decorate,decoration=snake,->]
+        (1.2,.51) -- (1.7,.51);
+        \begin{scope}[xshift=2cm]
+          \draw[->](0,0)--node[below]{edge$_L$}(1.2,0) node[right]{$x$};
+          \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
+          \draw(0,0) -- (0,-.032) node[below]{0};
+          \draw(1,0) -- (1,-.032) node[below]{1};
+          \draw[fill=blue] (0.113, 0.205) circle (0.025);
+          \draw[fill=blue] (0.500, 0.125) circle (0.025);
+          \draw[fill=blue] (0.887, 0.63) circle (0.025);
+        \end{scope}
+        \begin{scope}[xshift=3.5cm]
+          \draw[->](0,0)--node[below]{edge$_R$}(1.2,0) node[right]{$x$};
+          \draw[->](0,0)--(0,1) node[above]{Imp.$_R$};
+          \draw(0,0) -- (0,-.032) node[below]{0};
+          \draw(1,0) -- (1,-.032) node[below]{1};
+          \draw[fill=blue] (0.113, 0.56) circle (0.025);
+          \draw[fill=blue] (0.500, 0.72) circle (0.025);
+          \draw[fill=blue] (0.887, 0.8) circle (0.025);
+        \end{scope}
+
+      \end{tikzpicture}
+    \end{center}
+    % \item We also tested equidistant support points
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
   \frametitle{Constructing the Polynomials}
   Remember:
   \begin{equation*}
     F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
   \end{equation*}
   \begin{itemize}
-  \item Pick $n$ points for each of the edges: 
+  \item Pick $m$ points for each of the edges: 
     % Points of the left triangle:
     % $\left(x_1,\begin{pmatrix}
     %     h_1^R \\ u_1^R
@@ -606,10 +663,10 @@
     %   \end{pmatrix}\right)$. (Each point has height and impulse.)
   \item Right triangle points: $\left(x_1,\begin{pmatrix}
         h_1^R \\ u_1^R
-      \end{pmatrix}\right), \dots , \left(x_n, \begin{pmatrix}
-        h_n^R \\ u_n^R
+      \end{pmatrix}\right), \dots , \left(x_m, \begin{pmatrix}
+        h_m^R \\ u_m^R
       \end{pmatrix}\right)$
-  \item Similar for left triangle
+  \item Analogous for the left triangle
   \item Each point has height ($h$) and impulse ($u$)
   %\item Assign height and impulse to each of the $2n$ points
     % \item Generate 4 polynomials by interpolation (height/impulse for left/right triangle)
@@ -626,25 +683,6 @@
 
   \begin{center}
     \begin{tikzpicture}[scale=1.5]
-      \begin{scope}[scale=0.8]
-        \begin{scope}[xshift=-.1em,yshift=-.1em]
-          \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-          \draw[fill=blue] (0.113,0.887) circle (0.05); 
-          \draw[fill=blue] (0.5,0.5) circle (0.05); 
-          \draw[fill=blue] (0.887,0.113) circle (0.05); 
-          \node at (0.3,0.3) {$L$};
-        \end{scope}
-        % \draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
-        \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
-          \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-          \draw[fill=blue] (0.113,0.887) circle (0.05); 
-          \draw[fill=blue] (0.5,0.5) circle (0.05); 
-          \draw[fill=blue] (0.887,0.113) circle (0.05); 
-          \node at (0.3, 0.3) {$R$};
-        \end{scope}
-      \end{scope}
-      \draw[decorate,decoration=snake,->]
-      (1.2,.51) -- (1.7,.51);
       \begin{scope}[xshift=2cm]
         \draw[->](0,0)--node[below]{edge$_L$}(1.2,0) node[right]{$x$};
         \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
@@ -699,59 +737,6 @@
       p^R_h(x) \\ p^R_u(x)
     \end{pmatrix}
   \end{equation*}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Choice of Support Points for Polynomials}
-  \begin{itemize}
-  \item In principle: arbitrary
-  \item In practice: Use support points from Gaussian quadrature since we'll apply it later
-    \begin{center}
-      \begin{tikzpicture}[scale=2]
-        \begin{scope}[scale=0.8]
-          \begin{scope}[xshift=-.1em,yshift=-.1em]
-            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-            \draw[fill=blue] (0.113,0.887) circle (0.05); 
-            \draw[fill=blue] (0.5,0.5) circle (0.05); 
-            \draw[fill=blue] (0.887,0.113) circle (0.05); 
-            \node at (0.3,0.3) {$L$};
-          \end{scope}
-          %\draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
-          \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
-            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-            \draw[fill=blue] (0.113,0.887) circle (0.05); 
-            \draw[fill=blue] (0.5,0.5) circle (0.05); 
-            \draw[fill=blue] (0.887,0.113) circle (0.05); 
-            \node at (0.3, 0.3) {$R$};
-          \end{scope}
-        \end{scope}
-        \draw[decorate,decoration=snake,->]
-        (1.2,.51) -- (1.7,.51);
-        \begin{scope}[xshift=2cm]
-          \draw[->](0,0)--node[below]{edge$_L$}(1.2,0) node[right]{$x$};
-          \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
-          \draw(0,0) -- (0,-.032) node[below]{0};
-          \draw(1,0) -- (1,-.032) node[below]{1};
-          \draw[] (0.,0.3) parabola bend (0.4,0.1) (1,0.9);
-          \draw[fill=blue] (0.113, 0.205) circle (0.025);
-          \draw[fill=blue] (0.500, 0.125) circle (0.025);
-          \draw[fill=blue] (0.887, 0.63) circle (0.025);
-        \end{scope}
-        \begin{scope}[xshift=3.5cm]
-          \draw[->](0,0)--node[below]{edge$_R$}(1.2,0) node[right]{$x$};
-          \draw[->](0,0)--(0,1) node[above]{Imp.$_R$};
-          \draw(0,0) -- (0,-.032) node[below]{0};
-          \draw(1,0) -- (1,-.032) node[below]{1};
-          \draw[] (0.,0.5) parabola bend (1,0.8) (1,0.8);
-          \draw[fill=blue] (0.113, 0.56) circle (0.025);
-          \draw[fill=blue] (0.500, 0.72) circle (0.025);
-          \draw[fill=blue] (0.887, 0.8) circle (0.025);
-        \end{scope}
-
-      \end{tikzpicture}
-    \end{center}
-    % \item We also tested equidistant support points
-  \end{itemize}
 \end{frame}
 
 \section{Approximation vs. Exact Result}
@@ -819,7 +804,7 @@
   \end{columns}
   
   \begin{center}
-    $\Rightarrow$ Quality of approximation measured by $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$ \todo{Hier wollte der Martin $L^1$-Norm drinstehen haben. Zu wenig Platz}
+    $\Rightarrow$ Quality of approximation? $L^1$ norm: $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$ \todo{Hier wollte der Martin $L^1$-Norm drinstehen haben. Zu wenig Platz}
   \end{center}
 \end{frame}
 
@@ -829,10 +814,10 @@
     I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
   \end{equation*}
   \begin{itemize}
-  \item $N$ might have singularities (w.r.t. $x$ -- depending upon $h_i$ and $u_i$) 
+  \item $N$ might have singularities (w.r.t. $x$ -- depending on $h_i$ and $u_i$) 
 
     $\Rightarrow$ Not in $[0,1]$ for reasonable values of $h_i$ and $u_i$
-  \item $N(x)-N'(x)$ depends upon $4n$ variables
+  \item $N(x)-N'(x)$ depends on $4n$ variables
     
     ($n$ support points $\Rightarrow$ $2n$ parameters per triangle)
     % \begin{itemize}
@@ -840,8 +825,8 @@
     % \item $n$ points on each edge
     % \item Each point has height and impulse
     % \end{itemize}
-    % $\Rightarrow$ $I$ depends upon $4n$ variables
-  \item Maple couldn't find general analytic solutions \todo{Rausnehmen?}
+    % $\Rightarrow$ $I$ depends on $4n$ variables
+  \item Maple could not find general analytic solutions \todo{Rausnehmen?}
   \item $\Rightarrow$ Alternative: Visualization -- Fix all but at most 2 variables
   \end{itemize}
 \end{frame}
@@ -856,13 +841,13 @@
   \begin{columns}
     \begin{column}{.55\textwidth}
       \begin{itemize}
-      \item Analytic solution -- not feasible (zero crossings hard to compute)
-      \item Approximate without absolute value -- too bad
+      \item Analytic solution -- not feasible (zeroes hard to compute)
+      \item Approximate without absolute value -- not accurate
       \item Piecewise integration between support points $x_i$ -- too slow
       \item Maple's \texttt{evalf} -- too slow
       \item $\Rightarrow$ Old-school: 
         %Numerical integration using the 
-        ``Streifenmethode'' using $s$ stripes
+        rectangle method using $s$ rectangles
       \end{itemize}
     \end{column}
     \begin{column}{.45\textwidth}
@@ -1608,7 +1593,7 @@
   \section{Conclusions from the things seen}
   \label{sec:conslusions}
 
-  What all plots have in common is the fact that it looks as if towards the borders the error grows. Trying to derive an exact statement of how large the error is depending upon the support point values seems a bit witless since there are too many variables that interact with each other.
+  What all plots have in common is the fact that it looks as if towards the borders the error grows. Trying to derive an exact statement of how large the error is depending on the support point values seems a bit witless since there are too many variables that interact with each other.
 
   \subsection{Making this interactive}
   \label{sec:making-the-whole-thing-interactive}
