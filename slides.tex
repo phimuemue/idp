@@ -684,7 +684,9 @@
   \begin{center}
     \begin{tikzpicture}[scale=1.5]
       \begin{scope}[xshift=2cm]
-        \draw[->](0,0)--node[below]{edge$_L$}(1.2,0) node[right]{$x$};
+        \draw[->](0,0) --
+        %node[below]{edge$_L$}
+        (1.2,0) node[right]{$x$};
         \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
         \draw(0,0) -- (0,-.032) node[below]{0};
         \draw(1,0) -- (1,-.032) node[below]{1};
@@ -694,7 +696,9 @@
         \draw[fill=blue] (0.887, 0.63) circle (0.025);
       \end{scope}
       \begin{scope}[xshift=3.5cm]
-        \draw[->](0,0)--node[below]{edge$_R$}(1.2,0) node[right]{$x$};
+        \draw[->](0,0) --
+        %node[below]{edge$_R$}
+        (1.2,0) node[right]{$x$};
         \draw[->](0,0)--(0,1) node[above]{Imp.$_R$};
         \draw(0,0) -- (0,-.032) node[below]{0};
         \draw(1,0) -- (1,-.032) node[below]{1};
