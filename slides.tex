@@ -373,6 +373,30 @@
   \end{block}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Using the Matrices}
+  We reformulate
+  \begin{equation*}
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
+    \int_{\partial T} F(\mathbf{q}) \cdot n \phi_i \, ds -
+    \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
+  \end{equation*}
+  to
+  \begin{equation*}
+    M \cdot \pd{\tilde{\mathbf{q}}}{t} +
+    \sum_{e \in E} \tilde{F}^e W^e -
+    \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
+      F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
+  \end{equation*}
+  \begin{block}{Explanations}
+    \begin{itemize}
+    \item $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$
+    \item $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$
+    \item $F^x$ resp. $F^y$: $x$ resp. $y$-components of $F$
+    \end{itemize}
+  \end{block}
+\end{frame}
+
 % \begin{frame}
 %   \frametitle{Rewriting Equations}
 %   Remember:
@@ -569,7 +593,7 @@
       \end{pmatrix}
     \right) = 
     \begin{pmatrix}
-      u \cdot h \\
+      u \\
       \frac{1}{2} \frac{u^2}{h} + g h^2 
     \end{pmatrix}
   \end{equation}
