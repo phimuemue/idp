@@ -167,9 +167,8 @@
 \renewcommand{\zoomfactor}{0.3}
 \renewcommand{\autozoomfactor}{0.075}
 
-%\title[Discont. Galerkin Methods for SWE]{Discontinuous Galerkin Methods for Shallow Water Equations}
 \title[]{Approximation Analysis of the Lax-Friedrichs Flux in the Context of Shallow Water Equations}
-%\title[Shallow Water Equations and Lax-Friedrich-Flux]{Some aspects regarding shallow water equations in connection with the Lax-Friedrich-Flux}
+
 \subtitle{Interdisciplinary project in Mathematics}
 \author[S. Bakrac, P. Müller]{Stjepan Bakrac \and Philipp Müller}
 \date{\today}
@@ -401,7 +400,7 @@
 %     \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
 %   \end{equation*}
 %   % Using vectors $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$, we can rewrite it using our matrix definitions:
-%   $\Rightarrow$ Reformulate to:
+%   $\rightarrow$ Reformulate to:
 %   \begin{equation*}
 %     M \cdot \pd{\tilde{\mathbf{q}}}{t} +
 %     \sum_{e \in E} \tilde{F}^e W^e -
@@ -516,7 +515,7 @@
 %         \phi_i(p_j) = \delta_{ij}
 %       \end{equation*}
 %       with $\delta_{ij}$ being the Kronecker delta function.
-%     \item Polynomials of degree $d$ $\Rightarrow$
+%     \item Polynomials of degree $d$ $\rightarrow$
 %       $\frac{(d+1)\cdot(d+2)}{2}$ nodal basis functions
 %     \end{itemize}
 %   \end{block}
@@ -525,7 +524,7 @@
 \part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrichs Flux}
 \label{part:polynomialstuff}
 
-\section{A 1d-Problem}
+\section{A 1D problem}
 \label{sec:interpretation-as-1d-problem}
 
 \newcommand{\twopoints}[3]{
@@ -690,7 +689,7 @@
   %\item Assign height and impulse to each of the $2n$ points
     % \item Generate 4 polynomials by interpolation (height/impulse for left/right triangle)
 
-    %   $\Rightarrow$ Example: Impulse, right triangle: $(x_i, u_i^R)$
+    %   $\rightarrow$ Example: Impulse, right triangle: $(x_i, u_i^R)$
     %   \begin{itemize}
     %   \item Height, right triangle: $(x_i, h_i^R)$
     %   \item Impulse, right triangle: $(x_i, u_i^R)$
@@ -827,7 +826,7 @@
   \end{columns}
   
   \begin{center}
-    $\Rightarrow$ Quality of approximation? $L^1$ norm: $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$ \todo{Hier wollte der Martin $L^1$-Norm drinstehen haben. Zu wenig Platz}
+    $\rightarrow$ Quality of approximation? $L^1$ norm: $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$ \todo{Hier wollte der Martin $L^1$-Norm drinstehen haben. Zu wenig Platz}
   \end{center}
 \end{frame}
 
@@ -839,18 +838,18 @@
   \begin{itemize}
   \item $N$ might have singularities (w.r.t. $x$ -- depending on $h_i$ and $u_i$) 
 
-    $\Rightarrow$ Not in $[0,1]$ for reasonable values of $h_i$ and $u_i$
+    $\rightarrow$ Not in $[0,1]$ for reasonable values of $h_i$ and $u_i$
   \item $N(x)-N'(x)$ depends on $4n$ variables
     
-    ($n$ support points $\Rightarrow$ $2n$ parameters per triangle)
+    ($n$ support points $\rightarrow$ $2n$ parameters per triangle)
     % \begin{itemize}
     % \item Two edges
     % \item $n$ points on each edge
     % \item Each point has height and impulse
     % \end{itemize}
-    % $\Rightarrow$ $I$ depends on $4n$ variables
+    % $\rightarrow$ $I$ depends on $4n$ variables
   \item Maple could not find general analytic solutions \todo{Rausnehmen?}
-  \item $\Rightarrow$ Alternative: Visualization -- Fix all but at most 2 variables
+  \item Alternative: Visualization -- fix all but at most 2 variables
   \end{itemize}
 \end{frame}
 
@@ -868,8 +867,8 @@
       \item Approximate without absolute value -- not accurate
       \item Piecewise integration between support points $x_i$ -- too slow
       \item Maple's \texttt{evalf} -- too slow
-      \item $\Rightarrow$ Old-school: 
-        %Numerical integration using the 
+      \item $\rightarrow$ Simple: 
+        Numerical integration using the 
         rectangle method using $s$ rectangles
       \end{itemize}
     \end{column}
@@ -1015,7 +1014,7 @@
 %         \sum_{i=1}^n u_{x,i} \phi_i,
 %         \sum_{i=1}^n u_{y,i} \phi_i\right),
 %     \end{equation*}
-%   \item   Too complex $\Rightarrow$ compute the following:
+%   \item   Too complex $\rightarrow$ compute the following:
 %     \begin{equation*}
 %       \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
 %     \end{equation*}
@@ -1052,7 +1051,7 @@
   \end{eqnarray*}
   \begin{itemize}
   \item Point-wise approximation in the second line
-  \item Same stiffness matrices $S^x$ and $S^y$ as before $\Rightarrow$ interpret as matrix multiplication
+  \item Same stiffness matrices $S^x$ and $S^y$ as before $\rightarrow$ interpret as matrix multiplication
   \end{itemize}
 \end{frame}
 
@@ -1146,7 +1145,7 @@
   \item Complicated analycital solution (absolute value/rational function)
   \item Possibility 1: Approximate $I$ by $\int\limits_{x=0}^1 N(x) - N'(x) \  dx$. Bad!
   \item Fact: $N(x_i) = N'(x_i)$ 
-    $\Rightarrow$ $N(x_i) - N'(x_i) = 0$
+    $\rightarrow$ $N(x_i) - N'(x_i) = 0$
   \item Piecewise integration between the $x_i$'s:
     \begin{equation*}
       \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N(x) - N'(x) \  dx\ \right|
@@ -1248,7 +1247,7 @@
     \end{pmatrix}
   \right)$.
 
-  In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3d-plot showing this function. Please remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
+  In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3D plot showing this function. Please remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
 
   The orientation of the axes is displayed in figure \ref{fig:orientation-of-axes}.
 
@@ -1259,7 +1258,7 @@
       \draw[->,semithick] (0,0) -- +(-30:1) node[below right]{$h$}; % x
       \draw[->,semithick] (0,0) -- +(210:1) node[below left]{$u$}; % y
     \end{tikzpicture}
-    \caption{Orientation of the axes used throughout the 3d-plots}
+    \caption{Orientation of the axes used throughout the 3D plots}
     \label{fig:orientation-of-axes}
   \end{figure}
 
@@ -1276,13 +1275,13 @@
     \renewcommand\arraystretch{1.5}
     \centering
     \begin{tabular}[ht]{cl}
-      Order & $x$-coordinates \\
+      Order & $x$ coordinates \\
       \hline
       2 & $\frac{1}{2}-\frac{1}{6}\cdot \sqrt{3}, \frac{1}{2}+\frac{1}{6}\cdot \sqrt{3}$ \\
       3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} , 0.5, \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ \\
       \hline 
     \end{tabular}
-    \caption{$x$-coordinates of support points for Gauss-Quadrature}
+    \caption{$x$ coordinates of support points for Gaussian quadrature}
     \label{tab:x-coordinates-gauss-quadrature}
   \end{table}
 
