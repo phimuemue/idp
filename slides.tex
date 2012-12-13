@@ -167,8 +167,8 @@
 \renewcommand{\zoomfactor}{0.3}
 \renewcommand{\autozoomfactor}{0.075}
 
-\title[Discont. Galerkin Methods for SWE]{Discontinuous Galerkin Methods for Shallow Water Equations}
-
+%\title[Discont. Galerkin Methods for SWE]{Discontinuous Galerkin Methods for Shallow Water Equations}
+\title[]{Approximation Analysis of the Lax-Friedrichs Flux in the Context of Shallow Water Equations}
 %\title[Shallow Water Equations and Lax-Friedrich-Flux]{Some aspects regarding shallow water equations in connection with the Lax-Friedrich-Flux}
 \subtitle{Interdisciplinary project in Mathematics}
 \author[S. Bakrac, P. Müller]{Stjepan Bakrac \and Philipp Müller}
@@ -202,27 +202,23 @@
 
 \begin{frame}
   \frametitle{Introduction}
-  \begin{columns}
-    \begin{column}{.5\textwidth}
-      \begin{itemize}
-      \item Wave simulation
-      \item (Adaptive) triangulation of the whole area
-      \item How can we calculate the flux between triangles?
-      \item Model continuous equations within these triangles
-      \item Problem: Discontinuous due to spatial discretization
-      \end{itemize}
-    \end{column}
-    \begin{column}{.4\textwidth}
-      \includegraphics
-      [clip=true,trim=6cm 4cm 6cm 2cm,scale=0.2]{dreiecke.png}
-    \end{column}
-  \end{columns}
+  \begin{itemize}
+  \item Hyperbolic wave simulation
+  \item (Adaptive) triangulation of the whole area
+  \item How can we calculate the flux between triangles?
+  \item Model continuous equations within these triangles
+  \item Problem: Discontinuous due to spatial discretization
+  \end{itemize}
+  \begin{center}
+    \includegraphics[scale=1]{sample-screenshot.png}
+  \end{center}
 \end{frame}
 
 %\section{Shallow Water Equations}
 
 \begin{frame}
   \frametitle{Shallow Water Equations}
+  \vspace{-.3cm}
   \begin{equation}
     \label{eq:shallow-water-basic}
     \pd{\mathbf{q}}{t} + \nabla \cdot F(\mathbf{q}) = r = \begin{pmatrix}
@@ -240,14 +236,13 @@
       v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
     \end{pmatrix}
   \end{eqnarray*}
- 
   \begin{eqnarray*}
     \mathbf{q} =
     \begin{pmatrix}
       h \\ u_x \\ u_y
     \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
     {
-      \renewcommand{\arraystretch}{1.35}
+      \renewcommand{\arraystretch}{1.2}
       \begin{pmatrix}
         \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
         \frac{1}{2} g h^2 e_y
@@ -527,7 +522,7 @@
 %   \end{block}
 % \end{frame}
 
-\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrich-Flux}
+\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrichs Flux}
 \label{part:polynomialstuff}
 
 \section{A 1d-Problem}
@@ -913,7 +908,8 @@
   \frametitle{Results}
   \begin{itemize}
   \item Height error almost zero
-  \item 
+  \item Error mainly influenced by $h$ component
+  \item Error unbounded (but one uses only reasonable values for $h$)
   \end{itemize}
 \end{frame}
 
@@ -1179,15 +1175,16 @@
     % \todo{Skizze dazu unbedingt nötig!}
     
     \begin{center}
+
       \begin{tikzpicture}[scale=1.5]
         \draw[help lines, -] (0,0) node[below,color=black]{0} -- (0,2.25);
         \draw[help lines, -] (2,0) node[below,color=black]{1} -- (2,2.25);
-        \draw[-] (-0.5,0) -- (2.5,0);
-        \draw[domain=-0.2:2.1] plot (\x, {\x*\x*\x-2*\x*\x+2});
-        \draw[color=lightgray,-] (0,0) -- (0,1.890625) -- (0.5,1.890625) -- (0.5,0);
-        \draw[color=lightgray,-] (0.5,0) -- (0.5,1.296875) -- (1,1.296875) -- (1,0);
-        \draw[color=lightgray,-] (1,0) -- (1,0.828125) -- (1.5,0.828125) -- (1.5,0);
-        \draw[color=lightgray,-] (1.5,0) -- (1.5,1.234375) -- (2,1.234375) -- (2,0);
+        \draw[->] (-0.25,0) -- (2.25,0) node[right]{$x$};
+        \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (0,0) rectangle (0.5,1.890625);
+        \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (0.5,0) rectangle (1,1.296875);
+        \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (1,0) rectangle (1.5,0.828125);
+        \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (1.5,0) rectangle (2,1.234375);
+        \draw[domain=-0.2:2.1] plot (\x, {\x*\x*\x-2*\x*\x+2}) node[above]{$|N(x)-N'(x)|$};
         \draw[fill=blue] (0.25,1.890625) circle (0.02);
         \draw[fill=blue] (0.75,1.296875) circle (0.02);
         \draw[fill=blue] (1.25,0.828125) circle (0.02);
