@@ -278,7 +278,7 @@
   \begin{equation}
     \label{eq:shallow-water-dg}
     \int_T \pd {\mathbf{q}}{t} \phi \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot n \phi \, ds -
+    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
   \end{equation}
   
@@ -309,7 +309,7 @@
   \begin{equation}
     \label{eq:shallow-water-phi-i}
     \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot n \phi_i \, ds -
+    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi_i \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
   \end{equation}
 \end{frame}
@@ -342,7 +342,7 @@
   \vspace{-.3cm}
   \begin{equation*}
     \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot n \phi_i \, ds -
+    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi_i \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
   \end{equation*}
   \begin{block}{\emph{Precomputable} matrices (independent of $x$ and $y$)}
@@ -372,7 +372,7 @@
   We reformulate
   \begin{equation*}
     \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot n \phi_i \, ds -
+    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi_i \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
   \end{equation*}
   to
