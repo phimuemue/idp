@@ -70,7 +70,7 @@ class SimplePlotter:
             for (varname, varval) in zip(self.variables, [s.get_value() for s in self.sliders]):
                 self.gnuplot[i]('%s=%f' % (varname, varval))
 
-    def adjuststuff(self, widget, data=None):
+    def adjust_and_plot(self, widget, data=None):
         """Determines which variables are plot-axes-variables and wich
         ones are parameters. Decides whether to use a 2D- or a 3D-plot."""
         # numerical integration by streifensumme
@@ -78,10 +78,23 @@ class SimplePlotter:
         stripe_width = 1./stripe_amount
         stripe_midpoints = [1./(2*stripe_amount) + i*stripe_width for i in xrange(stripe_amount)]
         self.tfunc = []
-        for f in self.func:
-            tmp = ["+abs((%s)*(%f))"%(f.replace("x",str(midpoint)), stripe_width)
+        self.tauxiliaries = []
+        for aux in self.auxiliaries:
+            newaux = aux
+            for (na, ns) in self.tauxiliaries:
+                newaux[1] = re.sub(r"\b%s\b"%na, ns, newaux[1])
+            self.tauxiliaries.append(newaux)
+        for _f in self.func:
+            f = _f[:]
+            print f
+            for [a, s] in self.tauxiliaries:
+                print "replacing %s by %s"%(a, s)
+                print "\\b%s\\b"%re.escape(a)
+                f = re.sub(("\\b%s\\b"%re.escape(a)), s, f)
+            print "Result: " + f
+            tmp = ["abs((%s)*(%f))"%(f.replace("x",str(midpoint)), stripe_width)
                    for midpoint in stripe_midpoints]
-            tmp = "".join(tmp)
+            tmp = "+".join(tmp)
             self.tfunc.append(tmp)
         # determine variables
         subs = []
@@ -98,14 +111,18 @@ class SimplePlotter:
         self.plotcommand = "splot " if xvar!=yvar else "plot "
         # fill xyfunc with data for gnuplot
         self.xyfunc = []
+        print subs
         for f in self.tfunc:
             tmp = f
             for (s,t) in subs:
-                tmp = tmp.replace(s,t)
+                re.sub(r"\bs\b",t,tmp)
+                # tmp = tmp.replace(s,t)
             self.xyfunc.append(tmp)
         # adjust gnuplot properly
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
+            # for (a, s) in self.auxiliaries:
+            #     gp("%s=%s"%(a,s))
             if xvar != yvar:
                 gp("set xlabel \"%s\""%xvar)
                 gp("set ylabel \"%s\""%yvar)
@@ -118,6 +135,7 @@ class SimplePlotter:
                 gp("set autoscale")
                 gp("unset pm3d")
             self.adjustvars()
+            print self.xyfunc[i]
             gp('%s %s ls 1 title "%d. Function"' % (self.plotcommand, self.xyfunc[i], i))
 
     def adjustment_from_range(self,r):
@@ -190,14 +208,16 @@ class SimplePlotter:
         self.stripes_spin = gtk.SpinButton(gtk.Adjustment(5,1,1000,1))
         hbox.pack_start(self.stripes_spin)
         self.settings_box.pack_start(hbox)
-        self.stripes_spin.connect("value_changed", self.adjuststuff) 
+        self.stripes_spin.connect("value_changed", self.adjust_and_plot) 
 
     def init_variables_page(self):
         """Creates sliders and radio buttons for the single variables."""
         # create elements for variables!!
         self.variables = list(set(re.findall(
-                    "[a-zA-Z_]+[1-9]*",self.func[0] +"+"+ self.func[1])))
+                    r"([a-zA-Z_]+\d*\b)[^(]","+".join(self.func + ([aux[1] for aux in self.auxiliaries])))))
         self.variables = filter(lambda x:x!="x", self.variables)
+        print self.auxiliaries
+        self.variables = filter(lambda x:x not in [a[0] for a in self.auxiliaries], self.variables)
         def filter_func(x):
             if x in ["abs", "sin", "cos", "log", "tan", "e", "ln"]:
                 return False
@@ -208,10 +228,13 @@ class SimplePlotter:
         print self.variables
         # an auxiliary function to sort the variables properly
         def varkey(x):
-            tmp = x.split("_")
-            print "Varname: " + x
-            print tmp
-            return (int(tmp[1]),255-ord(tmp[0]))
+            return x
+            # if len(x)==1:
+            #     return x
+            # tmp = x.split("_")
+            # print "Varname: " + x
+            # print tmp
+            # return (int(tmp[1]),255-ord(tmp[0]))
         self.variables.sort(key=varkey)
         self.sliders = []
         self.xradios = []
@@ -227,13 +250,13 @@ class SimplePlotter:
             newx = gtk.RadioButton(group, "")
             self.xradios.append(newx)
             newvbox.pack_start(newx, False, False)
-            newx.connect("toggled", self.adjuststuff)
+            newx.connect("toggled", self.adjust_and_plot)
             # options for x
             group = None if len(self.yradios)==0 else self.yradios[0]
             newy = gtk.RadioButton(group, "")
             self.yradios.append(newy)
             newvbox.pack_start(newy, False, False)
-            newy.connect("toggled", self.adjuststuff)
+            newy.connect("toggled", self.adjust_and_plot)
             # slider
             newadjustment = self.adjustment_from_range(self.urange)
             if v[0].lower() == "h":
@@ -289,8 +312,10 @@ class SimplePlotter:
         self.vbox.add(self.notebook)
         self.variable_hbox = gtk.HBox()
         self.settings_box = gtk.VBox()
+        self.plottings_box = gtk.VBox()
         self.notebook.append_page(self.variable_hbox, gtk.Label("Variables/Parameters"))
         self.notebook.append_page(self.settings_box, gtk.Label("Settings"))
+        self.notebook.append_page(self.plottings_box, gtk.Label("Plottings"))
         self.window.add(self.variable_hbox)
         # export button
         vbox = gtk.VBox()
@@ -303,13 +328,17 @@ class SimplePlotter:
         self.init_settings_page()
         self.window.show_all()
 
-    def __init__(self, func1="h[1]+h[2]*h[3]", func2="h[1]+h[2]", urange="[-5:5]", hrange="[8:12]"):
-        """Initialization of the window."""
+    def __init__(self, functions, auxiliaries, urange="[-5:5]", hrange="[8:12]"):
+        """Initialization of the window.
+            * funcitons: List of strings representing stuff to be plotted
+            * auxiliaries: List of strings of the form "varname=varcomputationstuff" ("intermediate vars")
+        """
         # Configure Gnuplot settings
         self.urange = urange
         self.hrange = hrange
         self.plotcommand = "plot"
-        self.func = [func1, func2]
+        self.func = functions
+        self.auxiliaries = auxiliaries
         # initialize gnuplot for me
         self.gnuplot = []
         for f in self.func:
@@ -322,7 +351,7 @@ class SimplePlotter:
         self.img_extension = "pdf"
         # Initialize Gtk layout
         self.init_gtk_layout()
-        self.adjuststuff(None)
+        self.adjust_and_plot(None)
 
     def main(self):
         """Just fires the gtk main loop."""
@@ -346,14 +375,16 @@ def get_range(range):
     return result.group(1), result.group(2)
 
 def read_file(path):
-    """Reads a file generated by maple containing two terms."""
-    result = []
+    """Reads a file generated by maple and converted by our script containing two terms."""
+    functions = []
+    auxiliaries = []
     for line in open(path,"r"):
-        if line[0]==">":
-            result.append("")
+        if "=" in line:
+            varname, content = line.strip().split("=")
+            auxiliaries.append([varname, prettify_function(content)])
         else:
-            result[-1] = result[-1] + line.translate(None,"\"\\\n ")
-    return result
+            functions.append(prettify_function(line.strip()))
+    return (functions, auxiliaries)
 
             
 
@@ -364,8 +395,9 @@ if __name__ == "__main__":
     parser.add_option("-f", "--file", default="norm_stuff.txt")
     opts, args = parser.parse_args()
     stuff = read_file(opts.file)
+    functions, auxiliaries = read_file(opts.file)
     simpleplotter = SimplePlotter(
-                                  prettify_function(stuff[0]), prettify_function(stuff[1]),
+                                  functions, auxiliaries,
                                   urange=opts.urange, hrange=opts.hrange
             )
     simpleplotter.main()
