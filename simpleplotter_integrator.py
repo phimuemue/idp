@@ -68,6 +68,7 @@ class SimplePlotter:
         """Tells gnuplot to set the variables/parameters."""
         for i in xrange(len(self.func)):
             for (varname, varval) in zip(self.variables, [s.get_value() for s in self.sliders]):
+                print '%s=%f' % (varname, varval)
                 self.gnuplot[i]('%s=%f' % (varname, varval))
 
     def adjust_and_plot(self, widget, data=None):
@@ -78,19 +79,19 @@ class SimplePlotter:
         stripe_width = 1./stripe_amount
         stripe_midpoints = [1./(2*stripe_amount) + i*stripe_width for i in xrange(stripe_amount)]
         self.tfunc = []
-        self.tauxiliaries = []
-        for aux in self.auxiliaries:
-            newaux = aux
-            for (na, ns) in self.tauxiliaries:
-                newaux[1] = re.sub(r"\b%s\b"%na, ns, newaux[1])
-            self.tauxiliaries.append(newaux)
+        # self.tauxiliaries = []
+        # for aux in self.auxiliaries:
+        #     newaux = aux
+        #     for (na, ns) in self.tauxiliaries:
+        #         newaux[1] = re.sub(r"\b%s\b"%na, ns, newaux[1])
+        #     self.tauxiliaries.append(newaux)
         for _f in self.func:
             f = _f[:]
             print f
-            for [a, s] in self.tauxiliaries:
-                print "replacing %s by %s"%(a, s)
-                print "\\b%s\\b"%re.escape(a)
-                f = re.sub(("\\b%s\\b"%re.escape(a)), s, f)
+            # for [a, s] in self.tauxiliaries:
+            #     print "replacing %s by %s"%(a, s)
+            #     print "\\b%s\\b"%re.escape(a)
+            #     f = re.sub(("\\b%s\\b"%re.escape(a)), s, f)
             print "Result: " + f
             tmp = ["abs((%s)*(%f))"%(f.replace("x",str(midpoint)), stripe_width)
                    for midpoint in stripe_midpoints]
@@ -106,8 +107,8 @@ class SimplePlotter:
         for (i,r) in enumerate(self.yradios):
             if r.get_active():
                 yvar = self.variables[i]
-        subs.append((xvar, "x"))
-        subs.append((yvar, "y"))
+        # subs.append((xvar, "x"))
+        # subs.append((yvar, "y"))
         self.plotcommand = "splot " if xvar!=yvar else "plot "
         # fill xyfunc with data for gnuplot
         self.xyfunc = []
@@ -115,14 +116,15 @@ class SimplePlotter:
         for f in self.tfunc:
             tmp = f
             for (s,t) in subs:
-                re.sub(r"\bs\b",t,tmp)
-                # tmp = tmp.replace(s,t)
+                tmp = tmp.replace(s,t)
             self.xyfunc.append(tmp)
+        print self.xyfunc
         # adjust gnuplot properly
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
-            # for (a, s) in self.auxiliaries:
-            #     gp("%s=%s"%(a,s))
+            gp("set dummy %s, %s"%(xvar, yvar))
+            for (a, s) in self.auxiliaries:
+                gp("%s=%s"%(a,s))
             if xvar != yvar:
                 gp("set xlabel \"%s\""%xvar)
                 gp("set ylabel \"%s\""%yvar)
@@ -216,7 +218,7 @@ class SimplePlotter:
         self.variables = list(set(re.findall(
                     r"([a-zA-Z_]+\d*\b)[^(]","+".join(self.func + ([aux[1] for aux in self.auxiliaries])))))
         self.variables = filter(lambda x:x!="x", self.variables)
-        print self.auxiliaries
+        print "Auxiliaries: " + str(self.auxiliaries)
         self.variables = filter(lambda x:x not in [a[0] for a in self.auxiliaries], self.variables)
         def filter_func(x):
             if x in ["abs", "sin", "cos", "log", "tan", "e", "ln"]:
@@ -225,7 +227,7 @@ class SimplePlotter:
                 return False
             return True
         self.variables = filter(filter_func, self.variables)
-        print self.variables
+        print "Variables: " + str(self.variables)
         # an auxiliary function to sort the variables properly
         def varkey(x):
             return x
