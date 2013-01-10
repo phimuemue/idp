@@ -47,8 +47,12 @@ class Quotient(Term):
     def __str__(self):
         return "(%s)/(%s)"%(str(self.numerator), str(self.denominator))
 
-print Sum(1,2,3)
-
+class Power(Term):
+    def __init__(self, base, exponent):
+        self.base = base
+        self.exponent = exponent
+    def __str__(self):
+        return "(%s)**(%s)"%(str(self.base), str(self.exponent))
 
 def split_sum_and_prod(s):
     s = re.sub(r"\++", "+", s)
@@ -56,6 +60,7 @@ def split_sum_and_prod(s):
     s = s.replace("-", "+-")
     if s[0]=="+":
         s = s[1:]
+    # first, we try for a sum
     count = 0
     splits = [-1]
     for (i, c) in enumerate(s):
@@ -70,7 +75,7 @@ def split_sum_and_prod(s):
     if len(summand_str) > 1:
         print summand_str
         return Sum(*[parse_string(x) for x in summand_str])
-    # if we come here, we have no sum, but something else!
+    # if we come here, we have no sum, so we try product
     print "No sum found."
     count = 0
     splits = [-1]
@@ -83,6 +88,23 @@ def split_sum_and_prod(s):
             splits.append(i)
     splits.append(len(s))
     factors_str = [s[splits[i]+1:splits[i+1]] for i in xrange(len(splits)-1)]
+    if len(factors_str) > 1:
+        print factors_str
+        return Product(*[parse_string(x) for x in factors_str])
+    print "No product found."
+    count = 0
+    splits = [-1]
+    for (i, c) in enumerate(s):
+        if c=="(":
+            count = count + 1
+        if c==")":
+            count = count - 1
+        if c=="^" and count==0:
+            splits.append(i)
+    assert(len(splits)<=2)
+    splits.append(len(s))
+    if len(splits)==3:
+        return Power(parse_string(s[:splits[1]]), parse_string(s[splits[1]+1]))
     print factors_str
     return Product(*[parse_string(x) for x in factors_str])
 
@@ -104,5 +126,5 @@ def parse_string(s):
     return split_sum_and_prod(s)
     
 
-print parse_string("2*a-c")
+print parse_string("2^a-c")
 print parse_string("a+(2*b-c)+(2+b*2)-2")
