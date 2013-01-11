@@ -126,12 +126,16 @@ def split_string_parenthesized(s, split):
     parts = [s[splits[i]+1:splits[i+1]] for i in xrange(len(splits)-1)]
     return parts
 
-def split_sum_and_prod(s, fun_environment={}):
+def make_string_better_parsable(s):
     s = re.sub(r"\++", "+", s)
     s = re.sub(r"\+-", "-", s)
     s = s.replace("-", "+-")
     if s[0]=="+":
         s = s[1:]
+    return s
+
+def split_sum_and_prod(s, fun_environment={}):
+    s = make_string_better_parsable(s)
     # first, we try for a sum
     summand_str = split_string_parenthesized(s, "+")
     if len(summand_str) > 1:
@@ -150,7 +154,14 @@ def split_sum_and_prod(s, fun_environment={}):
         print power_str 
         return Power(parse_string(power_str[0]), parse_string(power_str[1]))
     # if we come here, we have no sum, product or exponent, thus
-    # probably a function call
+    # we try for a quotient
+    quotient_str = split_string_parenthesized(s, "/")
+    if len(quotient_str)>1:
+        print quotient_str
+        def quotientizer(a,b):
+            return Quotient(a, parse_string(b))
+        return reduce(quotientizer, quotient_str[1:], parse_string(quotient_str[0]))
+    # none of the above? Probably a function call
     print "No sum, product or exponentiation"
     if re.match(r"^[a-zA-Z_]+(\d*[a-zA-Z_]*)*\(.*\)$", s) is not None:
         print "function call!"
@@ -196,3 +207,4 @@ print result
 
 print parse_string("2^((a-c)^3)")
 # print parse_string("a*(2*b-c)*((2+b*2)-2)")
+print parse_string("a/b/c/d")
