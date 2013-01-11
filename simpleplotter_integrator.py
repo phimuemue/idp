@@ -161,6 +161,21 @@ class SimplePlotter:
             gp("set yrange [%d:%d]"%(self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
             gp("replot")
 
+    def init_plottings_page(self):
+        self.tv_plottings = gtk.TreeView()
+        tv = self.tv_plottings
+        sw = gtk.ScrolledWindow()
+        self.plottings_box.pack_start(sw)
+        sw.add(tv)
+        self.plottings_model = gtk.ListStore(str, str)
+        model = self.plottings_model
+        tv.set_model(self.plottings_model)
+        tv.append_column(gtk.TreeViewColumn("Name", gtk.CellRendererText(), text = 0))
+        tv.append_column(gtk.TreeViewColumn("Term", gtk.CellRendererText(), text = 1))
+        tv.set_headers_visible(True)
+        for (a,b) in self.auxiliaries:
+            model.append([a, b])
+
     def init_settings_page(self):
         """Fills the settings page."""
         # samples
@@ -328,6 +343,7 @@ class SimplePlotter:
         # initialize single pages of the notebook
         self.init_variables_page()
         self.init_settings_page()
+        self.init_plottings_page()
         self.window.show_all()
 
     def __init__(self, functions, auxiliaries, urange="[-5:5]", hrange="[8:12]"):
