@@ -1,6 +1,6 @@
 import re
 
-class Term:
+class Term(object):
     def __str__(self):
         return "[Some term]"
     def simplify(self):
@@ -98,19 +98,21 @@ class Funcall(Term):
         return self.fun.eval(self.params)
     def substitute_intern(self, source, dest):
         return Function(self.fun, [x.substitute_intern(source, dest) for x in self.params])
-
-class Function:
-    def __init__(self, name, params, term):
-        self.name = name
-        self.params = params
-        self.term = term
-    def eval(self, args):
-        assert len(args)==len(self.params)
-        return self.term.substitute(self.params, args)
     def __str__(self):
-        return "%s(%s)"%(self.name, ", ".join(self.params))
+        return str(self.fun.eval(self.params))
 
-def split_sum_and_prod(s):
+class Function(object):
+    def __init__(self, name, arguments, term):
+        self.name = name
+        self.arguments = arguments
+        self.term = term
+    def eval(self, params):
+        assert len(params)==len(self.arguments)
+        return self.term.substitute(self.arguments, params)
+    def __str__(self):
+        return "%s(%s)"%(self.name, ", ".join(self.arguments))
+
+def split_sum_and_prod(s, fun_environment={}):
     s = re.sub(r"\++", "+", s)
     s = re.sub(r"\+-", "-", s)
     s = s.replace("-", "+-")
@@ -166,8 +168,27 @@ def split_sum_and_prod(s):
     # if we come here, we have no sum, product or exponent, thus
     # probably a function call
     print "No sum, product or exponentiation"
+    if re.match(r"^[a-zA-Z_]+(\d*[a-zA-Z_]*)*\(.*\)$", s) is not None:
+        print "function call!"
+        fname, fparams = s.split("(", 1)
+        fparams = fparams[:-1]
+        print fname, fparams
+        count = 0
+        splits = [-1]
+        for (i, c) in enumerate(fparams):
+            if c=="(":
+                count = count + 1
+            if c==")":
+                count = count - 1
+            if c=="," and count==0:
+                splits.append(i)
+        splits.append(len(s))
+        params_str = [fparams[splits[i]+1:splits[i+1]] for i in xrange(len(splits)-1)]
+        print params_str
+        print fun_environment
+        return Funcall(fun_environment[fname], [parse_string(x) for x in params_str])
 
-def parse_string(s):
+def parse_string(s, fun_environment={}):
     raw_input ("Parsing %s"%s)
     # trim outer brackets
     if s[0]=="(" and s[-1]==")":
@@ -182,12 +203,11 @@ def parse_string(s):
     if re.search(r"^([a-zA-Z_]\d*[a-zA-Z_]*)$", s) is not None:
         return Variable(s)
     # probably something else
-    return split_sum_and_prod(s)
+    return split_sum_and_prod(s, fun_environment)
 
 f = Function("f", ["a","b","c"], parse_string("a+b+c"))
-print f
 x = parse_string("x+y")
-result = f.eval([x, x, x])
+result = parse_string("f(a,b,(1+c))", {"f": f})
 print result
 # print parse_string("2^a-c")
 # print parse_string("a*(2*b-c)*((2+b*2)-2)")
