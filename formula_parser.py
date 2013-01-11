@@ -112,6 +112,20 @@ class Function(object):
     def __str__(self):
         return "%s(%s)"%(self.name, ", ".join(self.arguments))
 
+def split_string_parenthesized(s, split):
+    count = 0
+    splits = [-1]
+    for (i, c) in enumerate(s):
+        if c=="(":
+            count = count + 1
+        if c==")":
+            count = count - 1
+        if c==split and count==0:
+            splits.append(i)
+    splits.append(len(s))
+    parts = [s[splits[i]+1:splits[i+1]] for i in xrange(len(splits)-1)]
+    return parts
+
 def split_sum_and_prod(s, fun_environment={}):
     s = re.sub(r"\++", "+", s)
     s = re.sub(r"\+-", "-", s)
@@ -119,52 +133,22 @@ def split_sum_and_prod(s, fun_environment={}):
     if s[0]=="+":
         s = s[1:]
     # first, we try for a sum
-    count = 0
-    splits = [-1]
-    for (i, c) in enumerate(s):
-        if c=="(":
-            count = count + 1
-        if c==")":
-            count = count - 1
-        if c=="+" and count==0:
-            splits.append(i)
-    splits.append(len(s))
-    summand_str = [s[splits[i]+1:splits[i+1]] for i in xrange(len(splits)-1)]
+    summand_str = split_string_parenthesized(s, "+")
     if len(summand_str) > 1:
         print summand_str
         return Sum(*[parse_string(x) for x in summand_str])
     # if we come here, we have no sum, so we try product
     print "No sum found."
-    count = 0
-    splits = [-1]
-    for (i, c) in enumerate(s):
-        if c=="(":
-            count = count + 1
-        if c==")":
-            count = count - 1
-        if c=="*" and count==0:
-            splits.append(i)
-    splits.append(len(s))
-    factors_str = [s[splits[i]+1:splits[i+1]] for i in xrange(len(splits)-1)]
+    factors_str = split_string_parenthesized(s, "*")
     if len(factors_str) > 1:
         print factors_str
         return Product(*[parse_string(x) for x in factors_str])
     # if we come here, we have no sum or product so we try exponentiation
     print "No product found."
-    count = 0
-    splits = [-1]
-    for (i, c) in enumerate(s):
-        if c=="(":
-            count = count + 1
-        if c==")":
-            count = count - 1
-        if c=="^" and count==0:
-            splits.append(i)
-    assert(len(splits)<=2)
-    splits.append(len(s))
-    if len(splits)==3:
-        print [(s[:splits[1]]), (s[splits[1]+1])]
-        return Power(parse_string(s[:splits[1]]), parse_string(s[splits[1]+1]))
+    power_str = split_string_parenthesized(s, "^")
+    if len(power_str)==2:
+        print power_str 
+        return Power(parse_string(power_str[0]), parse_string(power_str[1]))
     # if we come here, we have no sum, product or exponent, thus
     # probably a function call
     print "No sum, product or exponentiation"
@@ -189,7 +173,7 @@ def split_sum_and_prod(s, fun_environment={}):
         return Funcall(fun_environment[fname], [parse_string(x) for x in params_str])
 
 def parse_string(s, fun_environment={}):
-    raw_input ("Parsing %s"%s)
+    # raw_input ("Parsing %s"%s)
     # trim outer brackets
     if s[0]=="(" and s[-1]==")":
         return parse_string(s[1:-1])
@@ -209,5 +193,6 @@ f = Function("f", ["a","b","c"], parse_string("a+b+c"))
 x = parse_string("x+y")
 result = parse_string("f(a,b,(1+c))", {"f": f})
 print result
-# print parse_string("2^a-c")
+
+print parse_string("2^((a-c)^3)")
 # print parse_string("a*(2*b-c)*((2+b*2)-2)")
