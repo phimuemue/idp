@@ -146,7 +146,7 @@ For further reference, we will be calling the domain of the entire triangle $T$ 
 
 The points in the triangle are support points. The number depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is impossible to calculate the propagation exactly, we need to find a numerical approximation. This will be done with the discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin}. However, for each test function used for the method we will need one point in the triangle to save the calculated information to. They can be regarded as sample points that are representative for the values within the triangle. The higher polynomial degree we operate on, the more support points we will have. While this increases accuracy, it has a negative impact on efficiency, so a proper balance is desired.
 
-Another set of points are \emph{Gaussian quadrature} points, which we will use later on to approximate integrals along the edges. Accordingly, they will also be located on the respective edges. They will be explained in more detail in section \ref{sec:border-integral}.
+Another set of points are \emph{Gaussian quadrature} points, which we will use later on to approximate integrals along the edges. Accordingly, they will also be located on the respective edges. They will be explained in more detail in section \ref{sec:boundary-integral}.
 
 \section{Choice of basis functions}
 \label{sec:basis-functions-choice}
@@ -244,7 +244,7 @@ Having defined those terms to suit our purpose, we can rewrite the above as foll
   \end{pmatrix}
 \end{eqnarray*}
 
-Here we replaced the velocity $\mathbf{v}$ by the impulse $\mathbf{u}$, which, similarly, consists of two dimensions, one in each direction (referred to by $u_x$ and $u_y$). Occasionally we will need only the $x$ components (or $y$ components) from that vector, for which we will write $F^x$ (and $F^y$ respectively):
+Here we replaced the velocity $\mathbf{v}$ by the momentum $\mathbf{u}$, which, similarly, consists of two dimensions, one in each direction (referred to by $u_x$ and $u_y$). Occasionally we will need only the $x$ components (or $y$ components) from that vector, for which we will write $F^x$ (and $F^y$ respectively):
 
 \begin{eqnarray*}
   F^x(\mathbf{q}) =
@@ -276,11 +276,11 @@ The operator $\nabla \cdot$ is the divergence, which computes the sum of the $x$
 
 Note at this point, that these are actually six equations, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates. The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result. The last integral contains the symbol $\nabla$. This operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
 
-The second integral in that equation is a border integral around our triangle. The $\mathbf{n}$ in there denotes the (outward facing) normal at that point. We write $ds$ to denote integration over the $(x,y)$ values along the border. Since it is a border integral of a triangle, we can split it up into three integrals (one for each edge of the triangle), which will aid in computation of the term. This also implies splitting the normal vector $\mathbf{n}$ into three vectors, one for each edge. This helps as well, because the normal vector is constant within each edge.
+The second integral in that equation is a boundary integral around our triangle. The $\mathbf{n}$ in there denotes the (outward facing) normal at that point. We write $ds$ to denote integration over the $(x,y)$ values along the border. Since it is a boundary integral of a triangle, we can split it up into three integrals (one for each edge of the triangle), which will aid in computation of the term. This also implies splitting the normal vector $\mathbf{n}$ into three vectors, one for each edge. This helps as well, because the normal vector is constant within each edge.
 
 \begin{equation}
-  \label{eq:border-integral-sum}
-  \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds = \sum_{e \in E} \int_{e} F(\mathbf{q}) \cdot \mathbf{n}_e \, \phi \, ds = \sum_{e \in E} \int_{e} F^e \phi \, ds =: \text{Border integral}
+  \label{eq:boundary-integral-sum}
+  \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds = \sum_{e \in E} \int_{e} F(\mathbf{q}) \cdot \mathbf{n}_e \, \phi \, ds = \sum_{e \in E} \int_{e} F^e \phi \, ds =: \text{Boundary integral}
 \end{equation}
 
 We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a standardized space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:triangles}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
@@ -330,6 +330,8 @@ The elements $m_{ij}$ form the $n \times n$ mass matrix $M$. That means we have 
 \label{sec:stiffness-matrix}
 
 We will skip the second integral for now and move to the third. We need to treat each of the three components differently. In this section we will see the state vector array splitting up by their coordinates and giving us different results for the $x$ and $y$ components. This means we will be using the $F^x\left(\mathbf{q}\right)$ and $F^y\left(\mathbf{q}\right)$ terms defined in \ref{sec:shallow-water-equations} for simpler notation.
+
+\todo{Here we need some more explanations concerning the notation of $u_{x,j}$ and stuff\dots}
 
 \subsubsection{First line}
 \label{sec:stiffness-matrix-first-line}
@@ -389,6 +391,10 @@ An analogous approach to the second and third line gives us:
 
 The resulting terms here, $\int_T \phi_j \pd{\phi_i}{x} \, dT$ and $\int_T \phi_j \pd{\phi_i}{y} \, dT$, are the same stiffness matrices we computed before, $S^x$ and $S^y$ respectively.
 
+\todo{We have to do the explanation before we actually use it in the second line.}
+
+\todo{More references. Schwaiger-DA only is not sufficient here! Where is the approach taken from}
+
 \paragraph{Explanation: Point-wise approximation}
 
 The transition from (\ref{sec:third-integral-second-line-1}) to (\ref{sec:third-integral-second-line-2}) is used as an approximation to simplify further computation. To compute a function $f(h, u_x, u_y)$, instead of computing
@@ -429,10 +435,10 @@ The third line is computationally equivalent to the previous, with the respectiv
   & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
-\subsection{Inspecting the border integral}
-\label{sec:border-integral}
+\subsection{Inspecting the boundary integral}
+\label{sec:boundary-integral}
 
-Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because the term $F^e$ depends on the edge, and hence cannot be moved out of the integral, so the same techniques employed with the previous two integrals will not work here. Instead, we employ a Gaussian quadrature and integrate numerically. To do that we substitute the inner integral as follows:
+Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because the term $F^e$ is located and evaluated on the edge, and hence cannot be moved out of the integral, so the same techniques employed with the previous two integrals will not work here. Instead, we employ a Gaussian quadrature and integrate numerically. To do that we substitute the inner integral as follows:
 \begin{equation}
   \int_{e} F^e \phi_i \, ds \approx \sum_{k=1}^{m} F^e\left(p_k^e\right) \underbrace{\phi_i\left(p_k^e\right) \cdot w_k}_{w_{ik}^e},
 \end{equation}
@@ -474,9 +480,10 @@ Using the approximation $\mathbf{q} \approx \sum_{j=1}^n \mathbf{q}_i \phi_i\lef
 
 Here $\tilde{F^e}$ means a vector of all calculated $F_k^e$, similarly to $\tilde{\mathbf{q}}$. This now has the advantage of being easier to handle, both mathematically as well computationally.
 
-\section{Computing the integrals}
+\section{Time stepping}
 \label{sec:computing-integrals}
 
+\todo{Explain that a more sophisticated technique than Euler might be used here. It is well known that on should use 2nd order accuracy here.}
 \subsection{Explicit Euler}
 \label{subsec:explicit-euler}
 
@@ -534,9 +541,9 @@ We have to keep in mind that equation (\ref{eq:swe-euler-step-solution}) is actu
 \section{Setting}
 \label{sec:setting}
 
-When analyzing wave propagation along a grid of triangles, it's essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it's determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and impulse ($u$, proportional to velocity $q$), where the impulse is a vector for every spatial dimension. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
+When analyzing wave propagation along a grid of triangles, it's essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it's determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
 
-This may sometimes be acquired by exact means, however those computations are long and complex and can result in absurd computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We want to analyze what kind of accuracy loss that implies and if it's a suitable method for realistic computation.
+This may sometimes be acquired by exact means, however those computations are long and complex and can result in prohibitively high computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We want to analyze what kind of accuracy loss that implies and if it's a suitable method for realistic computation.
 
 We have two adjacent triangles (called $R$ and $L$ respectively, although the direction does not matter), sharing a common edge $E$. Each triangle has its own polynomial for every component ($h$ and $u$), evaluated over coordinates on the triangle. After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and triangle, resulting in four polynomials. What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places.
 
@@ -567,7 +574,7 @@ The Lax-Friedrichs flux is defined as follows:
   F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
 \end{equation}
 
-In (\ref{eq:lax-friedrich-definition}), $p^R$ and $p^L$ stand for the height and velocity along the right and the left edge, respectively. The term $F(p)$ is defined as in equation (\ref{eq:flux-function-definition}), and $p$ is a two-component vector. $p^R$ and $p^L$ are polynomials depending on a variable ($x$ in our one dimensional case). These polynomials are containing two components (for height and impulse). $p$ is technically a function $[0,1]\rightarrow\reals$, thus we should write $p\left(x\right)$ and $F\left(p\left(x\right)\right)$. For simplicity, we will simply use $p$ and $F\left(p\right)$ respectively, but we need to remember that fact when we differentiate or integrate over $x$, because we cannot treat $p$ and $F\left(p\right)$ as constants.
+In (\ref{eq:lax-friedrich-definition}), $p^R$ and $p^L$ stand for the height and velocity along the right and the left edge, respectively. The term $F(p)$ is defined as in equation (\ref{eq:flux-function-definition}), and $p$ is a two-component vector. $p^R$ and $p^L$ are polynomials depending on a variable ($x$ in our one dimensional case). These polynomials are containing two components (for height and momentum). $p$ is technically a function $[0,1]\rightarrow\reals$, thus we should write $p\left(x\right)$ and $F\left(p\left(x\right)\right)$. For simplicity, we will simply use $p$ and $F\left(p\right)$ respectively, but we need to remember that fact when we differentiate or integrate over $x$, because we cannot treat $p$ and $F\left(p\right)$ as constants.
 
 \subsection{Original situation: A 2D problem}
 \label{sec:original-situation-2d-problem}
@@ -608,9 +615,9 @@ Since we are interested in the situation along the adjacent edges, which is a li
 \subsection{Constructing the polynomials}
 \label{sec:constructing-polynomials}
 
-As stated in the introduction, we have to construct $p^L$ and $p^R$, the polynomials describing the height and impulse of the right and left triangle respectively. We construct these polynomials by interpolating certain points.
+As stated in the introduction, we have to construct $p^L$ and $p^R$, the polynomials describing the height and momentum of the right and left triangle respectively. We construct these polynomials by interpolating certain points.
 
-We do so for the left and the right triangle, and for the height and the impulse. We call the points we've chosen the \emph{support points} for the left and right triangle. For convenience, we have decided to use a naming convention for these points. Assume that we have $n$ points for each triangle. Then we call the (components of the) points of the left triangle 
+We do so for the left and the right triangle, and for the height and the momentum. We call the points we've chosen the \emph{support points} for the left and right triangle. For convenience, we have decided to use a naming convention for these points. Assume that we have $n$ points for each triangle. Then we call the (components of the) points of the left triangle 
 \begin{equation*}
 \left(x_1,\begin{pmatrix}
     h_1^R \\ u_1^R
@@ -628,7 +635,7 @@ and the points for the right triangle
 \end{equation*}
 i.e.\,we introduce a superscript indicating whether we are dealing with points within the left or the right triangle.
 
-As you can see, each point consists of two components, first a position on the edge ($x_i, i \in \{1 \dots n\}$) and second a vector with the corresponding height and impulse, ($h_i^R$ and $u_i^R$ for the left triangle and $h_i^L$ and $u_i^L$ for the right, with $i \in \{1 \dots n\}$).
+As you can see, each point consists of two components, first a position on the edge ($x_i, i \in \{1 \dots n\}$) and second a vector with the corresponding height and momentum, ($h_i^R$ and $u_i^R$ for the left triangle and $h_i^L$ and $u_i^L$ for the right, with $i \in \{1 \dots n\}$).
 
 Intuitively one would think the support points should be equidistant to each other, but other distributions yield better results. Eventually we will need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we'll employ the Gaussian quadrature. This method requires its own support points to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}.
 
@@ -640,9 +647,9 @@ We then generate four polynomials as follows:
 
 \begin{itemize}
 \item $p^L_h(x) := interpolate (x,h^L)$. Polynomial interpolating the height values for the left triangle.
-\item $p^L_u(x) := interpolate (x,u^L)$. Polynomial interpolating the impulse values for the left triangle.
+\item $p^L_u(x) := interpolate (x,u^L)$. Polynomial interpolating the momentum values for the left triangle.
 \item $p^R_h(x) := interpolate (x,h^R)$. Polynomial interpolating the height values for the right triangle.
-\item $p^R_u(x) := interpolate (x,u^R)$. Polynomial interpolating the impulse values for the right triangle.
+\item $p^R_u(x) := interpolate (x,u^R)$. Polynomial interpolating the momentum values for the right triangle.
 \end{itemize}
 
 We then combine two polynomials into one to obtain the following:
@@ -658,7 +665,7 @@ We then combine two polynomials into one to obtain the following:
   \end{pmatrix}
 \end{equation*}
 
-As was mentioned in section \ref{sec:flux-function-intro} $p^L$ and $p^R$ are actually functions that map $x \in [0,1]$ onto a vector containing the values of the height and the impulse polynomial for the respective triangle, we still call $p^L$ and $p^R$ polynomials to refer to the resulting functions, which we will be working with.
+As was mentioned in section \ref{sec:flux-function-intro} $p^L$ and $p^R$ are actually functions that map $x \in [0,1]$ onto a vector containing the values of the height and the momentum polynomial for the respective triangle, we still call $p^L$ and $p^R$ polynomials to refer to the resulting functions, which we will be working with.
 
 \subsection{What do we want to know?}
 \label{sec:goal-intro}
@@ -666,7 +673,7 @@ As was mentioned in section \ref{sec:flux-function-intro} $p^L$ and $p^R$ are ac
 What we eventually would like to do is to compare the following two things with each other:
 
 \begin{description}
-\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrich-Flux, and compute its exact value. The resulting values are again polynomials depending on $x$. We call these polynomials $N\left(x\right)$ (a vector which has a polynomial for the height as its first component, while the second component represents the impulse).
+\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrich-Flux, and compute its exact value. The resulting values are again polynomials depending on $x$. We call these polynomials $N\left(x\right)$ (a vector which has a polynomial for the height as its first component, while the second component represents the momentum).
 
 \item[Approximate solution] We supply the support points into the Lax-Friedrich-Flux directly, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
   \begin{equation*}
@@ -705,6 +712,8 @@ where the integration is to be understood component-wise.
 
 \subsection{How to evaluate $I$?}
 \label{sec:how-to-eval-I}
+
+\todo{Explain why we did not use Gauss-Integration?}
 
 It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-norm-definition}). Even if we delegate most of the work to the symbolic math program \emph{Maple}, we experienced some pitfalls while evaluating the exact approach.
 
@@ -752,7 +761,7 @@ You can find some more information about the developed tool in section \ref{sec:
 
 If we take a look at the second component of $I$, we can see that it contains a fraction (this is due to the flux function \ref{eqn:shallow-water-flux}, which contained a fraction itself). This means that there could be some singularities involved. If we integrate, we need to pay attention to these singularities, although we will see that they will have no practical relevance for us.
 
-If we use two support points for each edge (all points except $p_1^L$ are $(10,0)$) and expand the term $N\left(x\right)-N^\prime\left(x\right)$, we can clearly see a fraction in its second component, i.e.\, the term describing the error in the impulse component. The fraction term in this example looks as follows (numerator omitted for simplicity):
+If we use two support points for each edge (all points except $p_1^L$ are $(10,0)$) and expand the term $N\left(x\right)-N^\prime\left(x\right)$, we can clearly see a fraction in its second component, i.e.\, the term describing the error in the momentum component. The fraction term in this example looks as follows (numerator omitted for simplicity):
 
 \begin{equation*}
   \frac{1}{h_1\cdot(1.732 h_1 \cdot x - 17.320 x - 1.366 h_1 + 3.660)}
@@ -804,7 +813,7 @@ We are now going to plot (the two components of) the term $I$ as described in eq
 \subsection{Some considerations to take into account}
 \label{sec:some-considerations}
 
-Recall from section \ref{sec:constructing-polynomials}, that the terms $p^L$ and $p^R$ depend on the chosen support points. Moreover, $N\left(x\right)$ depends on these polynomials. Thus, the term $N\left(x\right)-N^\prime\left(x\right)$ also depends on the polynomials and by extension on the support points. This means, we have $4n$ variables\footnote{We have $n$ points for each of the two adjacent edges, each point consisting of a height and a impulse component, resulting in $4n$ variables.} in this term.
+Recall from section \ref{sec:constructing-polynomials}, that the terms $p^L$ and $p^R$ depend on the chosen support points. Moreover, $N\left(x\right)$ depends on these polynomials. Thus, the term $N\left(x\right)-N^\prime\left(x\right)$ also depends on the polynomials and by extension on the support points. This means, we have $4n$ variables\footnote{We have $n$ points for each of the two adjacent edges, each point consisting of a height and a momentum component, resulting in $4n$ variables.} in this term.
 This implies that $I$ (see equation (\ref{eq:integral-norm-definition})) also depends on the single points $
 \begin{pmatrix}
   h_1^L \\ u_1^L
@@ -861,7 +870,7 @@ We can now use a 3D plot with the $x$ axis representing $h_1^L$ and the $y$ axis
 
 To plot our results we considered several options. Maple supports dynamic plotting to a certain degree, and since we used it for some of our previous symbolic and numeric computation, we tried employing it to obtain the plots we need. Essentially, one can obtain a window with movable sliders that change a plot adjusting to it.
 
-However, we realized that this method had some downsides. We always are interested in plotting two graphs, one for the height error and one for the impulse error (both components of $I$). Showing two plots simultaneously affected by the same sliders proved to be a challenge, and was not doable with the native plotting services due to limited customization. It may have been able to write a custom Maplet (interactive Maple applet) which did what we wanted, but that turned out to be just as cumbersome due to Maple's limited applet functionality.
+However, we realized that this method had some downsides. We always are interested in plotting two graphs, one for the height error and one for the momentum error (both components of $I$). Showing two plots simultaneously affected by the same sliders proved to be a challenge, and was not doable with the native plotting services due to limited customization. It may have been able to write a custom Maplet (interactive Maple applet) which did what we wanted, but that turned out to be just as cumbersome due to Maple's limited applet functionality.
 
 Moreover, we wanted to be able to quickly switch the coordinate axes, so that we can compare plots with each other in real time, which also did not work with the native implementation. Finally, Maple's user interface is not intended to be used with that many variables, which posed a challenge for our $4n$ variables in $I$. The only alternative would have been to cut some of them out, which would make the tool less interactive.
 
@@ -904,11 +913,11 @@ The parameter ``stripes'' determines how many stripes are used to numerically ev
 \subsection{How to interpret the graphs}
 \label{sec:how-to-interpret-graphs}
 
-All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N^\prime\left(x\right)$. The tool generates two plots that are labeled ``0. Function'' and ``1. Function''. In our case ``0. Function'' represents the error in the $h$ component (height), while ``1. Function'' stands for the error in the $u$ component (impulse).
+All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N^\prime\left(x\right)$. The tool generates two plots that are labeled ``0. Function'' and ``1. Function''. In our case ``0. Function'' represents the error in the $h$ component (height), while ``1. Function'' stands for the error in the $u$ component (momentum).
 
 To understand how our plots work, we can take a look at figure \ref{fig:two-points-all-the-same}. In this example, we used 2 points on each triangle and edge. That is, we have four (relevant) points in total, \emph{two of which} we have plotted here. This is why figure \ref{fig:two-points-all-the-same} has \emph{two} sub-figures.
 
-Looking at sub-figure \ref{subfig:two-points-p1-height-impulse}, its caption says that point $p_1^L$ is varying. To be precise, its height and impulse vary along the plot axes.
+Looking at sub-figure \ref{subfig:two-points-p1-height-momentum}, its caption says that point $p_1^L$ is varying. To be precise, its height and momentum vary along the plot axes.
 
 The first part of this caption tells us that we are fixing \emph{all points except} $p_1^L$ to a specific value (in this case it was $
 \begin{pmatrix}
@@ -959,8 +968,8 @@ We implemented several scenarios and present the outcome of some of them using t
   \begin{tabular}[ht]{cl}
     Order & $x$-coordinates \\
     \hline
-    2 & $\frac{1}{2}-\frac{1}{6}\cdot \sqrt{3}, \frac{1}{2}+\frac{1}{6}\cdot \sqrt{3}$ \\
-    3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} , 0.5, \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ \\
+    2 & $\frac{1}{2}-\frac{1}{6}\cdot \sqrt{3},\  \frac{1}{2}+\frac{1}{6}\cdot \sqrt{3}$ \\
+    3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} ,\  0.5,\  \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ \\
     \hline 
   \end{tabular}
   \caption{$x$-coordinates of support points for Gauss-Quadrature}
@@ -970,7 +979,7 @@ We implemented several scenarios and present the outcome of some of them using t
 \subsection{Setting all support points to the same value}
 \label{sec:setting-all-support-points-to-the-same-value}
 
-First we set all support points to one single value ensuring homogenous height and impulse. Then, we tackle each point individually and let their values range over a certain domain.
+First we set all support points to one single value ensuring homogenous height and momentum. Then, we tackle each point individually and let their values range over a certain domain.
 
 \input{2_punkte_alles_10_0/tex.tex}
 
@@ -978,14 +987,14 @@ Figure \ref{fig:two-points-all-the-same} shows the case for two points on each a
 
 As the plot shows, the error for the $h$ component ranges up to 2.5.
 
-We did the same thing for three support points along each edge (and it can be done for an arbitrary number of support points). You can see the results in figure \ref{fig:three-points-equal}. In general it seems that the structure of the error plots is quite similar across different settings: the error in the height component is almost zero, while the error in the impulse component looks similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
+We did the same thing for three support points along each edge (and it can be done for an arbitrary number of support points). You can see the results in figure \ref{fig:three-points-equal}. In general it seems that the structure of the error plots is quite similar across different settings: the error in the height component is almost zero, while the error in the momentum component looks similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
 
 \input{3_punkte_gleich/tex.tex}
 
 \subsection{Singularities}
 \label{sec:plots-discontinuities}
 
-When we look at figure \ref{subfig:fixing-p2-in-first-example}, we see that the error in the impulse component looks somewhat like a parabola with respect to the variable $h_1$. We see a smooth curve.
+When we look at figure \ref{subfig:fixing-p2-in-first-example}, we see that the error in the momentum component looks somewhat like a parabola with respect to the variable $h_1$. We see a smooth curve.
 
 Remember that we saw in section \ref{sec:singularities} that there might be singularities. We will now see a plot that exposes these singularities to us.
 
@@ -1018,10 +1027,10 @@ You see the results of this experiment in figure \ref{fig:three-points-h1-}.
 
 Comparing figure \ref{fig:three-points-equal} and \ref{fig:three-points-h1-} it is worth noting that especially the plots for $p_2^L$, $p_3^L$ and $p_3^R$ differ strongly. Additionally, it can be seen that the structure differs as well as the range of the error.
 
-\subsubsection{Decreasing the impulse of $p_1^L$}
-\label{sec:decreasing-impulse-p1}
+\subsubsection{Decreasing the momentum of $p_1^L$}
+\label{sec:decreasing-momentum-p1}
 
-While we changed the height in subsection \ref{sec:decreasing-height-p1}, we are now going to change the impulse. The results are shown in figure \ref{fig:three-points-u1-}
+While we changed the height in subsection \ref{sec:decreasing-height-p1}, we are now going to change the momentum. The results are shown in figure \ref{fig:three-points-u1-}
 
 \input{3_punkte_1_impuls_verringert/tex.tex}
 
@@ -1032,10 +1041,10 @@ Now we are going to examine if it makes a difference when we decrease the height
 
 \input{3_punkte_2_hoehe_verringert/tex.tex}
 
-\subsubsection{Decreasing the impulse of $p_2^L$}
-\label{sec:decreasing-impulse-of-p2}
+\subsubsection{Decreasing the momentum of $p_2^L$}
+\label{sec:decreasing-momentum-of-p2}
 
-Decreasing the impulse of point $p_2^L$ results in the plots depicted in figure \ref{fig:three-points-u2-}. In particular, the graphs for $p_1^L$ and $p_3^L$ show significant structural differences.
+Decreasing the momentum of point $p_2^L$ results in the plots depicted in figure \ref{fig:three-points-u2-}. In particular, the graphs for $p_1^L$ and $p_3^L$ show significant structural differences.
 
 \input{3_punkte_2_impuls_verringert/tex.tex}
 
@@ -1082,7 +1091,7 @@ We started as in section \ref{sec:setting-all-support-points-to-the-same-value} 
 \section{Conclusions from the things seen}
 \label{sec:conslusions}
 
-What all plots have in common is the fact that it looks as if towards the borders the error grows. However, trying to determine an exact formula for the deviation is impracticle due to the amount of variables that all interact with each other, and may even be impossible.
+What all plots have in common is the fact that it looks as if towards the boundarys the error grows. However, trying to determine an exact formula for the deviation is impracticle due to the amount of variables that all interact with each other, and may even be impossible.
 
 \bibliography{bibliography}
 
