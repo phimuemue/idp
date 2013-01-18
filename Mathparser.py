@@ -1,7 +1,3 @@
-#TODO:
-# - Parse subsequent parentheses with multiplication: realize([[x],[y]]) = [x]*[y]
-# - Precompute expressions after assignment. Faster than Gnuplot? Does Gnuplot even simplify? Simple test, but too lazy right now.
-
 class InvalidFormatException(Exception):
     def __init__(self, line, reason):
         self.line = line
@@ -244,15 +240,6 @@ class Mathparser():
             if not newmode == 'adapt' and (newmode != mode or newmode == 'break'):
                 if current.strip() != '':
                     result[-1].append(current)
-                if mode == 'break':
-                    last = (result[-1][-1], 'current') if result[-1] != [] else (result[-2][-1], 'previous') if len(result) > 1 else ([], 'nil')
-                    precheck = self.isnum(last[0]) or self.isvar(last[0])
-                    postcheck = c in self.alpha+self.num+'('
-                    if precheck and postcheck:
-                        if last[1] == 'current':
-                            result[-1].append('*')
-                        elif last[1] == 'previous':
-                            result[-2].append('*')
                 current = c
                 mode = newmode
             else:
@@ -286,7 +273,13 @@ class Mathparser():
                 elif self.isop(tok):
                     opdict[tok].append(i-offset)
                     parsed.append(tok)
-
+                else:
+                    parsed.append(tok)
+                if len(parsed) > 1 and ((isinstance(parsed[-2], Term) and isinstance(parsed[-1], Term))):
+                    parsed[-1:] = ['*', parsed[-1]]
+                    opdict['*'].append(i-offset)
+                    offset -= 1
+            
             # Classification of operators and combined tokens
             offset = 0
             for i in sorted(opdict['**']+opdict['^']):
@@ -430,7 +423,7 @@ if __name__ == '__main__':
 
     p.setvar('t1', 5)
 
-    print('\nGnu formatted string:')
+    print('\nGnuplot formatted string:')
     print(p.gnuformat())
     print('\nInternal representation:')
     print(repr(p.exprlist))
