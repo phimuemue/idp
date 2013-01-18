@@ -25,7 +25,18 @@ class Sum(Term):
     def __repr__(self):
         return 'Addition('+', '.join([repr(summand) for summand in self.summands])+')'
     def __str__(self):
-        return '+'.join([str(summand) for summand in self.summands])
+        summands = []
+        acc = 0
+        for summand in [str(summand) for summand in self.summands]:
+            try:
+                acc += float(summand)
+            except ValueError:
+                summands.append(summand)
+        if acc == 0:
+            return '+'.join(summands)
+        if len(summands) == 0:
+            return str(acc)
+        return str(acc)+'+'+'+'.join(summands)
     def apply(self, name, val):
         for summand in self.summands:
             summand.apply(name, val)
@@ -37,7 +48,22 @@ class Difference(Term):
     def __repr__(self):
         return 'Difference('+repr(self.subtrahend)+', '+', '.join([repr(minuend) for minuend in self.minuends])+')'
     def __str__(self):
-        return str(self.subtrahend)+'-'+'-'.join([str(minuend) for minuend in self.minuends])
+        minuends = []
+        acc = 0
+        for minuend in [str(minuend) for minuend in self.minuends]:
+            try:
+                acc += float(minuend)
+            except ValueError:
+                minuends.append(minuend)
+        if acc == 0:
+            return str(self.subtrahend)+'-'+'-'.join(minuends)
+        try:
+            subtrahend = str(float(subtrahend) - acc)
+        except ValueError:
+            res.append(str(acc))
+        if len(minuends) == 0:
+            return subtrahend
+        return subtrahend+'-'.join(minuends)
     def apply(self, name, val):
         self.subtrahend.apply(name, val)
         for minuend in self.minuends:
@@ -49,8 +75,20 @@ class Product(Term):
     def __repr__(self):
         return 'Product('+', '.join([repr(factor) for factor in self.factors])+')'
     def __str__(self):
-        factorstr = '*'.join(['('+str(factor)+')' if isinstance(factor, (Sum, Difference)) else str(factor) for factor in self.factors])
-        return factorstr
+        factors = [] #['('+str(factor)+')' if isinstance(factor, (Sum, Difference)) else str(factor) for factor in self.factors]
+        acc = 1
+        #print(self.factors)
+        #print([str(f) for f in self.factors])
+        for factor in [str(factor) for factor in self.factors]:
+            try:
+                acc *= float(factor)
+            except ValueError:
+                factors.append(factor)
+        if acc == 0:
+            return '*'.join(factors)
+        if len(factors) == 0:
+            return str(acc)
+        return str(acc)+'*'+'*'.join(factors)
     def apply(self, name, val):
         for factor in self.factors:
             factor.apply(name, val)
@@ -62,9 +100,23 @@ class Quotient(Term):
     def __repr__(self):
         return 'Division('+repr(self.dividend)+', '+', '.join([repr(divisor) for divisor in self.divisors])+')'
     def __str__(self):
-        dividendstr = str('('+str(self.dividend)+')' if isinstance(self.dividend, (Sum, Difference)) else str(self.dividend))
-        divisorstr = '/'.join(['('+str(divisor)+')' if isinstance(divisor, (Sum, Difference)) else str(divisor) for divisor in self.divisors])
-        return dividendstr+'/'+divisorstr
+        dividend = str('('+str(self.dividend)+')' if isinstance(self.dividend, (Sum, Difference)) else str(self.dividend))
+        divisors = []
+        acc = 1
+        for divisor in ['('+str(divisor)+')' if isinstance(divisor, (Sum, Difference)) else str(divisor) for divisor in self.divisors]:
+            try:
+                acc *= float(divisor)
+            except ValueError:
+                divisors.append(divisor)
+        if acc == 0:
+            return str(self.dividend)+'/'+'/'.join(divisors)
+        try:
+            dividend = str(float(dividend) / acc)
+        except ValueError:
+            res.append(str(acc))
+        if len(divisors) == 0:
+            return dividend
+        return dividend+'/'.join(divisors)
     def apply(self, name, val):
         self.dividend.apply(name, val)
         for divisor in self.divisors:
@@ -77,9 +129,12 @@ class Exponent(Term):
     def __repr__(self):
         return 'Exponent('+repr(self.base)+', '+repr(self.exp)+')'
     def __str__(self):
-        basestr = str('('+str(self.base)+')' if isinstance(self.base, (Sum, Difference, Product, Quotient)) else str(self.base))
-        expstr = str('('+str(self.exp)+')' if isinstance(self.exp, (Sum, Difference, Product, Quotient)) else str(self.exp))
-        return basestr+'**'+expstr
+        base = str('('+str(self.base)+')' if isinstance(self.base, (Sum, Difference, Product, Quotient)) else str(self.base))
+        exp = str('('+str(self.exp)+')' if isinstance(self.exp, (Sum, Difference, Product, Quotient)) else str(self.exp))
+        try:
+            return str(float(base)**float(exp))
+        except ValueError:
+            return base+'**'+exp
     def apply(self, name, val):
         self.base.apply(name, val)
         self.exp.apply(name, val)
@@ -417,7 +472,7 @@ if __name__ == '__main__':
     print('\nGnuplot formatted string:')
     print(p.gnuformat())
     print('\nInternal representation:')
-    print(repr(p.exprlist))
+    print('\n'.join([repr(expr) for expr in p.exprlist]))
 
     print('\nSetting variable t1 to 5')
 
@@ -426,4 +481,4 @@ if __name__ == '__main__':
     print('\nGnuplot formatted string:')
     print(p.gnuformat())
     print('\nInternal representation:')
-    print(repr(p.exprlist))
+    print('\n'.join([repr(expr) for expr in p.exprlist]))
