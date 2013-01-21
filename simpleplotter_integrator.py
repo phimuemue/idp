@@ -71,20 +71,21 @@ class SimplePlotter:
                 print '%s=%f' % (varname, varval)
                 self.gnuplot[i]('%s=%f' % (varname, varval))
 
-    def adjust_and_plot(self, widget, data=None):
+    def adjust_and_plot(self, widget, data=None, two_dim=True):
         """Determines which variables are plot-axes-variables and wich
         ones are parameters. Decides whether to use a 2D- or a 3D-plot."""
         # numerical integration by streifensumme
         stripe_amount = int(self.stripes_spin.get_value()) 
         stripe_width = 1./stripe_amount
-        stripe_midpoints = [1./(2*stripe_amount) + i*stripe_width for i in xrange(stripe_amount)]
+        if not two_dim:
+            stripe_midpoints = [1./(2*stripe_amount) + i*stripe_width for i in xrange(stripe_amount)]
+        else:
+            # midpoints of squares
+            n = stripe_amount
+            stripe_midpoints = [(float(i)/n,float(j)/n) for i in xrange(n) for j in xrange(n) if i+j<n ]
+            stripe_midpoints = [x for (a,b) in stripe_midpoints for x in [(a+(1./n)/3., b+(1./n)/3.),(a+(2./n)/3., b+(2./n)/3.)]]
+            stripe_midpoints = filter(lambda x:x[0]+x[1]<1,stripe_midpoints)
         self.tfunc = []
-        # self.tauxiliaries = []
-        # for aux in self.auxiliaries:
-        #     newaux = aux
-        #     for (na, ns) in self.tauxiliaries:
-        #         newaux[1] = re.sub(r"\b%s\b"%na, ns, newaux[1])
-        #     self.tauxiliaries.append(newaux)
         for _f in self.func:
             f = _f[:]
             print f
@@ -93,8 +94,19 @@ class SimplePlotter:
             #     print "\\b%s\\b"%re.escape(a)
             #     f = re.sub(("\\b%s\\b"%re.escape(a)), s, f)
             print "Result: " + f
-            tmp = ["abs((%s)*(%f))"%(f.replace("x",str(midpoint)), stripe_width)
+            # TODO: replace not "x", but "\bx\b" (or similar)
+            def replace_x_and_y(f, xr, yr):
+                result = f.replace("x", xr)
+                if two_dim:
+                    result = f.replace("y", yr)
+                return result
+            if two_dim:
+                tmp = ["abs((%s)*(%f))"%(replace_x_and_y(f, str(midpoint[0]), str(midpoint[1])), stripe_width)
                    for midpoint in stripe_midpoints]
+            else:
+                tmp = ["abs((%s)*(%f))"%(replace_x_and_y(f, str(midpoint), None), stripe_width)
+                   for midpoint in stripe_midpoints]
+            
             tmp = "+".join(tmp)
             self.tfunc.append(tmp)
         # determine variables
@@ -122,7 +134,7 @@ class SimplePlotter:
         # adjust gnuplot properly
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
-            gp("set dummy %s, %s"%(xvar, yvar))
+            #gp("set dummy %s, %s"%(xvar, yvar))
             for (a, s) in self.auxiliaries:
                 gp("%s=%s"%(a,s))
             if xvar != yvar:
