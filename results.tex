@@ -363,6 +363,25 @@ Again we obtain matrices, denoted by the elements $s_{ij}^x$ and $s_{ij}^y$, sto
 \subsubsection{Second line}
 \label{sec:stiffness-second-line}
 
+\paragraph{Explanation: Point-wise approximation}
+
+Before we compute the second line, let us introduce a ``trick'' that is used in the program for easier (and thus faster) computation.
+
+To compute a function $f(h, u_x, u_y)$, instead of computing
+\begin{equation*}
+  f\left(\sum_{i=1}^n h_i \phi_i,
+    \sum_{i=1}^n u_{x,i} \phi_i,
+    \sum_{i=1}^n u_{y,i} \phi_i\right),
+\end{equation*}
+we compute the value
+\begin{equation*}
+  \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
+\end{equation*}
+
+The accuracy of this varies depending on $f$, so we will introduce an error here. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin.
+
+We will use this approximation later in the transition from (\ref{sec:third-integral-second-line-1}) to (\ref{sec:third-integral-second-line-2}).
+
 An analogous approach to the second and third line gives us:
 
 \begin{eqnarray}
@@ -391,24 +410,7 @@ An analogous approach to the second and third line gives us:
 
 The resulting terms here, $\int_T \phi_j \pd{\phi_i}{x} \, dT$ and $\int_T \phi_j \pd{\phi_i}{y} \, dT$, are the same stiffness matrices we computed before, $S^x$ and $S^y$ respectively.
 
-\todo{We have to do the explanation before we actually use it in the second line.}
-
 \todo{More references. Schwaiger-DA only is not sufficient here! Where is the approach taken from}
-
-\paragraph{Explanation: Point-wise approximation}
-
-The transition from (\ref{sec:third-integral-second-line-1}) to (\ref{sec:third-integral-second-line-2}) is used as an approximation to simplify further computation. To compute a function $f(h, u_x, u_y)$, instead of computing
-\begin{equation*}
-  f\left(\sum_{i=1}^n h_i \phi_i,
-    \sum_{i=1}^n u_{x,i} \phi_i,
-    \sum_{i=1}^n u_{y,i} \phi_i\right),
-\end{equation*}
-we compute the value
-\begin{equation*}
-  \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
-\end{equation*}
-
-The accuracy of this varies depending on $f$, so we will introduce an error here. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin.
 
 \subsubsection{Stiffness matrix, third line}
 
@@ -484,6 +486,7 @@ Here $\tilde{F^e}$ means a vector of all calculated $F_k^e$, similarly to $\tild
 \label{sec:computing-integrals}
 
 \todo{Explain that a more sophisticated technique than Euler might be used here. It is well known that on should use 2nd order accuracy here.}
+
 \subsection{Explicit Euler}
 \label{subsec:explicit-euler}
 
@@ -713,13 +716,13 @@ where the integration is to be understood component-wise.
 \subsection{How to evaluate $I$?}
 \label{sec:how-to-eval-I}
 
-\todo{Explain why we did not use Gauss-Integration?}
-
 It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-norm-definition}). Even if we delegate most of the work to the symbolic math program \emph{Maple}, we experienced some pitfalls while evaluating the exact approach.
 
 The main problem with exact integration is that Maple has to compute the zeroes of $N\left(x\right)-N^\prime\left(x\right)$, which is, depending on the degree of the polynomials, a time consuming task.
 
-There are several possibilities to overcome this problem. Here are the three we took into account:
+There are several possibilities to overcome this problem. The first that might come to one's mind is to use a Gaussian integration. However, using a Gaussian integration requires that the integrand at least ``looks somehow'' like a polynomial -- something we explicitly can \emph{not} be sure of.
+
+So we had to use another approach. Here are the three we took into account:
 
 \begin{itemize}
 \item $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
