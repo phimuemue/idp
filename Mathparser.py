@@ -1,3 +1,6 @@
+import math
+import copy
+
 class InvalidFormatException(Exception):
     def __init__(self, line, reason):
         self.line = line
@@ -8,6 +11,8 @@ class InvalidFormatException(Exception):
         return repr(self.line)+': '+repr(self.reason)
 
 class Term():
+    def contains(self, name):
+        return False
     def apply(self, name, val):
         return None
 
@@ -37,6 +42,11 @@ class Sum(Term):
         if len(summands) == 0:
             return str(acc)
         return str(acc)+'+'+'+'.join(summands)
+    def contains(self, name):
+        for summand in self.summands:
+            if summand.contains(name):
+                return True
+        return False
     def apply(self, name, val):
         for summand in self.summands:
             summand.apply(name, val)
@@ -65,6 +75,11 @@ class Difference(Term):
         if len(minuends) == 0:
             return subtrahend
         return subtrahend+'-'+'-'.join(minuends)
+    def contains(self, name):
+        for minuend in self.minuends:
+            if minuend.contains(name):
+                return True
+        return False or self.subtrahend.contains(name)
     def apply(self, name, val):
         self.subtrahend.apply(name, val)
         for minuend in self.minuends:
@@ -76,20 +91,23 @@ class Product(Term):
     def __repr__(self):
         return 'Product('+', '.join([repr(factor) for factor in self.factors])+')'
     def __str__(self):
-        factors = [] #['('+str(factor)+')' if isinstance(factor, (Sum, Difference)) else str(factor) for factor in self.factors]
+        factors = []
         acc = 1
-        #print(self.factors)
-        #print([str(f) for f in self.factors])
         for factor in [str(factor) for factor in self.factors]:
             try:
                 acc *= float(factor)
             except ValueError:
                 factors.append(factor)
-        if acc == 0:
+        if acc == 1:
             return '*'.join(factors)
         if len(factors) == 0:
             return str(acc)
         return str(acc)+'*'+'*'.join(factors)
+    def contains(self, name):
+        for factor in self.factors:
+            if factor.contains(name):
+                return True
+        return False
     def apply(self, name, val):
         for factor in self.factors:
             factor.apply(name, val)
@@ -109,7 +127,7 @@ class Quotient(Term):
                 acc *= float(divisor)
             except ValueError:
                 divisors.append(divisor)
-        if acc == 0:
+        if acc == 1:
             return str(self.dividend)+'/'+'/'.join(divisors)
         dividend = str(self.dividend)
         try:
@@ -119,6 +137,11 @@ class Quotient(Term):
         if len(divisors) == 0:
             return dividend
         return dividend+'/'+'/'.join(divisors)
+    def contains(self, name):
+        for divisor in self.divisors:
+            if divisor.contains(name):
+                return True
+        return False or self.dividend.contains(name)
     def apply(self, name, val):
         self.dividend.apply(name, val)
         for divisor in self.divisors:
@@ -131,12 +154,14 @@ class Exponent(Term):
     def __repr__(self):
         return 'Exponent('+repr(self.base)+', '+repr(self.exp)+')'
     def __str__(self):
-        base = str('('+str(self.base)+')' if isinstance(self.base, (Sum, Difference, Product, Quotient)) else str(self.base))
-        exp = str('('+str(self.exp)+')' if isinstance(self.exp, (Sum, Difference, Product, Quotient)) else str(self.exp))
+        base = '('+str(self.base)+')' if isinstance(self.base, (Sum, Difference, Product, Quotient)) else str(self.base)
+        exp = '('+str(self.exp)+')' if isinstance(self.exp, (Sum, Difference, Product, Quotient)) else str(self.exp)
         try:
             return str(float(base)**float(exp))
         except ValueError:
             return base+'**'+exp
+    def contains(self, name):
+        return self.base.contains(name) or self.exp.contains(name)
     def apply(self, name, val):
         self.base.apply(name, val)
         self.exp.apply(name, val)
@@ -149,6 +174,8 @@ class VariableAssignment(Term):
         return 'VariableAssignment('+repr(self.name)+', '+repr(self.term)+')'
     def __str__(self):
         return str(self.name)+' = '+str(self.term)
+    def contains(self, name):
+        return self.term.contains(name)
     def apply(self, name, val):
         self.term.apply(name, val)
 
@@ -161,6 +188,8 @@ class FunctionAssignment(Term):
         return 'FunctionAssignment('+repr(self.name)+', Arguments('+', '.join([repr(arg) for arg in self.args])+'), '+repr(self.term)+')'
     def __str__(self):
         return str(self.name)+'('+', '.join([str(arg) for arg in self.args])+') = '+str(self.term)
+    def contains(self, name):
+        return self.term.contains(name)
     def apply(self, name, val):
         self.term.apply(name, val)
 
@@ -178,6 +207,8 @@ class Variable(Term):
             return str(self.val)
         else:
             return str(self.name)
+    def contains(self, name):
+        return self.name == name
     def apply(self, name, val):
         if self.name == name:
             self.val = val
@@ -198,6 +229,11 @@ class Function(Term):
             return str(self.val)
         else:
             return str(self.name)+'('+', '.join([str(arg) for arg in self.args])+')'
+    def contains(self, name):
+        for arg in self.args:
+            if arg.contains(name):
+                return True
+        return False or self.name == name
     def apply(self, name, val):
         if self.name == name:
             self.val = val
@@ -262,7 +298,7 @@ class Mathparser():
         newmode = ''
         result = [[]]
         for c in input:
-            if (c in self.num and mode != 'var') or (c in ['e', 'E'] and mode == 'num'):
+            if (c in self.num and mode != 'var') or (c in ['e', 'E'] and mode == 'num') or (c == '-' and mode == 'num' and current[-1] in ['e', 'E']):
                 newmode = 'num'
             elif c in self.alpha or (c in self.num and mode == 'var'):
                 if mode == 'num':
@@ -270,7 +306,6 @@ class Mathparser():
                 newmode = 'var'
             elif c in self.ops:
                 if c == '-' and (self.isop(current) or (current == '' and (result[-1] == [] or self.isop(result[-1][-1])))):
-                    print('WAT: '+str(result))
                     newmode = 'adapt'
                 else:
                     newmode = 'ops'
@@ -424,7 +459,7 @@ class Mathparser():
                 reason = "Unkown format error."
                 if tlist.count('=') > 1:
                     reason = "Nested or multiple assignments are not allowed."
-                if not isvar(tlist[0]):
+                if not self.isvar(tlist[0]):
                     reason = "Only variables and functions can be assigned to."
                 if tlist[len(tlist)-1] == '=':
                     reason = "Empty assignments are not allowed."
@@ -446,7 +481,7 @@ class Mathparser():
                 line = line[:-1]
             else:
                 line = line+", "
-            lines.append(line)
+            lines.append(line.replace('[', '_').replace(']', ''))
         return ''.join(lines).split(', ')
 
     def parseterm(self, term):
@@ -466,12 +501,33 @@ class Mathparser():
         for expr in self.exprlist:
             expr.apply(name, val)
 
-    def gnuformat(self):
+    def gnuformat(self, *args):
         """Format the current expression tree to a Gnuplot string."""
-        return '\n'.join([str(expr) for expr in self.exprlist])
+        exprs = copy.deepcopy(self.exprlist)
+        funcdict = {}
+        offset = 0
+        for i in range(len(exprs)):
+            i = i-offset
+            expr = exprs[i]
+            if isinstance(expr, VariableAssignment):
+                arglist = filter(lambda el: expr.contains(el), args)
+                if len(arglist) > 0:
+                    expr = FunctionAssignment(expr.name, arglist, expr.term)
+                    exprs[i] = expr
+                for key in funcdict:
+                    if isinstance(funcdict[key], Number):
+                        expr.term.apply(key, funcdict[key])
+                try:
+                    funcdict[expr.name] = Number(float(str(expr.term)))
+                    exprs[i:i+1] = []
+                    offset += 1
+                except ValueError:
+                    funcdict[expr.name] = expr.term
+        return '\n'.join([str(expr) for expr in exprs])
 
 if __name__ == '__main__':
-    termstring = '"[13+2 e5, 1+2+3, 1+2*3, (1+2)(3), t2 = 2*t1 + 3, a(x) = 2+4t2, t4 = 2 a(x)**2 + 5 t1 (y), a-2-3-4/3/4/1.5*2]"'
+    #termstring = '"[13+2 12e-5, 1+2+3, 1+2*3, (1+2)(3), t2 = 2*t1 + 3, a(x) = 2+4t2, t4 = 2 a(x)**2 + 5 t1 (y), a-2-3-4/3/4/1.5*2, t15=a x + b y, t1642 = c y]"'
+    termstring = '"[t1 = 0.5*3*h[1], t2 = 2*t1 + 3, a(x) = 2+4t2, t4 = 2 a(x)**2 + 5 t1 (y), t15=a x + b y, t1642 = c y]"'
     print('Not supposed to be run on its own. Demonstrative run using the following input:\n%s' % termstring)
 
     p = Mathparser()
@@ -479,15 +535,15 @@ if __name__ == '__main__':
     p.parse(termstring)
 
     print('\nGnuplot formatted string:')
-    print(p.gnuformat())
+    print(p.gnuformat('x', 'y'))
     print('\nInternal representation:')
     print('\n'.join([repr(expr) for expr in p.exprlist]))
 
-    print('\nSetting variable t1 to 5')
+    print('\nSetting variable a to 5')
 
-    p.setvar('t1', 5)
+    p.setvar('a', 5)
 
     print('\nGnuplot formatted string:')
-    print(p.gnuformat())
+    print(p.gnuformat('x', 'y'))
     print('\nInternal representation:')
     print('\n'.join([repr(expr) for expr in p.exprlist]))
