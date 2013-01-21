@@ -57,13 +57,14 @@ class Difference(Term):
                 minuends.append(minuend)
         if acc == 0:
             return str(self.subtrahend)+'-'+'-'.join(minuends)
+        subtrahend = str(self.subtrahend)
         try:
             subtrahend = str(float(subtrahend) - acc)
         except ValueError:
-            res.append(str(acc))
+            minuends.append(str(acc))
         if len(minuends) == 0:
             return subtrahend
-        return subtrahend+'-'.join(minuends)
+        return subtrahend+'-'+'-'.join(minuends)
     def apply(self, name, val):
         self.subtrahend.apply(name, val)
         for minuend in self.minuends:
@@ -98,7 +99,7 @@ class Quotient(Term):
         self.dividend = dividend
         self.divisors = divisors
     def __repr__(self):
-        return 'Division('+repr(self.dividend)+', '+', '.join([repr(divisor) for divisor in self.divisors])+')'
+        return 'Quotient('+repr(self.dividend)+', '+', '.join([repr(divisor) for divisor in self.divisors])+')'
     def __str__(self):
         dividend = str('('+str(self.dividend)+')' if isinstance(self.dividend, (Sum, Difference)) else str(self.dividend))
         divisors = []
@@ -110,13 +111,14 @@ class Quotient(Term):
                 divisors.append(divisor)
         if acc == 0:
             return str(self.dividend)+'/'+'/'.join(divisors)
+        dividend = str(self.dividend)
         try:
             dividend = str(float(dividend) / acc)
         except ValueError:
-            res.append(str(acc))
+            divisors.append(str(acc))
         if len(divisors) == 0:
             return dividend
-        return dividend+'/'.join(divisors)
+        return dividend+'/'+'/'.join(divisors)
     def apply(self, name, val):
         self.dividend.apply(name, val)
         for divisor in self.divisors:
@@ -267,7 +269,8 @@ class Mathparser():
                     mode == 'break'
                 newmode = 'var'
             elif c in self.ops:
-                if c == '-' and (result[-1] == [] or self.isop(result[-1][-1])):
+                if c == '-' and (self.isop(current) or (current == '' and (result[-1] == [] or self.isop(result[-1][-1])))):
+                    print('WAT: '+str(result))
                     newmode = 'adapt'
                 else:
                     newmode = 'ops'
@@ -304,10 +307,13 @@ class Mathparser():
         return result.pop()
 
     def realize(self, tlist):
+        """Takes a tokenized list of terms and constructs an expression tree from it."""
         def makearguments(l):
+            """Sub-function to create a list of arguments, to not be confused with a parenthesized expression."""
             return [classify(arg) for arg in self.split(l, ',')]
     
         def classify(tlist):
+            """Classifies list elements into categories (Number, Variable, etc.)."""
             parsed = []
             opdict = {op: [] for op in self.oplist}
 
@@ -368,7 +374,7 @@ class Mathparser():
                             parsed[i-1].divisors.append(parsed[i+1])
                             parsed[i-1:i+2] = [parsed[i-1]]
                         else:
-                            parsed[i-1:i+2] = [Quotient(parsed[i-1], parsed[i+1])]
+                            parsed[i-1:i+2] = [Quotient(parsed[i-1], [parsed[i+1]])]
                     offset += 2
                     for key in opdict:
                         opdict[key] = [n-2 if n > i else n for n in opdict[key]]
@@ -397,7 +403,7 @@ class Mathparser():
                             parsed[i-1].minuends.append(parsed[i+1])
                             parsed[i-1:i+2] = [parsed[i-1]]
                         else:
-                            parsed[i-1:i+2] = [Difference(parsed[i-1], parsed[i+1])]
+                            parsed[i-1:i+2] = [Difference(parsed[i-1], [parsed[i+1]])]
                     offset += 2
                     for key in opdict:
                         opdict[key] = [n-2 if n > i else n for n in opdict[key]]
@@ -425,12 +431,8 @@ class Mathparser():
                 raise InvalidFormatException(self.deepjoin(tlist), reason)
         return classify(tlist)
 
-    # Parses a single term
-    def parseline(self, term):
-        return self.realize(self.tokenize(term))
-
-    # Formats Maple output to list of terms
     def formatinput(self, input):
+        """Formats Maple output to a list of separate expressions"""
         lines = []
         for line in input.splitlines():
             line = line.strip()
@@ -447,22 +449,29 @@ class Mathparser():
             lines.append(line)
         return ''.join(lines).split(', ')
 
-    # Takes a list of terms and parses them
+    def parseterm(self, term):
+        """Parses a single term into an internal expression"""
+        return self.realize(self.tokenize(term))
+
     def parselist(self, l):
-        return [self.parseline(el) for el in l]
+        """Takes a list of terms and parses them."""
+        return [self.parseterm(el) for el in l]
 
     def parse(self, input):
+        """Parse a comma-separated list of terms."""
         self.exprlist = self.parselist(self.formatinput(input))
 
     def setvar(self, name, val):
+        """Set a variable within the parsed expression tree to a certain value."""
         for expr in self.exprlist:
             expr.apply(name, val)
 
     def gnuformat(self):
+        """Format the current expression tree to a Gnuplot string."""
         return '\n'.join([str(expr) for expr in self.exprlist])
 
 if __name__ == '__main__':
-    termstring = '"[13+2 e5, 1+2+3, 1+2*3, (1+2)(3), t2 = 2*t1 + 3, a(x) = 2+4t2, t4 = 2 a(x)**2 + 5 t1 (y)]"'
+    termstring = '"[13+2 e5, 1+2+3, 1+2*3, (1+2)(3), t2 = 2*t1 + 3, a(x) = 2+4t2, t4 = 2 a(x)**2 + 5 t1 (y), a-2-3-4/3/4/1.5*2]"'
     print('Not supposed to be run on its own. Demonstrative run using the following input:\n%s' % termstring)
 
     p = Mathparser()
