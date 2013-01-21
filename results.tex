@@ -331,7 +331,13 @@ The elements $m_{ij}$ form the $n \times n$ mass matrix $M$. That means we have 
 
 We will skip the second integral for now and move to the third. We need to treat each of the three components differently. In this section we will see the state vector array splitting up by their coordinates and giving us different results for the $x$ and $y$ components. This means we will be using the $F^x\left(\mathbf{q}\right)$ and $F^y\left(\mathbf{q}\right)$ terms defined in \ref{sec:shallow-water-equations} for simpler notation.
 
-\todo{Here we need some more explanations concerning the notation of $u_{x,j}$ and stuff\dots}
+Before we go on, let us recapitulate some notation:
+\begin{itemize}
+\item $\phi_j$ is the $j$-th basis function ($j$ ranging from 1 to $n$)
+\item $u_{x,j}$ denotes the weight for basis function $\phi_j$ in the approximation of $u_x$
+\item $u_{y,j}$ -- similar to $u_{x,j}$
+\item $h_j$ denotes the weight for basis function $\phi_j$ in the approximation of $h$
+\end{itemize}
 
 \subsubsection{First line}
 \label{sec:stiffness-matrix-first-line}
