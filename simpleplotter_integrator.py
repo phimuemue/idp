@@ -175,6 +175,9 @@ class SimplePlotter:
         tv.set_headers_visible(True)
         for (a,b) in self.auxiliaries:
             model.append([a, b])
+        model.append(["---","-------------"]);
+        for (i,f) in enumerate(self.func):
+            model.append(["%d. func"%i, str(f)])
 
     def init_settings_page(self):
         """Fills the settings page."""
