@@ -76,8 +76,8 @@ class SimplePlotter:
         ones are parameters. Decides whether to use a 2D- or a 3D-plot."""
         # numerical integration by streifensumme
         stripe_amount = int(self.stripes_spin.get_value()) 
-        stripe_width = 1./stripe_amount
         if not two_dim:
+            stripe_width = 1./stripe_amount
             stripe_midpoints = [1./(2*stripe_amount) + i*stripe_width for i in xrange(stripe_amount)]
         else:
             # midpoints of squares
@@ -85,6 +85,7 @@ class SimplePlotter:
             stripe_midpoints = [(float(i)/n,float(j)/n) for i in xrange(n) for j in xrange(n) if i+j<n ]
             stripe_midpoints = [x for (a,b) in stripe_midpoints for x in [(a+(1./n)/3., b+(1./n)/3.),(a+(2./n)/3., b+(2./n)/3.)]]
             stripe_midpoints = filter(lambda x:x[0]+x[1]<1,stripe_midpoints)
+            stripe_width = (1./stripe_amount)*(1./stripe_amount)*0.5
         self.tfunc = []
         for _f in self.func:
             f = _f[:]
@@ -94,11 +95,10 @@ class SimplePlotter:
             #     print "\\b%s\\b"%re.escape(a)
             #     f = re.sub(("\\b%s\\b"%re.escape(a)), s, f)
             print "Result: " + f
-            # TODO: replace not "x", but "\bx\b" (or similar)
             def replace_x_and_y(f, xr, yr):
-                result = f.replace("x", xr)
+                result = re.sub(r"\bx\b", xr, f)
                 if two_dim:
-                    result = f.replace("y", yr)
+                    result = re.sub(r"\by\b", xr, result)
                 return result
             if two_dim:
                 tmp = ["abs((%s)*(%f))"%(replace_x_and_y(f, str(midpoint[0]), str(midpoint[1])), stripe_width)
@@ -134,7 +134,7 @@ class SimplePlotter:
         # adjust gnuplot properly
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
-            #gp("set dummy %s, %s"%(xvar, yvar))
+            gp("set dummy %s, %s"%(xvar, yvar))
             for (a, s) in self.auxiliaries:
                 gp("%s=%s"%(a,s))
             if xvar != yvar:
@@ -246,8 +246,9 @@ class SimplePlotter:
         """Creates sliders and radio buttons for the single variables."""
         # create elements for variables!!
         self.variables = list(set(re.findall(
-                    r"([a-zA-Z_]+\d*\b)[^(]","+".join(self.func + ([aux[1] for aux in self.auxiliaries])))))
-        self.variables = filter(lambda x:x!="x", self.variables)
+                    r"([a-zA-Z_]+\d*\b)(?:[^(]|$)","+".join(self.func + ([aux[1] for aux in self.auxiliaries])))))
+        print self.variables
+        self.variables = filter(lambda x:x not in["x","y"], self.variables)
         print "Auxiliaries: " + str(self.auxiliaries)
         self.variables = filter(lambda x:x not in [a[0] for a in self.auxiliaries], self.variables)
         def filter_func(x):
