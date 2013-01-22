@@ -1,0 +1,3 @@
+30.1: simpleplotter auf 2d-Integration umstellen
+14.2: Plots für Fehler in der Stiffnessmatrix erstellen
+1.3 : Vortrag, Ergebnisse zusammenfassen in results.pdf
