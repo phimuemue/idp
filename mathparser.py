@@ -317,6 +317,7 @@ class Function(Term):
     def apply(self, name, term):
         if self.name == name:
             return term
+        self.args = [arg.apply(name, term) for arg in self.args]
         return self
 
 class Mathparser():
@@ -539,7 +540,6 @@ class Mathparser():
 
     def realize(self, tlist):
         """Takes a tokenized list of terms and constructs an expression tree from it."""
-
         if '=' in tlist:
             if self.isvar(tlist[0]) and self.isass(tlist[1]) and len(tlist) > 2 and '=' not in tlist[2:]:
                 return VariableAssignment(tlist[0], self.classify(tlist[2:]))
@@ -579,14 +579,14 @@ class Mathparser():
         combinations = set([])
         for arg1 in args:
             for arg2 in args:
-                combinations.add(self.makeargs(arg1, arg2))
+                combinations.add(self.makeargs(arg1, arg2, 'x', 'y'))
         for arglist in combinations:
             self.funclists[arglist] = self.unapply(*arglist)
 
-    def integrate(self, expr, subs, area=1.0):
-        args = ('x', 'y')
+    def integrate(self, expr, subs, area, args=('x', 'y')):
+        """Numerical integration of expr, w.r.t. args and at the points provided in subs."""
         subs = [map(self.classify, [[term] for term in sub]) for sub in subs]
-        return Product([Sum([Function('abs', [deepcopy(expr).apply(args, sub)]) for sub in subs]), Number(area)])
+        return Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(args, sub) for sub in subs])])])
 
     def formatinput(self, input):
         """Formats Maple output to a list of separate expressions"""
@@ -653,39 +653,58 @@ class Mathparser():
         for args in self.funclists:
             self.setvars(self.funclists[args], name, val)
 
+    def simplify(self, exprlist):
+        """Takes a list of expressions and simplifies them much as possible with considerations to set variables. Returns a (possibly shortened) list of expressions."""
+        exprs = deepcopy(exprlist)
+        valdict = {}
+        for i in range(len(exprs)):
+            expr = exprs[i]
+            try:
+                for name, value in valdict:
+                    expr.setvar(name, value)
+                valdict[expr.name] = float(str(expr.term))
+                exprs[i:i+1] = []
+            except ValueError:
+                continue
+
     def gnuformat(self, *args, **kwargs):
         """Format the current expression tree to a Gnuplot string."""
+        args = self.makeargs(*args)
         if len(args) < 1 or len(args) > 2:
             raise InvalidCallError('('+', '.join(args)+')', 'Invalid number of arguments. One argument for a 2D plot, two for a 3D plot.')
         try:
             exprs = self.funclists[str(args)]
         except KeyError:
-            self.funclists[str(args)] = self.unapply(*args)
+            self.funclists[str(args)] = self.unapply(*args+('x', 'y'))
             exprs = self.funclists[str(args)]
         if 'integrate' in kwargs and kwargs['integrate']:
             if 'subs' not in kwargs:
                 raise InvalidOperationError('Cannot do analytic integration.')
             if 'area' not in kwargs:
                 kwargs['area'] = 1.0
-            if isinstance(exprs[-1], (FunctionAssignment, VariableAssignment)):
+            if isinstance(exprs[-1], (VariableAssignment, FunctionAssignment)):
                 exprs[-1].term = self.integrate(exprs[-1].term, kwargs['subs'], kwargs['area'])
+                if isinstance(exprs[-1], FunctionAssignment):
+                    exprs[-1].args = filter(lambda arg: arg not in ['x', 'y'], exprs[-1].args)
             else:
-                exprs[-1] = self.integrate(exprs[-1], kwargs['subs'], kwargs['area'])
+                exprs[-1] = self.integrate(exprs[-1], kwargs['subs'])
         if len(args) == 1:
-            argformat = 'set dummy %s\n' % args
+            argformat = 'set dummy %s' % args
         elif len(args) == 2:
-            argformat = 'set dummy %s, %s\n' % args
-        exprstr = argformat+'\n'.join([str(expr) for expr in exprs])
+            argformat = 'set dummy %s, %s' % args
+        exprstr = '\n'.join([str(expr) for expr in exprs])
+        plotcmd = ('s' if len(args) == 2 else '')+'plot %s'
         if isinstance(exprs[-1], FunctionAssignment):
-            return exprstr+'\n'+('s' if len(args) == 2 else '')+'plot '+exprs[-1].name+'('+', '.join(args)+')'
+            plotstr = plotcmd % exprs[-1].name+'('+', '.join(args)+')'
         elif isinstance(exprs[-1], VariableAssignment):
-            pass # todo later.
+            plotstr = plotcmd % exprs[-1].name
         else:
-            return exprstr+'\n'+('s' if len(args) == 2 else '')+'plot '+str(exprs[-1])
+            plotstr = plotcmd % exprs[-1]
+        return '%s\n%s\n%s' % (argformat, exprstr, plotstr)
 
 if __name__ == '__main__':
     #termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3 = 2h[1]+4t2 u[1], t4 = 2 h[1]**2 + t2^3 + t3*u[2]+ 5 t1 *(h[1]*h[2]), t15= t4*u[1]*u[2]*h[1]^2*h[2]**2 +  h[1], t1642 = 0.12t15+h[1]'
-    termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3(h[2]) = t2 + h[2]*x + u[2]*y'
+    termstring = 't1 = 0.5*3*h[1]+x*u[1]*h[2], t2 = y+2*t1 + 3/(h[1]*h[2]*u[2]), t3(h[2]) = t2 + h[2]*x + u[2]*y'
     print('Not supposed to be run on its own. Demonstrative run using the following input:\n%s\n' % '\n'.join(termstring.split(', ')))
 
     p = Mathparser()
@@ -694,8 +713,7 @@ if __name__ == '__main__':
     print('Parsed expressions:')
     print('\n'.join(str(expr) for expr in p.exprlist)+'\n')
     p.unapplyall('h_1', 'h_2', 'u_1', 'u_2')
-    print('\n'.join(str(expr) for expr in p.funclists[('h_1','u_1')])+'\n')
-    print(p.gnuformat('h_1', 'h_2', integrate=True, subs=[(0.0, 0.0), (0.33333, 0.3333), (0.6666, 0.6666), (1.0, 1.0)], area=1))
+    print(p.gnuformat('h_1', 'h_2', integrate=True, area=0.12, subs=[(0.0, 0.0), (0.33333, 0.3333), (0.6666, 0.6666), (1.0, 1.0)]))
 
     #print('\nInternal representation:')
     #print('\n'.join([repr(expr) for expr in p.exprlist]))
