@@ -27,6 +27,8 @@ class Term():
         pass
     def unapply(self, name, *args):
         return self
+    def rename(self, name, newname):
+        pass
 
 class Number(Term):
     def __init__(self, number):
@@ -219,7 +221,7 @@ class VariableAssignment(Term):
 class FunctionAssignment(Term):
     def __init__(self, name, args, term):
         self.name = name
-        self.args = args
+        self.args = tuple(args)
         self.term = term
     def __repr__(self):
         return 'FunctionAssignment('+repr(self.name)+', Arguments('+', '.join([repr(arg) for arg in self.args])+'), '+repr(self.term)+')'
@@ -515,25 +517,27 @@ class Mathparser():
                     reason = "Nested or multiple assignments are not allowed."
                 if not self.isvar(tlist[0]):
                     reason = "Only variables and functions can be assigned to."
-                if tlist[len(tlist)-1] == '=': #wtfwasIthinking
+                if tlist[-1] == '=':
                     reason = "Empty assignments are not allowed."
                 raise InvalidFormatError(self.deepjoin(tlist), reason)
         return classify(tlist)
 
-    def unapply(self, *args):
+    def unapply(self, *args, **kwargs):
         """Turns all variables into functions over args, if any args appear within the variable."""
         exprs = deepcopy(self.exprlist)
         funcdict = {}
         for i in range(len(exprs)):
             expr = exprs[i]
-            if isinstance(expr, VariableAssignment):
+            if isinstance(expr, (VariableAssignment, FunctionAssignment)):
                 for func in funcdict:
                     expr.unapply(func, *funcdict[func])
                 arglist = self.makeargs(*filter(lambda el: expr.contains(el), args))
                 if len(arglist) > 0:
                     expr = FunctionAssignment(expr.name, arglist, expr.term)
                     exprs[i] = expr
-                    funcdict[expr.name] = arglist
+                else:
+                    expr = VariableAssignment(expr.name, expr.term)
+                funcdict[expr.name] = arglist
         return exprs
 
     def unapplyall(self, *args):
@@ -544,6 +548,9 @@ class Mathparser():
                 combinations.add(self.makeargs(arg1, arg2))
         for arglist in combinations:
             self.funclists[arglist] = self.unapply(*arglist)
+
+    def integrate(self, expr, args=('x', 'y'), subs):
+        return Sum([expr.setvar(args, sub) for sub in subs])
 
     def formatinput(self, input):
         """Formats Maple output to a list of separate expressions"""
@@ -610,7 +617,7 @@ class Mathparser():
         for args in self.funclists:
             self.setvars(self.funclists[args], name, val)
 
-    def gnuformat(self, *args):
+    def gnuformat(self, *args, **kwargs):
         """Format the current expression tree to a Gnuplot string."""
         if len(args) < 1 or len(args) > 2:
             raise InvalidCallError('('+', '.join(args)+')', 'Invalid number of arguments. One argument for a 2D plot, two for a 3D plot.')
@@ -619,11 +626,18 @@ class Mathparser():
         except KeyError:
             self.funclists[str(args)] = self.unapply(*args)
             exprs = self.funclists[str(args)]
-        exprstr = '\n'.join([str(expr) for expr in exprs])
+        if 'integrate' in kwargs and kwargs['integrate']:
+            
+        if len(args) == 1:
+            argformat = 'set dummy %s\n' % args
+        elif len(args) == 2:
+            argformat = 'set dummy %s, %s\n' % args
+        exprstr = argformat+'\n'.join([str(expr) for expr in exprs])
         return exprstr+'\n'+('s' if len(args) == 2 else '')+'plot '+exprs[-1].name+'('+', '.join(args)+')'
 
 if __name__ == '__main__':
-    termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3 = 2h[1]+4t2 u[1], t4 = 2 h[1]**2 + t2^3 + t3*u[2]+ 5 t1 *(h[1]*h[2]), t15= t4*u[1]*u[2]*h[1]^2*h[2]**2 +  h[1], t1642 = 0.12t15+h[1]'
+    #termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3 = 2h[1]+4t2 u[1], t4 = 2 h[1]**2 + t2^3 + t3*u[2]+ 5 t1 *(h[1]*h[2]), t15= t4*u[1]*u[2]*h[1]^2*h[2]**2 +  h[1], t1642 = 0.12t15+h[1]'
+    termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3(h[2]) = t2 + h[2]'
     print('Not supposed to be run on its own. Demonstrative run using the following input:\n%s\n' % '\n'.join(termstring.split(', ')))
 
     p = Mathparser()
@@ -632,6 +646,9 @@ if __name__ == '__main__':
     print('Parsed expressions:')
     print('\n'.join(str(expr) for expr in p.exprlist)+'\n')
     p.unapplyall('h_1', 'h_2', 'u_1', 'u_2')
+    print('\n'.join(str(expr) for expr in p.funclists[('h_1','u_1')])+'\n')
+    p.setvar('h_1', 'x')
+    p.setvar('u_1', 'y')
     print('\n'.join(str(expr) for expr in p.funclists[('h_1','u_1')])+'\n')
 
     #print('\nInternal representation:')
