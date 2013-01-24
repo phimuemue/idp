@@ -441,7 +441,7 @@ class Mathparser():
                 parsed.append(Variable(tok))
             elif self.islist(tok):
                 if i > 0 and isinstance(parsed[-1], Variable):
-                    parsed[-1] = Function(str(parsed[-1]), makearguments(tok))
+                    parsed[-1] = Function(str(parsed[-1]), self.makearguments(tok))
                     offset += 1
                 else:
                     parsed.append(self.classify(tok))
@@ -533,17 +533,18 @@ class Mathparser():
                 raise InvalidFormatError(self.deepjoin(tlist), "Empty input list.")
             raise InvalidFormatError(self.deepjoin(tlist), "Unknown format error.")
 
+    def makearguments(self, l):
+        """Sub-function to create a list of arguments, to not be confused with a parenthesized expression."""
+        return [self.classify(arg) for arg in self.split(l, ',')]
+
     def realize(self, tlist):
         """Takes a tokenized list of terms and constructs an expression tree from it."""
-        def makearguments(l):
-            """Sub-function to create a list of arguments, to not be confused with a parenthesized expression."""
-            return [self.classify(arg) for arg in self.split(l, ',')]
 
         if '=' in tlist:
             if self.isvar(tlist[0]) and self.isass(tlist[1]) and len(tlist) > 2 and '=' not in tlist[2:]:
                 return VariableAssignment(tlist[0], self.classify(tlist[2:]))
             elif self.isvar(tlist[0]) and self.islist(tlist[1]) and self.isass(tlist[2]) and len(tlist) > 3 and '=' not in tlist[3:]:
-                return FunctionAssignment(tlist[0], tlist[1], self.classify(tlist[3:]))
+                return FunctionAssignment(tlist[0], self.makearguments(tlist[1]), self.classify(tlist[3:]))
             else:
                 reason = "Unkown format error."
                 if tlist.count('=') > 1:
@@ -582,9 +583,10 @@ class Mathparser():
         for arglist in combinations:
             self.funclists[arglist] = self.unapply(*arglist)
 
-    def integrate(self, expr, subs, args=('x', 'y')):
+    def integrate(self, expr, subs, area=1.0):
+        args = ('x', 'y')
         subs = [map(self.classify, [[term] for term in sub]) for sub in subs]
-        return Sum([deepcopy(expr).apply(args, sub) for sub in subs])
+        return Product([Sum([Function('abs', [deepcopy(expr).apply(args, sub)]) for sub in subs]), Number(area)])
 
     def formatinput(self, input):
         """Formats Maple output to a list of separate expressions"""
@@ -663,13 +665,23 @@ class Mathparser():
         if 'integrate' in kwargs and kwargs['integrate']:
             if 'subs' not in kwargs:
                 raise InvalidOperationError('Cannot do analytic integration.')
-            exprs[-1].term = self.integrate(exprs[-1].term, kwargs['subs'])
+            if 'area' not in kwargs:
+                kwargs['area'] = 1.0
+            if isinstance(exprs[-1], (FunctionAssignment, VariableAssignment)):
+                exprs[-1].term = self.integrate(exprs[-1].term, kwargs['subs'], kwargs['area'])
+            else:
+                exprs[-1] = self.integrate(exprs[-1], kwargs['subs'], kwargs['area'])
         if len(args) == 1:
             argformat = 'set dummy %s\n' % args
         elif len(args) == 2:
             argformat = 'set dummy %s, %s\n' % args
         exprstr = argformat+'\n'.join([str(expr) for expr in exprs])
-        return exprstr+'\n'+('s' if len(args) == 2 else '')+'plot '+exprs[-1].name+'('+', '.join(args)+')'
+        if isinstance(exprs[-1], FunctionAssignment):
+            return exprstr+'\n'+('s' if len(args) == 2 else '')+'plot '+exprs[-1].name+'('+', '.join(args)+')'
+        elif isinstance(exprs[-1], VariableAssignment):
+            pass # todo later.
+        else:
+            return exprstr+'\n'+('s' if len(args) == 2 else '')+'plot '+str(exprs[-1])
 
 if __name__ == '__main__':
     #termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3 = 2h[1]+4t2 u[1], t4 = 2 h[1]**2 + t2^3 + t3*u[2]+ 5 t1 *(h[1]*h[2]), t15= t4*u[1]*u[2]*h[1]^2*h[2]**2 +  h[1], t1642 = 0.12t15+h[1]'
@@ -683,7 +695,7 @@ if __name__ == '__main__':
     print('\n'.join(str(expr) for expr in p.exprlist)+'\n')
     p.unapplyall('h_1', 'h_2', 'u_1', 'u_2')
     print('\n'.join(str(expr) for expr in p.funclists[('h_1','u_1')])+'\n')
-    print(p.gnuformat('h_1', 'h_2', integrate=True, subs=[(0.0, 0.0), (0.33333, 0.3333), (0.6666, 0.6666), (1.0, 1.0)]))
+    print(p.gnuformat('h_1', 'h_2', integrate=True, subs=[(0.0, 0.0), (0.33333, 0.3333), (0.6666, 0.6666), (1.0, 1.0)], area=1))
 
     #print('\nInternal representation:')
     #print('\n'.join([repr(expr) for expr in p.exprlist]))

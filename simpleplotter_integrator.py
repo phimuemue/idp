@@ -1,5 +1,4 @@
 # TODO:
-# * make main routine such that it accepts a variable number of functions, plotting each one in a single gnuplot window
 # * correct order of variables
 # * possibility to choose domain for plot variables/parameters dynamically
 # * could be nice: possibility to send custom command to (all instances of) gnuplot
@@ -14,6 +13,8 @@ import time
 import os.path
 import os
 import glob
+
+from mathparser import Mathparser as Parser
 
 class SimplePlotter:
     """This class encapsules a whole bunch of things useful for "interactive" 
@@ -68,7 +69,7 @@ class SimplePlotter:
         """Tells gnuplot to set the variables/parameters."""
         for i in xrange(len(self.func)):
             for (varname, varval) in zip(self.variables, [s.get_value() for s in self.sliders]):
-                print '%s=%f' % (varname, varval)
+                print 'Setting variable: %s=%f' % (varname, varval)
                 self.gnuplot[i]('%s=%f' % (varname, varval))
 
     def adjust_and_plot(self, widget, data=None, two_dim=True):
@@ -86,14 +87,53 @@ class SimplePlotter:
             stripe_midpoints = [x for (a,b) in stripe_midpoints for x in [(a+(1./n)/3., b+(1./n)/3.),(a+(2./n)/3., b+(2./n)/3.)]]
             stripe_midpoints = filter(lambda x:x[0]+x[1]<1,stripe_midpoints)
             stripe_width = (1./stripe_amount)*(1./stripe_amount)*0.5
+        # sum up all relevant parts - this will be sourced out to mathparser
+        tmp = map(lambda x:x[0]+"="+x[1], self.auxiliaries) + ["plotfnc%d(x,y)=%s"%(i,fu) for (i,fu) in enumerate(self.func)]
+        tmp = ", ".join(tmp)
+        print tmp
+        parser = Parser()
+        parser.parse(tmp)
+        print "Jetzt gehts los -------------------------------------------"
+        print "\n\n%s\n\n"%parser.gnuformat("A", "B", integrate=True, subs=stripe_midpoints)
+        print "Jetzt ists aus -------------------------------------------"
+        # determine variables
+        subs = []
+        xvar = self.variables[0]
+        yvar = self.variables[0]
+        for (i,r) in enumerate(self.xradios):
+            if r.get_active():
+                xvar = self.variables[i]
+        for (i,r) in enumerate(self.yradios):
+            if r.get_active():
+                yvar = self.variables[i]
+        subs.append((xvar, "x"))
+        subs.append((yvar, "y"))
+        for i in xrange(len(self.func)):
+            gp = self.gnuplot[i]
+            if xvar != yvar:
+                gp("set xlabel \"%s\""%xvar)
+                gp("set ylabel \"%s\""%yvar)
+                gp("set xrange " + self.urange)
+                gp("set yrange " + self.hrange)
+                gp("set pm3d")
+            else:
+                gp("unset ylabel")
+                gp("set xlabel \"%s\""%xvar)
+                gp("set autoscale")
+                gp("unset pm3d")
+            self.adjustvars()
+            print "Sending lines to gp%d-----------------------"%i
+            print stripe_midpoints
+            for line in parser.gnuformat(xvar, yvar, integrate=True, subs=stripe_midpoints).splitlines():
+                print line
+                gp(line)
+            print "Sent lines to gp%d-----------------------"%i
+        return # alles drunter ist altes zeug
+
         self.tfunc = []
         for _f in self.func:
             f = _f[:]
             print f
-            # for [a, s] in self.tauxiliaries:
-            #     print "replacing %s by %s"%(a, s)
-            #     print "\\b%s\\b"%re.escape(a)
-            #     f = re.sub(("\\b%s\\b"%re.escape(a)), s, f)
             print "Result: " + f
             def replace_x_and_y(f, xr, yr):
                 result = re.sub(r"\bx\b", xr, f)
@@ -109,18 +149,6 @@ class SimplePlotter:
             
             tmp = "+".join(tmp)
             self.tfunc.append(tmp)
-        # determine variables
-        subs = []
-        xvar = self.variables[0]
-        yvar = self.variables[0]
-        for (i,r) in enumerate(self.xradios):
-            if r.get_active():
-                xvar = self.variables[i]
-        for (i,r) in enumerate(self.yradios):
-            if r.get_active():
-                yvar = self.variables[i]
-        # subs.append((xvar, "x"))
-        # subs.append((yvar, "y"))
         self.plotcommand = "splot " if xvar!=yvar else "plot "
         # fill xyfunc with data for gnuplot
         self.xyfunc = []
@@ -130,12 +158,13 @@ class SimplePlotter:
             for (s,t) in subs:
                 tmp = tmp.replace(s,t)
             self.xyfunc.append(tmp)
-        print self.xyfunc
         # adjust gnuplot properly
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
-            gp("set dummy %s, %s"%(xvar, yvar))
-            for (a, s) in self.auxiliaries:
+            # gp("set dummy %s, %s"%(xvar, yvar))
+            for [a, s] in self.auxiliaries:
+                if (i==0):
+                    print("Setting function: %s=%s"%(a,s))
                 gp("%s=%s"%(a,s))
             if xvar != yvar:
                 gp("set xlabel \"%s\""%xvar)
@@ -149,7 +178,8 @@ class SimplePlotter:
                 gp("set autoscale")
                 gp("unset pm3d")
             self.adjustvars()
-            print self.xyfunc[i]
+            if i==0:
+                print "Plottin function: " + self.xyfunc[i]
             gp('%s %s ls 1 title "%d. Function"' % (self.plotcommand, self.xyfunc[i], i))
 
     def adjustment_from_range(self,r):
@@ -174,6 +204,8 @@ class SimplePlotter:
             gp("replot")
 
     def init_plottings_page(self):
+        """Initialize page that holds all auxiliary and plotted funcs.
+        This is basically just beautification."""
         self.tv_plottings = gtk.TreeView()
         tv = self.tv_plottings
         sw = gtk.ScrolledWindow()
@@ -260,6 +292,7 @@ class SimplePlotter:
         self.variables = filter(filter_func, self.variables)
         print "Variables: " + str(self.variables)
         # an auxiliary function to sort the variables properly
+        # this was earlier more complex, but now it's easy!
         def varkey(x):
             return x
             # if len(x)==1:
@@ -303,6 +336,7 @@ class SimplePlotter:
         self.yvar = self.variables[0]
 
     def export_image_with_terminal(self, gp, term, filename, i):
+        """Issues the commands to generate a PDF file from a given gp."""
         gp("set style line 1 linecolor rgb \"black\"")
         if term=="jpg" or term=="jpeg":
             size = "1024,768"
@@ -314,7 +348,6 @@ class SimplePlotter:
         gp("replot")
         gp("set term wxt")
             
-
     def on_export(self, widget):
         if not os.path.exists(self.foldername):
             os.makedirs(self.foldername)
@@ -419,8 +452,6 @@ def read_file(path):
         else:
             functions.append(prettify_function(line.strip()))
     return (functions, auxiliaries)
-
-            
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
