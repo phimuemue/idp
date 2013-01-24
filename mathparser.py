@@ -27,8 +27,8 @@ class Term():
         pass
     def unapply(self, name, *args):
         return self
-    def rename(self, name, newname):
-        pass
+    def apply(self, name, term):
+        return self
 
 class Number(Term):
     def __init__(self, number):
@@ -71,6 +71,9 @@ class Sum(Term):
     def unapply(self, name, *args):
         self.summands = [summand.unapply(name, *args) for summand in self.summands]
         return self
+    def apply(self, name, term):
+        self.summands = [summand.apply(name, term) for summand in self.summands]
+        return self
 
 class Difference(Term):
     def __init__(self, subtrahend, minuends):
@@ -109,6 +112,10 @@ class Difference(Term):
         self.subtrahend = self.subtrahend.unapply(name, *args)
         self.minuends = [minuend.unapply(name, *args) for minuend in self.minuend]
         return self
+    def apply(self, name, term):
+        self.subtrahend = self.subtrahend.apply(name, term)
+        self.minuends = [minuend.apply(name, term) for minuend in self.minuends]
+        return self
 
 class Product(Term):
     def __init__(self, factors):
@@ -138,6 +145,9 @@ class Product(Term):
             factor.setvar(name, val)
     def unapply(self, name, *args):
         self.factors = [factor.unapply(name, *args) for factor in self.factors]
+        return self
+    def apply(self, name, term):
+        self.factors = [factor.apply(name, term) for factor in self.factors]
         return self
 
 class Quotient(Term):
@@ -178,6 +188,10 @@ class Quotient(Term):
         self.dividend = self.dividend.unapply(name, *args)
         self.divisors = [divisor.unapply(name, *args) for divisor in self.divisors]
         return self
+    def apply(self, name, term):
+        self.dividend = self.dividend.apply(name, term)
+        self.divisors = [divisor.apply(name, term) for divisor in self.divisors]
+        return self
 
 class Exponent(Term):
     def __init__(self, base, exp):
@@ -201,6 +215,10 @@ class Exponent(Term):
         self.base = self.base.unapply(name, *args)
         self.exp = self.exp.unapply(name, *args)
         return self
+    def apply(self, name, term):
+        self.base = self.base.apply(name, term)
+        self.exp = self.exp.apply(name, term)
+        return self
 
 class VariableAssignment(Term):
     def __init__(self, name, term):
@@ -216,6 +234,9 @@ class VariableAssignment(Term):
         self.term.setvar(name, val)
     def unapply(self, name, *args):
         self.term = self.term.unapply(name, *args)
+        return self
+    def apply(self, name, term):
+        self.term = self.term.apply(name, term)
         return self
 
 class FunctionAssignment(Term):
@@ -233,6 +254,9 @@ class FunctionAssignment(Term):
         self.term.setvar(name, val)
     def unapply(self, name, *args):
         self.term = self.term.unapply(name, *args)
+        return self
+    def apply(self, name, term):
+        self.term = self.term.apply(name, term)
         return self
 
 class Variable(Term):
@@ -258,6 +282,11 @@ class Variable(Term):
         if self.name == name:
             arglist = [Variable(arg) for arg in args]
             return Function(self.name, arglist, self.val)
+        return self
+    def apply(self, names, terms):
+        for name, term in zip(names, terms):
+            if self.name == name:
+                return term
         return self
 
 class Function(Term):
@@ -285,6 +314,10 @@ class Function(Term):
             self.val = val
         for arg  in self.args:
             arg.setvar(name, val)
+    def apply(self, name, term):
+        if self.name == name:
+            return term
+        return self
 
 class Mathparser():
     def __init__(self):
@@ -393,124 +426,124 @@ class Mathparser():
             result[-1].append(current)
         return result.pop()
 
-    def realize(self, tlist):
-        """Takes a tokenized list of terms and constructs an expression tree from it."""
-        def makearguments(l):
-            """Sub-function to create a list of arguments, to not be confused with a parenthesized expression."""
-            return [classify(arg) for arg in self.split(l, ',')]
+    def classify(self, tlist):
+        """Classifies list elements into categories (Number, Variable, etc.)."""
+        parsed = []
+        opdict = {op: [] for op in self.oplist}
 
-        def classify(tlist):
-            """Classifies list elements into categories (Number, Variable, etc.)."""
-            parsed = []
-            opdict = {op: [] for op in self.oplist}
-
-            # Classification of single tokens
-            offset = 0
-            for i in range(len(tlist)):
-                tok = tlist[i]
-                if self.isnum(tok):
-                    parsed.append(Number(tok))
-                elif self.isvar(tok):
-                    parsed.append(Variable(tok))
-                elif self.islist(tok):
-                    if i > 0 and isinstance(parsed[-1], Variable):
-                        parsed[-1] = Function(str(parsed[-1]), makearguments(tok))
-                        offset += 1
-                    else:
-                        parsed.append(classify(tok))
-                elif self.isop(tok):
-                    opdict[tok].append(i-offset)
-                    parsed.append(tok)
+        # Classification of single tokens
+        offset = 0
+        for i in range(len(tlist)):
+            tok = tlist[i]
+            if self.isnum(tok):
+                parsed.append(Number(tok))
+            elif self.isvar(tok):
+                parsed.append(Variable(tok))
+            elif self.islist(tok):
+                if i > 0 and isinstance(parsed[-1], Variable):
+                    parsed[-1] = Function(str(parsed[-1]), makearguments(tok))
+                    offset += 1
                 else:
-                    parsed.append(tok)
-                if len(parsed) > 1 and ((isinstance(parsed[-2], Term) and isinstance(parsed[-1], Term))):
-                    parsed[-1:] = ['*', parsed[-1]]
-                    opdict['*'].append(i-offset)
-                    offset -= 1
+                    parsed.append(self.classify(tok))
+            elif self.isop(tok):
+                opdict[tok].append(i-offset)
+                parsed.append(tok)
+            else:
+                parsed.append(tok)
+            if len(parsed) > 1 and ((isinstance(parsed[-2], Term) and isinstance(parsed[-1], Term))):
+                parsed[-1:] = ['*', parsed[-1]]
+                opdict['*'].append(i-offset)
+                offset -= 1
 
-            # Classification of operators and combined tokens
-            offset = 0
-            for i in sorted(opdict['**']+opdict['^']):
-                try:
-                    i -= offset
-                    if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
-                        raise InvalidFormatError(self.deepjoin(tlist), "Exponentiation is a binary operator, requires one argument to the left and one to the right.")
-                    parsed[i-1:i+2] = [Exponent(parsed[i-1], parsed[i+1])]
-                    offset += 2
-                    for key in opdict:
-                        opdict[key] = [n-2 if n > i else n for n in opdict[key]]
-                except IndexError:
+        # Classification of operators and combined tokens
+        offset = 0
+        for i in sorted(opdict['**']+opdict['^']):
+            try:
+                i -= offset
+                if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
                     raise InvalidFormatError(self.deepjoin(tlist), "Exponentiation is a binary operator, requires one argument to the left and one to the right.")
-            offset = 0
-            for i in sorted(opdict['*']+opdict['/']):
-                try:
-                    i -= offset
-                    if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
-                        if i in opdict['*']:
-                            raise InvalidFormatError(self.deepjoin(tlist), "Multiplication is a binary operator and requires one argument to the left and one to the right.")
-                        elif i in opdict['/']:
-                            raise InvalidFormatError(self.deepjoin(tlist), "Division is a binary operator and requires one argument to the left and one to the right.")
-                    if i in opdict['*']:
-                        if isinstance(parsed[i-1], Product):
-                            parsed[i-1].factors.append(parsed[i+1])
-                            parsed[i-1:i+2] = [parsed[i-1]]
-                        else:
-                            parsed[i-1:i+2] = [Product([parsed[i-1], parsed[i+1]])]
-                    elif i in opdict['/']:
-                        if isinstance(parsed[i-1], Quotient):
-                            parsed[i-1].divisors.append(parsed[i+1])
-                            parsed[i-1:i+2] = [parsed[i-1]]
-                        else:
-                            parsed[i-1:i+2] = [Quotient(parsed[i-1], [parsed[i+1]])]
-                    offset += 2
-                    for key in opdict:
-                        opdict[key] = [n-2 if n > i else n for n in opdict[key]]
-                except IndexError:
+                parsed[i-1:i+2] = [Exponent(parsed[i-1], parsed[i+1])]
+                offset += 2
+                for key in opdict:
+                    opdict[key] = [n-2 if n > i else n for n in opdict[key]]
+            except IndexError:
+                raise InvalidFormatError(self.deepjoin(tlist), "Exponentiation is a binary operator, requires one argument to the left and one to the right.")
+        offset = 0
+        for i in sorted(opdict['*']+opdict['/']):
+            try:
+                i -= offset
+                if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
                     if i in opdict['*']:
                         raise InvalidFormatError(self.deepjoin(tlist), "Multiplication is a binary operator and requires one argument to the left and one to the right.")
                     elif i in opdict['/']:
                         raise InvalidFormatError(self.deepjoin(tlist), "Division is a binary operator and requires one argument to the left and one to the right.")
-            offset = 0
-            for i in sorted(opdict['+']+opdict['-']):
-                try:
-                    i -= offset
-                    if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
-                        if i in opdict['+']:
-                            raise InvalidFormatError(self.deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
-                        elif i in opdict['-']:
-                            raise InvalidFormatError(self.deepjoin(tlist), "Subtraction is a binary operator and requires one argument to the left and one to the right.")
-                    if i in opdict['+']:
-                        if isinstance(parsed[i-1], Sum):
-                            parsed[i-1].summands.append(parsed[i+1])
-                            parsed[i-1:i+2] = [parsed[i-1]]
-                        else:
-                            parsed[i-1:i+2] = [Sum([parsed[i-1], parsed[i+1]])]
-                    elif i in opdict['-']:
-                        if isinstance(parsed[i-1], Difference):
-                            parsed[i-1].minuends.append(parsed[i+1])
-                            parsed[i-1:i+2] = [parsed[i-1]]
-                        else:
-                            parsed[i-1:i+2] = [Difference(parsed[i-1], [parsed[i+1]])]
-                    offset += 2
-                    for key in opdict:
-                        opdict[key] = [n-2 if n > i else n for n in opdict[key]]
-                except IndexError:
+                if i in opdict['*']:
+                    if isinstance(parsed[i-1], Product):
+                        parsed[i-1].factors.append(parsed[i+1])
+                        parsed[i-1:i+2] = [parsed[i-1]]
+                    else:
+                        parsed[i-1:i+2] = [Product([parsed[i-1], parsed[i+1]])]
+                elif i in opdict['/']:
+                    if isinstance(parsed[i-1], Quotient):
+                        parsed[i-1].divisors.append(parsed[i+1])
+                        parsed[i-1:i+2] = [parsed[i-1]]
+                    else:
+                        parsed[i-1:i+2] = [Quotient(parsed[i-1], [parsed[i+1]])]
+                offset += 2
+                for key in opdict:
+                    opdict[key] = [n-2 if n > i else n for n in opdict[key]]
+            except IndexError:
+                if i in opdict['*']:
+                    raise InvalidFormatError(self.deepjoin(tlist), "Multiplication is a binary operator and requires one argument to the left and one to the right.")
+                elif i in opdict['/']:
+                    raise InvalidFormatError(self.deepjoin(tlist), "Division is a binary operator and requires one argument to the left and one to the right.")
+        offset = 0
+        for i in sorted(opdict['+']+opdict['-']):
+            try:
+                i -= offset
+                if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
                     if i in opdict['+']:
                         raise InvalidFormatError(self.deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
                     elif i in opdict['-']:
                         raise InvalidFormatError(self.deepjoin(tlist), "Subtraction is a binary operator and requires one argument to the left and one to the right.")
-            try:
-                return parsed[0]
+                if i in opdict['+']:
+                    if isinstance(parsed[i-1], Sum):
+                        parsed[i-1].summands.append(parsed[i+1])
+                        parsed[i-1:i+2] = [parsed[i-1]]
+                    else:
+                        parsed[i-1:i+2] = [Sum([parsed[i-1], parsed[i+1]])]
+                elif i in opdict['-']:
+                    if isinstance(parsed[i-1], Difference):
+                        parsed[i-1].minuends.append(parsed[i+1])
+                        parsed[i-1:i+2] = [parsed[i-1]]
+                    else:
+                        parsed[i-1:i+2] = [Difference(parsed[i-1], [parsed[i+1]])]
+                offset += 2
+                for key in opdict:
+                    opdict[key] = [n-2 if n > i else n for n in opdict[key]]
             except IndexError:
-                if len(tlist) == 0:
-                    raise InvalidFormatError(self.deepjoin(tlist), "Empty input list.")
-                raise InvalidFormatError(self.deepjoin(tlist), "Unknown format error.")
+                if i in opdict['+']:
+                    raise InvalidFormatError(self.deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
+                elif i in opdict['-']:
+                    raise InvalidFormatError(self.deepjoin(tlist), "Subtraction is a binary operator and requires one argument to the left and one to the right.")
+        try:
+            return parsed[0]
+        except IndexError:
+            if len(tlist) == 0:
+                raise InvalidFormatError(self.deepjoin(tlist), "Empty input list.")
+            raise InvalidFormatError(self.deepjoin(tlist), "Unknown format error.")
+
+    def realize(self, tlist):
+        """Takes a tokenized list of terms and constructs an expression tree from it."""
+        def makearguments(l):
+            """Sub-function to create a list of arguments, to not be confused with a parenthesized expression."""
+            return [self.classify(arg) for arg in self.split(l, ',')]
 
         if '=' in tlist:
             if self.isvar(tlist[0]) and self.isass(tlist[1]) and len(tlist) > 2 and '=' not in tlist[2:]:
-                return VariableAssignment(tlist[0], classify(tlist[2:]))
+                return VariableAssignment(tlist[0], self.classify(tlist[2:]))
             elif self.isvar(tlist[0]) and self.islist(tlist[1]) and self.isass(tlist[2]) and len(tlist) > 3 and '=' not in tlist[3:]:
-                return FunctionAssignment(tlist[0], tlist[1], classify(tlist[3:]))
+                return FunctionAssignment(tlist[0], tlist[1], self.classify(tlist[3:]))
             else:
                 reason = "Unkown format error."
                 if tlist.count('=') > 1:
@@ -520,7 +553,7 @@ class Mathparser():
                 if tlist[-1] == '=':
                     reason = "Empty assignments are not allowed."
                 raise InvalidFormatError(self.deepjoin(tlist), reason)
-        return classify(tlist)
+        return self.classify(tlist)
 
     def unapply(self, *args, **kwargs):
         """Turns all variables into functions over args, if any args appear within the variable."""
@@ -549,8 +582,9 @@ class Mathparser():
         for arglist in combinations:
             self.funclists[arglist] = self.unapply(*arglist)
 
-    def integrate(self, expr, args=('x', 'y'), subs):
-        return Sum([expr.setvar(args, sub) for sub in subs])
+    def integrate(self, expr, subs, args=('x', 'y')):
+        subs = [map(self.classify, [[term] for term in sub]) for sub in subs]
+        return Sum([deepcopy(expr).apply(args, sub) for sub in subs])
 
     def formatinput(self, input):
         """Formats Maple output to a list of separate expressions"""
@@ -627,7 +661,9 @@ class Mathparser():
             self.funclists[str(args)] = self.unapply(*args)
             exprs = self.funclists[str(args)]
         if 'integrate' in kwargs and kwargs['integrate']:
-            
+            if 'subs' not in kwargs:
+                raise InvalidOperationError('Cannot do analytic integration.')
+            exprs[-1].term = self.integrate(exprs[-1].term, kwargs['subs'])
         if len(args) == 1:
             argformat = 'set dummy %s\n' % args
         elif len(args) == 2:
@@ -637,7 +673,7 @@ class Mathparser():
 
 if __name__ == '__main__':
     #termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3 = 2h[1]+4t2 u[1], t4 = 2 h[1]**2 + t2^3 + t3*u[2]+ 5 t1 *(h[1]*h[2]), t15= t4*u[1]*u[2]*h[1]^2*h[2]**2 +  h[1], t1642 = 0.12t15+h[1]'
-    termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3(h[2]) = t2 + h[2]'
+    termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3(h[2]) = t2 + h[2]*x + u[2]*y'
     print('Not supposed to be run on its own. Demonstrative run using the following input:\n%s\n' % '\n'.join(termstring.split(', ')))
 
     p = Mathparser()
@@ -647,9 +683,7 @@ if __name__ == '__main__':
     print('\n'.join(str(expr) for expr in p.exprlist)+'\n')
     p.unapplyall('h_1', 'h_2', 'u_1', 'u_2')
     print('\n'.join(str(expr) for expr in p.funclists[('h_1','u_1')])+'\n')
-    p.setvar('h_1', 'x')
-    p.setvar('u_1', 'y')
-    print('\n'.join(str(expr) for expr in p.funclists[('h_1','u_1')])+'\n')
+    print(p.gnuformat('h_1', 'h_2', integrate=True, subs=[(0.0, 0.0), (0.33333, 0.3333), (0.6666, 0.6666), (1.0, 1.0)]))
 
     #print('\nInternal representation:')
     #print('\n'.join([repr(expr) for expr in p.exprlist]))
