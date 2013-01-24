@@ -20,6 +20,14 @@ class InvalidCallError(Exception):
     def __repr__(self):
         return repr(self.call)+': '+repr(self.reason)
 
+class InvalidOperationError(Exception):
+    def __init__(self, reason):
+        self.reason = reason
+    def __str__(self):
+        return repr(self.reason)
+    def __repr__(self):
+        return repr(self.reason)
+
 class Term():
     def contains(self, name):
         return False
@@ -668,7 +676,16 @@ class Mathparser():
                 continue
 
     def gnuformat(self, *args, **kwargs):
-        """Format the current expression tree to a Gnuplot string."""
+        """Format the current expression tree to a Gnuplot string.
+            args contains the variables which it should plot.
+            kwargs can contain:
+                integrate: Domain type to integrate
+                    Line
+                    RTriangle
+                start: Start of x integration domain
+                end: End of x integration domain
+                stops: Number of partitions of the x domain
+            Higher dimensional domains will be integrated evenly."""
         args = self.makeargs(*args)
         if len(args) < 1 or len(args) > 2:
             raise InvalidCallError('('+', '.join(args)+')', 'Invalid number of arguments. One argument for a 2D plot, two for a 3D plot.')
@@ -677,17 +694,36 @@ class Mathparser():
         except KeyError:
             self.funclists[str(args)] = self.unapply(*args+('x', 'y'))
             exprs = self.funclists[str(args)]
-        if 'integrate' in kwargs and kwargs['integrate']:
-            if 'subs' not in kwargs:
-                raise InvalidOperationError('Cannot do analytic integration.')
-            if 'area' not in kwargs:
-                kwargs['area'] = 1.0
+        if 'integrate' in kwargs:
+            start = kwargs['start'] if 'start' in kwargs else 0
+            end = kwargs['end'] if 'end' in kwargs else 1
+            stops = kwargs['stops'] if 'stops' in kwargs else 5
+            length = math.fabs(end-start)/stops
+            subs = None
+            if kwargs['integrate'] == 'RTriangle':
+                combinations = []
+                for i in range(stops):
+                    for j in range(stops-i):
+                        combinations.append((i,j))
+                subs = map(lambda (x, y): (x+1.0/6.0, y+1.0/6.0), combinations)+map(lambda (x, y): (x+5.0/6.0, y+5.0/6.0), combinations)
+                subs = map(lambda (x, y): (start+x*length, start+y*length), subs)
+                subs = filter(lambda (x, y): x+y <= end, subs)
+                area = length**2/2.0
+            elif kwargs['integrate'] == 'Line':
+                subs = [(x+0.5)/length for x in range(stops)]
+                area = length
+            if not subs or not area:
+                if isinstance(kwargs['integrate'], str):
+                    raise InvalidOperationError('Integration domain %s unknown or not supported.' % kwargs['integrate'])
+                else:
+                    raise InvalidOperationError('No integration domain specified.')
+            area /= len(subs)
             if isinstance(exprs[-1], (VariableAssignment, FunctionAssignment)):
-                exprs[-1].term = self.integrate(exprs[-1].term, kwargs['subs'], kwargs['area'])
+                exprs[-1].term = self.integrate(exprs[-1].term, subs, area)
                 if isinstance(exprs[-1], FunctionAssignment):
                     exprs[-1].args = filter(lambda arg: arg not in ['x', 'y'], exprs[-1].args)
             else:
-                exprs[-1] = self.integrate(exprs[-1], kwargs['subs'])
+                exprs[-1] = self.integrate(exprs[-1], subs, area)
         if len(args) == 1:
             argformat = 'set dummy %s' % args
         elif len(args) == 2:
@@ -713,7 +749,7 @@ if __name__ == '__main__':
     print('Parsed expressions:')
     print('\n'.join(str(expr) for expr in p.exprlist)+'\n')
     p.unapplyall('h_1', 'h_2', 'u_1', 'u_2')
-    print(p.gnuformat('h_1', 'h_2', integrate=True, area=0.12, subs=[(0.0, 0.0), (0.33333, 0.3333), (0.6666, 0.6666), (1.0, 1.0)]))
+    print(p.gnuformat('h_1', 'h_2', integrate='RTriangle'))
 
     #print('\nInternal representation:')
     #print('\n'.join([repr(expr) for expr in p.exprlist]))
