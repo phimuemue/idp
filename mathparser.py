@@ -28,6 +28,88 @@ class InvalidOperationError(Exception):
     def __repr__(self):
         return repr(self.reason)
 
+nums = '0123456789.'
+alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
+ops = '+-*/^'
+seps = '=,'
+oplist = ['+', '-', '*', '/', '^', '**']
+
+def split(l, sep):
+    """Splits a list into a list of lists by a separating string sep."""
+    res = [[]]
+    for el in l:
+        if el == sep:
+            res.append([])
+        else:
+            res[-1].append(el)
+    return res
+
+def deepjoin(l):
+    """Joins a list to a string, nested lists are enclosed by parentheses and their contents joined as well."""
+    res = ''
+    for el in l:
+        if type(el) == list:
+            res += '('+(deepjoin(el))+')'
+        else:
+            res += str(el)
+    return res
+
+def isvar(tok):
+    """Returns True if tok is a valid variable name. Not allowed to start with a number, otherwise characters in alpha and nums are alloewd."""
+    if type(tok) != str:
+        return False
+    if not tok[0] in alpha:
+        return False
+    for c in tok:
+        if not c in alpha+nums:
+            return False
+    return True
+
+def isnum(tok):
+    """Returns True if tok is a number. Uses the Python float parser."""
+    try:
+        float(tok)
+        return True
+    except:
+        return False
+
+def isop(tok):
+    """Returns True if tok is an operator as specified by oplist."""
+    return tok in oplist
+
+def isass(tok):
+    """Returns True if tok is the equality sign."""
+    return tok == '='
+
+def islist(tok):
+    """Returns True if tok is a list."""
+    return type(tok) == list
+
+def flatten(l, full=True):
+    """Removes nesting in lists, sets and tuples, splices nested containers into the same position of the outer list."""
+    res = [None for el in l]
+    offset = 0
+    for i,el in enumerate(l):
+        i = i+offset
+        if full and type(el) in (list, tuple, set) or type(el) == type(l):
+            splice = flatten(el, full)
+            res[i:i+1] = splice
+            offset += len(splice)-1
+        else:
+            res[i:i+1] = [el]
+    if type(l) == tuple:
+        return tuple(res)
+    if type(l) == set:
+        return set(res)
+    return res
+
+def makeargs(*args, **kwargs):
+    """Returns a tuple of sorted arguments, removing duplicates."""
+    if 'sort' in kwargs and kwargs['sort']:
+        return tuple(sorted(set(flatten(args))))
+    else:
+        return tuple(set(flatten(args)))
+
 class Term():
     def contains(self, name):
         return False
@@ -46,7 +128,7 @@ class Number(Term):
             print("String %s mistakenly parsed as number." % number)
             raise
     def __repr__(self):
-        return 'Number('+repr(self.number)+')'
+        return 'Number('+repr(number)+')'
     def __str__(self):
         return str(self.number)
 
@@ -201,12 +283,12 @@ class Quotient(Term):
         self.divisors = [divisor.apply(name, term) for divisor in self.divisors]
         return self
 
-class Exponent(Term):
+class Power(Term):
     def __init__(self, base, exp):
         self.base = base
         self.exp = exp
     def __repr__(self):
-        return 'Exponent('+repr(self.base)+', '+repr(self.exp)+')'
+        return 'Power('+repr(self.base)+', '+repr(self.exp)+')'
     def __str__(self):
         base = ('(%s)' if isinstance(self.base, (Sum, Difference, Product, Quotient)) else '%s') % str(self.base)
         exp = ('(%s)' if isinstance(self.exp, (Sum, Difference, Product, Quotient)) else '%s') % str(self.exp)
@@ -311,6 +393,12 @@ class Function(Term):
         if self.val != None:
             return str(self.val)
         else:
+            # Attempt to simplify math functions
+            #try:
+            #    args = [float(str(arg)) for arg in self.args]
+            #    if self.name
+            #except ValueError:
+            #    return '%s(%s)' % (self.name, ', '.join([str(arg) for arg in self.args]))
             return '%s(%s)' % (self.name, ', '.join([str(arg) for arg in self.args]))
     def contains(self, name):
         for arg in self.args:
@@ -330,80 +418,29 @@ class Function(Term):
 
 class Mathparser():
     def __init__(self):
-        self.num = '0123456789.'
-        self.alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
-        self.ops = '+-*/^'
-        self.seps = '=,'
-        self.oplist = ['+', '-', '*', '/', '^', '**']
-
         self.exprlist = []
         self.funclists = {} # Simplified exprlist, with unapplied functions over certain arguments.
-
-    def split(self, l, sep):
-        res = [[]]
-        for el in l:
-            if el == sep:
-                res.append([])
-            else:
-                res[-1].append(el)
-        return res
-
-    def deepjoin(self, l):
-        res = ''
-        for el in l:
-            if type(el) == list:
-                res += '('+(self.deepjoin(el))+')'
-            else:
-                res += str(el)
-        return res
-
-    def isvar(self, tok):
-        if type(tok) != str:
-            return False
-        if not tok[0] in self.alpha:
-            return False
-        for c in tok:
-            if not (c in self.alpha or c in self.num):
-                return False
-        return True
-
-    def isnum(self, tok):
-        try:
-            float(tok)
-            return True
-        except:
-            return False
-
-    def isop(self, tok):
-        return tok in self.oplist
-
-    def isass(self, tok):
-        return tok == '='
-
-    def islist(self, tok):
-        return type(tok) == list
-
-    def makeargs(self, *args):
-        return tuple(sorted(set(args)))
+        self.intargs = ('x', 'y')
 
     def tokenize(self, input):
+        """Takes a string input of an expression of the supported types and returns a tokenized list of single terms. Results should be passed to realize() to obtain a parsed expression tree."""
         current = ''
         mode = ''
         newmode = ''
         result = [[]]
         for c in input:
-            if (c in self.num and mode != 'var') or (c in ['e', 'E'] and mode == 'num') or (c == '-' and mode == 'num' and current[-1] in ['e', 'E']):
+            if (c in nums and mode != 'var') or (c in ['e', 'E'] and mode == 'num') or (c == '-' and mode == 'num' and current[-1] in ['e', 'E']):
                 newmode = 'num'
-            elif c in self.alpha or (c in self.num and mode == 'var'):
+            elif c in alpha or (c in nums and mode == 'var'):
                 if mode == 'num':
                     mode == 'break'
                 newmode = 'var'
-            elif c in self.ops:
-                if c == '-' and (self.isop(current) or (current == '' and (result[-1] == [] or self.isop(result[-1][-1])))):
+            elif c in ops:
+                if c == '-' and (isop(current) or (current == '' and (result[-1] == [] or isop(result[-1][-1])))):
                     newmode = 'adapt'
                 else:
                     newmode = 'ops'
-            elif c in self.seps:
+            elif c in seps:
                 newmode = 'seps'
             elif c == ' ':
                 newmode = 'break'
@@ -438,23 +475,23 @@ class Mathparser():
     def classify(self, tlist):
         """Classifies list elements into categories (Number, Variable, etc.)."""
         parsed = []
-        opdict = {op: [] for op in self.oplist}
+        opdict = {op: [] for op in oplist}
 
         # Classification of single tokens
         offset = 0
         for i in range(len(tlist)):
             tok = tlist[i]
-            if self.isnum(tok):
+            if isnum(tok):
                 parsed.append(Number(tok))
-            elif self.isvar(tok):
+            elif isvar(tok):
                 parsed.append(Variable(tok))
-            elif self.islist(tok):
+            elif islist(tok):
                 if i > 0 and isinstance(parsed[-1], Variable):
-                    parsed[-1] = Function(str(parsed[-1]), self.makearguments(tok))
+                    parsed[-1] = Function(str(parsed[-1]), self.classifyarguments(tok))
                     offset += 1
                 else:
                     parsed.append(self.classify(tok))
-            elif self.isop(tok):
+            elif isop(tok):
                 opdict[tok].append(i-offset)
                 parsed.append(tok)
             else:
@@ -469,23 +506,23 @@ class Mathparser():
         for i in sorted(opdict['**']+opdict['^']):
             try:
                 i -= offset
-                if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
-                    raise InvalidFormatError(self.deepjoin(tlist), "Exponentiation is a binary operator, requires one argument to the left and one to the right.")
-                parsed[i-1:i+2] = [Exponent(parsed[i-1], parsed[i+1])]
+                if i <= 0 or isop(parsed[i-1]) or isop(parsed[i+1]):
+                    raise InvalidFormatError(deepjoin(tlist), "Exponentiation is a binary operator, requires one argument to the left and one to the right.")
+                parsed[i-1:i+2] = [Power(parsed[i-1], parsed[i+1])]
                 offset += 2
                 for key in opdict:
                     opdict[key] = [n-2 if n > i else n for n in opdict[key]]
             except IndexError:
-                raise InvalidFormatError(self.deepjoin(tlist), "Exponentiation is a binary operator, requires one argument to the left and one to the right.")
+                raise InvalidFormatError(deepjoin(tlist), "Exponentiation is a binary operator, requires one argument to the left and one to the right.")
         offset = 0
         for i in sorted(opdict['*']+opdict['/']):
             try:
                 i -= offset
-                if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
+                if i <= 0 or isop(parsed[i-1]) or isop(parsed[i+1]):
                     if i in opdict['*']:
-                        raise InvalidFormatError(self.deepjoin(tlist), "Multiplication is a binary operator and requires one argument to the left and one to the right.")
+                        raise InvalidFormatError(deepjoin(tlist), "Multiplication is a binary operator and requires one argument to the left and one to the right.")
                     elif i in opdict['/']:
-                        raise InvalidFormatError(self.deepjoin(tlist), "Division is a binary operator and requires one argument to the left and one to the right.")
+                        raise InvalidFormatError(deepjoin(tlist), "Division is a binary operator and requires one argument to the left and one to the right.")
                 if i in opdict['*']:
                     if isinstance(parsed[i-1], Product):
                         parsed[i-1].factors.append(parsed[i+1])
@@ -503,18 +540,18 @@ class Mathparser():
                     opdict[key] = [n-2 if n > i else n for n in opdict[key]]
             except IndexError:
                 if i in opdict['*']:
-                    raise InvalidFormatError(self.deepjoin(tlist), "Multiplication is a binary operator and requires one argument to the left and one to the right.")
+                    raise InvalidFormatError(deepjoin(tlist), "Multiplication is a binary operator and requires one argument to the left and one to the right.")
                 elif i in opdict['/']:
-                    raise InvalidFormatError(self.deepjoin(tlist), "Division is a binary operator and requires one argument to the left and one to the right.")
+                    raise InvalidFormatError(deepjoin(tlist), "Division is a binary operator and requires one argument to the left and one to the right.")
         offset = 0
         for i in sorted(opdict['+']+opdict['-']):
             try:
                 i -= offset
-                if i <= 0 or self.isop(parsed[i-1]) or self.isop(parsed[i+1]):
+                if i <= 0 or isop(parsed[i-1]) or isop(parsed[i+1]):
                     if i in opdict['+']:
-                        raise InvalidFormatError(self.deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
+                        raise InvalidFormatError(deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
                     elif i in opdict['-']:
-                        raise InvalidFormatError(self.deepjoin(tlist), "Subtraction is a binary operator and requires one argument to the left and one to the right.")
+                        raise InvalidFormatError(deepjoin(tlist), "Subtraction is a binary operator and requires one argument to the left and one to the right.")
                 if i in opdict['+']:
                     if isinstance(parsed[i-1], Sum):
                         parsed[i-1].summands.append(parsed[i+1])
@@ -532,36 +569,41 @@ class Mathparser():
                     opdict[key] = [n-2 if n > i else n for n in opdict[key]]
             except IndexError:
                 if i in opdict['+']:
-                    raise InvalidFormatError(self.deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
+                    raise InvalidFormatError(deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
                 elif i in opdict['-']:
-                    raise InvalidFormatError(self.deepjoin(tlist), "Subtraction is a binary operator and requires one argument to the left and one to the right.")
+                    raise InvalidFormatError(deepjoin(tlist), "Subtraction is a binary operator and requires one argument to the left and one to the right.")
         try:
             return parsed[0]
         except IndexError:
             if len(tlist) == 0:
-                raise InvalidFormatError(self.deepjoin(tlist), "Empty input list.")
-            raise InvalidFormatError(self.deepjoin(tlist), "Unknown format error.")
+                raise InvalidFormatError(deepjoin(tlist), "Empty input list.")
+            raise InvalidFormatError(deepjoin(tlist), "Unknown format error.")
 
-    def makearguments(self, l):
+    def setintargs(self, *args):
+        """Sets self.intargs to whatever is passed as arguments, formatted by makeargs()."""
+        self.intargs = makeargs(*flatten(args))
+
+    def classifyarguments(self, l):
         """Sub-function to create a list of arguments, to not be confused with a parenthesized expression."""
-        return [self.classify(arg) for arg in self.split(l, ',')]
+        return [self.classify(arg) for arg in split(l, ',')]
 
     def realize(self, tlist):
         """Takes a tokenized list of terms and constructs an expression tree from it."""
         if '=' in tlist:
-            if self.isvar(tlist[0]) and self.isass(tlist[1]) and len(tlist) > 2 and '=' not in tlist[2:]:
+            if isvar(tlist[0]) and isass(tlist[1]) and len(tlist) > 2 and '=' not in tlist[2:]:
                 return VariableAssignment(tlist[0], self.classify(tlist[2:]))
-            elif self.isvar(tlist[0]) and self.islist(tlist[1]) and self.isass(tlist[2]) and len(tlist) > 3 and '=' not in tlist[3:]:
-                return FunctionAssignment(tlist[0], self.makearguments(tlist[1]), self.classify(tlist[3:]))
+            elif isvar(tlist[0]) and islist(tlist[1]) and isass(tlist[2]) and len(tlist) > 3 and '=' not in tlist[3:]:
+                return FunctionAssignment(tlist[0], self.classifyarguments(tlist[1]), self.classify(tlist[3:]))
             else:
-                reason = "Unkown format error."
                 if tlist.count('=') > 1:
                     reason = "Nested or multiple assignments are not allowed."
-                if not self.isvar(tlist[0]):
+                elif not isvar(tlist[0]):
                     reason = "Only variables and functions can be assigned to."
-                if tlist[-1] == '=':
+                elif tlist[-1] == '=':
                     reason = "Empty assignments are not allowed."
-                raise InvalidFormatError(self.deepjoin(tlist), reason)
+                else:
+                    reason = "Unkown format error."
+                raise InvalidFormatError(deepjoin(tlist), reason)
         return self.classify(tlist)
 
     def unapply(self, *args, **kwargs):
@@ -573,7 +615,7 @@ class Mathparser():
             if isinstance(expr, (VariableAssignment, FunctionAssignment)):
                 for func in funcdict:
                     expr.unapply(func, *funcdict[func])
-                arglist = self.makeargs(*filter(lambda el: expr.contains(el), args))
+                arglist = makeargs(*filter(lambda el: expr.contains(el), args))
                 if len(arglist) > 0:
                     expr = FunctionAssignment(expr.name, arglist, expr.term)
                     exprs[i] = expr
@@ -584,12 +626,9 @@ class Mathparser():
 
     def unapplyall(self, *args):
         """Unapplies all parsed terms w.r.t. all combinations of arguments provided in *args. Results are stored for further application."""
-        combinations = set([])
-        for arg1 in args:
-            for arg2 in args:
-                combinations.add(self.makeargs(arg1, arg2, 'x', 'y'))
+        combinations = set([makeargs(arg1, arg2, 'x', 'y', sort=True) for arg1 in args for arg2 in args])
         for arglist in combinations:
-            self.funclists[arglist] = self.unapply(*arglist)
+            self.funclists[filter(lambda arg: arg not in ['x', 'y'], arglist)] = self.unapply(*arglist)
 
     def integrate(self, expr, subs, area, args=('x', 'y')):
         """Numerical integration of expr, w.r.t. args and at the points provided in subs."""
@@ -665,15 +704,23 @@ class Mathparser():
         """Takes a list of expressions and simplifies them much as possible with considerations to set variables. Returns a (possibly shortened) list of expressions."""
         exprs = deepcopy(exprlist)
         valdict = {}
+        offset = 0
+        print('Before: '+str(exprlist))
         for i in range(len(exprs)):
-            expr = exprs[i]
+            i -= offset
             try:
-                for name, value in valdict:
-                    expr.setvar(name, value)
-                valdict[expr.name] = float(str(expr.term))
-                exprs[i:i+1] = []
-            except ValueError:
-                continue
+                expr = exprs[i]
+                try:
+                    for name, value in valdict:
+                        expr.setvar(name, value)
+                    valdict[expr.name] = float(str(expr.term))
+                    exprs[i:i+1] = []
+                    offset += 1
+                except ValueError:
+                    continue
+            except IndexError:
+                break
+        print('After: '+str(exprlist))
 
     def gnuformat(self, *args, **kwargs):
         """Format the current expression tree to a Gnuplot string.
@@ -686,28 +733,35 @@ class Mathparser():
                 end: End of x integration domain
                 stops: Number of partitions of the x domain
             Higher dimensional domains will be integrated evenly."""
-        args = self.makeargs(*args)
+        args = makeargs(args)
         if len(args) < 1 or len(args) > 2:
             raise InvalidCallError('('+', '.join(args)+')', 'Invalid number of arguments. One argument for a 2D plot, two for a 3D plot.')
+        intargs = self.intargs if 'intargs' not in kwargs else makeargs(kwargs['intargs'])
         try:
-            exprs = self.funclists[str(args)]
+            exprs = self.funclists[makeargs(args, sort=True)]
         except KeyError:
-            self.funclists[str(args)] = self.unapply(*args+('x', 'y'))
-            exprs = self.funclists[str(args)]
+            self.funclists[makeargs(args, sort=True)] = self.unapply(*args+intargs)
+            exprs = self.funclists[makeargs(args, sort=True)]
         if 'integrate' in kwargs:
-            start = kwargs['start'] if 'start' in kwargs else 0
-            end = kwargs['end'] if 'end' in kwargs else 1
+            start = kwargs['start'] if 'start' in kwargs else 0.0
+            end = kwargs['end'] if 'end' in kwargs else 1.0
             stops = kwargs['stops'] if 'stops' in kwargs else 5
             length = math.fabs(end-start)/stops
             subs = None
+            area = None
+            if kwargs['integrate'] == True:
+                if all(exprs[-1].contains(arg) for arg in intargs):
+                    kwargs['integrate'] = 'RTriangle'
+                elif any(exprs[-1].contains(arg) for arg in intargs):
+                    kwargs['integrate'] = 'Line'
+                elif False:
+                    # Might be removed at some point. Kinda pointless.
+                    if 'intargs' not in kwargs:
+                        raise InvalidOperationError('No integral variables specified. Default variables x and y not found.')
+                    else:
+                        raise InvalidOperationError('None of the specified integral variables found.')
             if kwargs['integrate'] == 'RTriangle':
-                combinations = []
-                for i in range(stops):
-                    for j in range(stops-i):
-                        combinations.append((i,j))
-                subs = map(lambda (x, y): (x+1.0/6.0, y+1.0/6.0), combinations)+map(lambda (x, y): (x+5.0/6.0, y+5.0/6.0), combinations)
-                subs = map(lambda (x, y): (start+x*length, start+y*length), subs)
-                subs = filter(lambda (x, y): x+y <= end, subs)
+                subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i,j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/6.0, 5.0/6.0]], full=False)))
                 area = length**2/2.0
             elif kwargs['integrate'] == 'Line':
                 subs = [(x+0.5)/length for x in range(stops)]
@@ -749,7 +803,8 @@ if __name__ == '__main__':
     print('Parsed expressions:')
     print('\n'.join(str(expr) for expr in p.exprlist)+'\n')
     p.unapplyall('h_1', 'h_2', 'u_1', 'u_2')
-    print(p.gnuformat('h_1', 'h_2', integrate='RTriangle'))
+    print('Gnuplot formatted string:')
+    print(p.gnuformat('h_1', 'h_2', integrate=True))
 
     #print('\nInternal representation:')
     #print('\n'.join([repr(expr) for expr in p.exprlist]))
