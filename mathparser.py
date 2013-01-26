@@ -85,14 +85,20 @@ def islist(tok):
     """Returns True if tok is a list."""
     return type(tok) == list
 
-def flatten(l, full=True):
-    """Removes nesting in lists, sets and tuples, splices nested containers into the same position of the outer list."""
+def flatten(l, full=True, level=0):
+    """Removes nesting in lists, sets and tuples, splices nested containers into the same position of the outer list.
+        full: specifies if all types of containers, even those not matching the outer, should be flattened.
+        level: specifies how deep the flattening process should go. Further nested list will not be flattened."""
     res = [None for el in l]
     offset = 0
+    level -= 1
     for i,el in enumerate(l):
         i = i+offset
         if full and type(el) in (list, tuple, set) or type(el) == type(l):
-            splice = flatten(el, full)
+            if level != 0:
+                splice = flatten(el, full, level)
+            else:
+                splice = el
             res[i:i+1] = splice
             offset += len(splice)-1
         else:
@@ -761,7 +767,7 @@ class Mathparser():
                     else:
                         raise InvalidOperationError('None of the specified integral variables found.')
             if kwargs['integrate'] == 'RTriangle':
-                subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i,j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/6.0, 5.0/6.0]], full=False)))
+                subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i, j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/6.0, 5.0/6.0]], level=1)))
                 area = length**2/2.0
             elif kwargs['integrate'] == 'Line':
                 subs = [(x+0.5)/length for x in range(stops)]
@@ -804,7 +810,7 @@ if __name__ == '__main__':
     print('\n'.join(str(expr) for expr in p.exprlist)+'\n')
     p.unapplyall('h_1', 'h_2', 'u_1', 'u_2')
     print('Gnuplot formatted string:')
-    print(p.gnuformat('h_1', 'h_2', integrate=True))
+    print(p.gnuformat('h_1', 'h_2', integrate='RTriangle', stops=1))
 
     #print('\nInternal representation:')
     #print('\n'.join([repr(expr) for expr in p.exprlist]))
