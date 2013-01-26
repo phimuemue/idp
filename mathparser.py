@@ -1,6 +1,5 @@
 from copy import deepcopy
 import math
-import sys
 
 class InvalidFormatError(Exception):
     def __init__(self, line, reason):
@@ -119,8 +118,6 @@ def makeargs(*args, **kwargs):
 class Term():
     def contains(self, name):
         return False
-    def setvar(self, name, val):
-        pass
     def unapply(self, name, *args):
         return self
     def apply(self, name, term):
@@ -161,9 +158,6 @@ class Sum(Term):
             if summand.contains(name):
                 return True
         return False
-    def setvar(self, name, val):
-        for summand in self.summands:
-            summand.setvar(name, val)
     def unapply(self, name, *args):
         self.summands = [summand.unapply(name, *args) for summand in self.summands]
         return self
@@ -200,10 +194,6 @@ class Difference(Term):
             if minuend.contains(name):
                 return True
         return False or self.subtrahend.contains(name)
-    def setvar(self, name, val):
-        self.subtrahend.setvar(name, val)
-        for minuend in self.minuends:
-            minuend.setvar(name, val)
     def unapply(self, name, *args):
         self.subtrahend = self.subtrahend.unapply(name, *args)
         self.minuends = [minuend.unapply(name, *args) for minuend in self.minuend]
@@ -236,9 +226,6 @@ class Product(Term):
             if factor.contains(name):
                 return True
         return False
-    def setvar(self, name, val):
-        for factor in self.factors:
-            factor.setvar(name, val)
     def unapply(self, name, *args):
         self.factors = [factor.unapply(name, *args) for factor in self.factors]
         return self
@@ -276,10 +263,6 @@ class Quotient(Term):
             if divisor.contains(name):
                 return True
         return False or self.dividend.contains(name)
-    def setvar(self, name, val):
-        self.dividend.setvar(name, val)
-        for divisor in self.divisors:
-            divisor.setvar(name, val)
     def unapply(self, name, *args):
         self.dividend = self.dividend.unapply(name, *args)
         self.divisors = [divisor.unapply(name, *args) for divisor in self.divisors]
@@ -304,9 +287,6 @@ class Power(Term):
             return '%s**%s' % (base, exp)
     def contains(self, name):
         return self.base.contains(name) or self.exp.contains(name)
-    def setvar(self, name, val):
-        self.base.setvar(name, val)
-        self.exp.setvar(name, val)
     def unapply(self, name, *args):
         self.base = self.base.unapply(name, *args)
         self.exp = self.exp.unapply(name, *args)
@@ -326,8 +306,6 @@ class VariableAssignment(Term):
         return str(self.name)+' = '+str(self.term)
     def contains(self, name):
         return self.term.contains(name)
-    def setvar(self, name, val):
-        self.term.setvar(name, val)
     def unapply(self, name, *args):
         self.term = self.term.unapply(name, *args)
         return self
@@ -346,8 +324,6 @@ class FunctionAssignment(Term):
         return '%s(%s) = %s' % (str(self.name), ', '.join([str(arg) for arg in self.args]), str(self.term))
     def contains(self, name):
         return self.term.contains(name)
-    def setvar(self, name, val):
-        self.term.setvar(name, val)
     def unapply(self, name, *args):
         self.term = self.term.unapply(name, *args)
         return self
@@ -356,28 +332,26 @@ class FunctionAssignment(Term):
         return self
 
 class Variable(Term):
-    def __init__(self, name, val=None):
+    def __init__(self, name):
         self.name = str(name)
-        self.val = val
     def __repr__(self):
-        if self.val != None:
-            return 'Variable('+repr(self.name)+', '+repr(self.val)+')'
+        global vardict
+        if vardict[self.name] != None:
+            return 'Variable('+repr(self.name)+', '+repr(vardict[self.name])+')'
         else:
             return 'Variable('+repr(self.name)+', Unassigned)'
     def __str__(self):
-        if self.val != None:
-            return str(self.val)
+        global vardict
+        if self.name in vardict and vardict[self.name] != None:
+            return str(vardict[self.name])
         else:
             return self.name
     def contains(self, name):
         return self.name == name
-    def setvar(self, name, val):
-        if self.name == name:
-            self.val = val
     def unapply(self, name, *args):
         if self.name == name:
             arglist = [Variable(arg) for arg in args]
-            return Function(self.name, arglist, self.val)
+            return Function(self.name, arglist)
         return self
     def apply(self, names, terms):
         for name, term in zip(names, terms):
@@ -386,48 +360,30 @@ class Variable(Term):
         return self
 
 class Function(Term):
-    def __init__(self, name, args, val=None):
+    def __init__(self, name, args):
         self.name = str(name)
         self.args = args
-        self.val = val
     def __repr__(self):
-        if self.val != None:
-            return 'Function('+self.name+', Arguments('+', '.join([repr(arg) for arg in self.args])+'), '+repr(self.val)+')'
-        else:
-            return 'Function('+self.name+', Arguments('+', '.join([repr(arg) for arg in self.args])+'), Unassigned)'
+        return 'Function('+self.name+', Arguments('+', '.join([repr(arg) for arg in self.args])+'))'
     def __str__(self):
-        if self.val != None:
-            return str(self.val)
-        else:
-            # Attempt to simplify math functions
-            #try:
-            #    args = [float(str(arg)) for arg in self.args]
-            #    if self.name
-            #except ValueError:
-            #    return '%s(%s)' % (self.name, ', '.join([str(arg) for arg in self.args]))
-            return '%s(%s)' % (self.name, ', '.join([str(arg) for arg in self.args]))
+        return '%s(%s)' % (self.name, ', '.join([str(arg) for arg in self.args]))
     def contains(self, name):
         for arg in self.args:
             if arg.contains(name):
                 return True
         return False or self.name == name
-    def setvar(self, name, val):
-        if self.name == name:
-            self.val = val
-        for arg  in self.args:
-            arg.setvar(name, val)
     def apply(self, name, term):
         if self.name == name:
             return term
         self.args = [arg.apply(name, term) for arg in self.args]
         return self
 
-class Mathparser():
-    def __init__(self):
-        self.exprlist = []
-        self.funclists = {} # Simplified exprlist, with unapplied functions over certain arguments.
-        self.intargs = ('x', 'y')
+vardict = {} # Stores variables set by the user used in generated various strings of stored expressions.
+exprlist = [] # Contains the parsed result of the main input string.
+funclists = {} # Simplified exprlist, with unapplied functions over certain arguments.
+intargs = ('x', 'y') # Default variables to integrate over. Set with setintargs().
 
+class Mathparser():
     def tokenize(self, input):
         """Takes a string input of an expression of the supported types and returns a tokenized list of single terms. Results should be passed to realize() to obtain a parsed expression tree."""
         current = ''
@@ -480,6 +436,7 @@ class Mathparser():
 
     def classify(self, tlist):
         """Classifies list elements into categories (Number, Variable, etc.)."""
+        global vardict
         parsed = []
         opdict = {op: [] for op in oplist}
 
@@ -491,9 +448,11 @@ class Mathparser():
                 parsed.append(Number(tok))
             elif isvar(tok):
                 parsed.append(Variable(tok))
+                vardict[tok] = None
             elif islist(tok):
                 if i > 0 and isinstance(parsed[-1], Variable):
-                    parsed[-1] = Function(str(parsed[-1]), self.classifyarguments(tok))
+                    parsed[-1] = Function(parsed[-1].name, self.classifyarguments(tok))
+                    del vardict[parsed[-1].name]
                     offset += 1
                 else:
                     parsed.append(self.classify(tok))
@@ -586,8 +545,9 @@ class Mathparser():
             raise InvalidFormatError(deepjoin(tlist), "Unknown format error.")
 
     def setintargs(self, *args):
-        """Sets self.intargs to whatever is passed as arguments, formatted by makeargs()."""
-        self.intargs = makeargs(*flatten(args))
+        """Sets intargs to whatever is passed as arguments, formatted by makeargs()."""
+        global intargs
+        intargs = makeargs(*flatten(args))
 
     def classifyarguments(self, l):
         """Sub-function to create a list of arguments, to not be confused with a parenthesized expression."""
@@ -614,7 +574,8 @@ class Mathparser():
 
     def unapply(self, *args, **kwargs):
         """Turns all variables into functions over args, if any args appear within the variable."""
-        exprs = deepcopy(self.exprlist)
+        global exprlist
+        exprs = deepcopy(exprlist)
         funcdict = {}
         for i in range(len(exprs)):
             expr = exprs[i]
@@ -632,14 +593,15 @@ class Mathparser():
 
     def unapplyall(self, *args):
         """Unapplies all parsed terms w.r.t. all combinations of arguments provided in *args. Results are stored for further application."""
+        global funclists
         combinations = set([makeargs(arg1, arg2, 'x', 'y', sort=True) for arg1 in args for arg2 in args])
         for arglist in combinations:
-            self.funclists[filter(lambda arg: arg not in ['x', 'y'], arglist)] = self.unapply(*arglist)
+            funclists[filter(lambda arg: arg not in ['x', 'y'], arglist)] = self.unapply(*arglist)
 
     def integrate(self, expr, subs, area, args=('x', 'y')):
         """Numerical integration of expr, w.r.t. args and at the points provided in subs."""
         subs = [map(self.classify, [[term] for term in sub]) for sub in subs]
-        return Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(args, sub) for sub in subs])])])
+        return Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(args, sub)]) for sub in subs])])
 
     def formatinput(self, input):
         """Formats Maple output to a list of separate expressions"""
@@ -689,36 +651,40 @@ class Mathparser():
 
     def parse(self, input):
         """Parse a comma-separated list of terms."""
-        self.exprlist = self.parselist(self.formatinput(input))
+        global exprlist, vardict
+        exprlist = self.parselist(self.formatinput(input))
+        for expr in exprlist:
+            if isinstance(expr, (VariableAssignment, FunctionAssignment)):
+                try:
+                    del vardict[expr.name]
+                except KeyError:
+                    pass
 
     def fullparse(self, input, *args):
         """Parses a comma-seperated list of terms, stores the results and then unapplies all combinations of the provided arguments and stores the results separately."""
         self.parse(input)
         self.unapplyall(*args)
 
-    def setvars(self, exprs, name, val):
-        """Set a variable within the given expression list to a certain value."""
-        for expr in exprs:
-            expr.setvar(name, val)
-
     def setvar(self, name, val):
-        self.setvars(self.exprlist, name, val)
-        for args in self.funclists:
-            self.setvars(self.funclists[args], name, val)
+        """Sets a variable to the specified value. When that variable appears in an expression, it will resolve to the value instead of its name."""
+        global vardict
+        if not name in vardict:
+            print('Warning: Variable %s not found in the parsed expression list.' % name)
+        vardict[name] = val
 
-    def simplify(self, exprlist):
+    def simplify(self, exprs):
         """Takes a list of expressions and simplifies them much as possible with considerations to set variables. Returns a (possibly shortened) list of expressions."""
-        exprs = deepcopy(exprlist)
+        exprs = deepcopy(exprs)
         valdict = {}
         offset = 0
-        print('Before: '+str(exprlist))
+        print('Before: '+str(exprs))
         for i in range(len(exprs)):
             i -= offset
             try:
                 expr = exprs[i]
                 try:
                     for name, value in valdict:
-                        expr.setvar(name, value)
+                        expr.apply(name, value)
                     valdict[expr.name] = float(str(expr.term))
                     exprs[i:i+1] = []
                     offset += 1
@@ -726,7 +692,11 @@ class Mathparser():
                     continue
             except IndexError:
                 break
-        print('After: '+str(exprlist))
+        print('After: '+str(exprs))
+
+    def getexprs(self):
+        global exprlist
+        return exprlist
 
     def gnuformat(self, *args, **kwargs):
         """Format the current expression tree to a Gnuplot string.
@@ -742,12 +712,13 @@ class Mathparser():
         args = makeargs(args)
         if len(args) < 1 or len(args) > 2:
             raise InvalidCallError('('+', '.join(args)+')', 'Invalid number of arguments. One argument for a 2D plot, two for a 3D plot.')
-        intargs = self.intargs if 'intargs' not in kwargs else makeargs(kwargs['intargs'])
+        global intargs, funclists
+        intargs = intargs if 'intargs' not in kwargs else makeargs(kwargs['intargs'])
         try:
-            exprs = self.funclists[makeargs(args, sort=True)]
+            exprs = funclists[makeargs(args, sort=True)]
         except KeyError:
-            self.funclists[makeargs(args, sort=True)] = self.unapply(*args+intargs)
-            exprs = self.funclists[makeargs(args, sort=True)]
+            funclists[makeargs(args, sort=True)] = self.unapply(*args+intargs)
+            exprs = funclists[makeargs(args, sort=True)]
         if 'integrate' in kwargs:
             start = kwargs['start'] if 'start' in kwargs else 0.0
             end = kwargs['end'] if 'end' in kwargs else 1.0
@@ -760,12 +731,11 @@ class Mathparser():
                     kwargs['integrate'] = 'RTriangle'
                 elif any(exprs[-1].contains(arg) for arg in intargs):
                     kwargs['integrate'] = 'Line'
-                elif False:
-                    # Might be removed at some point. Kinda pointless.
+                else:
                     if 'intargs' not in kwargs:
-                        raise InvalidOperationError('No integral variables specified. Default variables x and y not found.')
+                        print('No integral variables specified. Default variables x and y not found.')
                     else:
-                        raise InvalidOperationError('None of the specified integral variables found.')
+                        print('None of the specified integral variables found.')
             if kwargs['integrate'] == 'RTriangle':
                 subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i, j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/6.0, 5.0/6.0]], level=1)))
                 area = length**2/2.0
@@ -806,13 +776,10 @@ if __name__ == '__main__':
     p = Mathparser()
     p.parse(termstring)
 
+    print('Parsed variables:')
+    print(sorted([name for name in vardict]))
     print('Parsed expressions:')
-    print('\n'.join(str(expr) for expr in p.exprlist)+'\n')
+    print('\n'.join(str(expr) for expr in p.getexprs())+'\n')
     p.unapplyall('h_1', 'h_2', 'u_1', 'u_2')
     print('Gnuplot formatted string:')
-    print(p.gnuformat('h_1', 'h_2', integrate='RTriangle', stops=1))
-
-    #print('\nInternal representation:')
-    #print('\n'.join([repr(expr) for expr in p.exprlist]))
-    #print('\nGnuplot formatted string:')
-    #print(p.gnuformat('h_1', 'u_1'))
+    print(p.gnuformat('u_1', 'u_2', integrate='RTriangle', stops=2))
