@@ -202,7 +202,7 @@ class Difference(Term):
     def __str__(self):
         return '%s-%s' % (str(self.subtrahend), '-'.join(('(%s)' if isprecop(minuend, self.__class__) else '%s') % str(minuend) for minuend in self.minuends))
     def eval(self, vars, funcs):
-        subtrahend = self.subtrahend.eval(vars, func)
+        subtrahend = self.subtrahend.eval(vars, funcs)
         nums, minuends = splitnums([minuend.eval(vars, funcs) for minuend in self.minuends])
         if len(nums) > 0:
             if isinstance(subtrahend, float):
@@ -417,17 +417,14 @@ class Plotter():
     def setvars(self, *args):
         [self.parsers[name].setvars(*args) for name in self.parsers]
 
-    def gpcommand(self, command, name=None):
-        if name:
-            self.parsers[name].gp(command)
-        else:
-            [self.parsers[name].gp(command) for name in self.parsers]
+    def gpcommand(self, command):
+        [self.parsers[name].gp(command) for name in self.parsers]
 
     def plot(self, *args):
         [self.parsers[name].plot(*args) for name in self.parsers]
 
-    def replot(self, name=None):
-        self.gpcommand('replot', name)
+    def replot(self, *args):
+        [self.parsers[name].plot(*args) for name in self.parsers]
 
 class Parser():
     def __init__(self, name=None, input=None, integrate=False, intargs=('x', 'y'), intstart=0.0, intend=1.0, intstops=5):
@@ -794,9 +791,18 @@ class Parser():
                 break
         print('After: '+str(exprs))
 
-    def plot(self, args, integrate=None, intargs=None, intstart=None, intend=None, intstops=None):
+    def evalfuncs(self, sargs):
+        vardict = deepcopy(self.vardict)
+        for name in sargs:
+            if name in vardict:
+                del vardict[name]
+        funcdict = {}
+        return [expr.eval(vardict, funcdict) for expr in deepcopy(self.funclists[sargs])]
+
+    def plot(self, args=None, integrate=None, intargs=None, intstart=None, intend=None, intstops=None):
         """Plots the parsed expression list with specified settings."""
-        args = makeargs(args)
+        args = makeargs(args) if args != None else self.args
+        self.args = args
         if len(args) < 1 or len(args) > 2:
             raise InvalidCallError('(%s)' % ', '.join(args), 'Invalid number of arguments. One argument for a 2D plot, two for a 3D plot.')
 
@@ -816,12 +822,7 @@ class Parser():
         commands = []
 
         # Format the parsed expression list.
-        vardict = deepcopy(self.vardict)
-        for name in args:
-            if name in vardict:
-                del vardict[name]
-        funcdict = {}
-        exprs = [expr.eval(vardict, funcdict) for expr in deepcopy(self.funclists[sargs])]
+        exprs = self.evalfuncs(sargs)
 
         # Integrate, if specified.
         if integrate:
@@ -838,7 +839,7 @@ class Parser():
         commands.extend([str(expr) for expr in exprs])
 
         # Determine the plot command based on variables and the last expression.
-        plotcmd = '%s %%s' % ('splot' if len(fargs) == 2 else 'plot')
+        plotcmd = '%s %%s ls 1' % ('splot' if len(fargs) == 2 else 'plot')
         if isinstance(plotexpr, FunctionAssignment):
             commands.append(plotcmd % ('%s(%s)' % (plotexpr.name, ', '.join(fargs))))
         elif isinstance(plotexpr, VariableAssignment):
@@ -846,15 +847,10 @@ class Parser():
         else:
             commands.append(plotcmd % plotexpr)
 
-        # Send the formatted commands to Gnuplot instance.
-        print('Plot term for %s:\n%s\n' % (self.name, '\n'.join(commands)))
-        [self.gp(command) for command in commands]
+        self.commands = commands
 
-    def replot(self, *args):
-        """Replots with current settings, used after variables have been set. Optionally provide variables in tuple form in args."""
-        if len(args) > 0:
-            self.setvars(*args)
-        self.gp('replot')
+        # Send the formatted commands to Gnuplot instance.
+        [self.gp(command) for command in commands]
 
 if __name__ == '__main__':
     #termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3 = 2h[1]+4t2 u[1], t4 = 2 h[1]**2 + t2^3 + t3*u[2]+ 5 t1 *(h[1]*h[2]), t15= t4*u[1]*u[2]*h[1]^2*h[2]**2 +  h[1], t1642 = 0.12t15+h[1]'
