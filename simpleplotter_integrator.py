@@ -1,7 +1,5 @@
 # TODO:
-# * correct order of variables
 # * possibility to choose domain for plot variables/parameters dynamically
-# * could be nice: possibility to send custom command to (all instances of) gnuplot
 
 from numpy import *
 import Gnuplot, Gnuplot.funcutils
@@ -187,12 +185,10 @@ class SimplePlotter:
         for efficiency)."""
         # determine plotting vars
         assert(len(self.variables)==len(self.sliders))
-        for gp in self.gnuplot:
-            gp("set samples %d"%self.samples_spin.get_value())
-            gp("set isosamples %d"%self.isosamples_spin.get_value())
-            gp("set xrange [%d:%d]"%(self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
-            gp("set yrange [%d:%d]"%(self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
-            #gp("replot")
+        self.plotter.gpcommand("set samples %d"%self.samples_spin.get_value())
+        self.plotter.gpcommand("set isosamples %d"%self.isosamples_spin.get_value())
+        self.plotter.gpcommand("set xrange [%d:%d]"%(self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
+        self.plotter.gpcommand("set yrange [%d:%d]"%(self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
 
     def init_plottings_page(self):
         """Initialize page that holds all auxiliary and plotted funcs.
