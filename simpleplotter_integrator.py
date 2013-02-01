@@ -30,24 +30,8 @@ class SimplePlotter:
 
     def destroy(self, widget, data=None):
         """Things to do when window is destroyed."""
-        if os.path.exists(self.foldername):
-            texfile = open(self.foldername + "/tex.tex", "w")
-            texfile.write("%% %d variables in here:\n" % len(self.variables))
-            vars_values = zip(self.variables, [s.get_value() for s in self.sliders])
-            vars_values = map(lambda x: "%s = %s"%(x[0], str(x[1])), vars_values)
-            #print vars_values
-            texfile.write("% " + ", ".join(vars_values)+"\n")
-            texfile.write("\\begin{figure}[ht]\n")
-            texfile.write("\\centering\n")
-            for f in glob.glob(self.foldername+"/*.%s"%self.img_extension):
-                #print f
-                texfile.write("  \\subfigure[] {\n")
-                texfile.write("    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n"%f[:-(len(self.img_extension)+1)])
-                texfile.write("  }\n")
-            texfile.write("\\caption{}\n")
-            texfile.write("\\label{}\n")
-            texfile.write("\\end{figure}\n")
         gtk.main_quit()
+        return
 
     def redraw(self, adj, data=None):
         """This is invoked to generate a plot for *all* given functions.
@@ -81,8 +65,6 @@ class SimplePlotter:
         if xvar != yvar:
             self.plotter.gp('set xlabel "%s"' % xvar)
             self.plotter.gp('set ylabel "%s"' % yvar)
-            self.plotter.gp("set xrange [%d:%d]" % self.urange)
-            self.plotter.gp("set yrange [%d:%d]" % self.hrange)
             self.plotter.gp("set pm3d")
         else:
             self.plotter.gp("unset ylabel")
@@ -106,6 +88,7 @@ class SimplePlotter:
         self.plotter.gp("set isosamples %d" % self.isosamples_spin.get_value())
         self.plotter.gp("set xrange [%d:%d]" % (self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
         self.plotter.gp("set yrange [%d:%d]" % (self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
+        self.adjust_and_plot()
 
     def init_plottings_page(self):
         """Initialize page that holds all auxiliary and plotted funcs.
@@ -252,6 +235,24 @@ class SimplePlotter:
             parser.gp("set output \"%s/%s.pdf\"" % (foldername, filename))
             parser.gp("replot")
             parser.gp("set term wxt")
+        texfile = open(foldername + "/tex.tex", "w")
+        texfile.write("%% %d variables in here:\n" % len(self.variables))
+        vars_values = zip(self.variables, [s.get_value() for s in self.sliders])
+        vars_values = map(lambda x: "%s = %s"%(x[0], str(x[1])), vars_values)
+        #print vars_values
+        texfile.write("% " + ", ".join(vars_values)+"\n")
+        texfile.write("\\begin{figure}[ht]\n")
+        texfile.write("\\centering\n")
+        while len(glob.glob(foldername+"/*.pdf")) < len(self.plotter.parsers):
+            pass
+        for f in glob.glob(foldername+"/*.pdf"):
+            print "File: " + f
+            texfile.write("  \\subfigure[] {\n")
+            texfile.write("    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n"%f[:-4])
+            texfile.write("  }\n")
+        texfile.write("\\caption{}\n")
+        texfile.write("\\label{}\n")
+        texfile.write("\\end{figure}\n")
         print "Exporting!"
 
     def init_gtk_layout(self):
