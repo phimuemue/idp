@@ -132,10 +132,12 @@ def flatten(l, full=True, level=0):
 
 def makeargs(args=(), sort=False):
     """Returns a tuple of sorted arguments, removing duplicates."""
+    args = flatten(args)
     if sort:
-        return tuple(sorted(set(flatten(args))))
+        return tuple(sorted(set(args)))
     else:
-        return tuple(set(flatten(args)))
+        seen = set()
+        return tuple([arg for arg in args if arg not in seen and not seen.add(arg)])
 
 def matchvars(l1, l2):
     """Returns a union of the sets of variable lists provided."""
@@ -146,7 +148,7 @@ class Term():
         return self
     def contains(self, name):
         return False
-    def unapply(self, name, *args):
+    def unapply(self, funcs):
         return self
     def apply(self, name, term):
         return self
@@ -186,8 +188,8 @@ class Sum(Term):
             if summand.contains(name):
                 return True
         return False
-    def unapply(self, name, *args):
-        self.summands = [summand.unapply(name, *args) for summand in self.summands]
+    def unapply(self, funcs):
+        self.summands = [summand.unapply(funcs) for summand in self.summands]
         return self
     def apply(self, name, term):
         self.summands = [summand.apply(name, term) for summand in self.summands]
@@ -218,9 +220,9 @@ class Difference(Term):
             if minuend.contains(name):
                 return True
         return False or self.subtrahend.contains(name)
-    def unapply(self, name, *args):
-        self.subtrahend = self.subtrahend.unapply(name, *args)
-        self.minuends = [minuend.unapply(name, *args) for minuend in self.minuend]
+    def unapply(self, funcs):
+        self.subtrahend = self.subtrahend.unapply(funcs)
+        self.minuends = [minuend.unapply(funcs) for minuend in self.minuends]
         return self
     def apply(self, name, term):
         self.subtrahend = self.subtrahend.apply(name, term)
@@ -247,8 +249,8 @@ class Product(Term):
             if factor.contains(name):
                 return True
         return False
-    def unapply(self, name, *args):
-        self.factors = [factor.unapply(name, *args) for factor in self.factors]
+    def unapply(self, funcs):
+        self.factors = [factor.unapply(funcs) for factor in self.factors]
         return self
     def apply(self, name, term):
         self.factors = [factor.apply(name, term) for factor in self.factors]
@@ -278,9 +280,9 @@ class Quotient(Term):
             if divisor.contains(name):
                 return True
         return False or self.dividend.contains(name)
-    def unapply(self, name, *args):
-        self.dividend = self.dividend.unapply(name, *args)
-        self.divisors = [divisor.unapply(name, *args) for divisor in self.divisors]
+    def unapply(self, funcs):
+        self.dividend = self.dividend.unapply(funcs)
+        self.divisors = [divisor.unapply(funcs) for divisor in self.divisors]
         return self
     def apply(self, name, term):
         self.dividend = self.dividend.apply(name, term)
@@ -305,9 +307,9 @@ class Power(Term):
         return Power(base, exp)
     def contains(self, name):
         return self.base.contains(name) or self.exp.contains(name)
-    def unapply(self, name, *args):
-        self.base = self.base.unapply(name, *args)
-        self.exp = self.exp.unapply(name, *args)
+    def unapply(self, funcs):
+        self.base = self.base.unapply(funcs)
+        self.exp = self.exp.unapply(funcs)
         return self
     def apply(self, name, term):
         self.base = self.base.apply(name, term)
@@ -326,8 +328,8 @@ class VariableAssignment(Term):
         return VariableAssignment(self.name, self.term.eval(vars, funcs))
     def contains(self, name):
         return self.term.contains(name)
-    def unapply(self, name, *args):
-        self.term = self.term.unapply(name, *args)
+    def unapply(self, funcs):
+        self.term = self.term.unapply(funcs)
         return self
     def apply(self, name, term):
         self.term = self.term.apply(name, term)
@@ -346,8 +348,8 @@ class FunctionAssignment(Term):
         return FunctionAssignment(self.name, self.args, self.term.eval(vars, funcs))
     def contains(self, name):
         return self.term.contains(name)
-    def unapply(self, name, *args):
-        self.term = self.term.unapply(name, *args)
+    def unapply(self, funcs):
+        self.term = self.term.unapply(funcs)
         return self
     def apply(self, name, term):
         self.term = self.term.apply(name, term)
@@ -367,8 +369,9 @@ class Variable(Term):
             return self
     def contains(self, name):
         return self.name == name
-    def unapply(self, name, *args):
-        if self.name == name:
+    def unapply(self, funcs):
+        if self.name in funcs:
+            args = funcs[self.name]
             arglist = [Variable(arg) for arg in args]
             if len(arglist) > 0:
                 return Function(self.name, arglist)
@@ -398,6 +401,10 @@ class Function(Term):
             if arg.contains(name):
                 return True
         return False or self.name == name
+    def unapply(self, funcs):
+        if self.name in funcs:
+            if len(self.args) < len(funcs[self.name]):
+                makeargs(self.args+funcs[self.name])
     def apply(self, name, term):
         if self.name == name:
             return term
@@ -641,15 +648,14 @@ class Parser():
                 raise InvalidFormatError(deepjoin(tlist), reason)
         return self.classify(tlist)
 
-    def unapply(self, *args, **kwargs):
+    def unapply(self, *args):
         """Turns all variables into functions over args, if any args appear within the variable."""
         exprs = deepcopy(self.exprlist)
         funcdict = {}
         for i in range(len(exprs)):
             expr = exprs[i]
             if isinstance(expr, (VariableAssignment, FunctionAssignment)):
-                for func in funcdict:
-                    expr.unapply(func, *funcdict[func])
+                expr.unapply(funcdict)
                 arglist = makeargs(filter(lambda el: expr.contains(el), args))
                 if len(arglist) > 0:
                     expr = FunctionAssignment(expr.name, arglist, expr.term)
