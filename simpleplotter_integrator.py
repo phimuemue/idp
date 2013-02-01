@@ -88,7 +88,9 @@ class SimplePlotter:
         self.plotter.gp("set isosamples %d" % self.isosamples_spin.get_value())
         self.plotter.gp("set xrange [%d:%d]" % (self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
         self.plotter.gp("set yrange [%d:%d]" % (self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
-        self.adjust_and_plot()
+        print "settings stuff"
+        self.plotter.settings(intstops = int(self.stripes_spin.get_value()))
+        self.adjust_and_plot(widget)
 
     def init_plottings_page(self):
         """Initialize page that holds all auxiliary and plotted funcs.
@@ -159,7 +161,7 @@ class SimplePlotter:
         self.stripes_spin = gtk.SpinButton(gtk.Adjustment(5,1,1000,1))
         hbox.pack_start(self.stripes_spin)
         self.settings_box.pack_start(hbox)
-        self.stripes_spin.connect("value_changed", self.adjust_and_plot)
+        self.stripes_spin.connect("value_changed", self.do_settings)
 
     def init_variables_page(self):
         """Creates sliders and radio buttons for the single variables."""

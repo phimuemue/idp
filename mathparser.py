@@ -87,7 +87,7 @@ def islist(tok):
 
 def isprecop(term, op):
     """Determines operator precedence between term and op. True if term < op."""
-    pass # TODO
+    return True
 
 def splitlists(l, f):
     """Evaluates all elements in l with f and returns two lists, one with the successes, the other with the failures."""
@@ -184,7 +184,6 @@ class Sum(Term):
         return Sum(summands)
     def contains(self, name):
         #return reduce(lambda x, y: x or y.contains(name), self.summands, False)
-        print self.summands
         for summand in self.summands:
             if summand.contains(name):
                 return True
@@ -236,7 +235,7 @@ class Product(Term):
     def __repr__(self):
         return 'Product('+', '.join([repr(factor) for factor in self.factors])+')'
     def __str__(self):
-        return '*'.join(['(%s)' if isprecop(factor, self.__class__) else '%s' % str(factor) for factor in self.factors])
+        return '*'.join([('(%s)' if isprecop(factor, self.__class__) else '%s') % str(factor) for factor in self.factors])
     def eval(self, vars, funcs):
         nums, factors = splitnums([factor.eval(vars, funcs) for factor in self.factors])
         if len(nums) == 0:
@@ -267,7 +266,7 @@ class Quotient(Term):
     def __repr__(self):
         return 'Quotient('+repr(self.dividend)+', '+', '.join([repr(divisor) for divisor in self.divisors])+')'
     def __str__(self):
-        return '%s/%s' % (str(self.dividend), '/'.join(('(%s)' if isprecop(divisor, self.__class__) else '%s') % str(divisor) for divisor in self.divisors))
+        return '%s/%s' % (str(self.dividend), '/'.join([('(%s)' if isprecop(divisor, self.__class__) else '%s') % str(divisor) for divisor in self.divisors]))
     def eval(self, vars, funcs):
         dividend = self.dividend.eval(vars, funcs)
         nums, divisors = splitnums([divisor.eval(vars, funcs) for divisor in self.divisors])
@@ -430,8 +429,8 @@ class Plotter():
     def setvars(self, *args):
         [self.parsers[name].setvars(*args) for name in self.parsers]
 
-    def settings(self, *args):
-        [self.parsers[name].settings(*args) for name in self.parsers]
+    def settings(self, **kwargs):
+        [self.parsers[name].settings(**kwargs) for name in self.parsers]
 
     def gp(self, command):
         [self.parsers[name].gp(command) for name in self.parsers]
@@ -697,8 +696,9 @@ class Parser():
             else:
                 print('Parser: None of the integral variables found.')
         if integrate == 'RTriangle':
-            subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i, j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/6.0, 5.0/6.0]], level=1)))
+            subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i, j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/3.0, 2.0/3.0]], level=1)))
             area = length**2/2.0
+            print "area %f"%area
         elif self.integrate == 'Line':
             subs = [(x+0.5)/length for x in range(stops)]
             area = length
@@ -712,7 +712,9 @@ class Parser():
             if isinstance(expr, FunctionAssignment):
                 expr.args = filter(lambda arg: str(arg) not in intargs, expr.args)
             expr.term = Product([Number(area), Sum([Function('abs', [deepcopy(expr.term).apply(intargs, sub)]) for sub in subs])])
+            print expr
             return expr
+        print Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(intargs, sub)]) for sub in subs])])
         return Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(intargs, sub)]) for sub in subs])])
 
     def formatinput(self, input):
@@ -870,7 +872,7 @@ class Parser():
             commands.append(plotcmd % plotexpr)
 
         self.commands = commands
-        print [str(command) for command in commands]
+        # print [str(command) for command in commands]
 
         # Send the formatted commands to Gnuplot instance.
         [self.gp(command) for command in commands]
