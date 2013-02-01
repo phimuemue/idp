@@ -269,7 +269,7 @@ class SimplePlotter:
         self.vbox = gtk.VBox()
         self.window.add(self.vbox)
         self.notebook = gtk.Notebook()
-        self.vbox.add(self.notebook)
+        self.vbox.pack_start(self.notebook, expand=True, fill=True)
         self.variable_hbox = gtk.HBox()
         self.settings_box = gtk.VBox()
         self.plottings_box = gtk.VBox()
@@ -280,9 +280,9 @@ class SimplePlotter:
 
         # export button
         vbox = gtk.VBox()
-        self.vbox.add(vbox)
+        self.vbox.pack_end(vbox, expand=False, fill=False)
         button = gtk.Button("Export")
-        vbox.add(button)
+        vbox.pack_end(button, expand=False)
         button.connect("clicked", self.on_export)
 
         # initialize single pages of the notebook
