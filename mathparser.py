@@ -156,7 +156,7 @@ class Number(Term):
         try:
             self.number = float(number)
         except:
-            print("String %s mistakenly parsed as number." % self.number)
+            print("Parser: String %s mistakenly parsed as number." % self.number)
             raise
     def __repr__(self):
         return 'Number('+repr(self.number)+')'
@@ -417,7 +417,10 @@ class Plotter():
     def setvars(self, *args):
         [self.parsers[name].setvars(*args) for name in self.parsers]
 
-    def gpcommand(self, command):
+    def settings(self, *args):
+        [self.parsers[name].settings(*args) for name in self.parsers]
+
+    def gp(self, command):
         [self.parsers[name].gp(command) for name in self.parsers]
 
     def plot(self, *args):
@@ -490,7 +493,7 @@ class Parser():
                 continue
             else:
                 newmode = ''
-                print('Unhandled character: %s' % c)
+                print('Parser: Unhandled character: %s' % c)
             if not newmode == 'adapt' and (newmode != mode or newmode == 'break'):
                 if current.strip() != '':
                     result[-1].append(current)
@@ -673,7 +676,7 @@ class Parser():
             elif any(expr.contains(arg) for arg in intargs):
                 integrate = 'Line'
             else:
-                print('None of the integral variables found.')
+                print('Parser: None of the integral variables found.')
         if integrate == 'RTriangle':
             subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i, j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/6.0, 5.0/6.0]], level=1)))
             area = length**2/2.0
@@ -760,13 +763,13 @@ class Parser():
 
     def setvars(self, *args):
         """Sets a variable to the specified value. When that variable appears in an expression, it will resolve to the value instead of its name."""
-        print('Setting vars for %s: %s\n' % (str(self.name), str(args)))
+        #print('Parser: Setting vars for %s: %s\n' % (str(self.name), str(args)))
         if len(args) == 1 and type(args[0]) == dict:
             for name, val in args[0].items():
                 self.vardict[name] = self.parseterm(str(val))
         for name, val in args:
             if not name in self.vardict:
-                print('Warning: Variable %s not found in the parsed expression list.' % name)
+                print('Parser warning: Variable %s not found in the parsed expression list.' % name)
             self.vardict[name] = self.parseterm(str(val))
 
     def simplify(self, exprs):
