@@ -137,7 +137,7 @@ def makeargs(args=(), sort=False):
         return tuple(sorted(set(args)))
     else:
         seen = set()
-        return tuple([arg for arg in args if arg not in seen and not seen.add(arg)])
+        return tuple([arg for arg in args if str(arg) not in seen and not seen.add(str(arg))])
 
 def matchvars(l1, l2):
     """Returns a union of the sets of variable lists provided."""
@@ -184,6 +184,7 @@ class Sum(Term):
         return Sum(summands)
     def contains(self, name):
         #return reduce(lambda x, y: x or y.contains(name), self.summands, False)
+        print self.summands
         for summand in self.summands:
             if summand.contains(name):
                 return True
@@ -240,6 +241,9 @@ class Product(Term):
         nums, factors = splitnums([factor.eval(vars, funcs) for factor in self.factors])
         if len(nums) == 0:
             return Product(factors)
+        for factor in nums:
+            if float(factor) == 0:
+                return Number(0)
         if len(factors) == 0:
             return Number(reduce(lambda x, y: x*float(y), nums, 1))
         factors.append(Number(reduce(lambda x, y: x*float(y), nums, 1)))
@@ -385,7 +389,7 @@ class Variable(Term):
 class Function(Term):
     def __init__(self, name, args):
         self.name = str(name)
-        self.args = args
+        self.args = tuple(args)
     def __repr__(self):
         return 'Function('+self.name+', Arguments('+', '.join([repr(arg) for arg in self.args])+'))'
     def __str__(self):
@@ -404,7 +408,9 @@ class Function(Term):
     def unapply(self, funcs):
         if self.name in funcs:
             if len(self.args) < len(funcs[self.name]):
-                makeargs(self.args+funcs[self.name])
+                args = self.args+funcs[self.name][len(self.args):]
+                return Function(self.name, args)
+        return self
     def apply(self, name, term):
         if self.name == name:
             return term
@@ -657,7 +663,14 @@ class Parser():
             if isinstance(expr, (VariableAssignment, FunctionAssignment)):
                 expr.unapply(funcdict)
                 arglist = makeargs(filter(lambda el: expr.contains(el), args))
+                arglist = tuple([self.classify([arg]) for arg in arglist])
                 if len(arglist) > 0:
+                    if isinstance(expr, FunctionAssignment):
+                        arglist = makeargs(expr.args+arglist)
+                        #argset = expr.args
+                        #for arg in arglist:
+                        #    if arg not in expr.args:
+                        #        argset = argset+(arg,)
                     expr = FunctionAssignment(expr.name, arglist, expr.term)
                     exprs[i] = expr
                 else:
@@ -697,7 +710,7 @@ class Parser():
         subs = [map(self.classify, [[term] for term in sub]) for sub in subs]
         if isinstance(expr, (VariableAssignment, FunctionAssignment)):
             if isinstance(expr, FunctionAssignment):
-                expr.args = filter(lambda arg: arg not in intargs, expr.args)
+                expr.args = filter(lambda arg: str(arg) not in intargs, expr.args)
             expr.term = Product([Number(area), Sum([Function('abs', [deepcopy(expr.term).apply(intargs, sub)]) for sub in subs])])
             return expr
         return Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(intargs, sub)]) for sub in subs])])
@@ -857,6 +870,7 @@ class Parser():
             commands.append(plotcmd % plotexpr)
 
         self.commands = commands
+        print [str(command) for command in commands]
 
         # Send the formatted commands to Gnuplot instance.
         [self.gp(command) for command in commands]
