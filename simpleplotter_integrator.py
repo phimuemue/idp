@@ -33,45 +33,17 @@ class SimplePlotter:
         gtk.main_quit()
         return
 
-    def redraw(self, adj, data=None):
-        """This is invoked to generate a plot for *all* given functions.
-        Delegates the work to the function drawspecific."""
-        self.adjustvars()
-        self.adjust_and_plot(adj)
-
-    def adjustvars(self):
-        """Tells gnuplot to set the variables/parameters."""
-        print "Setting variables!!!"
-        self.plotter.setvars(*zip(self.variables, [s.get_value() for s in self.sliders]))
-
-    def adjust_and_plot(self, widget, data=None, two_dim=True):
+    def draw(self, widget, data=None, two_dim=True):
         """Determines which variables are plot-axes-variables and wich
         ones are parameters. Decides whether to use a 2D- or a 3D-plot."""
-        # numerical integration by streifensumme
-        stripe_amount = int(self.stripes_spin.get_value())
+        if isinstance(widget, gtk.RadioButton):
+            if not widget.get_active():
+                return
+            else:
+                self.plotvars = (widget.var, self.plotvars[1]) if widget.index == 'x' else (self.plotvars[0], widget.var)
         # determine variables
-        subs = []
-        xvar = self.variables[0]
-        yvar = self.variables[0]
-        for (i,r) in enumerate(self.xradios):
-            if r.get_active():
-                xvar = self.variables[i]
-        for (i,r) in enumerate(self.yradios):
-            if r.get_active():
-                yvar = self.variables[i]
-        subs.append((xvar, "x"))
-        subs.append((yvar, "y"))
         self.plotter.setvars(*zip(self.variables, [s.get_value() for s in self.sliders]))
-        if xvar != yvar:
-            self.plotter.gp('set xlabel "%s"' % xvar)
-            self.plotter.gp('set ylabel "%s"' % yvar)
-            self.plotter.gp("set pm3d")
-        else:
-            self.plotter.gp("unset ylabel")
-            self.plotter.gp("set xlabel \"%s\"" % xvar)
-            self.plotter.gp("set autoscale")
-            self.plotter.gp("unset pm3d")
-        self.plotter.replot((xvar, yvar))
+        self.plotter.plot(self.plotvars)
         return
 
     def adjustment_from_range(self, r):
@@ -83,14 +55,17 @@ class SimplePlotter:
         """Determines the settings and applies them (these may be varied
         for efficiency)."""
         # determine plotting vars
-        assert(len(self.variables)==len(self.sliders))
-        self.plotter.gp("set samples %d" % self.samples_spin.get_value())
-        self.plotter.gp("set isosamples %d" % self.isosamples_spin.get_value())
-        self.plotter.gp("set xrange [%d:%d]" % (self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
-        self.plotter.gp("set yrange [%d:%d]" % (self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
-        print "settings stuff"
-        self.plotter.settings(intstops = int(self.stripes_spin.get_value()))
-        self.adjust_and_plot(widget)
+        if widget == self.samples_spin:
+            self.plotter.gp("set samples %d" % self.samples_spin.get_value())
+        elif widget == self.isosamples_spin:
+            self.plotter.gp("set isosamples %d" % self.isosamples_spin.get_value())
+        elif widget == self.x_lower_spin:
+            self.plotter.gp("set xrange [%d:%d]" % (self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
+        elif widget == self.y_lower_spin:
+            self.plotter.gp("set yrange [%d:%d]" % (self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
+        elif widget == self.stripes_spin:
+            self.plotter.settings(intstops = int(self.stripes_spin.get_value()))
+        self.draw(widget)
 
     def init_plottings_page(self):
         """Initialize page that holds all auxiliary and plotted funcs.
@@ -165,7 +140,7 @@ class SimplePlotter:
 
     def init_variables_page(self):
         """Creates sliders and radio buttons for the single variables."""
-        print "Checking variables 'n stuff"
+        #print "Checking variables 'n stuff"
         # create elements for variables!!
         self.variables = list(set(re.findall(
                     r"([a-zA-Z_]+\d*\b)(?:[^(]|$)", "+".join(self.func + ([aux[1] for aux in self.auxiliaries])))))
@@ -192,6 +167,7 @@ class SimplePlotter:
         def varkey(x):
             return x
         self.variables.sort(key=varkey)
+        self.plotvars = (self.variables[0], self.variables[0])
         self.sliders = []
         self.xradios = []
         self.yradios = []
@@ -204,20 +180,24 @@ class SimplePlotter:
             # options for x
             group = None if len(self.xradios)==0 else self.xradios[0]
             newx = gtk.RadioButton(group, "")
+            newx.index = 'x'
+            newx.var = v
             self.xradios.append(newx)
             newvbox.pack_start(newx, False, False)
-            newx.connect("toggled", self.adjust_and_plot)
-            # options for x
+            newx.connect("toggled", self.draw)
+            # options for y
             group = None if len(self.yradios)==0 else self.yradios[0]
             newy = gtk.RadioButton(group, "")
+            newy.index = 'y'
+            newy.var = v
             self.yradios.append(newy)
             newvbox.pack_start(newy, False, False)
-            newy.connect("toggled", self.adjust_and_plot)
+            newy.connect("toggled", self.draw)
             # slider
             newadjustment = self.adjustment_from_range(self.urange)
             if v[0].lower() == "h":
                 newadjustment = self.adjustment_from_range(self.hrange)
-            newadjustment.connect("value_changed", self.redraw)
+            newadjustment.connect("value_changed", self.draw)
             self.sliders.append(gtk.VScale(newadjustment))
             self.sliders[-1].set_size_request(10,200)
             self.sliders[-1].set_inverted(True)
@@ -233,28 +213,27 @@ class SimplePlotter:
             print('Simpleplotter warning: Folder %s already exists.' % foldername)
         for name, parser in self.plotter.parsers.items():
             filename = name
-            parser.gp("set term pdfcairo size 5.0in,3.0in")
-            parser.gp("set output \"%s/%s.pdf\"" % (foldername, filename))
-            parser.gp("replot")
-            parser.gp("set term wxt")
-        texfile = open(foldername + "/tex.tex", "w")
-        texfile.write("%% %d variables in here:\n" % len(self.variables))
+            parser.gp('set term pdfcairo size 5.0in,3.0in')
+            parser.gp('set output "%s/%s.pdf"' % (foldername, filename))
+            parser.gp('replot')
+            parser.gp('set term wxt')
+        texfile = open(foldername + '/tex.tex', 'w')
+        texfile.write('%% %d variables in here:\n' % len(self.variables))
         vars_values = zip(self.variables, [s.get_value() for s in self.sliders])
-        vars_values = map(lambda x: "%s = %s"%(x[0], str(x[1])), vars_values)
+        vars_values = map(lambda x: '%s = %s' % (x[0], str(x[1])), vars_values)
         #print vars_values
-        texfile.write("% " + ", ".join(vars_values)+"\n")
-        texfile.write("\\begin{figure}[ht]\n")
-        texfile.write("\\centering\n")
-        while len(glob.glob(foldername+"/*.pdf")) < len(self.plotter.parsers):
+        texfile.write('% ' + ', '.join(vars_values)+'\n')
+        texfile.write('\\begin{figure}[ht]\n')
+        texfile.write('\\centering\n')
+        while len(glob.glob(foldername+'/*.pdf')) < len(self.plotter.parsers):
             pass
-        for f in glob.glob(foldername+"/*.pdf"):
-            print "File: " + f
-            texfile.write("  \\subfigure[] {\n")
-            texfile.write("    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n"%f[:-4])
-            texfile.write("  }\n")
-        texfile.write("\\caption{}\n")
-        texfile.write("\\label{}\n")
-        texfile.write("\\end{figure}\n")
+        for f in glob.glob(foldername+'/*.pdf'):
+            texfile.write('  \\subfigure[] {\n')
+            texfile.write('    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n'%f[:-4])
+            texfile.write('  }\n')
+        texfile.write('\\caption{}\n')
+        texfile.write('\\label{}\n')
+        texfile.write('\\end{figure}\n')
         print "Exporting!"
 
     def init_gtk_layout(self):
@@ -310,20 +289,12 @@ class SimplePlotter:
         # Initialize plotters
         self.plotter = Plotter(tmp, integrate=True)
         self.plotter.gp("set style line 1 linecolor rgb \"black\"")
-        #self.plotter.gp('set xrange %s' % urange)
-        #self.plotter.gp('set yrange %s' % hrange)
-        #self.plotter.gp('set pm3d')
-
-        # Export settings
 
         # Initialize Gtk layout
         self.init_gtk_layout()
 
-        self.adjustvars()
-        self.plotter.plot((self.variables[0],))
-
         # first round!
-        self.adjust_and_plot(None)
+        self.draw(None)
 
     def main(self):
         """Just fires the gtk main loop."""

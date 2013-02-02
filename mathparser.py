@@ -33,6 +33,7 @@ alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
 ops = '+-*/^'
 seps = '=,'
 oplist = ['+', '-', '*', '/', '^', '**']
+opprec = {}
 
 def split(l, sep):
     """Splits a list into a list of lists by a separating string sep."""
@@ -85,9 +86,9 @@ def islist(tok):
     """Returns True if tok is a list."""
     return type(tok) == list
 
-def isprecop(term, op):
+def isprecop(term, opclass):
     """Determines operator precedence between term and op. True if term < op."""
-    return True
+    return isinstance(term, opprec[opclass])
 
 def splitlists(l, f):
     """Evaluates all elements in l with f and returns two lists, one with the successes, the other with the failures."""
@@ -178,9 +179,11 @@ class Sum(Term):
         nums, summands = splitnums([summand.eval(vars, funcs) for summand in self.summands])
         if len(nums) == 0:
             return Sum(summands)
+        num = Number(math.fsum(nums))
         if len(summands) == 0:
-            return Number(math.fsum(nums))
-        summands.append(Number(math.fsum(nums)))
+            return num
+        if num != 0:
+            summands.append(num)
         return Sum(summands)
     def contains(self, name):
         #return reduce(lambda x, y: x or y.contains(name), self.summands, False)
@@ -207,12 +210,18 @@ class Difference(Term):
         subtrahend = self.subtrahend.eval(vars, funcs)
         nums, minuends = splitnums([minuend.eval(vars, funcs) for minuend in self.minuends])
         if len(nums) > 0:
-            if isinstance(subtrahend, float):
-                subtrahend -= math.fsum(nums)
+            num = math.fsum(nums)
+            if isinstance(subtrahend, Number):
+                subtrahend = Number(float(subtrahend) - num)
             else:
-                minuends.append(Number(math.fsum(nums)))
-            if len(minuends) == 0:
-                return Number(subtrahend)
+                minuends.append(Number(num))
+        if len(minuends) == 0:
+            return subtrahend
+        if float(subtrahend) == 0:
+            if len(minuends) == 1:
+                return minuends[0]
+            else:
+                return Difference(Negation(minuends[0]), minuends[1:])
         return Difference(subtrahend, minuends)
     def contains(self, name):
         #return reduce(lambda x, y: x or y.contains(name), self.minuends, self.subtrahend.contains(name))
@@ -307,6 +316,10 @@ class Power(Term):
         exp = self.exp.eval(vars, funcs)
         if isinstance(base, Number) and isinstance(exp, Number):
             return Number(float(base)**float(exp))
+        elif isinstance(exp, Number) and float(exp) == 0:
+            return Number(1)
+        elif isinstance(base, Number) and float(base) == 0:
+            return Number(0)
         return Power(base, exp)
     def contains(self, name):
         return self.base.contains(name) or self.exp.contains(name)
@@ -317,6 +330,29 @@ class Power(Term):
     def apply(self, name, term):
         self.base = self.base.apply(name, term)
         self.exp = self.exp.apply(name, term)
+        return self
+
+class Negation(Term):
+    def __init__(self, term):
+        self.term = term
+    def __repr__(self):
+        return 'Negation(%s)' % repr(self.term)
+    def __str__(self):
+        return '-%s' % (('(%s)' if isprecop(self.term, self.__class__) else '%s') % str(self.term))
+    def eval(self, vars, funcs):
+        term = self.term.eval(vars, funcs)
+        if isinstance(term, Number):
+            return Number(-float(term))
+        if isinstance(term, Negation):
+            return term.term
+        return Negation(term)
+    def contains(self, name):
+        return self.term.contains(name)
+    def unapply(self, funcs):
+        self.term = self.term.unapply(funcs)
+        return self
+    def apply(self, name, term):
+        self.term = self.term.apply(name, term)
         return self
 
 class VariableAssignment(Term):
@@ -415,6 +451,13 @@ class Function(Term):
             return term
         self.args = [arg.apply(name, term) for arg in self.args]
         return self
+
+opprec[Sum] = ()
+opprec[Difference] = (Sum, Difference)
+opprec[Product] = (Sum, Difference)
+opprec[Quotient] = (Sum, Difference, Product, Quotient)
+opprec[Power] = (Sum, Difference, Product, Quotient)
+opprec[Negation] = (Sum, Difference, Product, Quotient, Power)
 
 class Plotter():
     def __init__(self, inputs={}, integrate=False, intargs=('x', 'y'), intstart=0.0, intend=1.0, intstops=5):
@@ -683,7 +726,7 @@ class Parser():
         for arglist in combinations:
             self.funclists[filter(lambda arg: arg not in ['x', 'y'], arglist)] = self.unapply(*arglist)
 
-    def numintegrate(self, expr, integrate, intargs, start, end, stops):#expr, subs, area, args=('x', 'y')):
+    def numintegrate(self, expr, integrate, intargs, start, end, stops):
         """Numerical integration of expr, w.r.t. args and at the points provided in subs."""
         length = math.fabs(end-start)/stops
         subs = None
@@ -698,7 +741,6 @@ class Parser():
         if integrate == 'RTriangle':
             subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i, j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/3.0, 2.0/3.0]], level=1)))
             area = length**2/2.0
-            print "area %f"%area
         elif self.integrate == 'Line':
             subs = [(x+0.5)/length for x in range(stops)]
             area = length
@@ -712,9 +754,7 @@ class Parser():
             if isinstance(expr, FunctionAssignment):
                 expr.args = filter(lambda arg: str(arg) not in intargs, expr.args)
             expr.term = Product([Number(area), Sum([Function('abs', [deepcopy(expr.term).apply(intargs, sub)]) for sub in subs])])
-            print expr
             return expr
-        print Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(intargs, sub)]) for sub in subs])])
         return Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(intargs, sub)]) for sub in subs])])
 
     def formatinput(self, input):
@@ -790,7 +830,7 @@ class Parser():
                 self.vardict[name] = self.parseterm(str(val))
         for name, val in args:
             if not name in self.vardict:
-                print('Parser warning: Variable %s not found in the parsed expression list.' % name)
+                print('Parser warning (%s): Variable %s not found in the parsed expression list.' % (self.name, name))
             self.vardict[name] = self.parseterm(str(val))
 
     def simplify(self, exprs):
@@ -856,8 +896,15 @@ class Parser():
         # Set plotting variables.
         fargs = tuple([arg for arg in args if plotexpr.contains(arg)])
         if len(fargs) == 1:
+            #commands.append('unset pm3d')
+            commands.append('unset ylabel')
+            commands.append('set xlabel "%s"' % fargs[0])
+            commands.append('set autoscale')
             commands.append('set dummy %s' % fargs)
         elif len(fargs) == 2:
+            commands.append('set xlabel "%s"' % args[0])
+            commands.append('set ylabel "%s"' % args[1])
+            commands.append('set pm3d')
             commands.append('set dummy %s, %s' % fargs)
 
         commands.extend([str(expr) for expr in exprs])
@@ -871,8 +918,8 @@ class Parser():
         else:
             commands.append(plotcmd % plotexpr)
 
-        self.commands = commands
-        # print [str(command) for command in commands]
+        #for command in commands:
+        #    print(command)
 
         # Send the formatted commands to Gnuplot instance.
         [self.gp(command) for command in commands]
@@ -883,6 +930,19 @@ if __name__ == '__main__':
     termstring2 = 't1 = 2, t3 = 2*h[1]+x, t65 = u[1]**2, t122 = y + t65*t3^t1'
     print('Not supposed to be run on its own. Demonstrative run using the following inputs:\nA-Term:\n%s\n\nTerm Ber:\n%s\n' % ('\n'.join(termstring1.split(', ')), '\n'.join(termstring2.split(', '))))
 
+    print(split([1,2,3], ','))
     p = Plotter({'A-Term': termstring1, 'Term Ber': termstring2}, integrate=True)
     p.setvars(('h_1', 5), ('h_2', 3.1), ('u_1', 4), ('u_2', -0.2))
     p.plot(('h_1', 'h_2'))
+
+    p1 = p.parsers['A-Term']
+    p2 = p.parsers['Term Ber']
+
+    import readline
+    import code
+
+    vars = globals().copy()
+    vars.update(locals())
+
+    shell = code.InteractiveConsole(vars)
+    shell.interact()
