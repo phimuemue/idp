@@ -31,9 +31,8 @@ class SimplePlotter:
     def destroy(self, widget, data=None):
         """Things to do when window is destroyed."""
         gtk.main_quit()
-        return
 
-    def draw(self, widget, data=None, two_dim=True):
+    def plot(self, widget=None, data=None):
         """Determines which variables are plot-axes-variables and wich
         ones are parameters. Decides whether to use a 2D- or a 3D-plot."""
         if isinstance(widget, gtk.RadioButton):
@@ -44,7 +43,6 @@ class SimplePlotter:
         # determine variables
         self.plotter.setvars(*zip(self.variables, [s.get_value() for s in self.sliders]))
         self.plotter.plot(self.plotvars)
-        return
 
     def adjustment_from_range(self, r):
         """Returns a gtk.Adjustment from a "gnuplot"-range.
@@ -65,7 +63,7 @@ class SimplePlotter:
             self.plotter.gp("set yrange [%d:%d]" % (self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
         elif widget == self.stripes_spin:
             self.plotter.settings(intstops = int(self.stripes_spin.get_value()))
-        self.draw(widget)
+        self.plot(widget)
 
     def init_plottings_page(self):
         """Initialize page that holds all auxiliary and plotted funcs.
@@ -142,32 +140,32 @@ class SimplePlotter:
         """Creates sliders and radio buttons for the single variables."""
         #print "Checking variables 'n stuff"
         # create elements for variables!!
-        self.variables = list(set(re.findall(
-                    r"([a-zA-Z_]+\d*\b)(?:[^(]|$)", "+".join(self.func + ([aux[1] for aux in self.auxiliaries])))))
+        #self.variables = list(set(re.findall(
+        #            r"([a-zA-Z_]+\d*\b)(?:[^(]|$)", "+".join(self.func + ([aux[1] for aux in self.auxiliaries])))))
         #print self.variables
-        self.variables = filter(lambda x:x not in["x","y"], self.variables)
-        #print "Auxiliaries: " + str(self.auxiliaries)
-        def is_not_auxiliary(x):
-            aux_l = [a[0] for a in self.auxiliaries]
-            for au in aux_l:
-                if au.startswith(x):
-                    return False
-            return True
-        self.variables = filter(is_not_auxiliary, self.variables)
-        def filter_func(x):
-            if x in ["abs", "sin", "cos", "log", "tan", "e", "ln"]:
-                return False
-            if re.match("^e[0-9]*$", x) is not None:
-                return False
-            return True
-        self.variables = filter(filter_func, self.variables)
+        #self.variables = filter(lambda x:x not in["x","y"], self.variables)
+        ##print "Auxiliaries: " + str(self.auxiliaries)
+        #def is_not_auxiliary(x):
+        #    aux_l = [a[0] for a in self.auxiliaries]
+        #    for au in aux_l:
+        #        if au.startswith(x):
+        #            return False
+        #    return True
+        #self.variables = filter(is_not_auxiliary, self.variables)
+        #def filter_func(x):
+        #    if x in ["abs", "sin", "cos", "log", "tan", "e", "ln"]:
+        #        return False
+        #    if re.match("^e[0-9]*$", x) is not None:
+        #        return False
+        #    return True
+        #self.variables = filter(filter_func, self.variables)
         #print "Variables: " + str(self.variables)
+        #print(self.plotter.getvars(sort=True))
         # an auxiliary function to sort the variables properly
         # this was earlier more complex, but now it's easy!
-        def varkey(x):
-            return x
-        self.variables.sort(key=varkey)
-        self.plotvars = (self.variables[0], self.variables[0])
+        #def varkey(x):
+        #    return x
+        #self.variables.sort(key=varkey)
         self.sliders = []
         self.xradios = []
         self.yradios = []
@@ -184,7 +182,7 @@ class SimplePlotter:
             newx.var = v
             self.xradios.append(newx)
             newvbox.pack_start(newx, False, False)
-            newx.connect("toggled", self.draw)
+            newx.connect("toggled", self.plot)
             # options for y
             group = None if len(self.yradios)==0 else self.yradios[0]
             newy = gtk.RadioButton(group, "")
@@ -192,18 +190,16 @@ class SimplePlotter:
             newy.var = v
             self.yradios.append(newy)
             newvbox.pack_start(newy, False, False)
-            newy.connect("toggled", self.draw)
+            newy.connect("toggled", self.plot)
             # slider
             newadjustment = self.adjustment_from_range(self.urange)
             if v[0].lower() == "h":
                 newadjustment = self.adjustment_from_range(self.hrange)
-            newadjustment.connect("value_changed", self.draw)
+            newadjustment.connect("value_changed", self.plot)
             self.sliders.append(gtk.VScale(newadjustment))
             self.sliders[-1].set_size_request(10,200)
             self.sliders[-1].set_inverted(True)
             newvbox.add(self.sliders[-1])
-        self.xvar = self.variables[0]
-        self.yvar = self.variables[0]
 
     def on_export(self, widget):
         foldername = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -255,7 +251,6 @@ class SimplePlotter:
         self.notebook.append_page(self.variable_hbox, gtk.Label("Variables/Parameters"))
         self.notebook.append_page(self.settings_box, gtk.Label("Settings"))
         self.notebook.append_page(self.plottings_box, gtk.Label("Plottings"))
-        self.window.add(self.variable_hbox)
 
         # export button
         vbox = gtk.VBox()
@@ -289,12 +284,16 @@ class SimplePlotter:
         # Initialize plotters
         self.plotter = Plotter(tmp, integrate=True)
         self.plotter.gp("set style line 1 linecolor rgb \"black\"")
+        self.variables = self.plotter.getvars(sort=True)
+
+        # Set default plotting variable
+        self.plotvars = (self.variables[0], self.variables[0])
 
         # Initialize Gtk layout
         self.init_gtk_layout()
 
         # first round!
-        self.draw(None)
+        self.plot()
 
     def main(self):
         """Just fires the gtk main loop."""

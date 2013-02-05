@@ -1,3 +1,5 @@
+#TODO
+# * simplify nested numbers of equivalent operations 2/(x*2)
 from copy import deepcopy
 import math
 from Gnuplot import Gnuplot
@@ -179,11 +181,12 @@ class Sum(Term):
         nums, summands = splitnums([summand.eval(vars, funcs) for summand in self.summands])
         if len(nums) == 0:
             return Sum(summands)
-        num = Number(math.fsum(nums))
+        num = math.fsum(nums)
         if len(summands) == 0:
-            return num
+            return Number(num)
         if num != 0:
-            summands.append(num)
+            summands.append(Number(num))
+            #print(num)
         return Sum(summands)
     def contains(self, name):
         #return reduce(lambda x, y: x or y.contains(name), self.summands, False)
@@ -252,9 +255,11 @@ class Product(Term):
         for factor in nums:
             if float(factor) == 0:
                 return Number(0)
+        num = reduce(lambda x, y: x*float(y), nums, 1)
         if len(factors) == 0:
-            return Number(reduce(lambda x, y: x*float(y), nums, 1))
-        factors.append(Number(reduce(lambda x, y: x*float(y), nums, 1)))
+            return Number(num)
+        if num != 1:
+            factors.append(Number(num))
         return Product(factors)
     def contains(self, name):
         for factor in self.factors:
@@ -278,14 +283,17 @@ class Quotient(Term):
         return '%s/%s' % (str(self.dividend), '/'.join([('(%s)' if isprecop(divisor, self.__class__) else '%s') % str(divisor) for divisor in self.divisors]))
     def eval(self, vars, funcs):
         dividend = self.dividend.eval(vars, funcs)
+        if isinstance(dividend, Number) and float(dividend) == 0:
+            return Number(0)
         nums, divisors = splitnums([divisor.eval(vars, funcs) for divisor in self.divisors])
         if len(nums) > 0:
-            if isinstance(dividend, float):
-                dividend /= reduce(lambda x, y: x*float(y), nums, 1)
+            num = reduce(lambda x, y: x*float(y), nums, 1)
+            if isinstance(dividend, Number):
+                dividend = Number(float(dividend)/num)
             else:
-                divisors.append(Number(reduce(lambda x, y: x*float(y), nums, 1)))
-            if len(divisors) == 0:
-                return Number(dividend)
+                divisors.append(num)
+        if len(divisors) == 0:
+            return dividend
         return Quotient(dividend, divisors)
     def contains(self, name):
         for divisor in self.divisors:
@@ -364,7 +372,10 @@ class VariableAssignment(Term):
     def __str__(self):
         return str(self.name)+' = '+str(self.term)
     def eval(self, vars, funcs):
-        return VariableAssignment(self.name, self.term.eval(vars, funcs))
+        term = self.term.eval(vars, funcs)
+        if isinstance(term, Number):
+            vars[self.name] = term
+        return VariableAssignment(self.name, term)
     def contains(self, name):
         return self.term.contains(name)
     def unapply(self, funcs):
@@ -384,7 +395,10 @@ class FunctionAssignment(Term):
     def __str__(self):
         return '%s(%s) = %s' % (str(self.name), ', '.join([str(arg) for arg in self.args]), str(self.term))
     def eval(self, vars, funcs):
-        return FunctionAssignment(self.name, self.args, self.term.eval(vars, funcs))
+        term = self.term.eval(vars, funcs)
+        if isinstance(term, Number):
+            funcs[self.name] = (self.args, term)
+        return FunctionAssignment(self.name, self.args, term)
     def contains(self, name):
         return self.term.contains(name)
     def unapply(self, funcs):
@@ -472,6 +486,12 @@ class Plotter():
     def setvars(self, *args):
         [self.parsers[name].setvars(*args) for name in self.parsers]
 
+    def getvars(self, sort=False):
+        vars = list(set(flatten([self.parsers[name].getvars() for name in self.parsers])))
+        if sort:
+            vars.sort()
+        return vars
+
     def settings(self, **kwargs):
         [self.parsers[name].settings(**kwargs) for name in self.parsers]
 
@@ -492,12 +512,23 @@ class Parser():
         self.intstart = intstart # Sets default integration start.
         self.intend = intend # Sets default integration end.
         self.intstops = intstops # Sets default number of horizontal intergration parts.
+
         self.exprlist = [] # Contains the parsed result of the main input string.
         self.vardict = {} # Variable definitions, used to look up values for string generation.
         self.funclists = {} # Simplified exprlist, with unapplied functions over certain arguments.
+
+        # Set plot-evaluating variables
+        self.intvals = None
+        self.sargs = None
+        self.plotvars = None
+        self.plotexprs = []
+
         self.gp = Gnuplot(debug=0)
         if input:
             self.parse(input)
+
+    def log(self, msg):
+        print('Parser %s: %s' % (self.name, msg))
 
     def settings(self, name=None, args=None, integrate=None, intargs=None, intstart=None, intend=None, intstops=None):
         """Function to set object-wide settings for certain variables."""
@@ -548,7 +579,7 @@ class Parser():
                 continue
             else:
                 newmode = ''
-                print('Parser: Unhandled character: %s' % c)
+                self.log('Unhandled character: %s' % c)
             if not newmode == 'adapt' and (newmode != mode or newmode == 'break'):
                 if current.strip() != '':
                     result[-1].append(current)
@@ -573,7 +604,8 @@ class Parser():
                 parsed.append(Number(tok))
             elif isvar(tok):
                 parsed.append(Variable(tok))
-                self.vardict[tok] = None
+                if tok not in self.vardict:
+                    self.vardict[tok] = None
             elif islist(tok):
                 if i > 0 and isinstance(parsed[-1], Variable):
                     parsed[-1] = Function(parsed[-1].name, self.classifyarguments(tok))
@@ -709,10 +741,6 @@ class Parser():
                 if len(arglist) > 0:
                     if isinstance(expr, FunctionAssignment):
                         arglist = makeargs(expr.args+arglist)
-                        #argset = expr.args
-                        #for arg in arglist:
-                        #    if arg not in expr.args:
-                        #        argset = argset+(arg,)
                     expr = FunctionAssignment(expr.name, arglist, expr.term)
                     exprs[i] = expr
                 else:
@@ -737,25 +765,38 @@ class Parser():
             elif any(expr.contains(arg) for arg in intargs):
                 integrate = 'Line'
             else:
-                print('Parser: None of the integral variables found.')
+                integrate = 'Self'
+                self.log('None of the integral variables found.')
         if integrate == 'RTriangle':
             subs = filter(lambda (x, y): x+y <= end, map(lambda (x, y): (start+x*length, start+y*length), flatten([map(lambda (x, y): (x+offset, y+offset), [(i, j) for i in range(stops) for j in range(stops-i)]) for offset in [1.0/3.0, 2.0/3.0]], level=1)))
             area = length**2/2.0
-        elif self.integrate == 'Line':
+        elif integrate == 'Line':
             subs = [(x+0.5)/length for x in range(stops)]
             area = length
-        if not subs or not area:
-            if isinstance(self.integrate, str):
+        elif integrate == 'Self':
+            subs = []
+            area = 1
+        if not integrate == 'Self' and (subs == None or area == None):
+            if type(integrate) == str:
                 raise InvalidOperationError('Integration domain %s unknown or not supported.' % self.integrate)
             else:
                 raise InvalidOperationError('No integration domain specified.')
         subs = [map(self.classify, [[term] for term in sub]) for sub in subs]
+        def expand(term):
+            if integrate == 'Self':
+                return term
+            return Product([Number(area), Sum([Function('abs', [deepcopy(term).apply(intargs, sub)]) for sub in subs])])
         if isinstance(expr, (VariableAssignment, FunctionAssignment)):
             if isinstance(expr, FunctionAssignment):
                 expr.args = filter(lambda arg: str(arg) not in intargs, expr.args)
-            expr.term = Product([Number(area), Sum([Function('abs', [deepcopy(expr.term).apply(intargs, sub)]) for sub in subs])])
-            return expr
-        return Product([Number(area), Sum([Function('abs', [deepcopy(expr).apply(intargs, sub)]) for sub in subs])])
+                if len(expr.args) == 0:
+                    expr = VariableAssignment(expr.name, expr.term)
+            #self.log(expr.term)
+            expr.term = expand(expr.term)
+            #self.log(expr.term)
+        else:
+            expr = expand(expr)
+        return expr
 
     def formatinput(self, input):
         """Formats Maple output to a list of separate expressions"""
@@ -812,10 +853,13 @@ class Parser():
                     del self.vardict[expr.name]
                 except KeyError:
                     pass
+        self.exprlist = [expr for expr in self.exprlist if self.exprlist[-1].contains(expr.name) or expr == self.exprlist[-1]]
 
-    def fullparse(self, input, *args):
+    def fullparse(self, input, args=None):
         """Parses a comma-seperated list of terms, stores the results and then unapplies all combinations of the provided arguments and stores the results separately."""
         self.parse(input)
+        if not args:
+            args = tuple(self.getvars())
         self.unapplyall(*args)
 
     def setvar(self, *args):
@@ -824,21 +868,22 @@ class Parser():
 
     def setvars(self, *args):
         """Sets a variable to the specified value. When that variable appears in an expression, it will resolve to the value instead of its name."""
-        #print('Parser: Setting vars for %s: %s\n' % (str(self.name), str(args)))
-        if len(args) == 1 and type(args[0]) == dict:
-            for name, val in args[0].items():
-                self.vardict[name] = self.parseterm(str(val))
-        for name, val in args:
-            if not name in self.vardict:
-                print('Parser warning (%s): Variable %s not found in the parsed expression list.' % (self.name, name))
-            self.vardict[name] = self.parseterm(str(val))
+        args = {name: self.parseterm(str(val)) for name, val in args}
+        self.vardict.update(args)
+
+    def getvars(self, sort=False):
+        """Returns a list of currently tracked variables."""
+        varlist = [var for var in self.vardict if not self.integrate or self.integrate and var not in self.intargs]
+        if sort:
+            varlist.sort()
+        return tuple(varlist)
 
     def simplify(self, exprs):
         """Takes a list of expressions and simplifies them much as possible with considerations to set variables. Returns a (possibly shortened) list of expressions."""
         exprs = deepcopy(exprs)
         valdict = {}
         offset = 0
-        print('Before: '+str(exprs))
+        self.log('Before: %s' % str(exprs))
         for i in range(len(exprs)):
             i -= offset
             try:
@@ -853,13 +898,10 @@ class Parser():
                     continue
             except IndexError:
                 break
-        print('After: '+str(exprs))
+        self.log('After: %s' % str(exprs))
 
     def evalfuncs(self, sargs):
-        vardict = deepcopy(self.vardict)
-        for name in sargs:
-            if name in vardict:
-                del vardict[name]
+        vardict = {name: val for name, val in deepcopy(self.vardict).items() if name not in sargs and (not self.integrate or name not in self.intargs)}
         funcdict = {}
         return [expr.eval(vardict, funcdict) for expr in deepcopy(self.funclists[sargs])]
 
@@ -878,48 +920,59 @@ class Parser():
         intend = intend if intend != None else self.intend
         intstops = intstops if intstops != None else self.intstops
 
-        # Unapply expression list for specified arguments, if not already done.
         sargs = makeargs(args, sort=True)
-        if sargs not in self.funclists:
-            self.funclists[sargs] = self.unapply(*args+intargs)
+        reapply = sargs != self.sargs
+        reeval = reapply or self.plotvars != {name: str(val) for name, val in self.vardict.items()}
+        reintegrate = integrate and (reapply or reeval or (integrate, intargs, intstart, intend, intstops) != self.intvals)
+
+        # Unapply expression list for specified arguments, if not already done.
+        if reapply:
+            if sargs not in self.funclists:
+                self.funclists[sargs] = self.unapply(*args+intargs)
+            self.sargs = sargs
+
+        # Format the parsed expression list if it hasn't been previously formatted with the current settings
+        if reeval:
+            self.plotexprs = self.evalfuncs(sargs)
+            self.plotvars = {name: str(val) for name, val in self.vardict.items()}
+
+        # Integrate, if specified and not already integrated with current variables.
+        if integrate:
+            plotexpr = self.numintegrate(deepcopy(self.plotexprs[-1]), integrate, intargs, intstart, intend, intstops)
+            self.intvals = (integrate, intargs, intstart, intend, intstops)
+        else:
+            plotexpr = self.plotexprs[-1]
 
         commands = []
 
-        # Format the parsed expression list.
-        exprs = self.evalfuncs(sargs)
-
-        # Integrate, if specified.
-        if integrate:
-            exprs[-1] = self.numintegrate(exprs[-1], integrate, intargs, intstart, intend, intstops)
-        plotexpr = exprs[-1]
-
         # Set plotting variables.
-        fargs = tuple([arg for arg in args if plotexpr.contains(arg)])
-        if len(fargs) == 1:
-            #commands.append('unset pm3d')
+        if len(args) == 1:
+            commands.append('unset pm3d')
             commands.append('unset ylabel')
-            commands.append('set xlabel "%s"' % fargs[0])
+            commands.append('set xlabel "%s"' % args[0])
             commands.append('set autoscale')
-            commands.append('set dummy %s' % fargs)
-        elif len(fargs) == 2:
+            commands.append('set dummy %s' % args[0])
+        elif len(args) == 2:
             commands.append('set xlabel "%s"' % args[0])
             commands.append('set ylabel "%s"' % args[1])
             commands.append('set pm3d')
-            commands.append('set dummy %s, %s' % fargs)
+            commands.append('set dummy %s, %s' % args)
 
-        commands.extend([str(expr) for expr in exprs])
+        commands.extend([str(expr) for expr in self.plotexprs])
+        commands[-1] = str(plotexpr)
 
         # Determine the plot command based on variables and the last expression.
-        plotcmd = '%s %%s ls 1' % ('splot' if len(fargs) == 2 else 'plot')
+        plotcmd = '%s %%s ls 1' % ('splot' if len(args) == 2 else 'plot')
         if isinstance(plotexpr, FunctionAssignment):
+            plotargs = [str(parg) for parg in plotexpr.args]
+            fargs = filter(lambda arg: arg in plotargs, args)
             commands.append(plotcmd % ('%s(%s)' % (plotexpr.name, ', '.join(fargs))))
         elif isinstance(plotexpr, VariableAssignment):
             commands.append(plotcmd % plotexpr.name)
         else:
             commands.append(plotcmd % plotexpr)
 
-        #for command in commands:
-        #    print(command)
+        #self.log('Gnuplot commands:\n%s\n' % '\n'.join([command for command in commands]))
 
         # Send the formatted commands to Gnuplot instance.
         [self.gp(command) for command in commands]
@@ -930,13 +983,12 @@ if __name__ == '__main__':
     termstring2 = 't1 = 2, t3 = 2*h[1]+x, t65 = u[1]**2, t122 = y + t65*t3^t1'
     print('Not supposed to be run on its own. Demonstrative run using the following inputs:\nA-Term:\n%s\n\nTerm Ber:\n%s\n' % ('\n'.join(termstring1.split(', ')), '\n'.join(termstring2.split(', '))))
 
-    print(split([1,2,3], ','))
     p = Plotter({'A-Term': termstring1, 'Term Ber': termstring2}, integrate=True)
-    p.setvars(('h_1', 5), ('h_2', 3.1), ('u_1', 4), ('u_2', -0.2))
-    p.plot(('h_1', 'h_2'))
-
     p1 = p.parsers['A-Term']
     p2 = p.parsers['Term Ber']
+
+    p.setvars(('h_1', 5), ('h_2', 3.1), ('u_1', 4), ('u_2', -0.2))
+    p.plot(('h_1', 'h_2'))
 
     import readline
     import code
