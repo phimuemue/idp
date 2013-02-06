@@ -96,7 +96,7 @@ class SimplePlotter:
             def replace_x_and_y(f, xr, yr):
                 result = re.sub(r"\bx\b", xr, f)
                 if two_dim:
-                    result = re.sub(r"\by\b", xr, result)
+                    result = re.sub(r"\by\b", yr, result)
                 return result
             if two_dim:
                 tmp = ["abs((%s)*(%f))"%(replace_x_and_y(f, str(midpoint[0]), str(midpoint[1])), stripe_width)
@@ -131,6 +131,7 @@ class SimplePlotter:
         # adjust gnuplot properly
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
+            print ("set dummy %s, %s"%(xvar, yvar))
             gp("set dummy %s, %s"%(xvar, yvar))
             for (a, s) in self.auxiliaries:
                 gp("%s=%s"%(a,s))
@@ -146,6 +147,9 @@ class SimplePlotter:
                 gp("set autoscale")
                 gp("unset pm3d")
             self.adjustvars()
+            print sorted(stripe_midpoints)
+            print self.xyfunc[i]
+            print "\n"
             gp('%s %s ls 1 title "%d. Function"' % (self.plotcommand, self.xyfunc[i], i))
 
     def adjustment_from_range(self,r):
@@ -372,7 +376,7 @@ class SimplePlotter:
         # initialize gnuplot for me
         self.gnuplot = []
         for f in self.func:
-            newgp = Gnuplot.Gnuplot(debug=0)
+            newgp = Gnuplot.Gnuplot(debug=1)
             self.gnuplot.append(newgp)
             self.gnuplot[-1]("set xrange " + urange)
             self.gnuplot[-1]("set yrange " + hrange)
