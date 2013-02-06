@@ -853,7 +853,7 @@ class Parser():
                     del self.vardict[expr.name]
                 except KeyError:
                     pass
-        self.exprlist = [expr for expr in self.exprlist if self.exprlist[-1].contains(expr.name) or expr == self.exprlist[-1]]
+        #self.exprlist = [expr for expr in self.exprlist if self.exprlist[-1].contains(expr.name) or expr == self.exprlist[-1]]
 
     def fullparse(self, input, args=None):
         """Parses a comma-seperated list of terms, stores the results and then unapplies all combinations of the provided arguments and stores the results separately."""
