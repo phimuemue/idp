@@ -41,7 +41,6 @@ class SimplePlotter:
             texfile.write("\\begin{figure}[ht]\n")
             texfile.write("\\centering\n")
             for f in glob.glob(self.foldername+"/*.%s"%self.img_extension):
-                print f
                 texfile.write("  \\subfigure[] {\n")
                 texfile.write("    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n"%f[:-(len(self.img_extension)+1)])
                 texfile.write("  }\n")
@@ -89,7 +88,6 @@ class SimplePlotter:
         self.tfunc = []
         for _f in self.func:
             f = _f[:]
-            print f
             # for [a, s] in self.tauxiliaries:
             #     print "replacing %s by %s"%(a, s)
             #     print "\\b%s\\b"%re.escape(a)
@@ -130,7 +128,6 @@ class SimplePlotter:
             for (s,t) in subs:
                 tmp = tmp.replace(s,t)
             self.xyfunc.append(tmp)
-        print self.xyfunc
         # adjust gnuplot properly
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
@@ -149,7 +146,6 @@ class SimplePlotter:
                 gp("set autoscale")
                 gp("unset pm3d")
             self.adjustvars()
-            print self.xyfunc[i]
             gp('%s %s ls 1 title "%d. Function"' % (self.plotcommand, self.xyfunc[i], i))
 
     def adjustment_from_range(self,r):
@@ -352,7 +348,7 @@ class SimplePlotter:
         self.window.add(self.variable_hbox)
         # export button
         vbox = gtk.VBox()
-        self.vbox.add(vbox)
+        self.vbox.pack_end(vbox, expand=False, fill=False)
         button = gtk.Button("Export")
         vbox.add(button)
         button.connect("clicked", self.on_export)
