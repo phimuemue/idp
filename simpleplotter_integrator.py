@@ -413,6 +413,8 @@ def read_file(path):
     functions = []
     auxiliaries = []
     for line in open(path,"r"):
+        if line.strip()=="" or line.startswith(">"):
+            continue
         if "=" in line:
             varname, content = line.strip().split("=")
             auxiliaries.append([varname, prettify_function(content)])
