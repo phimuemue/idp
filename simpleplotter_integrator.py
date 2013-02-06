@@ -57,9 +57,9 @@ class SimplePlotter:
             self.plotter.gp("set samples %d" % self.samples_spin.get_value())
         elif widget == self.isosamples_spin:
             self.plotter.gp("set isosamples %d" % self.isosamples_spin.get_value())
-        elif widget == self.x_lower_spin:
+        elif widget == self.x_lower_spin or widget == self.x_upper_spin:
             self.plotter.gp("set xrange [%d:%d]" % (self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
-        elif widget == self.y_lower_spin:
+        elif widget == self.y_lower_spin or widget == self.y_upper_spin:
             self.plotter.gp("set yrange [%d:%d]" % (self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
         elif widget == self.stripes_spin:
             self.plotter.settings(intstops = int(self.stripes_spin.get_value()))
@@ -90,14 +90,14 @@ class SimplePlotter:
         # samples
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("Samples: "))
-        self.samples_spin = gtk.SpinButton(gtk.Adjustment(100,2,1000,1))
+        self.samples_spin = gtk.SpinButton(gtk.Adjustment(self.default_samples,2,1000,1))
         hbox.pack_start(self.samples_spin)
         self.settings_box.pack_start(hbox)
         self.samples_spin.connect("value_changed", self.do_settings)
         # isosamples
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("Isosamples: "))
-        self.isosamples_spin = gtk.SpinButton(gtk.Adjustment(10,2,1000,1))
+        self.isosamples_spin = gtk.SpinButton(gtk.Adjustment(self.default_isosamples,2,1000,1))
         hbox.pack_start(self.isosamples_spin)
         self.settings_box.pack_start(hbox)
         self.isosamples_spin.connect("value_changed", self.do_settings)
@@ -105,33 +105,33 @@ class SimplePlotter:
         # x/u-component
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("lower x: "))
-        self.x_lower_spin = gtk.SpinButton(gtk.Adjustment(-4,-500,500,1))
+        self.x_lower_spin = gtk.SpinButton(gtk.Adjustment(self.default_h_lower,-500,500,1))
         hbox.pack_start(self.x_lower_spin)
         self.settings_box.pack_start(hbox)
         self.x_lower_spin.connect("value_changed", self.do_settings)
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("upper x: "))
-        self.x_upper_spin = gtk.SpinButton(gtk.Adjustment(4,-500,500,1))
+        self.x_upper_spin = gtk.SpinButton(gtk.Adjustment(self.default_h_upper,-500,500,1))
         hbox.pack_start(self.x_upper_spin)
         self.settings_box.pack_start(hbox)
         self.x_upper_spin.connect("value_changed", self.do_settings)
         # y/h-component
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("lower y: "))
-        self.y_lower_spin = gtk.SpinButton(gtk.Adjustment(8,-500,500,1))
+        self.y_lower_spin = gtk.SpinButton(gtk.Adjustment(self.default_u_lower,-500,500,1))
         hbox.pack_start(self.y_lower_spin)
         self.settings_box.pack_start(hbox)
         self.y_lower_spin.connect("value_changed", self.do_settings)
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("upper y: "))
-        self.y_upper_spin = gtk.SpinButton(gtk.Adjustment(12,-500,500,1))
+        self.y_upper_spin = gtk.SpinButton(gtk.Adjustment(self.default_u_upper,-500,500,1))
         hbox.pack_start(self.y_upper_spin)
         self.settings_box.pack_start(hbox)
         self.y_upper_spin.connect("value_changed", self.do_settings)
         # amount of stipes for streifenmethode numerical integration
         hbox = gtk.HBox()
         hbox.pack_start(gtk.Label("Stripes: "))
-        self.stripes_spin = gtk.SpinButton(gtk.Adjustment(5,1,1000,1))
+        self.stripes_spin = gtk.SpinButton(gtk.Adjustment(self.default_intstops,1,1000,1))
         hbox.pack_start(self.stripes_spin)
         self.settings_box.pack_start(hbox)
         self.stripes_spin.connect("value_changed", self.do_settings)
@@ -270,6 +270,13 @@ class SimplePlotter:
             * funcitons: List of strings representing stuff to be plotted
             * auxiliaries: List of strings of the form "varname=varcomputationstuff" ("intermediate vars")
         """
+        # Default plotting settings
+        self.default_samples = 100
+        self.default_isosamples = 10
+        self.default_h_lower, self.default_h_upper = hrange
+        self.default_u_lower, self.default_u_upper = urange
+        self.default_intstops = 5
+
         # Configure Gnuplot settings
         self.urange = urange
         self.hrange = hrange
@@ -282,8 +289,10 @@ class SimplePlotter:
         tmp = map(lambda x: ", ".join(x), tmp)
 
         # Initialize plotters
-        self.plotter = Plotter(tmp, integrate=True)
-        self.plotter.gp("set style line 1 linecolor rgb \"black\"")
+        self.plotter = Plotter(tmp, integrate=True, intstops = self.default_intstops)
+        self.plotter.gp('set style line 1 linecolor rgb "black"')
+        self.plotter.gp('set xrange [%d:%d]' % hrange)
+        self.plotter.gp('set yrange [%d:%d]' % urange)
         self.variables = self.plotter.getvars(sort=True)
 
         # Set default plotting variable
