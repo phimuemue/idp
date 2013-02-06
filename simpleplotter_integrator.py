@@ -147,8 +147,6 @@ class SimplePlotter:
                 gp("set autoscale")
                 gp("unset pm3d")
             self.adjustvars()
-            print sorted(stripe_midpoints)
-            print self.xyfunc[i]
             print "\n"
             gp('%s %s ls 1 title "%d. Function"' % (self.plotcommand, self.xyfunc[i], i))
 
@@ -376,7 +374,7 @@ class SimplePlotter:
         # initialize gnuplot for me
         self.gnuplot = []
         for f in self.func:
-            newgp = Gnuplot.Gnuplot(debug=1)
+            newgp = Gnuplot.Gnuplot(debug=0)
             self.gnuplot.append(newgp)
             self.gnuplot[-1]("set xrange " + urange)
             self.gnuplot[-1]("set yrange " + hrange)
