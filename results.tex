@@ -819,6 +819,46 @@ Analytically deriving a general formula for where these singularities occur is a
 
 We are now going to plot (the two components of) the term $I$ as described in equation (\ref{eq:integral-norm-definition}). First, we have to elaborate on some necessary considerations when it comes plotting such a complicated term. Afterwards, we present our tool that was developed to simplify plotting as much as possible.
 
+\subsection{A word on visualization}
+\label{sec:a-word-on-visualization}
+
+Before we actually go into visualizing the error term, let us introduce some concepts that will be useful later when it comes to plotting.
+
+Consider some well-known plots known from school, e.g. the graphs for the functions $y=2\cdot x+3$ or $y=x^2$. \todo{Plots for these simple functions.} These plots are probably well-known to every reader of this paper -- simply a horizontal $x$-axis, and a vertical $y$-axis. 
+
+\subsubsection{Functions with parameters}
+
+Let us now consider a slightly more complicated function, namely
+
+\begin{equation*}
+  y = a\cdot x+1.
+\end{equation*}
+
+This equation describes a line going through point $(0,1)$ with varying gradient, namely $a$. That is, we actually have a whole collection of lines given by this equation. If one wants to plot ``the function'' $y=a\cdot x + 1$, one has in principle two possibilities:
+
+\begin{itemize}
+\item Focus on specific values of $a$ and plot $y=a\cdot x + 1$ for these values of $a$.
+\item Generate a 3d-plot for varying values of $a$ and $x$. This plot has then two axes for $a$ and $x$ spanning two dimensions, the resulting value $y$ is then denoted by the last dimension.
+
+  That is, each point contained in the graph of this 3d-plot has three coordinates $(x,a,y)$, and these three coordinates have to suffice the condition $y=a\cdot x + 1$.\todo{Plot!}
+\end{itemize}
+
+Now, let us extend the above function by another variable and consider the function
+
+\begin{equation*}
+  y = a\cdot x+b.
+\end{equation*}
+
+As you can see, this function contains two parameters, namely $a$ and $b$. Again, if we want to plot this (collection of) line(s), we have several possibilities:
+
+\begin{itemize}
+\item Focus on specific values for $a$ and $b$ and generate a plot for the combinations of $a$ and $b$ under considerations.
+\item Focus on specific values for $a$, and draw a 3d-plot (for each value of $a$ under consideration) having two axes that then describe $x$ and $a$, while $y$ is then represented by the remaining dimension.
+\item Similar to the previous possibility, one could focus on $b$ (instead of $a$) and draw 3d-plots having two axes that then describe $x$ and $b$, while $y$ is then represented by the remaining dimension.
+\end{itemize}
+
+Of course, as the number of parameters increases, the number of possibilities for plotting grows drastically. This is why we have to pick specific assignments for parameters and generate the corresponding plots.
+
 \subsection{Some considerations to take into account}
 \label{sec:some-considerations}
 

@@ -84,6 +84,7 @@ class SimplePlotter:
             stripe_midpoints = [(float(i)/n,float(j)/n) for i in xrange(n) for j in xrange(n) if i+j<n ]
             stripe_midpoints = [x for (a,b) in stripe_midpoints for x in [(a+(1./n)/3., b+(1./n)/3.),(a+(2./n)/3., b+(2./n)/3.)]]
             stripe_midpoints = filter(lambda x:x[0]+x[1]<1,stripe_midpoints)
+            print sorted(stripe_midpoints)
             stripe_width = (1./stripe_amount)*(1./stripe_amount)*0.5
         self.tfunc = []
         for _f in self.func:
@@ -147,6 +148,9 @@ class SimplePlotter:
                 gp("set autoscale")
                 gp("unset pm3d")
             self.adjustvars()
+            print "\n"
+            print "Function %d:"%(i)
+            print self.xyfunc[i]
             print "\n"
             gp('%s %s ls 1 title "%d. Function"' % (self.plotcommand, self.xyfunc[i], i))
 
