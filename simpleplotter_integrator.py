@@ -6,7 +6,7 @@ import Gnuplot, Gnuplot.funcutils
 import pygtk
 import gtk
 import re
-import optparse
+import argparse
 import time
 import os.path
 import os
@@ -44,11 +44,6 @@ class SimplePlotter:
         self.plotter.setvars(*zip(self.variables, [s.get_value() for s in self.sliders]))
         self.plotter.plot(self.plotvars)
 
-    def adjustment_from_range(self, r):
-        """Returns a gtk.Adjustment from a "gnuplot"-range.
-        A gnuplot-range has the format [-3:67]."""
-        return gtk.Adjustment((r[0]+r[1])/2., r[0], r[1], step_incr=0.5)
-
     def do_settings(self, widget):
         """Determines the settings and applies them (these may be varied
         for efficiency)."""
@@ -79,11 +74,6 @@ class SimplePlotter:
         tv.append_column(gtk.TreeViewColumn("Name", gtk.CellRendererText(), text = 0))
         tv.append_column(gtk.TreeViewColumn("Term", gtk.CellRendererText(), text = 1))
         tv.set_headers_visible(True)
-        for (a,b) in self.auxiliaries:
-            model.append([a, b])
-        model.append(["---","-------------"]);
-        for (i,f) in enumerate(self.func):
-            model.append(["%d. func"%i, str(f)])
 
     def init_settings_page(self):
         """Fills the settings page."""
@@ -138,34 +128,6 @@ class SimplePlotter:
 
     def init_variables_page(self):
         """Creates sliders and radio buttons for the single variables."""
-        #print "Checking variables 'n stuff"
-        # create elements for variables!!
-        #self.variables = list(set(re.findall(
-        #            r"([a-zA-Z_]+\d*\b)(?:[^(]|$)", "+".join(self.func + ([aux[1] for aux in self.auxiliaries])))))
-        #print self.variables
-        #self.variables = filter(lambda x:x not in["x","y"], self.variables)
-        ##print "Auxiliaries: " + str(self.auxiliaries)
-        #def is_not_auxiliary(x):
-        #    aux_l = [a[0] for a in self.auxiliaries]
-        #    for au in aux_l:
-        #        if au.startswith(x):
-        #            return False
-        #    return True
-        #self.variables = filter(is_not_auxiliary, self.variables)
-        #def filter_func(x):
-        #    if x in ["abs", "sin", "cos", "log", "tan", "e", "ln"]:
-        #        return False
-        #    if re.match("^e[0-9]*$", x) is not None:
-        #        return False
-        #    return True
-        #self.variables = filter(filter_func, self.variables)
-        #print "Variables: " + str(self.variables)
-        #print(self.plotter.getvars(sort=True))
-        # an auxiliary function to sort the variables properly
-        # this was earlier more complex, but now it's easy!
-        #def varkey(x):
-        #    return x
-        #self.variables.sort(key=varkey)
         self.sliders = []
         self.xradios = []
         self.yradios = []
@@ -192,9 +154,12 @@ class SimplePlotter:
             newvbox.pack_start(newy, False, False)
             newy.connect("toggled", self.plot)
             # slider
-            newadjustment = self.adjustment_from_range(self.urange)
-            if v[0].lower() == "h":
-                newadjustment = self.adjustment_from_range(self.hrange)
+            if v[0].lower() == 'h':
+                newadjustment = gtk.Adjustment(self.default_h, self.hrange[0], self.hrange[1], step_incr=0.5)
+            elif v[0].lower() == 'u':
+                newadjustment = gtk.Adjustment(self.default_u, self.urange[0], self.urange[1], step_incr=0.5)
+            else:
+                newadjustment = gtk.Adjustment(0.5, 0, 1, 0.1)
             newadjustment.connect("value_changed", self.plot)
             self.sliders.append(gtk.VScale(newadjustment))
             self.sliders[-1].set_size_request(10,200)
@@ -225,7 +190,7 @@ class SimplePlotter:
             pass
         for f in glob.glob(foldername+'/*.pdf'):
             texfile.write('  \\subfigure[] {\n')
-            texfile.write('    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n'%f[:-4])
+            texfile.write('    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n' % f[:-4])
             texfile.write('  }\n')
         texfile.write('\\caption{}\n')
         texfile.write('\\label{}\n')
@@ -265,31 +230,26 @@ class SimplePlotter:
         self.init_plottings_page()
         self.window.show_all()
 
-    def __init__(self, functions, auxiliaries, urange=(-5,5), hrange=(8,12)):
+    def __init__(self, filename, urange, hrange):
         """Initialization of the window.
             * funcitons: List of strings representing stuff to be plotted
             * auxiliaries: List of strings of the form "varname=varcomputationstuff" ("intermediate vars")
         """
+        # Read arguments
+        self.filename = filename
+        self.urange = urange
+        self.hrange = hrange
         # Default plotting settings
         self.default_samples = 100
         self.default_isosamples = 10
-        self.default_h_lower, self.default_h_upper = hrange
-        self.default_u_lower, self.default_u_upper = urange
+        self.default_h_lower, self.default_h_upper = self.hrange
+        self.default_u_lower, self.default_u_upper = self.urange
         self.default_intstops = 5
-
-        # Configure Gnuplot settings
-        self.urange = urange
-        self.hrange = hrange
-        self.plotcommand = "plot"
-        self.func = functions
-        self.auxiliaries = auxiliaries
-
-        # Read functions
-        tmp = [map(lambda x:x[0]+"="+x[1], self.auxiliaries) + ["plotfnc%d(x,y)=%s"%(i,c)] for (i,c) in enumerate(self.func)]
-        tmp = map(lambda x: ", ".join(x), tmp)
+        self.default_h = (hrange[0]+hrange[1])/2
+        self.default_u = (urange[0]+urange[1])/2
 
         # Initialize plotters
-        self.plotter = Plotter(tmp, integrate=True, intstops = self.default_intstops)
+        self.plotter = Plotter(filename=filename, integrate=True, intstops=self.default_intstops)
         self.plotter.gp('set style line 1 linecolor rgb "black"')
         self.plotter.gp('set xrange [%d:%d]' % hrange)
         self.plotter.gp('set yrange [%d:%d]' % urange)
@@ -308,37 +268,12 @@ class SimplePlotter:
         """Just fires the gtk main loop."""
         gtk.main()
 
-def prettify_function(f):
-    """Brings functions from maple to gnuplot-syntax."""
-    result = f
-    result = re.sub("([a-z_]*)\[(.*?)\]", "\g<1>_\g<2>", result)
-    result = result.replace("ln", "log")
-    result = result.replace("^", "**")
-    return result
-
-def read_file(path):
-    """Reads a file generated by maple and converted by our script containing two terms."""
-    functions = []
-    auxiliaries = []
-    for line in open(path,"r"):
-        if "=" in line:
-            varname, content = line.strip().split("=")
-            auxiliaries.append([varname, prettify_function(content)])
-        else:
-            functions.append(prettify_function(line.strip()))
-    return (functions, auxiliaries)
-
 if __name__ == "__main__":
-    parser = optparse.OptionParser()
-    parser.add_option("--urange", default=(-5,5))
-    parser.add_option("--hrange", default=(8,12))
-    parser.add_option("-f", "--file", default="norm_stuff.txt")
-    opts, args = parser.parse_args()
-    stuff = read_file(opts.file)
-    functions, auxiliaries = read_file(opts.file)
-    simpleplotter = SimplePlotter(
-                                  functions, auxiliaries,
-                                  urange=opts.urange, hrange=opts.hrange
-            )
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--urange", default=(-5,5))
+    parser.add_argument("--hrange", default=(8,12))
+    parser.add_argument("-f", "--file", default="wot")
+    args = parser.parse_args()
+    simpleplotter = SimplePlotter(filename=args.file, urange=args.urange, hrange=args.hrange)
     simpleplotter.main()
 

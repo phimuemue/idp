@@ -1,7 +1,9 @@
 #TODO
 # * simplify nested numbers of equivalent operations 2/(x*2)
+# * Simplify same types when nested
 from copy import deepcopy
 import math
+import re
 from Gnuplot import Gnuplot
 
 class InvalidFormatError(Exception):
@@ -79,6 +81,12 @@ def isnum(tok):
 def isop(tok):
     """Returns True if tok is an operator as specified by oplist."""
     return tok in oplist
+
+def issep(tok):
+    for c in tok:
+        if c not in seps:
+            return False
+    return True
 
 def isass(tok):
     """Returns True if tok is the equality sign."""
@@ -158,11 +166,7 @@ class Term():
 
 class Number(Term):
     def __init__(self, number):
-        try:
-            self.number = float(number)
-        except:
-            print("Parser: String %s mistakenly parsed as number." % self.number)
-            raise
+        self.number = float(number)
     def __repr__(self):
         return 'Number('+repr(self.number)+')'
     def __str__(self):
@@ -179,6 +183,7 @@ class Sum(Term):
         return '+'.join([str(summand) for summand in self.summands])
     def eval(self, vars, funcs):
         nums, summands = splitnums([summand.eval(vars, funcs) for summand in self.summands])
+        summands = reduce(lambda agg, term: agg+term.summands if isinstance(term, Sum) else agg+[term], summands, [])
         if len(nums) == 0:
             return Sum(summands)
         num = math.fsum(nums)
@@ -186,7 +191,8 @@ class Sum(Term):
             return Number(num)
         if num != 0:
             summands.append(Number(num))
-            #print(num)
+        if len(summands) == 1:
+                return summands[0]
         return Sum(summands)
     def contains(self, name):
         #return reduce(lambda x, y: x or y.contains(name), self.summands, False)
@@ -202,43 +208,45 @@ class Sum(Term):
         return self
 
 class Difference(Term):
-    def __init__(self, subtrahend, minuends):
-        self.subtrahend = subtrahend
-        self.minuends = minuends
+    def __init__(self, minuend, subtrahends):
+        self.minuend = minuend
+        self.subtrahends = subtrahends
     def __repr__(self):
-        return 'Difference('+repr(self.subtrahend)+', '+', '.join([repr(minuend) for minuend in self.minuends])+')'
+        return 'Difference('+repr(self.minuend)+', '+', '.join([repr(subtrahend) for subtrahend in self.subtrahends])+')'
     def __str__(self):
-        return '%s-%s' % (str(self.subtrahend), '-'.join(('(%s)' if isprecop(minuend, self.__class__) else '%s') % str(minuend) for minuend in self.minuends))
+        return '%s-%s' % (str(self.minuend), '-'.join(('(%s)' if isprecop(subtrahend, self.__class__) else '%s') % str(subtrahend) for subtrahend in self.subtrahends))
     def eval(self, vars, funcs):
-        subtrahend = self.subtrahend.eval(vars, funcs)
-        nums, minuends = splitnums([minuend.eval(vars, funcs) for minuend in self.minuends])
+        minuend = self.minuend.eval(vars, funcs)
+        nums, subtrahends = splitnums([subtrahend.eval(vars, funcs) for subtrahend in self.subtrahends])
         if len(nums) > 0:
             num = math.fsum(nums)
-            if isinstance(subtrahend, Number):
-                subtrahend = Number(float(subtrahend) - num)
+            if isinstance(minuend, Number):
+                minuend = Number(float(minuend) - num)
+            elif num != 0:
+                subtrahends.append(Number(num))
+        if len(subtrahends) == 0:
+            return minuend
+        if isinstance(minuend, Number) and float(minuend) == 0:
+            if len(subtrahends) == 1:
+                return Negation(subtrahends[0])
             else:
-                minuends.append(Number(num))
-        if len(minuends) == 0:
-            return subtrahend
-        if float(subtrahend) == 0:
-            if len(minuends) == 1:
-                return minuends[0]
-            else:
-                return Difference(Negation(minuends[0]), minuends[1:])
-        return Difference(subtrahend, minuends)
+                return Difference(Negation(subtrahends[0]), subtrahends[1:])
+        if len(subtrahends) == 1:
+            return subtrahends[0]
+        return Difference(minuend, subtrahends)
     def contains(self, name):
-        #return reduce(lambda x, y: x or y.contains(name), self.minuends, self.subtrahend.contains(name))
-        for minuend in self.minuends:
-            if minuend.contains(name):
+        #return reduce(lambda x, y: x or y.contains(name), self.subtrahends, self.minuend.contains(name))
+        for subtrahend in self.subtrahends:
+            if subtrahend.contains(name):
                 return True
-        return False or self.subtrahend.contains(name)
+        return False or self.minuend.contains(name)
     def unapply(self, funcs):
-        self.subtrahend = self.subtrahend.unapply(funcs)
-        self.minuends = [minuend.unapply(funcs) for minuend in self.minuends]
+        self.minuend = self.minuend.unapply(funcs)
+        self.subtrahends = [subtrahend.unapply(funcs) for subtrahend in self.subtrahends]
         return self
     def apply(self, name, term):
-        self.subtrahend = self.subtrahend.apply(name, term)
-        self.minuends = [minuend.apply(name, term) for minuend in self.minuends]
+        self.minuend = self.minuend.apply(name, term)
+        self.subtrahends = [subtrahend.apply(name, term) for subtrahend in self.subtrahends]
         return self
 
 class Product(Term):
@@ -250,6 +258,7 @@ class Product(Term):
         return '*'.join([('(%s)' if isprecop(factor, self.__class__) else '%s') % str(factor) for factor in self.factors])
     def eval(self, vars, funcs):
         nums, factors = splitnums([factor.eval(vars, funcs) for factor in self.factors])
+        factors = reduce(lambda agg, term: agg+term.factors if isinstance(term, Product) else agg+[term], factors, [])
         if len(nums) == 0:
             return Product(factors)
         for factor in nums:
@@ -260,6 +269,8 @@ class Product(Term):
             return Number(num)
         if num != 1:
             factors.append(Number(num))
+        if len(factors) == 1:
+            return factors[0]
         return Product(factors)
     def contains(self, name):
         for factor in self.factors:
@@ -291,7 +302,7 @@ class Quotient(Term):
             if isinstance(dividend, Number):
                 dividend = Number(float(dividend)/num)
             else:
-                divisors.append(num)
+                divisors.append(Number(num))
         if len(divisors) == 0:
             return dividend
         return Quotient(dividend, divisors)
@@ -474,11 +485,20 @@ opprec[Power] = (Sum, Difference, Product, Quotient)
 opprec[Negation] = (Sum, Difference, Product, Quotient, Power)
 
 class Plotter():
-    def __init__(self, inputs={}, integrate=False, intargs=('x', 'y'), intstart=0.0, intend=1.0, intstops=5):
+    def __init__(self, filename=None, inputs={}, integrate=False, intargs=('x', 'y'), intstart=0.0, intend=1.0, intstops=5):
         intargs = intargs # Variables over which to integrate numerically.
-        if type(inputs) == list:
+        filters = []
+        #filters = ['Function 5']
+        if filename:
+            try:
+                with open(filename, 'r') as f:
+                    fstr = f.read()
+                    inputs = re.findall(r'"\[(?:.*?)\]"', fstr, re.S)
+            except:
+                raise
+        if inputs and type(inputs) == list:
             inputs = {'Function %d' % (i+1): input for i, input in enumerate(inputs)}
-        self.parsers = {name: Parser(name, input, integrate, intargs, intstart, intend, intstops) for name, input in inputs.items()} # One Parser object for each input string to be parsed.
+        self.parsers = {name: Parser(name, input, integrate, intargs, intstart, intend, intstops) for name, input in inputs.items() if not filters or name in filters} # One Parser object for each input string to be parsed.
 
     def setvar(self, *args):
         self.setvars(args)
@@ -499,9 +519,6 @@ class Plotter():
         [self.parsers[name].gp(command) for name in self.parsers]
 
     def plot(self, *args):
-        [self.parsers[name].plot(*args) for name in self.parsers]
-
-    def replot(self, *args):
         [self.parsers[name].plot(*args) for name in self.parsers]
 
 class Parser():
@@ -548,7 +565,7 @@ class Parser():
         newmode = ''
         result = [[]]
         for c in input:
-            if (c in nums and mode != 'var') or (c in ['e', 'E'] and mode == 'num') or (c == '-' and (mode == 'num' and len(current) > 0 and current[-1] in ['e', 'E'] or mode != 'num' and not isnum(current))):
+            if (c in nums and mode != 'var') or (c in ['e', 'E'] and mode == 'num'):
                 newmode = 'num'
             elif c in alpha or (c in nums and mode == 'var'):
                 if mode == 'num':
@@ -625,6 +642,20 @@ class Parser():
 
         # Classification of operators and combined tokens
         offset = 0
+        for i in opdict['-']:
+            try:
+                i -= offset
+                if i < 0 or isop(parsed[i+1]):
+                    raise InvalidFormatError(deepjoin(tlist), "Negaion is a unary operator, requires one argument to the right.")
+                if i == 0 or isop(parsed[i-1]):
+                    parsed[i:i+2] = [Negation(parsed[i+1])]
+                    del opdict['-'][i+offset]
+                    offset += 1
+                    for key in opdict:
+                        opdict[key] = [n-1 if n > i else n for n in opdict[key]]
+            except IndexError:
+                raise InvalidFormatError(deepjoin(tlist), "Negation is a unary operator, requires one argument to the right.")
+        offset = 0
         for i in sorted(opdict['**']+opdict['^']):
             try:
                 i -= offset
@@ -659,7 +690,7 @@ class Parser():
                         parsed[i-1:i+2] = [Quotient(parsed[i-1], [parsed[i+1]])]
                 offset += 2
                 for key in opdict:
-                    opdict[key] = [n-2 if n > i else n for n in opdict[key]]
+                    opdict[key] = [n-2 if n >= i else n for n in opdict[key]]
             except IndexError:
                 if i in opdict['*']:
                     raise InvalidFormatError(deepjoin(tlist), "Multiplication is a binary operator and requires one argument to the left and one to the right.")
@@ -669,7 +700,7 @@ class Parser():
         for i in sorted(opdict['+']+opdict['-']):
             try:
                 i -= offset
-                if i <= 0 or isop(parsed[i-1]) or isop(parsed[i+1]):
+                if i <= 0 and isop(parsed[i-1]) or i < 0 and isop(parsed[i+1]):
                     if i in opdict['+']:
                         raise InvalidFormatError(deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
                     elif i in opdict['-']:
@@ -682,13 +713,13 @@ class Parser():
                         parsed[i-1:i+2] = [Sum([parsed[i-1], parsed[i+1]])]
                 elif i in opdict['-']:
                     if isinstance(parsed[i-1], Difference):
-                        parsed[i-1].minuends.append(parsed[i+1])
+                        parsed[i-1].subtrahends.append(parsed[i+1])
                         parsed[i-1:i+2] = [parsed[i-1]]
                     else:
                         parsed[i-1:i+2] = [Difference(parsed[i-1], [parsed[i+1]])]
                 offset += 2
                 for key in opdict:
-                    opdict[key] = [n-2 if n > i else n for n in opdict[key]]
+                    opdict[key] = [n-2 if n >= i else n for n in opdict[key]]
             except IndexError:
                 if i in opdict['+']:
                     raise InvalidFormatError(deepjoin(tlist), "Addition is a binary operator and requires one argument to the left and one to the right.")
@@ -748,11 +779,12 @@ class Parser():
                 funcdict[expr.name] = arglist
         return exprs
 
-    def unapplyall(self, *args):
+    def unapplyall(self, vars):
         """Unapplies all parsed terms w.r.t. all combinations of arguments provided in *args. Results are stored for further application."""
-        combinations = set([makeargs(arg1, arg2, 'x', 'y', sort=True) for arg1 in args for arg2 in args])
+        #vars = [var for var in vars if not self.integrate or var not in self.intargs]
+        combinations = set([makeargs((str(var1), str(var2)), sort=True) for var1 in vars for var2 in vars])
         for arglist in combinations:
-            self.funclists[filter(lambda arg: arg not in ['x', 'y'], arglist)] = self.unapply(*arglist)
+            self.funclists[filter(lambda arg: arg not in self.intargs, arglist)] = self.unapply(*arglist+self.intargs)
 
     def numintegrate(self, expr, integrate, intargs, start, end, stops):
         """Numerical integration of expr, w.r.t. args and at the points provided in subs."""
@@ -760,9 +792,9 @@ class Parser():
         subs = None
         area = None
         if type(integrate) == bool and integrate:
-            if all(expr.contains(arg) for arg in intargs):
+            if len(intargs) == 2:
                 integrate = 'RTriangle'
-            elif any(expr.contains(arg) for arg in intargs):
+            elif len(intargs) == 1:
                 integrate = 'Line'
             else:
                 integrate = 'Self'
@@ -791,9 +823,7 @@ class Parser():
                 expr.args = filter(lambda arg: str(arg) not in intargs, expr.args)
                 if len(expr.args) == 0:
                     expr = VariableAssignment(expr.name, expr.term)
-            #self.log(expr.term)
             expr.term = expand(expr.term)
-            #self.log(expr.term)
         else:
             expr = expand(expr)
         return expr
@@ -803,7 +833,9 @@ class Parser():
         lines = input.strip().splitlines()
         terms = []
         term = ''
-        for i in range(len(lines)):
+        total = len(lines)
+        nestlevel = 0
+        for i in range(total):
             line = lines[i].strip()
             if line == '' or line.startswith('>'):
                 continue
@@ -813,10 +845,9 @@ class Parser():
                 line = line[:-2]
             elif line.endswith('\\'):
                 line = line[:-1]
-            elif i < len(lines)-1:
-                line = line+", "
+            elif i < total-1:
+                line = line+" "
             line = line.replace('[', '_').replace(']', '')
-            nestlevel = 0
             for c in line:
                 if c == '(':
                     nestlevel += 1
@@ -831,20 +862,26 @@ class Parser():
                     term = ''
                 else:
                     term += c
-            if nestlevel > 0:
-                raise InvalidFormatError(input, "Parenthesis mismatch.")
-            terms.append(term)
+        terms.append(term)
+        if nestlevel > 0:
+            raise InvalidFormatError(input, "Parenthesis mismatch.")
         return terms
 
     def parseterm(self, term):
         """Parses a single term into an internal expression"""
+        #self.log(term)
+        #self.log(deepjoin(self.tokenize(term)))
+        #self.log(str(self.realize(self.tokenize(term))).replace('.0', '').replace('**', '^'))
+        #self.log('Checks:')
+        #self.log(term == deepjoin(self.tokenize(term)))
+        #self.log(term == str(self.realize(self.tokenize(term))).replace('.0', '').replace('**', '^'))
         return self.realize(self.tokenize(term))
 
     def parselist(self, l):
         """Takes a list of terms and parses them."""
         return [self.parseterm(el) for el in l]
 
-    def parse(self, input):
+    def parse(self, input, unapply=True):
         """Parse a comma-separated list of terms."""
         self.exprlist = self.parselist(self.formatinput(input))
         for expr in self.exprlist:
@@ -853,14 +890,9 @@ class Parser():
                     del self.vardict[expr.name]
                 except KeyError:
                     pass
+        if unapply:
+            self.unapplyall(self.vardict)
         #self.exprlist = [expr for expr in self.exprlist if self.exprlist[-1].contains(expr.name) or expr == self.exprlist[-1]]
-
-    def fullparse(self, input, args=None):
-        """Parses a comma-seperated list of terms, stores the results and then unapplies all combinations of the provided arguments and stores the results separately."""
-        self.parse(input)
-        if not args:
-            args = tuple(self.getvars())
-        self.unapplyall(*args)
 
     def setvar(self, *args):
         """Packs the variables from the argument tuple and sets it to setvars as a list of length one."""
@@ -903,6 +935,7 @@ class Parser():
     def evalfuncs(self, sargs):
         vardict = {name: val for name, val in deepcopy(self.vardict).items() if name not in sargs and (not self.integrate or name not in self.intargs)}
         funcdict = {}
+        exprs = deepcopy(self.funclists[sargs])
         return [expr.eval(vardict, funcdict) for expr in deepcopy(self.funclists[sargs])]
 
     def plot(self, args=None, integrate=None, intargs=None, intstart=None, intend=None, intstops=None):
@@ -958,11 +991,12 @@ class Parser():
             commands.append('set pm3d')
             commands.append('set dummy %s, %s' % args)
 
-        commands.extend([str(expr) for expr in self.plotexprs])
-        commands[-1] = str(plotexpr)
+        commands.extend([str(expr) for expr in self.plotexprs if isinstance(expr, (VariableAssignment, FunctionAssignment))])
+        if isinstance(plotexpr, (VariableAssignment, FunctionAssignment)):
+            commands[-1] = str(plotexpr)
 
         # Determine the plot command based on variables and the last expression.
-        plotcmd = '%s %%s ls 1' % ('splot' if len(args) == 2 else 'plot')
+        plotcmd = '%s %%s ls 1 title "%s"' % ('splot' if len(args) == 2 else 'plot', self.name)
         if isinstance(plotexpr, FunctionAssignment):
             plotargs = [str(parg) for parg in plotexpr.args]
             fargs = filter(lambda arg: arg in plotargs, args)
@@ -972,7 +1006,7 @@ class Parser():
         else:
             commands.append(plotcmd % plotexpr)
 
-        #self.log('Gnuplot commands:\n%s\n' % '\n'.join([command for command in commands]))
+        self.log('Gnuplot commands:\n%s\n' % '\n'.join([command for command in commands]))
 
         # Send the formatted commands to Gnuplot instance.
         [self.gp(command) for command in commands]
@@ -983,12 +1017,14 @@ if __name__ == '__main__':
     termstring2 = 't1 = 2, t3 = 2*h[1]+x, t65 = u[1]**2, t122 = y + t65*t3^t1'
     print('Not supposed to be run on its own. Demonstrative run using the following inputs:\nA-Term:\n%s\n\nTerm Ber:\n%s\n' % ('\n'.join(termstring1.split(', ')), '\n'.join(termstring2.split(', '))))
 
-    p = Plotter({'A-Term': termstring1, 'Term Ber': termstring2}, integrate=True)
-    p1 = p.parsers['A-Term']
-    p2 = p.parsers['Term Ber']
+    #p = Plotter({'A-Term': termstring1, 'Term Ber': termstring2}, integrate=True)
+    #p1 = p.parsers['A-Term']
+    #p2 = p.parsers['Term Ber']
 
-    p.setvars(('h_1', 5), ('h_2', 3.1), ('u_1', 4), ('u_2', -0.2))
-    p.plot(('h_1', 'h_2'))
+    #p.setvars(('h_1', 5), ('h_2', 3.1), ('u_1', 4), ('u_2', -0.2))
+    #p.plot(('h_1', 'h_2'))
+
+    p = Parser()
 
     import readline
     import code
