@@ -86,10 +86,6 @@ class SimplePlotter:
         self.tfunc = []
         for _f in self.func:
             f = _f[:]
-            # for [a, s] in self.tauxiliaries:
-            #     print "replacing %s by %s"%(a, s)
-            #     print "\\b%s\\b"%re.escape(a)
-            #     f = re.sub(("\\b%s\\b"%re.escape(a)), s, f)
             print "Result: " + f
             def replace_x_and_y(f, xr, yr):
                 result = re.sub(r"\bx\b", xr, f)
@@ -115,8 +111,6 @@ class SimplePlotter:
         for (i,r) in enumerate(self.yradios):
             if r.get_active():
                 yvar = self.variables[i]
-        # subs.append((xvar, "x"))
-        # subs.append((yvar, "y"))
         self.plotcommand = "splot " if xvar!=yvar else "plot "
         # fill xyfunc with data for gnuplot
         self.xyfunc = []
@@ -132,6 +126,7 @@ class SimplePlotter:
         def get_hrange():
             return "[%d:%d]"%(self.y_lower_spin.get_value(), self.y_upper_spin.get_value())
         xpos = ypos = 0
+        self.adjustvars()
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
             print ("set dummy %s, %s"%(xvar, yvar))
@@ -151,7 +146,6 @@ class SimplePlotter:
                 gp("set xrange " + get_urange())
                 gp("set autoscale")
                 gp("unset pm3d")
-            self.adjustvars()
             print "\n"
             print "Function %d:"%(i)
             print self.xyfunc[i]
@@ -176,9 +170,8 @@ class SimplePlotter:
         for gp in self.gnuplot:
             gp("set samples %d"%self.samples_spin.get_value())
             gp("set isosamples %d"%self.isosamples_spin.get_value())
-            gp("set xrange [%d:%d]"%(self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
-            gp("set yrange [%d:%d]"%(self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
             gp("replot")
+        self.adjust_and_plot(None)
 
     def init_plottings_page(self):
         self.tv_plottings = gtk.TreeView()
