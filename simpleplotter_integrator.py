@@ -158,7 +158,7 @@ class SimplePlotter:
             print self.xyfunc[i]
             print "\n"
             gp("set style line 1 linecolor rgb \"black\"")
-            gp('%s %s ls 1 title "%d. Function"' % (self.plotcommand, self.xyfunc[i], i))
+            gp('%s %s ls 1 title "%s"' % (self.plotcommand, self.xyfunc[i], self.funcnames[i]))
 
     def adjustment_from_range(self,r):
         """Returns a gtk.Adjustment from a "gnuplot"-range.
@@ -197,7 +197,7 @@ class SimplePlotter:
             model.append([a, b])
         model.append(["---","-------------"]);
         for (i,f) in enumerate(self.func):
-            model.append(["%d. func"%i, str(f)])
+            model.append([self.funcnames[i], str(f)])
 
     def init_settings_page(self):
         """Fills the settings page."""
@@ -375,6 +375,26 @@ class SimplePlotter:
             * funcitons: List of strings representing stuff to be plotted
             * auxiliaries: List of strings of the form "varname=varcomputationstuff" ("intermediate vars")
         """
+        self.funcnames = ["1st Basis function, x-momentum", 
+        "1st Basis function, y-momentum", 
+        "2nd Basis function, x-momentum", 
+        "2nd Basis function, y-momentum", 
+        "3rd Basis function, x-momentum", 
+        "3rd Basis function, y-momentum", 
+        "4th Basis function, x-momentum", 
+        "4th Basis function, y-momentum", 
+        "5th Basis function, x-momentum", 
+        "5th Basis function, y-momentum", 
+        "6th Basis function, x-momentum", 
+        "6th Basis function, y-momentum", 
+        "7th Basis function, x-momentum", 
+        "7th Basis function, y-momentum", 
+        "8th Basis function, x-momentum", 
+        "8th Basis function, y-momentum", 
+        "9th Basis function, x-momentum", 
+        "9th Basis function, y-momentum", 
+        "10th Basis function, x-momentum", 
+        "10th Basis function, y-momentum"]
         # Configure Gnuplot settings
         self.urange = urange
         self.hrange = hrange
