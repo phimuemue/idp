@@ -1006,7 +1006,7 @@ class Parser():
         else:
             commands.append(plotcmd % plotexpr)
 
-        self.log('Gnuplot commands:\n%s\n' % '\n'.join([command for command in commands]))
+        #self.log('Gnuplot commands:\n%s\n' % '\n'.join([command for command in commands]))
 
         # Send the formatted commands to Gnuplot instance.
         [self.gp(command) for command in commands]
