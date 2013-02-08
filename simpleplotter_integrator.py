@@ -1,5 +1,4 @@
 # TODO:
-# * make main routine such that it accepts a variable number of functions, plotting each one in a single gnuplot window
 # * correct order of variables
 # * possibility to choose domain for plot variables/parameters dynamically
 # * could be nice: possibility to send custom command to (all instances of) gnuplot
@@ -59,8 +58,6 @@ class SimplePlotter:
                 avg_vars = [s.get_value() for (_i,s) in enumerate(self.sliders)
                             if self.variables[_i].lower().startswith(self.xvar[0].lower())]
                 avg_vars = float(sum(avg_vars))/len(avg_vars)
-                print  "set arrow 1 from %f,-100000 to %f,100000"%(avg_vars, avg_vars)
-                self.gnuplot[i]("set arrow 1 from %f,-100000 to %f,100000"%(avg_vars, avg_vars))
             self.gnuplot[i]('replot')
 
     def adjustvars(self):
@@ -134,10 +131,12 @@ class SimplePlotter:
             return "[%d:%d]"%(self.x_lower_spin.get_value(), self.x_upper_spin.get_value())
         def get_hrange():
             return "[%d:%d]"%(self.y_lower_spin.get_value(), self.y_upper_spin.get_value())
+        xpos = ypos = 0
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
             print ("set dummy %s, %s"%(xvar, yvar))
             gp("set dummy %s, %s"%(xvar, yvar))
+            gp("set terminal wxt size 640 480")
             for (a, s) in self.auxiliaries:
                 gp("%s=%s"%(a,s))
             if xvar != yvar:
@@ -196,8 +195,15 @@ class SimplePlotter:
         for (a,b) in self.auxiliaries:
             model.append([a, b])
         model.append(["---","-------------"]);
+        def short_funcname(i):
+            result = "%d. BF, "%(i/2+1)
+            if i%2==0:
+                result = result + "x"
+            else:
+                result = result + "y"
+            return result
         for (i,f) in enumerate(self.func):
-            model.append([self.funcnames[i], str(f)])
+            model.append([short_funcname(i), str(f)])
 
     def init_settings_page(self):
         """Fills the settings page."""
@@ -370,7 +376,7 @@ class SimplePlotter:
         self.init_plottings_page()
         self.window.show_all()
 
-    def __init__(self, functions, auxiliaries, urange="[-5:5]", hrange="[8:12]"):
+    def __init__(self, functions, auxiliaries, urange="[-5:5]", hrange="[8:12]", foldername="TODOdatum"):
         """Initialization of the window.
             * funcitons: List of strings representing stuff to be plotted
             * auxiliaries: List of strings of the form "varname=varcomputationstuff" ("intermediate vars")
@@ -395,6 +401,7 @@ class SimplePlotter:
         "9th Basis function, y-momentum", 
         "10th Basis function, x-momentum", 
         "10th Basis function, y-momentum"]
+        self.foldername = foldername
         # Configure Gnuplot settings
         self.urange = urange
         self.hrange = hrange
@@ -409,7 +416,7 @@ class SimplePlotter:
             self.gnuplot[-1]("set xrange " + urange)
             self.gnuplot[-1]("set yrange " + hrange)
             self.gnuplot[-1]("set pm3d")
-        self.foldername = time.strftime("%Y%m%d%H%M%S")
+        #self.foldername = time.strftime("%Y%m%d%H%M%S")
         self.img_extension = "pdf"
         # Initialize Gtk layout
         self.init_gtk_layout()
@@ -457,12 +464,14 @@ if __name__ == "__main__":
     parser.add_option("--urange", default="[-5:5]")
     parser.add_option("--hrange", default="[8:12]")
     parser.add_option("-f", "--file", default="norm_stuff.txt")
+    parser.add_option("-r", "--result", default="TODO_datum")
     opts, args = parser.parse_args()
     stuff = read_file(opts.file)
     functions, auxiliaries = read_file(opts.file)
     simpleplotter = SimplePlotter(
                                   functions, auxiliaries,
-                                  urange=opts.urange, hrange=opts.hrange
+                                  urange=opts.urange, hrange=opts.hrange,
+                                  foldername = opts.result
             )
     simpleplotter.main()
 
