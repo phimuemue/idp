@@ -130,6 +130,10 @@ class SimplePlotter:
                 tmp = tmp.replace(s,t)
             self.xyfunc.append(tmp)
         # adjust gnuplot properly
+        def get_urange():
+            return "[%d:%d]"%(self.x_lower_spin.get_value(), self.x_upper_spin.get_value())
+        def get_hrange():
+            return "[%d:%d]"%(self.y_lower_spin.get_value(), self.y_upper_spin.get_value())
         for i in xrange(len(self.func)):
             gp = self.gnuplot[i]
             print ("set dummy %s, %s"%(xvar, yvar))
@@ -139,12 +143,13 @@ class SimplePlotter:
             if xvar != yvar:
                 gp("set xlabel \"%s\""%xvar)
                 gp("set ylabel \"%s\""%yvar)
-                gp("set xrange " + self.urange)
-                gp("set yrange " + self.hrange)
+                gp("set xrange " + get_urange())
+                gp("set yrange " + get_hrange())
                 gp("set pm3d")
             else:
                 gp("unset ylabel")
                 gp("set xlabel \"%s\""%xvar)
+                gp("set xrange " + get_urange())
                 gp("set autoscale")
                 gp("unset pm3d")
             self.adjustvars()
@@ -152,6 +157,7 @@ class SimplePlotter:
             print "Function %d:"%(i)
             print self.xyfunc[i]
             print "\n"
+            gp("set style line 1 linecolor rgb \"black\"")
             gp('%s %s ls 1 title "%d. Function"' % (self.plotcommand, self.xyfunc[i], i))
 
     def adjustment_from_range(self,r):
