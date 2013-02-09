@@ -31,7 +31,9 @@ class SimplePlotter:
     def destroy(self, widget, data=None):
         """Things to do when window is destroyed."""
         if os.path.exists(self.foldername):
-            texfile = open(self.foldername + "/tex.tex", "w")
+            print "Seems that you exported some pictures. Generating appropriate tex-file..."
+            texfilename = self.foldername + "/tex.tex"
+            texfile = open(texfilename, "w")
             texfile.write("%% %d variables in here:\n" % len(self.variables))
             vars_values = zip(self.variables, [s.get_value() for s in self.sliders])
             vars_values = map(lambda x: "%s = %s"%(x[0], str(x[1])), vars_values)
@@ -39,13 +41,15 @@ class SimplePlotter:
             texfile.write("% " + ", ".join(vars_values)+"\n")
             texfile.write("\\begin{figure}[ht]\n")
             texfile.write("\\centering\n")
-            for f in glob.glob(self.foldername+"/*.%s"%self.img_extension):
+            for f in sorted(glob.glob(self.foldername+"/*.%s"%self.img_extension)):
+                print "Found picture %s"%(f)
                 texfile.write("  \\subfigure[] {\n")
                 texfile.write("    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n"%f[:-(len(self.img_extension)+1)])
                 texfile.write("  }\n")
             texfile.write("\\caption{}\n")
             texfile.write("\\label{}\n")
             texfile.write("\\end{figure}\n")
+            print "Generated tex-file %s"%(texfilename)
         gtk.main_quit()
 
     def redraw(self, adj, data=None):
@@ -269,12 +273,6 @@ class SimplePlotter:
         # an auxiliary function to sort the variables properly
         def varkey(x):
             return x
-            # if len(x)==1:
-            #     return x
-            # tmp = x.split("_")
-            # print "Varname: " + x
-            # print tmp
-            # return (int(tmp[1]),255-ord(tmp[0]))
         self.variables.sort(key=varkey)
         self.sliders = []
         self.xradios = []
@@ -320,7 +318,6 @@ class SimplePlotter:
             gp("set output \"%s/%sf%d.pdf\""%(self.foldername,filename,i))
         gp("replot")
         gp("set term wxt")
-            
 
     def on_export(self, widget):
         if not os.path.exists(self.foldername):
@@ -369,7 +366,7 @@ class SimplePlotter:
         self.init_plottings_page()
         self.window.show_all()
 
-    def __init__(self, functions, auxiliaries, urange="[-5:5]", hrange="[8:12]", foldername="TODOdatum"):
+    def __init__(self, functions, auxiliaries, urange="[-5:5]", hrange="[8:12]", foldername=None):
         """Initialization of the window.
             * funcitons: List of strings representing stuff to be plotted
             * auxiliaries: List of strings of the form "varname=varcomputationstuff" ("intermediate vars")
@@ -394,7 +391,10 @@ class SimplePlotter:
         "9th Basis function, y-momentum", 
         "10th Basis function, x-momentum", 
         "10th Basis function, y-momentum"]
-        self.foldername = foldername
+        if foldername == None:
+            self.foldername = time.strftime("%Y%m%d%H%M%S")
+        else:
+            self.foldername = foldername
         # Configure Gnuplot settings
         self.urange = urange
         self.hrange = hrange
@@ -409,7 +409,6 @@ class SimplePlotter:
             self.gnuplot[-1]("set xrange " + urange)
             self.gnuplot[-1]("set yrange " + hrange)
             self.gnuplot[-1]("set pm3d")
-        #self.foldername = time.strftime("%Y%m%d%H%M%S")
         self.img_extension = "pdf"
         # Initialize Gtk layout
         self.init_gtk_layout()
@@ -450,14 +449,13 @@ def read_file(path):
             functions.append(prettify_function(line.strip()))
     return (functions, auxiliaries)
 
-            
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("--urange", default="[-5:5]")
     parser.add_option("--hrange", default="[8:12]")
     parser.add_option("-f", "--file", default="norm_stuff.txt")
-    parser.add_option("-r", "--result", default="TODO_datum")
+    parser.add_option("-r", "--result", default=None)
     opts, args = parser.parse_args()
     stuff = read_file(opts.file)
     functions, auxiliaries = read_file(opts.file)
