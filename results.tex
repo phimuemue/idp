@@ -305,7 +305,9 @@ To do that, we first have to get rid of the various terms containing $\mathbf{q}
   \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i\left(x,y\right)
 \end{equation}
 
-$\mathbf{q}_i$ are the $\mathbf{q}$ values at the corresponding support points. Since those do not depend on the position, it allows us to move them out of the integral, leaving integrals over various combinations of basis functions, which are all independant of $\mathbf{q}$, and hence can be precomputed.
+$\mathbf{q}_i$ are the $\mathbf{q}$-values at the corresponding support points. Since those do not depend on the position, it allows us to move them out of the integral, leaving integrals over various combinations of basis functions, which are all independant of $\mathbf{q}$, and hence can be precomputed.
+
+Please note that $\mathbf{q}$ (and all $\mathbf{q}_i$) contain three components: The height $h$, the momentum in $x$-direction $u_x$ and the $y$-momentum $u_y$. This means, equation (\ref{eq:support-point-approximation}) yields three equations (one for each of the components).
 
 \subsection{Mass matrix}
 \label{sec:mass-matrix}
@@ -391,14 +393,14 @@ We will use this approximation later in the transition from (\ref{sec:third-inte
 An analogous approach to the second and third line gives us:
 
 \begin{eqnarray}
-  \label{sec:third-integral-second-line-1}
+  \label{eq:third-integral-second-line-1}
   \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = &
   \int_T
   \begin{pmatrix}
     \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
   \end{pmatrix}
   \cdot \nabla \phi_i \, dT \approx \\
-  \label{sec:third-integral-second-line-2}
+  \label{eq:third-integral-second-line-2}
   & = &
   \int_T
   \begin{pmatrix}
@@ -1141,6 +1143,163 @@ We started as in section \ref{sec:setting-all-support-points-to-the-same-value} 
 \label{sec:conslusions}
 
 What all plots have in common is the fact that it looks as if towards the boundarys the error grows. However, trying to determine an exact formula for the deviation is impracticle due to the amount of variables that all interact with each other, and may even be impossible.
+
+\part{Stiffness matrix reloaded}
+\label{part:stiffness-matrix}
+
+\section{Point-wise approximation vs. exact solution}
+\label{sec:point-wise-appr-vs-exact-solution-intro}
+
+We are now going to compare another term used in the approximation: The $u_x$-component (resp. the $u_y$-component) in the stiffness matrix. Recall from section \ref{sec:stiffness-second-line}, and in particular from equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}) that we use a point-wise approximation to compute the emerging integrals.
+
+Here are -- for reference -- the equations we used. For the second line (i.e. for the $u_x$-component), we had:
+
+\begin{eqnarray}
+  \label{eq:third-integral-second-line-1-analysis-part}
+  \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = &
+  \int_T
+  \begin{pmatrix}
+    \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+  \end{pmatrix}
+  \cdot \nabla \phi_i \, dT \approx \\
+  \label{eq:third-integral-second-line-2-analysis-part}
+  & = &
+  \int_T
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_i}{x} \\
+    \pd{\phi_i}{y}
+  \end{pmatrix} dT \\
+  & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+  & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT 
+\end{eqnarray}
+
+Let us for a moment focus on the integrand and assign a name to it, since we will use it later:
+
+\begin{equation}
+  \label{eq:point-wise-approx-result-second-line}
+  \overline{F_2(\mathbf{q})} \cdot \nabla \phi =
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_i}{x} \\
+    \pd{\phi_i}{y}
+  \end{pmatrix}
+\end{equation}
+
+The computation for the $u_y$-component was as follows:
+
+\begin{eqnarray*}
+  \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
+  \int_T
+  \begin{pmatrix}
+    \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+  \end{pmatrix}
+  \cdot \nabla \phi_i \, dT \approx \\
+  & = & \int_T
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_i}{x} \\
+    \pd{\phi_i}{y}
+  \end{pmatrix} dT \\
+  & = & \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+  & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+\end{eqnarray*}
+
+Similarily to the second line, we define $\overline{F_3(\mathbf{q})} \cdot \nabla \phi$.
+
+\begin{equation}
+  \label{eq:point-wise-approx-result-third-line}
+  \overline{F_3(\mathbf{q})} \cdot \nabla \phi =
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_i}{x} \\
+    \pd{\phi_i}{y}
+  \end{pmatrix}
+\end{equation}
+
+
+Remember that -- from line (\ref{eq:third-integral-second-line-1-analysis-part}) to line (\ref{eq:third-integral-second-line-2-analysis-part}) -- we used the point-wise approximation explained in section \ref{sec:stiffness-second-line}.
+
+This approximation of course implies some loss of precision. We will now look what the equations would look like if we did \emph{not} use a point-wise approximation, but instead looked at the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} solution.
+
+So, let us introspect what the terms would look like if we used the original substitutions (derived in equation (\ref{eq:support-point-approximation})). We do so by exemplaryly examining the third component:
+
+\begin{eqnarray*}
+  \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
+  \int_T
+  \begin{pmatrix}
+    \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+  \end{pmatrix}
+  \cdot \nabla \phi_i \, dT \approx \\
+  & = & \int_T
+  \begin{pmatrix}
+    \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \\ \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2
+  \end{pmatrix}
+  \cdot \nabla \phi_i \, dT = \\
+  & = & 
+  \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{x} + \\
+  & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
+\end{eqnarray*}
+
+Note that the approximation used here is clearly another one than that used in equation (\ref{eq:third-integral-second-line-1-analysis-part}).
+
+As you can see, these term quickly become huge and difficult to handle manually. To simplify reading, we introduce three shorthand notations for the three components of $\mathbf{q}$:
+
+\begin{equation}
+  \label{eq:substitutions-for-all-components-with-hat}
+  \widehat{h} := \sum_{j=1}^n \phi_j h_j \quad 
+  \widehat{u_y} := \sum_{j=1}^n \phi_j u_{y,j} \quad
+  \widehat{u_x} := \sum_{j=1}^n \phi_j u_{x,j}
+\end{equation}
+
+Let us now focus purely on the integrant (i.e. we omit all the integral signs) and use these substitutions. Then, we can simply rewrite the above term to the following simpler form (we use a similar hat-notation for the whole flux-function to indicate the approximation):
+
+\begin{equation}
+  \label{eq:stiffness-analysis-third-line-exact-approx-simple}
+  \widehat{F_3\left(\mathbf{q}\right)} \cdot \nabla \phi= 
+  \frac{\widehat{u_x} \cdot \widehat{u_y} }{\widehat{h}} \cdot \pd{\phi_i}{x} + 
+  \left( \frac{\widehat{u_y}^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{y}
+\end{equation}
+
+Similarily, we can deduce this for the second (i.e. the $u_x$-)component:
+
+\begin{equation}
+  \label{eq:stiffness-analysis-second-line-exact-approx-simple}
+  \widehat{F_2(\mathbf{q})} \cdot \nabla \phi = 
+  \left( \frac{\widehat{u_x}^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{x} +
+  \frac{\widehat{u_x} \cdot \widehat{u_y} }{\widehat{h}} \cdot \pd{\phi_i}{y}
+\end{equation}
+
+\paragraph{What will we compare?}
+
+We have now derived an exact solution and one that uses a point-wise approximation. Recall that we gave a name to the integrands that were obtained using the point-wise apprimation:  $\overline{F_2(\mathbf{q})} \cdot \nabla \phi$ resp. $\overline{F_3(\mathbf{q})} \cdot \nabla \phi$. The exact integrands were defined to be $\widehat{F_2(\mathbf{q})} \cdot \nabla \phi$ resp. $\widehat{F_3(\mathbf{q})} \cdot \nabla \phi$.
+
+We now compare these two solutions. Therefore, we consider the (absolute value) difference between the overline- and the hat-variant of the corresponding components, and compute the $L_1$-norm (i.e. we integrate over the domain (the triangle)).
+
+To cut a long story short, that means we compute the following two things:
+
+\begin{eqnarray*}
+  \int_T \left| \overline{F_2(\mathbf{q})} \cdot \nabla \phi - \widehat{F_2(\mathbf{q})} \cdot \nabla \phi \right| \, dT, \quad
+  \int_T \left| \overline{F_3(\mathbf{q})} \cdot \nabla \phi - \widehat{F_3(\mathbf{q})} \cdot \nabla \phi \right| \, dT 
+\end{eqnarray*}
+
+It is obvious that these terms could be simplified a bit (e.g. by ``factoring out'' $\nabla \phi$), but since the terms are very complicated anyway, we omit such manual simplifications and delegate tasks of this kind to Maple (or any equivalent computer algebra system).
 
 \bibliography{bibliography}
 
