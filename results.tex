@@ -1304,6 +1304,11 @@ It is obvious that these terms could be simplified a bit (e.g. by ``factoring ou
   SE_x \\ SE_y
 \end{pmatrix}$.
 
+In the above setting, we showed how we can compute $SE$. As you can see, it involves the term $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That is, we get these two error terms ($SE_x$, $SE_y$) \emph{for each} basis functions. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i=
+\begin{pmatrix}
+  SE_x^i \\ SE_y^i
+\end{pmatrix}$ is the error term for basis function $\phi_i$.
+
 
 \section{How to evaluate $SE$?}
 \label{sec:how-to-evaluate-e}
@@ -1372,6 +1377,52 @@ Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one singl
 Using this technique, one can -- just in the one-dimensional case -- adjust the number of subtriangles to take into account. The more subtriangles are used, the more accurate is the approximation of the integral.
 
 During our studies we recognized that $r=5$ (i.e. using 25 subtriangles) suffices most of the time. Higher values for $r$ result only in minor changes to the plots.
+
+\section{First insights}
+\label{sec:stiffness-analysis-first-touch}
+
+So, let us start out with some simple graphs obtained by plotting the terms $SE^i =
+\begin{pmatrix}
+  SE_x^i \\ SE_y^i
+\end{pmatrix}$ for $i=1,\dots, n$.
+
+\subsection{Order 1 -- standard values}
+
+\subsubsection{Varying $h_1$}
+
+We start out by considering a quite simple example: Basis functions of order 1. As you hopefully remember from section \ref{sec:basis-functions-choice}, choosing order 1 require 3 basis functions $\phi_1,\dots,\phi_n$. These depend upon the three coordinates (height, $x$-momentum, $y$-momentum) of three support points. We now want to research the impact of the value $h_1$ (i.e. the height of the first support point) on the error terms.
+
+We therefore fix the following values:
+
+\begin{eqnarray*}
+  & h_2 = 10 & h_3 = 10 \\
+  u_{x,1} = 0 & u_{x,2} = 0 & u_{x,3} = 0 \\
+  u_{y,1} = 0 & u_{y,2} = 0 & u_{y,3} = 0
+\end{eqnarray*}
+
+As you can see, the variable $h_1$ is explicitly omitted in the above setting, since we will leave this as the single varying component in this subexperiment. That means, we research how a variation of $h_1$ results in the plots.
+
+\input{standardwerte_nach_h1_ord1/tex}
+
+To see the resulting plots, please have a look at figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE^1$ (resulting from the term with basis function $\phi_1$, consisting of error in $x$-momentum and $y$-momentum) is 0 (at least within the depicted range of $h_1$)\todo{Wie schauts mit weiterer range aus?}.
+
+Moreover, the error in the $y$-momentum of $SE^2$ and $SE^3$ is zero as well.
+
+The most interesting in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the ones for the $x$-momentum of $SE^2$ and $SE^3$. You can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). It looks somewhat like a parabola \todo{checken, ob das mathematisch belegbar ist}.
+
+The fact that the error is minimal for $h_1=10$ is interesting for the following reason: We fixed as well $h_2$ as $h_3$ to have the value 10, so it \emph{might} be advantageous if the third height (in this case $h_1$) has value 10, as well. The error term grows up to about 5.
+
+From now on, we will omit plots that depict an error plot (such as in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} all subfigures except the ones for the $x$-momentum of $SE^2$ and $SE^3$).
+
+\subsubsection{Varying $u_{x,1}$}
+
+We leave all values as they were, but instead take $u_{x,1}$ as the varying component. The results are depicted in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}.
+
+\input{standardwerte_nach_ux_ord1/tex}
+
+As you can see, we omitted all plots except those for the $x$-momentum for the second and third base function. These two look -- again -- like parabolas. But note that the error produced lies somewhere between 0 and 0.5.
+
+Moreover, it is again convenient that the minimum error occurs for $u_{x,1}=0$ since these equals the values of $u_{x,2}$ and $u_{x,3}$.
 
 \bibliography{bibliography}
 
