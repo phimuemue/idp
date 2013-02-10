@@ -178,6 +178,8 @@ class SimplePlotter:
         self.adjust_and_plot(None)
 
     def toggle_func(self, widget, path, model):
+        if model[path][3]==-1:
+            return
         model[path][2] = not model[path][2]
         if not model[path][2]:
             self.gnuplot[model[path][3]] = lambda x:x
