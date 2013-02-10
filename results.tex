@@ -1416,13 +1416,39 @@ From now on, we will omit plots that depict an error plot (such as in figure \re
 
 \subsubsection{Varying $u_{x,1}$}
 
-We leave all values as they were, but instead take $u_{x,1}$ as the varying component. The results are depicted in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}.
+We leave all values as they were and additionally set $h_1=10$, but instead take $u_{x,1}$ as the varying component. The results are depicted in figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
 
 \input{standardwerte_nach_ux_ord1/tex}
 
 As you can see, we omitted all plots except those for the $x$-momentum for the second and third base function. These two look -- again -- like parabolas. But note that the error produced lies somewhere between 0 and 0.5.
 
 Moreover, it is again convenient that the minimum error occurs for $u_{x,1}=0$ since these equals the values of $u_{x,2}$ and $u_{x,3}$.
+
+\subsubsection{Varying $u_{y,1}$}
+
+Up to now, always the $x$-momentum of the second and third basis function were the most interesting terms to look at. Let us now see, what happens if we choose $u_{y,1}$ as varying comopnent.
+
+\input{standardwerte_nach_uy_ord1/tex}
+
+The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. As one could have suspected, the plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$-momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
+
+\subsubsection{Varying $u_{x,1}$ and $u_{y,1}$}
+
+While we restricted ourselves to \emph{one single} varying component, we will now have a look at the situation that appears if we fix all but \emph{two} variables -- namely $u_{x,1}$ and $u_{y,1}$.
+
+We will use the following variable assignment for the remaining variables:
+
+\begin{eqnarray*}
+  h_1 = 10 & h_2 = 10 & h_3 = 10 \\
+   & u_{x,2} = 0 & u_{x,3} = 0 \\
+   & u_{y,2} = 0 & u_{y,3} = 0
+\end{eqnarray*}
+
+The resulting plots are shown in figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}.
+
+\input{standardwerte_nach_ux1_uy1_ord1/tex}
+
+What's interesting here is that \emph{all} error plots seem to have characteristic shapes (i.e. no error is always 0). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$.
 
 \bibliography{bibliography}
 
