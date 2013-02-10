@@ -177,21 +177,33 @@ class SimplePlotter:
             gp("replot")
         self.adjust_and_plot(None)
 
+    def toggle_func(self, widget, path, model):
+        model[path][2] = not model[path][2]
+        if not model[path][2]:
+            self.gnuplot[model[path][3]] = lambda x:x
+        else:
+            print "Making gnuplot!"
+            self.gnuplot[model[path][3]] = Gnuplot.Gnuplot(debug=0)
+            self.do_settings(None)
+
     def init_plottings_page(self):
         self.tv_plottings = gtk.TreeView()
         tv = self.tv_plottings
         sw = gtk.ScrolledWindow()
         self.plottings_box.pack_start(sw)
         sw.add(tv)
-        self.plottings_model = gtk.ListStore(str, str)
+        self.plottings_model = gtk.ListStore(str, str, bool, int)
         model = self.plottings_model
         tv.set_model(self.plottings_model)
+        visibility_toggler = gtk.CellRendererToggle()
+        tv.append_column(gtk.TreeViewColumn("Draw", visibility_toggler, active = 2))
         tv.append_column(gtk.TreeViewColumn("Name", gtk.CellRendererText(), text = 0))
         tv.append_column(gtk.TreeViewColumn("Term", gtk.CellRendererText(), text = 1))
+        visibility_toggler.connect("toggled", self.toggle_func, model)
         tv.set_headers_visible(True)
         for (a,b) in self.auxiliaries:
-            model.append([a, b])
-        model.append(["---","-------------"]);
+            model.append([a, b, True, -1])
+        model.append(["---","-------------",False,-1]);
         def short_funcname(i):
             result = "%d. BF, "%(i/2+1)
             if i%2==0:
@@ -200,7 +212,7 @@ class SimplePlotter:
                 result = result + "y"
             return result
         for (i,f) in enumerate(self.func):
-            model.append([short_funcname(i), str(f)])
+            model.append([short_funcname(i), str(f), True, i])
 
     def init_settings_page(self):
         """Fills the settings page."""
