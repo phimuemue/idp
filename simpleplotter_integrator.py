@@ -33,7 +33,7 @@ class SimplePlotter:
         if os.path.exists(self.foldername):
             print "Seems that you exported some pictures. Generating appropriate tex-file..."
             texfilename = self.foldername + "/tex.tex"
-            texfile = open(texfilename, "w")
+            texfile = open(texfilename, "a")
             texfile.write("%% %d variables in here:\n" % len(self.variables))
             vars_values = zip(self.variables, [s.get_value() for s in self.sliders])
             vars_values = map(lambda x: "%s = %s"%(x[0], str(x[1])), vars_values)
