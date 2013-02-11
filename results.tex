@@ -1402,7 +1402,7 @@ We therefore fix the following values:
 
 As you can see, the variable $h_1$ is explicitly omitted in the above setting, since we will leave this as the single varying component in this subexperiment. That means, we research how a variation of $h_1$ results in the plots.
 
-\input{standardwerte_nach_h1_ord1/tex}
+\input{standardwerte_nach_h1_ord1/tex.tex}
 
 To see the resulting plots, please have a look at figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE^1$ (resulting from the term with basis function $\phi_1$, consisting of error in $x$-momentum and $y$-momentum) is 0 (at least within the depicted range of $h_1$)\todo{Wie schauts mit weiterer range aus?}.
 
@@ -1418,7 +1418,7 @@ From now on, we will omit plots that depict an error plot (such as in figure \re
 
 We leave all values as they were and additionally set $h_1=10$, but instead take $u_{x,1}$ as the varying component. The results are depicted in figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
 
-\input{standardwerte_nach_ux_ord1/tex}
+\input{standardwerte_nach_ux_ord1/tex.tex}
 
 As you can see, we omitted all plots except those for the $x$-momentum for the second and third base function. These two look -- again -- like parabolas. But note that the error produced lies somewhere between 0 and 0.5.
 
@@ -1428,7 +1428,7 @@ Moreover, it is again convenient that the minimum error occurs for $u_{x,1}=0$ s
 
 Up to now, always the $x$-momentum of the second and third basis function were the most interesting terms to look at. Let us now see, what happens if we choose $u_{y,1}$ as varying comopnent.
 
-\input{standardwerte_nach_uy_ord1/tex}
+\input{standardwerte_nach_uy_ord1/tex.tex}
 
 The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. As one could have suspected, the plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$-momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
 
@@ -1446,9 +1446,57 @@ We will use the following variable assignment for the remaining variables:
 
 The resulting plots are shown in figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}.
 
-\input{standardwerte_nach_ux1_uy1_ord1/tex}
+\input{standardwerte_nach_ux1_uy1_ord1/tex.tex}
 
 What's interesting here is that \emph{all} error plots seem to have characteristic shapes (i.e. no error is always 0). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$.
+
+\subsection{Order 1 --- non-standard values}
+\label{sec:stiffness-analysis-ord1-non-std-values}
+
+While we -- up to now -- considered situations in which all fixed heights resp. momentums were equal. We will now focus on what happens if we choose for example $h_2=10$ and $h_3=11$.
+
+\subsubsection{Different heights}
+\label{sec:stiffness-analysis-ord1-differing-h2-10-h3-11}
+
+Let us begin with a setting that employs different heights, and assigns all momentums to 0. We want to investigate the plots for varying $h_1$.
+
+\input{ord1_differing_h2_h3_10_11/tex}
+
+You can see the resulting plots in figure \ref{fig:stiffneses-analysis-ord1-h2-10-h3-11}. We only show the plots for the errors in $x$-momentum of second and third basis function since all other plots show a line going through 0.
+
+What is remarkable about these plots is the fact that the error is now minimal for a value of $h_1\approx 10.5$ -- which corresponds to the average value of $h_2$ and $h_3$. However, note that now the minimal error is roughly 1, while in the previous setting ($h_2=h_3=10$) the minimal error was 0.
+
+Let us investigate, if we can find a minimal at $h_1=11$ error if we do the same experiment for $h_2=10$ and $h_3=12$.
+
+\input{ord1_differing_h2_h3_10_12/tex}
+
+You can see the resulting plots in figure \ref{fig:stiffneses-analysis-ord1-h2-10-h3-12}. And, indeed, the error is now minimal at $h_1\approx 11$ -- the average of $h_2=10$ and $h_3=12$. The minimal error grew up to 4.
+
+Let's see what it looks like if we now set $h_2=12$ and $h_1=10$.
+
+\input{ord1_differing_h2_h3_12_10/tex}
+
+The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10} and they look as expected: The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two.
+
+Let us now inspect the following scenario: We set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$. Let's see if this renders true\dots
+
+\input{ord1_differing_h2_h3_12_8/tex.tex}
+
+As you can see in figure \ref{fig:ord1_differing_h2_h3_12_8}, the error is still minimal for a value of $h_1=\frac{12+8}{2}=\frac{h_2+h_3}{2}=10$, but the shape looks different than before. Moreover, the error terms grow up to about 19. Even more blatant, the minimal error grew to up over 16.
+
+\paragraph{Conclusion}
+
+What one can guess from the things seen so far is that -- if we leave all $u_{x,i}=u_{y,i}=0$ ($i=1\dots n$) and take $h_1$ as axis variable -- the error seems to be minimal if $h_1\approx \frac{h_2+h_3}{2}$.
+
+Of course, it is an interesting question if this can be proven (or even disproven) analytically. To examine this, we take -- as an example -- the error in the $x$-momentum of the third basis function and set all $u_{x,i}=u_{y,i}=0$. 
+
+Unfortunately, even with with the help of Maple, we were not able to verify this result. The reason is that it is not true that the error is minimal if $h_1$ is the average of $h_2$ and $h_3$. To illustrate this, let us consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
+
+\input{ord1_differing_h2_h3_164/tex.tex}
+
+Figure \ref{fig:ord1_differing_h2_h3_164} shows the plot for this situation. As you can see, the error is \emph{not} minimal for $h_1=10$, even if the average of $h_2=16$ and $h_3=4$ is 10 in this case. Moreover, as one would expect, the error terms become extremely large in this case (from 145 to 147 in the range from 8 to 12).
+
+\todo{Kann man das nicht doch irgendwie herrechnen?}
 
 \bibliography{bibliography}
 
