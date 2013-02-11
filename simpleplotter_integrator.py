@@ -47,7 +47,7 @@ class SimplePlotter:
                 texfile.write("    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n"%f[:-(len(self.img_extension)+1)])
                 texfile.write("  }\n")
             texfile.write("\\caption{}\n")
-            texfile.write("\\label{}\n")
+            texfile.write("\\label{fig:%s}\n"%self.foldername)
             texfile.write("\\end{figure}\n")
             print "Generated tex-file %s"%(texfilename)
         gtk.main_quit()
