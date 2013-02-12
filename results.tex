@@ -1448,7 +1448,7 @@ The resulting plots are shown in figure \ref{fig:standardwerte_nach_ux1_ux2_ord1
 
 \input{standardwerte_nach_ux1_uy1_ord1/tex.tex}
 
-What's interesting here is that \emph{all} error plots seem to have characteristic shapes (i.e. no error is always 0). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$.
+What's interesting here is that \emph{all} error plots seem to have characteristic shapes (i.e. no error is always 0). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Please also note the similarity resp. symmetry between some plots. We will later omit plots that are too similar or mirrored.
 
 \subsection{Order 1 --- non-standard values}
 \label{sec:stiffness-analysis-ord1-non-std-values}
@@ -1498,7 +1498,65 @@ Figure \ref{fig:ord1_differing_h2_h3_164} shows the plot for this situation. As 
 
 \todo{Kann man das nicht doch irgendwie herrechnen?}
 
+\subsubsection{Different $x$-momentums}
+\label{sec:stiffness-analysis-ord1-nonstandard-diff-ux}
+
+We are now going doing another experiment: We set all height values to 10, and see what happens if we choose different values for the $u_{x,i}$. For a reference what happens for $u_{x,2}=u_{x,3}=0$, please see figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
+
+We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting can be seen in figure \ref{fig:ord1_ux1_differing_ux2_ux3}. Again, only the $x$-momentums for the second and third basis function are plot-worthy, since all other plots show a line througt 0.
+
+\input{ord1_ux1_differing_ux2_ux3/tex.tex}
+
+As you can see, the error again describes a paraboly-like shape, having its minimum value at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$.
+
+Of course, we could play this game further, but this would not give so many insights since altering $u_{x,2}$ and $u_{x,3}$ (while using $u_{x,1}$ as axis variable) affects the plots in a similar way to that one if we change $h_2$ and $h_3$ (using $h_1$ as axis variable).
+
+\subsubsection{Different $y$-momentums}
+\label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
+
+The last thing to be done in analogy to the previous experiments would be the following: We should use $u_{y,1}$ as axis variable, and play around with $u_{y,2}$ and $u_{y,3}$. However, we do not show any plots for this scenario, since they do not provide any useful new information. The only difference to before is that when we use $u_{y,1}$ as axis variable, the $y$-momentums of the first and the second basis function are the interesting plots, while all others show 0.
+
+\subsubsection{Different $x$- and $y$-momentums}
+\label{sec:stiffness-analysis-different-ux-uy-momentums}
+
+We now generalize the previous experiments in the sense that we alter some $x$-momentums \emph{and} some $y$-momentums.
+
+To visualize these settings, we come back to three-dimensional plots that have two axis variables. To see the ``original situation'' (i.e. heights are 10, momentums are 0), please refer to figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, where we always had a minimal error at $u_{x,1}=u_{y,1}=0$. However, from now on, since the plots are partially highly symmetric, we will omit some of them, stating which plots we omitted and why.
+
+Remember that if we solely changed either the $x$-impulse values resp. the $y$-impulse values, the error (depending on the only non-fixed $x$- resp. $y$-momentum) reached its minimum roughly at the average of the other two $x$- resp. $y$-momentums --- as long as they did not differ too strongly. Will we be able to observe a similar behaviour if we change two variables? 
+
+To answer this question, let us start out by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
+
+\input{ord1_varying_ux1_uy1_differing_ux2_uy2_1_1/tex.tex}
+
+Consider the plot for the $x$-momentum of the first basis function: You can guess the two bends (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$- resp. $y$-momentums). If you compare this subplot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, you can see that ``originally'' the bends were quite sharp, while now they have been kind of smoothed. Moreover, the error term reaches now the 0.5 mark, while previously only came up to about 0.4.
+
+In general (i.e. considering all subplots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), you can guess a slight ``displacement'' of all the plots. This displacement is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$- resp. $y$-momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
+
+However, with $u_{x,2}=u_{y,2}=1$ one can still see the strong connection to the original plots. 
+
+Let us now choose some more extreme values: $u_{x,2}=3$ and $u_{y,2}=3$. The corresponding plots can be found in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_3_3}.
+
+\input{ord1_varying_ux1_uy1_differing_ux2_uy2_3_3/tex.tex}
+
+Now, the deformations in the plots are stronger. While the overal error grew quite a lot, we can still say that it is minimal roughly at $u_{x,1}=\frac{u_{x,2}+u_{x,3}}{2}$ and $u_{y,1}=\frac{u_{y,2}+u_{y,3}}{2}$.
+
+What we can assume from the plots we have seen so far is the following: The more the moments differ, the worse our approximation (i.e. the bigger the error) will get.
+
+To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=1$ assuming that this should roughly look like the ``original situation'' where all moments were set to 0 -- except that we suspect the error to be minimal at $u_{x,1}=1$ and $u_{y,1}=1$.
+
+\input{ord1_varying_ux1_uy1_differing_ux2_uy2_ux3_uy3_1_1_1_1/tex.tex}
+
+Voilà: The plots confirm our suspiction: The error is minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ --- it even is 0.
+
 \bibliography{bibliography}
+
+\appendix{}
+
+\part{Cheat sheet}
+\label{part:cheat-sheet}
+
+\todo{Cheat sheet für alle Abkürzungen, Variablen, etc.}
 
 \end{document}
 
