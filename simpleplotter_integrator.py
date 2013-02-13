@@ -135,7 +135,7 @@ class SimplePlotter:
             gp = self.gnuplot[i]
             print ("set dummy %s, %s"%(xvar, yvar))
             gp("set dummy %s, %s"%(xvar, yvar))
-            gp("set terminal wxt size 640 480")
+            gp("set terminal wxt size 640,480")
             for (a, s) in self.auxiliaries:
                 gp("%s=%s"%(a,s))
             if xvar != yvar:
@@ -329,7 +329,7 @@ class SimplePlotter:
             gp("set output \"%s/%sf%d.jpg\""%(self.foldername,filename,i))
         if term=="pdf":
             gp("set term pdfcairo size 5.0in,3.0in")
-            gp("set output \"%s/%sf%d.pdf\""%(self.foldername,filename,i))
+            gp("set output \"%s/%sf%02d.pdf\""%(self.foldername,filename,i))
         gp("replot")
         gp("set term wxt")
 
