@@ -5,6 +5,8 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{booktabs}
 
 \usepackage{tikz}
 \usepackage{subfigure}
@@ -176,6 +178,48 @@ For low degree polynomials, we choose specific distribution of the support point
 \end{description}
 
 For higher degree, we choose the points derived by Dunavant (see \cite{dunavant1985high}). The distributions of support points are illustrated in figure \ref{fig:triangle-support-points-var-degrees}.
+
+\subsection{Summary: Basis functions for low degrees}
+\label{sec:basis-functions-for-low-degrees}
+
+To have an impression of what the basis functions look like, please have a look at table \ref{tab:basis-functions-for-low-degrees}. It shows the basis functions for orders 0 to 2.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{cclll}
+    \toprule
+    Order & $n$ & Basis functions & $x$-derivative & $y$-derivative \\
+    \midrule
+    \multirow{1}{*}{0} & 1 & 1 \\
+    \midrule
+    \multirow{3}{*}{1} & \multirow{3}{*}{3} & $1-2y$ & 0 & -2\\
+    &  & $-1+2x+2y$ & 2 & 2\\
+    &  & $1-2x$ & -2 & 0\\
+    \midrule
+    \multirow{6}{*}{2} & \multirow{6}{*}{6} & $1-3\,x-3\,y+2\,{x}^{2}+4\,xy+2\,{y}^{2}$ & $-3+4x+4y$ & $-3+4x+4y$\\ 
+& & $4\,x-4\,{x}^{2}-4\,xy$ & $4-8x-4y$ & $-4x$\\ 
+& & $-x+2\,{x}^{2}$ & $-1+4x$ & 0\\ 
+& & $4\,xy$ & $4y$ & $4x$\\ 
+& & $-y+2\,{y}^{2}$ & $0$ & $-1+4y$\\ 
+& & $4\,y-4\,xy-4\,{y}^{2}$ & $-4y$ & $4-4x-8y$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Basis functions for low degree. Note that these basis functions are not the only possible choosings. We, however, will focus on them throughout this text. The second column ($n$) denotes the number of basis functions used for the respective order.}
+  \label{tab:basis-functions-for-low-degrees}
+\end{table}
+
+\subsubsection{Symmetry in basis function}
+\label{sec:basis-function-symmetry}
+
+If you consider table \ref{tab:basis-functions-for-low-degrees}, you'll recognize that there are some symmetries for the basis functions. We will point out some of these symmetries here because they will make our lives easier later.
+
+\paragraph{Order 1}
+
+For order 1, we see that the third and the first basis function look somewhat similar. To be precise, we recognize that $\phi_1(x,y)=\phi_3(y,x)$. This symmetry -- of course -- also holds for the respective derivatives.
+
+\paragraph{Order 2}
+
+For second order, the thing involves a bit more elaboration, but is still easy. We obtain that $\phi_2(x,y)=\phi_6(y,x)$ and $\phi_3(x,y)=\phi_5(y,x)$. The basis functions $\phi_1$ and $\phi_4$ can be interpreted to be ``symmetric to themselves'': $\phi_1(x,y)=\phi_1(y,x)$ and $\phi_4(x,y)=\phi_4(y,x)$.
 
 \section{Discontinuous Galerkin}
 \label{sec:discontinuous-galerkin}
