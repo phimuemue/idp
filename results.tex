@@ -1422,8 +1422,29 @@ Using this technique, one can -- just in the one-dimensional case -- adjust the 
 
 During our studies we recognized that $r=5$ (i.e. using 25 subtriangles) suffices most of the time. Higher values for $r$ result only in minor changes to the plots.
 
-\section{First insights}
+\section{First insights for order 1}
 \label{sec:stiffness-analysis-first-touch}
+
+We begin our analysis by investingating the case for order-1-basis functions (i.e. we have three basis functions $\phi_1,\dots,\phi_3$). For one second, please go back to table \ref{tab:basis-functions-for-low-degrees} and see that we derived some ``symmetries'' between the basis functions. We found out that $\phi_1(x,y)=\phi_3(y,x)$ and $\phi_2(x,y)=\phi_x(y,x)$. We will now exploit these facts.
+
+Consider e.g. the term $SE_x^i = \int_T \left| \left(\overline{F_2(\mathbf{q})}-\widehat{F_2(\mathbf{q})}\right) \cdot \nabla\phi_i(x,y) \right|$. The terms $\overline{F_2(\mathbf{q})}$ and $\widehat{F_2(\mathbf{q})}$ depend on the height and momentum values of the single support points (i.e. on the values $h_1,\dots,h_3$, $u_{x,1},\dots,u_{x,3}$ and $u_{y,1},\dots,u_{y,3}$.
+
+The essence of how we can easily exploit this symmetry is the following: I we have two symmetric basis funcions $\phi_i$ and $\phi_j$ and consider $SE^i$, then we can compute the following:
+
+\begin{equation*}
+  SE^i(h, u_x, u_y) = SE^j(h, u_y, u_x)
+\end{equation*}
+
+To examine this, you can look at equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}.
+
+This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$-momentum since these plots can be constructed from their counterpart (i.e. the error in $x$-momentum for basis function $\phi_i$ is the same as the error in $y$-momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
+
+For the resulting plots, if $\phi_i$ and $\phi_j$ are symmetric, this means the following:
+
+\begin{itemize}
+\item 2d-plots for the error of the $x$-momentum for basis function $\phi_i$ looks exactly like the 2d-plot for the error of the $y$-momentum for basis function $\phi_j$.
+\item 3d-plots for the error of the $x$-momentum for basis function $\phi_i$ looks exactly like the 3d-plot for the error of the $y$-momentum for basis function $\phi_j$ with exchanged axes.
+\end{itemize}
 
 So, let us start out with some simple graphs obtained by plotting the terms $SE^i =
 \begin{pmatrix}
@@ -1595,7 +1616,7 @@ To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y
 
 Voilà: The plots confirm our suspiction: The error is minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ --- it even is 0.
 
-\subsection{Order 2}
+\section{Order 2}
 \label{sec:stiffness-analyis-ord-2}
 
 \subsubsection{Default values}
