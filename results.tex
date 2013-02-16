@@ -1435,16 +1435,9 @@ The essence of how we can easily exploit this symmetry is the following: I we ha
   SE^i(h, u_x, u_y) = SE^j(h, u_y, u_x)
 \end{equation*}
 
-To examine this, you can look at equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}.
+To examine this, you can look at equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others (in fact they might even be equal). This will later enable us to use some plots for multiple situations.
 
-This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$-momentum since these plots can be constructed from their counterpart (i.e. the error in $x$-momentum for basis function $\phi_i$ is the same as the error in $y$-momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
-
-For the resulting plots, if $\phi_i$ and $\phi_j$ are symmetric, this means the following:
-
-\begin{itemize}
-\item 2d-plots for the error of the $x$-momentum for basis function $\phi_i$ looks exactly like the 2d-plot for the error of the $y$-momentum for basis function $\phi_j$.
-\item 3d-plots for the error of the $x$-momentum for basis function $\phi_i$ looks exactly like the 3d-plot for the error of the $y$-momentum for basis function $\phi_j$ with exchanged axes.
-\end{itemize}
+%This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$-momentum since these plots can be constructed from their counterpart (i.e. the error in $x$-momentum for basis function $\phi_i$ is the same as the error in $y$-momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
 
 So, let us start out with some simple graphs obtained by plotting the terms $SE^i =
 \begin{pmatrix}
