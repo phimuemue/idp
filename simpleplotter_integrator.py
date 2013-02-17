@@ -39,7 +39,7 @@ class SimplePlotter:
             vars_values = map(lambda x: "%s = %s"%(x[0], str(x[1])), vars_values)
             print vars_values
             texfile.write("% " + ", ".join(vars_values)+"\n")
-            texfile.write("\\begin{figure}[ht]\n")
+            texfile.write("\\begin{figure}[h!]\n")
             texfile.write("\\centering\n")
             for f in sorted(glob.glob(self.foldername+"/*.%s"%self.img_extension)):
                 print "Found picture %s"%(f)
@@ -48,7 +48,10 @@ class SimplePlotter:
                 texfile.write("  }\n")
             texfile.write("\\caption{}\n")
             texfile.write("\\label{fig:%s}\n"%self.foldername)
-            texfile.write("\\end{figure}\n")
+            texfile.write("\\end{figure}\n\n")
+            texfile.write("%%% Local Variables:\n")
+            texfile.write("%%% TeX-master: \"../results.tex\"\n")
+            texfile.write("%%% End:\n")
             print "Generated tex-file %s"%(texfilename)
         gtk.main_quit()
 
