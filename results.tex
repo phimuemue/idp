@@ -59,6 +59,12 @@
 
 \maketitle{}
 
+\todo{Before submission, run
+  \begin{center}
+    \texttt{grep -nri 'todo' . --include=*.tex}
+  \end{center}
+and see if all todo's are done}
+
 \begin{abstract}
   The question how to simulate waves on a computer is subject to many difficulties. At several points in the process approximations have to be made to be feasibly computable. One of those points is the discretization of the continuous space into finite segments, usually triangles. Another is the simulation of the domain of each segment by sampling specific points within that segment. Yet another point is not as obvious, and occurs when trying to calculate a complex integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation has to be made.
 
@@ -1424,12 +1430,12 @@ Using this technique, one can -- just in the one-dimensional case -- adjust the 
 
 During our studies we recognized that $r=5$ (i.e. using 25 subtriangles) suffices most of the time. Higher values for $r$ result only in minor changes to the plots.
 
-\section{First insights for order 1}
+\section{Order 1}
 \label{sec:stiffness-analysis-first-touch}
 
 We begin our analysis by investingating the case for order-1-basis functions (i.e. we have three basis functions $\phi_1,\dots,\phi_3$). For one second, please go back to table \ref{tab:basis-functions-for-low-degrees} and see that we derived some ``symmetries'' between the basis functions. We found out that $\phi_1(x,y)=\phi_3(y,x)$ and $\phi_2(x,y)=\phi_x(y,x)$. We will now exploit these facts.
 
-Consider e.g. the term $SE_x^i = \int_T \left| \left(\overline{F_2(\mathbf{q})}-\widehat{F_2(\mathbf{q})}\right) \cdot \nabla\phi_i(x,y) \right|$. The terms $\overline{F_2(\mathbf{q})}$ and $\widehat{F_2(\mathbf{q})}$ depend on the height and momentum values of the single support points (i.e. on the values $h_1,\dots,h_3$, $u_{x,1},\dots,u_{x,3}$ and $u_{y,1},\dots,u_{y,3}$.
+Consider e.g. the term $SE_x^i = \int_T \left| \left(\overline{F_2(\mathbf{q})}-\widehat{F_2(\mathbf{q})}\right) \cdot \nabla\phi_i(x,y) \right|$. The terms $\overline{F_2(\mathbf{q})}$ and $\widehat{F_2(\mathbf{q})}$ depend on the height and momentum values of the single support points (i.e. on the values $h_1,\dots,h_3$, $u_{x,1},\dots,u_{x,3}$ and $u_{y,1},\dots,u_{y,3}$).
 
 The essence of how we can easily exploit this symmetry is the following: I we have two symmetric basis funcions $\phi_i$ and $\phi_j$ and consider $SE^i$, then we can compute the following:
 
@@ -1611,22 +1617,78 @@ To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y
 
 Voilà: The plots confirm our suspiction: The error is minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ --- it even is 0.
 
+\clearpage{}
+
 \section{Order 2}
 \label{sec:stiffness-analyis-ord-2}
 
-\subsubsection{Default values}
-\label{sec:stiffness-analyiss-ord2-default-h1}
+We will now examine the error plots for order 2. Remember from table \ref{tab:basis-functions-for-low-degrees} that we have now 6 basis functions $\phi_1,\dots,\phi_6$. Besides making the approximation more complicated, this gives rise to 12 plots (we have the errors in $x$-momentum and in $y$-momentum for each of the basis functions).
+
+Similar to before, we will use only one plot for several error plots if they all look the same.
+
+\subsection{Standard values}
+\label{sec:stiffness-analyiss-ord2-default}
+
+\subsubsection{Varying $h_1$}
+\label{sec:stiffness-analysis-ord2-default-var-h1}
+
+Again, we start out by using the default values: All heights are set to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. You can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}. 
 
 \input{ord2_varying_h1_default/tex.tex}
 
+As you recognize, we always have a parabola-like shape (except for the $x$-momentum of the 5th and the $y$-momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (e.g. for the $x$-momentum of the 2nd basis function). We -- similarily to before -- recognize that the error is always minimal (in fact even 0) for $h_1=10$.
+
+\subsection{Non-standard values}
+\label{sec:stiffness-analysis-ord2-nondefault}
+
+We will now alter some values and see how this affects our error plots. We will do similar alterations to the ones used in section \ref{sec:stiffness-analysis-ord1-non-std-values} and see if we have a similar behaviour to before.
+
+\subsubsection{Altering heights}
+\label{sec:stiffness-analysis-ord2-nondefault-altering-heights}
+
+\paragraph{Altering $h_2$}
+
+Let us first do a simple modification to our standard setting: We choose $h_2=11$ and leave all other height values (i.e. $h_3$ to $h_6$ fixed at 10). The resulting plots can be seen in figure \ref{fig:ord2_varying_h1_h2_11}. 
+
 \input{ord2_varying_h1_h2_11/tex.tex}
+
+As you can see, we have a strongly different situation here compared to that for order 1, where we set one single height to 11 (\todo{Section-referenz}): None of the plots has kept its parabola-like shape, they look much more like 4th-degree polynomials.
+
+This is traceable, since we use 2nd-order approximations for $h, u_x$ and $u_y$ (because we use 2nd-order basis functions) that are multiplied with each other. This results in the fourth degree.
+
+While in the 1st-order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), we now can not explore this behaviour for some of the functions.
+
+Remarkably, the errors for the $y$-momentum of the 3rd basis function and the $x$-momentum of the 5th basis function is still 0.\todo{Kann man dies irgendwie herrechnen?}
+
+\paragraph{Altering $h_3$}
+
+We now want to get insights whether modifying another height value results in remarkably different plots. Therefore, we choose $h_3=11$ and consider the resulting plots in figure \ref{fig:ord2_varying_h1_h3_11}.
 
 \input{ord2_varying_h1_h3_11/tex.tex}
 
+First of all: The errors in $y$-momentum of the 3rd basis function and the $x$-function of the 5th basis function is still 0. \todo{Herrechenbar?} 
+
+However, all other plots resemble sort of polynomials of 4th degree. Again, we can not be sure that the minimum error is at the average of the height values $h_2$ to $h_6$. Moreover, all these errors are \emph{never} 0.
+
+What we can see from these plots is that it has a significant influence which of the height values we modify. Even if we still look at 4th degree polynomials, they have significantly different shapes than the ones obtained by setting $h_2=11$.
+
+\paragraph{Altering all height values}
+
+We now set all heights $h_2$ to $h_6$ to the value 11. We do so, because we hope to see that we now again obtain parabola-like shapes (as in the case where all heights were set to 10). The results are shown in figure \ref{fig:ord2_varying_h1_h2-h6_11} and confirm our expectations: We have parabola-like shapes, whose minima are without exception at $h_1=11$.
+
 \input{ord2_varying_h1_h2-h6_11/tex.tex}
+
+Even the opening of the parabola looks very similar, and the minimum error is 0.
+
+\paragraph{Differing heights}
+
+Up to now we examined what happens if all heights are equal or at most one height differs from the other ones. We now do an experiment where we set $h_2=h_3=11$ and $h_4=h_5=h_6=9$. The corresponding plots are shown in figure \ref{fig:ord2_varying_h1_h2-h3_11_h4-h6_9}.
 
 \input{ord2_varying_h1_h2-h3_11_h4-h6_9/tex.tex}
 
+Now we have the first time where some plots look drastically different than before.
+
+\cleardoublepage{}
 
 \bibliography{bibliography}
 
