@@ -1196,6 +1196,8 @@ We started as in section \ref{sec:setting-all-support-points-to-the-same-value} 
 
 What all plots have in common is the fact that it looks as if towards the boundarys the error grows. However, trying to determine an exact formula for the deviation is impracticle due to the amount of variables that all interact with each other, and may even be impossible.
 
+\clearpage{}
+
 \part{Stiffness matrix reloaded}
 \label{part:stiffness-matrix}
 
@@ -1338,7 +1340,7 @@ Similarily, we can deduce this for the second (i.e. the $u_x$-)component:
   \frac{\widehat{u_x} \cdot \widehat{u_y} }{\widehat{h}} \cdot \pd{\phi_i}{y}
 \end{equation}
 
-\paragraph{What will we compare?}
+\subsection{What will we compare?}
 
 We have now derived an exact solution and one that uses a point-wise approximation. Recall that we gave a name to the integrands that were obtained using the point-wise apprimation:  $\overline{F_2(\mathbf{q})} \cdot \nabla \phi$ resp. $\overline{F_3(\mathbf{q})} \cdot \nabla \phi$. The exact integrands were defined to be $\widehat{F_2(\mathbf{q})} \cdot \nabla \phi$ resp. $\widehat{F_3(\mathbf{q})} \cdot \nabla \phi$.
 
@@ -1361,6 +1363,40 @@ In the above setting, we showed how we can compute $SE$. As you can see, it invo
   SE_x^i \\ SE_y^i
 \end{pmatrix}$ is the error term for basis function $\phi_i$.
 
+\subsection{The easy ones!}
+\label{sec:stiffness-analysis-easy-ones}
+
+Before we start, we will have a look at a special case. Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
+
+Mathematically, we have then
+\begin{align*}
+  \pd{\phi_X}{x} &= 0 \\
+  \pd{\phi_Y}{y} &= 0 
+\end{align*}
+
+Let us start out by examining the error of the $y$-momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right)$. Note that $\mathtt{DIFFY}$ is a two-component vector containing an $x$ and an $y$-coordinate.
+
+\begin{align*}
+  SE_y^X &= \int_T \left| \left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right) \cdot \nabla \phi_X \right| \, dT = \\
+  &= \int_T \left| \mathtt{DIFFY} \cdot \nabla \phi_X \right|\,dT = \\
+  &= \int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} + \mathtt{DIFFY}_Y \cdot \underbrace{\pd{\phi_X}{y}}_{=0} \right) \right| \, dT = \\
+  &=\int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} \right) \right| \, dT
+\end{align*}
+
+So, let us now consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$-component between the exact solution and the point-wise approximation:
+
+\begin{equation*}
+  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u_x}^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
+\end{equation*}
+with $\widehat h, \widehat{u_x}, \widehat{u_y}$ as defined in equation (\ref{eq:substitutions-for-all-components-with-hat}).
+
+If we choose all momentums to be 0 (which is a quite common scenario in our test cases), then we can simplify $\mathtt{DIFF}_Y$ to the following:
+
+\begin{equation*}
+  \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right)
+\end{equation*}
+
+Remember that $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$.\todo{Kann man das weiter ausrechnen?}
 
 \section{How to evaluate $SE$?}
 \label{sec:how-to-evaluate-e}
@@ -1692,7 +1728,7 @@ Now we have the first time where some plots look drastically different than befo
 
 \bibliography{bibliography}
 
-\appendix{}
+\appendix
 
 \part{Cheat sheet}
 \label{part:cheat-sheet}
