@@ -1445,9 +1445,79 @@ After this, we filter out the unnecessary centers:
   \right\}
 \end{equation*}
 
-\todo{Figure describing how triangle is split up.}
-
 If we use this definition, we obtain $r^2$ subtriangles of equal size.
+
+\begin{figure}[h!]
+  \newcommand{\mytriangle}[3]{
+    \begin{scope}[scale=#1*2, xshift=#2cm,yshift=#3cm]
+      \draw(0,0) -- (1,0) -- (0,1) -- (0,0);
+    \end{scope}
+  }
+  \centering
+  \subfigure[One ``subtriangle'' ($r=1$)]{
+    \begin{tikzpicture}
+      \mytriangle{1}{0}{0};
+    \end{tikzpicture}
+  }
+  \subfigure[Four subtriangles ($r=2$)]{
+    \begin{tikzpicture}
+      \mytriangle{1}{0}{0};
+      \mytriangle{.5}{0}{0};
+      \mytriangle{.5}{0}{1};
+      \mytriangle{.5}{1}{0};
+    \end{tikzpicture}
+  }
+  \subfigure[Nine subtriangles ($r=3$)]{
+    \begin{tikzpicture}
+      \mytriangle{1}{0}{0};
+      \mytriangle{.3333}{0}{0};
+      \mytriangle{.3333}{0}{1};
+      \mytriangle{.3333}{1}{0};
+      \mytriangle{.3333}{0}{2};
+      \mytriangle{.3333}{2}{0};
+      \mytriangle{.3333}{1}{1};
+    \end{tikzpicture}
+  }
+  \subfigure[Sixteen subtriangles ($r=4$)]{
+    \begin{tikzpicture}
+      \mytriangle{1}{0}{0};
+      \mytriangle{.25}{0}{0};
+      \mytriangle{.25}{0}{1};
+      \mytriangle{.25}{1}{0};
+      \mytriangle{.25}{0}{2};
+      \mytriangle{.25}{2}{0};
+      \mytriangle{.25}{1}{1};
+      \mytriangle{.25}{0}{3};
+      \mytriangle{.25}{3}{0};
+      \mytriangle{.25}{1}{2};
+      \mytriangle{.25}{2}{1};
+    \end{tikzpicture}
+  }
+  \subfigure[Twenty-five subtriangles ($r=5$) -- accurate enough]{
+    \begin{tikzpicture}
+      \mytriangle{1}{0}{0};
+      \mytriangle{.2}{0}{0};
+      \mytriangle{.2}{0}{1};
+      \mytriangle{.2}{1}{0};
+      \mytriangle{.2}{0}{2};
+      \mytriangle{.2}{2}{0};
+      \mytriangle{.2}{1}{1};
+      \mytriangle{.2}{0}{3};
+      \mytriangle{.2}{3}{0};
+      \mytriangle{.2}{1}{2};
+      \mytriangle{.2}{2}{1};
+      \mytriangle{.2}{0}{4};
+      \mytriangle{.2}{4}{0};
+      \mytriangle{.2}{1}{3};
+      \mytriangle{.2}{3}{1};
+      \mytriangle{.2}{2}{2};
+    \end{tikzpicture}
+  }
+  \caption{Splitting a triangle into smaller subtriangles}
+  \label{fig:splitting-triangle-into-smaller-subtriangles}
+\end{figure}
+
+You can see how the subdivision of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-subtriangles}.
 
 We then can sample the height at the centers and compute the appropriate subvolume of the corresponding prism. Therefore, we have to multiply the height by the base area of the subtriangle. The area of one subtriangle is $\frac{1}{2 r^2}$. This results then in the following equation:
 
