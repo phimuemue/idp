@@ -1758,15 +1758,41 @@ The plots look quite similar to the ones where we changed $u_{x,2}$, even if the
 
 \paragraph{Altering $u_{y,2}$}
 
-\todo{Standardzeug}
+Let us now inspect what happens if we do not change the $x$-momentum but the $y$-momentum. As a showcase example, we will use $u_{y,2}=1$ and leave all other momentums at 0 (-- all heights are still 10). 
+
+The plots are shown in figure \ref{fig:ord2_varying_ux1_uy2_1} and are likely to surprise us. Because these plots are likely to surprise us, we split them up into the errors for the $x$-momentums and the errors for the $y$-momentums.
+
+The errors for the $x$-momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1}, the ones for the $y$-momentums in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent}.
+
+\subparagraph{Errors in $x$-momentums}
+
+Let us first concentrate on the errors of the $x$-momentums shown in figure \ref{fig:ord2_varying_ux1_uy2_1}.
 
 \input{ord2_varying_ux1_uy2_1/tex.tex}
 
+All in all, the error plots look roughly the same -- except for the error of the 5th basis function. All of the other plots still show parabolae, and the error is negligibly bigger than the error used for default values (have a look at figure \ref{fig:ord2_varying_ux_1} for comparison). The most striking difference is -- as said -- the $x$-momentum for the 5th basis function, that has changed from zero to an ``absolute-value-linear'' graph.
+
+Note that \emph{all} errors reach zero for $u_{x,1}=0$ (except possibly the error for the 1st basis function that is shifted to the right by a quantum \todo{Herrechenbar?}).
+
+\subparagraph{Errors in $y$-momentums}
+
+The error plots for the $y$-momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and look a bit chaotic (compared to before where they were all 0).
+
+\input{ord2_varying_ux1_uy2_1/tex_y.tex}
+
+Suddenly, the errors in the $y$-momentums are not zero anymore, but look like piecewise linear functions (at least within the plotted range). Even if the error term didn't grow that much, the shape differs strongly from what we have seen so far.
+
+Probably most interesting is the $y$-momentum of the 5th basis function, that is still constant, however not at a value of 0 anymore, but at a value of roughly 0.004835.\todo{Ist das eine numerische Ungenauigkeit? (vermutlich nicht, oder?!)}
+
+We saw that changing an $y$-momentum can result in drastically changed shapes of the error plots,  which is something we did not expect.\todo{Hier noch mehr Experimente durchführen, um genauere Aussagen treffen zu können.}
+
 \paragraph{Setting all $x$-momentums to 1}
 
-\todo{Standard}
+We will now come back to only modifying the $x$-momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect parabolae whose minima are at $u_{x,1}=1$ (since all other $x$-momentums are 1). You can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
 
-\input{ord2_varying_ux1_ux2-ux6_1/tex.tex }
+\input{ord2_varying_ux1_ux2-ux6_1/tex.tex}
+
+It is not a big surprise that our expectations are confirmed at best.
 
 \cleardoublepage{}
 
