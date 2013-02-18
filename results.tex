@@ -1735,6 +1735,8 @@ Up to now we examined what happens if all heights are equal or at most one heigh
 
 Now we have the first time where some plots look drastically different than before.
 
+\clearpage{}
+
 \subsubsection{Altering momentums}
 \label{sec:stiffness-analysis-ord2-altering-momentums}
 
@@ -1748,9 +1750,11 @@ You can see that the curves are no parabolae anymore, but look more like functio
 
 \paragraph{Altering $u_{x,3}$}
 
-\todo{Das übliche}
+We now want to research whether the different $x$-momentums have significantly different impacts on the error term. Therefore, we now exemplarily alter $u_{x,3}$ (instead of -- like before -- altering $u_{x,2}$). The plots are shown in figure \ref{fig:ord2_varying_ux1_ux3_1}.
 
 \input{ord2_varying_ux1_ux3_1/tex.tex}
+
+The plots look quite similar to the ones where we changed $u_{x,2}$, even if the impact seems to be a bit weaker at some points (especially at the $x$-momentums of the 1st, 2nd and 3rd basis function). Therefore, we can suspect that -- if we only alter one single $x$-momentum -- the error plots will look quite similar, i.e. it does not (significantly) matter \emph{which} $x$-momentum we alter, but only how strong we do so.
 
 \paragraph{Altering $u_{y,2}$}
 
