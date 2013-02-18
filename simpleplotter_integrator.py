@@ -359,6 +359,7 @@ class SimplePlotter:
         self.window.connect("delete_event", self.delete_event)
         self.window.connect("destroy", self.destroy)
         self.window.set_border_width(10)
+        self.window.set_title("Simpleplotter [%s]"%self.foldername)
         # user interface stuff!
         self.vbox = gtk.VBox()
         self.window.add(self.vbox)
