@@ -1411,6 +1411,15 @@ If we choose all momentums to be 0 (which is a quite common scenario in our test
 
 Remember that $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$.\todo{Kann man das weiter ausrechnen?}
 
+\subsection{What does $SE$ mean?}
+\label{sec:stiffness-analysis-what-does-se-mean}
+
+It is a very nontrivial task to assign a quickly comprehensible meaning to $SE$. First of all, note that $SE$ (resp. its single components) describe the deviation between two functions (namely the exact solution and the point-wise approximation). They do so by computing an integral over the whole domain affected by the functions.
+
+The only thing one can say \emph{for sure} is that if $SE$ (resp. one of its components) is zero, then the compared functions are equal, i.e. then we have no error at all.
+
+On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where exactly} these functions deviate by just looking at $SE$.
+
 \section{How to evaluate $SE$?}
 \label{sec:how-to-evaluate-e}
 
