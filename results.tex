@@ -21,7 +21,7 @@
 [display]
 {\bfseries\LARGE}
 {}
-{.5ex}
+{-2ex}
 {\MakeUppercase{\partname{ }}\thepart:{ }}
 [\vspace{.5ex}%
 ]
@@ -1814,13 +1814,11 @@ It is not a big surprise that our expectations are confirmed at best.
 \appendix
 
 \clearpage{}
-
+\newgeometry{margin=1.5cm}
 \part{Appendix}
 \label{part:cheat-sheet}
 
-\section{Cheat sheet}
-
-\todo{Complete this stuff!}
+\section{Cheat sheet for stiffness matrix analysis}
 
 \newenvironment{meine}{}{}
 \newcommand{\mypmatrix}[1]
@@ -1834,14 +1832,12 @@ It is not a big surprise that our expectations are confirmed at best.
   \end{meine}
 }
 
-\subsection{Analysis of stiffness matrix}
-
 \begin{center}
-  \renewcommand{\arraystretch}{2}
   \begin{longtable}[h!]{ccp{8cm}}
     \toprule
     Symbol & Definition & Notes \\
     \midrule{}
+
     $\phi_i(x,y)$ & & $i$-th basis function, simpler notation: $\phi_i$ \\
 
     $\int_\Omega (\cdot)\, d\Omega$ & & simpler notation for 2-dimensional integration over area $\Omega$ \\
