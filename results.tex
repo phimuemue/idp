@@ -15,6 +15,18 @@
 \usepackage{subfigure}
 \usepackage{geometry}
 
+\usepackage{titlesec}
+\titleformat
+{\part}
+[display]
+{\bfseries\LARGE}
+{}
+{.5ex}
+{\MakeUppercase{\partname{ }}\thepart:{ }}
+[\vspace{.5ex}%
+]
+
+
 \usepackage{cite}
 
 \usetikzlibrary{decorations.pathmorphing}
