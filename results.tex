@@ -1674,6 +1674,13 @@ Again, we start out by using the default values: All heights are set to 10 (exce
 
 As you recognize, we always have a parabola-like shape (except for the $x$-momentum of the 5th and the $y$-momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (e.g. for the $x$-momentum of the 2nd basis function). We -- similarily to before -- recognize that the error is always minimal (in fact even 0) for $h_1=10$.
 
+\subsubsection{Varying $u_{x,1}$}
+\label{sec:stiffness-analysis-ord2-default-var-ux1}
+
+\todo{Plots ausdünnen und zusammenfassen}
+
+\input{ord2_varying_ux_1/tex.tex}
+
 \subsection{Non-standard values}
 \label{sec:stiffness-analysis-ord2-nondefault}
 
@@ -1723,6 +1730,33 @@ Up to now we examined what happens if all heights are equal or at most one heigh
 \input{ord2_varying_h1_h2-h3_11_h4-h6_9/tex.tex}
 
 Now we have the first time where some plots look drastically different than before.
+
+\subsubsection{Altering momentums}
+\label{sec:stiffness-analysis-ord2-altering-momentums}
+
+\paragraph{Altering $u_{x,2}$}
+
+\todo{Zeug interpretieren, Plots formatieren}
+
+\input{ord2_varying_ux2_1/tex.tex}
+
+\paragraph{Altering $u_{x,3}$}
+
+\todo{Das übliche}
+
+\input{ord2_varying_ux1_ux3_1/tex.tex}
+
+\paragraph{Altering $u_{y,2}$}
+
+\todo{Standardzeug}
+
+\input{ord2_varying_ux1_uy2_1/tex.tex}
+
+\paragraph{Setting all $x$-momentums to 1}
+
+\todo{Standard}
+
+\input{ord2_varying_ux1_ux2-ux6_1/tex.tex }
 
 \cleardoublepage{}
 
