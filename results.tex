@@ -242,6 +242,18 @@ For order 1, we see that the third and the first basis function look somewhat si
 
 For second order, the thing involves a bit more elaboration, but is still easy. We obtain that $\phi_2(x,y)=\phi_6(y,x)$ and $\phi_3(x,y)=\phi_5(y,x)$. The basis functions $\phi_1$ and $\phi_4$ can be interpreted to be ``symmetric to themselves'': $\phi_1(x,y)=\phi_1(y,x)$ and $\phi_4(x,y)=\phi_4(y,x)$.
 
+\subsubsection{Other properties}
+\label{sec:basis-functions-other-properties}
+
+We conjecture the following two identities \todo{Sind diese irgendwie beweisbar?}
+
+\begin{align}
+  \sum_{i=1}^n \phi_i(x,y) &= 1 \\
+  \left( \sum_{i=1}^n a \cdot \phi_i(x,y) \right)^2 &= a^2 
+\end{align}
+
+We verified these two equations for first and second order using maple (and generic support points). However, we do not know how to prove them by hand and generalized for higher orders. While these two may look a bit farfetched at first, they will later be useful when we examine specific plots.
+
 \section{Discontinuous Galerkin}
 \label{sec:discontinuous-galerkin}
 
