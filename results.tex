@@ -1376,41 +1376,6 @@ In the above setting, we showed how we can compute $SE$. As you can see, it invo
   SE_x^i \\ SE_y^i
 \end{pmatrix}$ is the error term for basis function $\phi_i$.
 
-\subsection{The easy ones!}
-\label{sec:stiffness-analysis-easy-ones}
-
-Before we start, we will have a look at a special case. Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
-
-Mathematically, we have then
-\begin{align*}
-  \pd{\phi_X}{x} &= 0 \\
-  \pd{\phi_Y}{y} &= 0 
-\end{align*}
-
-Let us start out by examining the error of the $y$-momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right)$. Note that $\mathtt{DIFFY}$ is a two-component vector containing an $x$ and an $y$-coordinate.
-
-\begin{align*}
-  SE_y^X &= \int_T \left| \left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right) \cdot \nabla \phi_X \right| \, dT = \\
-  &= \int_T \left| \mathtt{DIFFY} \cdot \nabla \phi_X \right|\,dT = \\
-  &= \int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} + \mathtt{DIFFY}_Y \cdot \underbrace{\pd{\phi_X}{y}}_{=0} \right) \right| \, dT = \\
-  &=\int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} \right) \right| \, dT
-\end{align*}
-
-So, let us now consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$-component between the exact solution and the point-wise approximation:
-
-\begin{equation*}
-  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u_x}^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
-\end{equation*}
-with $\widehat h, \widehat{u_x}, \widehat{u_y}$ as defined in equation (\ref{eq:substitutions-for-all-components-with-hat}).
-
-If we choose all momentums to be 0 (which is a quite common scenario in our test cases), then we can simplify $\mathtt{DIFF}_Y$ to the following:
-
-\begin{equation*}
-  \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right)
-\end{equation*}
-
-Remember that $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$.\todo{Kann man das weiter ausrechnen?}
-
 \subsection{What does $SE$ mean?}
 \label{sec:stiffness-analysis-what-does-se-mean}
 
@@ -1776,6 +1741,44 @@ We now choose $u_{x,1}$ to be the axis variable. We set all other momentums to 0
 One can see there that the error for all $y$-momentums is zero. Moreover, the error is zero for the $x$-momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
 
 The plots mostly look parabola-like which is traceable since we use basis functions of second degree.
+
+The fact that \emph{all} $y$-momentums are zero deserves a special treatment. However, we will do this in a manner that is -- while still suited for this special case -- a bit more general.
+
+% Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
+
+% Mathematically, we have then
+% \begin{align*}
+%   \pd{\phi_X}{x} &= 0 \\
+%   \pd{\phi_Y}{y} &= 0 
+% \end{align*}
+
+Let us start out by examining the error of the $y$-momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right)$. Note that $\mathtt{DIFFY}$ is a two-component vector containing an $x$ and an $y$-coordinate.
+
+\begin{align*}
+  SE_y^X &= \int_T \left| \left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right) \cdot \nabla \phi_X \right| \, dT = \\
+  &= \int_T \left| \mathtt{DIFFY} \cdot \nabla \phi_X \right|\,dT = \\
+  &= \int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} + \mathtt{DIFFY}_Y \cdot \underbrace{\pd{\phi_X}{y}}_{=0} \right) \right| \, dT = \\
+  &=\int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} \right) \right| \, dT
+\end{align*}
+
+So, let us now consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$-component between the exact solution and the point-wise approximation:
+
+\begin{equation*}
+  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u_x}^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
+\end{equation*}
+with $\widehat h, \widehat{u_x}, \widehat{u_y}$ as defined in equation (\ref{eq:substitutions-for-all-components-with-hat}).
+
+If we choose all momentums to be 0 (which is what we are doing in this scenario), then we can simplify $\mathtt{DIFF}_Y$ to the following:
+
+\begin{equation*}
+  \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right)
+\end{equation*}
+
+Note that for second order, we have $n=6$. And moreover, we have $\sum_{i=1}^6 \phi(x,y)=1$ -- this can be verified by simple computation. Even more interesting is the fact that $(\sum_{i=1}^6 a \phi(x,y))^2 = a^2$.
+
+Remember that $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$. We will now exploit the two mentioned identities: We set $h_1=h_2=h_3=\dots=h_n$ and can -- even if it is a somewhat nontrivial computation -- simplify the above to 0. This is why all $y$-momentums are 0 in this scenario.
+
+\todo{Kann man das weiter ausrechnen?}
 
 \subsection{Non-standard values}
 \label{sec:stiffness-analysis-ord2-nondefault}
