@@ -1,16 +1,11 @@
 # TODO:
 # * possibility to choose domain for plot variables/parameters dynamically
 
-from numpy import *
-import Gnuplot, Gnuplot.funcutils
-import pygtk
 import gtk
-import re
 import argparse
-import time
-import os.path
-import os
-import glob
+from time import strftime
+from os import makedirs
+from glob import glob
 
 from mathparser import Plotter
 
@@ -41,23 +36,23 @@ class SimplePlotter:
             else:
                 self.plotvars = (widget.var, self.plotvars[1]) if widget.index == 'x' else (self.plotvars[0], widget.var)
         # determine variables
-        self.plotter.setvars(*zip(self.variables, [s.get_value() for s in self.sliders]))
-        self.plotter.plot(self.plotvars)
+        self.plots.setvars(*zip(self.variables, [s.get_value() for s in self.sliders]))
+        self.plots.plot(self.plotvars)
 
     def do_settings(self, widget):
         """Determines the settings and applies them (these may be varied
         for efficiency)."""
         # determine plotting vars
         if widget == self.samples_spin:
-            self.plotter.gp("set samples %d" % self.samples_spin.get_value())
+            self.plots.gp("set samples %d" % self.samples_spin.get_value())
         elif widget == self.isosamples_spin:
-            self.plotter.gp("set isosamples %d" % self.isosamples_spin.get_value())
+            self.plots.gp("set isosamples %d" % self.isosamples_spin.get_value())
         elif widget == self.x_lower_spin or widget == self.x_upper_spin:
-            self.plotter.gp("set xrange [%d:%d]" % (self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
+            self.plots.gp("set xrange [%d:%d]" % (self.x_lower_spin.get_value(), self.x_upper_spin.get_value()))
         elif widget == self.y_lower_spin or widget == self.y_upper_spin:
-            self.plotter.gp("set yrange [%d:%d]" % (self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
+            self.plots.gp("set yrange [%d:%d]" % (self.y_lower_spin.get_value(), self.y_upper_spin.get_value()))
         elif widget == self.stripes_spin:
-            self.plotter.settings(intstops = int(self.stripes_spin.get_value()))
+            self.plots.settings(intstops = int(self.stripes_spin.get_value()))
         self.plot(widget)
 
     def init_plottings_page(self):
@@ -167,17 +162,12 @@ class SimplePlotter:
             newvbox.add(self.sliders[-1])
 
     def on_export(self, widget):
-        foldername = time.strftime("%Y-%m-%d-%H-%M-%S")
+        foldername = strftime("%Y-%m-%d-%H-%M-%S")
         try:
-            os.makedirs(foldername)
+            makedirs(foldername)
         except OSError:
             print('Simpleplotter warning: Folder %s already exists.' % foldername)
-        for name, parser in self.plotter.parsers.items():
-            filename = name
-            parser.gp('set term pdfcairo size 5.0in,3.0in')
-            parser.gp('set output "%s/%s.pdf"' % (foldername, filename))
-            parser.gp('replot')
-            parser.gp('set term wxt')
+        self.plots.export(foldername)
         texfile = open(foldername + '/tex.tex', 'w')
         texfile.write('%% %d variables in here:\n' % len(self.variables))
         vars_values = zip(self.variables, [s.get_value() for s in self.sliders])
@@ -186,9 +176,9 @@ class SimplePlotter:
         texfile.write('% ' + ', '.join(vars_values)+'\n')
         texfile.write('\\begin{figure}[ht]\n')
         texfile.write('\\centering\n')
-        while len(glob.glob(foldername+'/*.pdf')) < len(self.plotter.parsers):
+        while len(glob(foldername+'/*.pdf')) < len(self.plots.parsers):
             pass
-        for f in glob.glob(foldername+'/*.pdf'):
+        for f in glob(foldername+'/*.pdf'):
             texfile.write('  \\subfigure[] {\n')
             texfile.write('    \\includegraphics[scale=\zoomfactor]{{{%s}}}\n' % f[:-4])
             texfile.write('  }\n')
@@ -249,11 +239,11 @@ class SimplePlotter:
         self.default_u = (urange[0]+urange[1])/2
 
         # Initialize plotters
-        self.plotter = Plotter(filename=filename, integrate=True, intstops=self.default_intstops)
-        self.plotter.gp('set style line 1 linecolor rgb "black"')
-        self.plotter.gp('set xrange [%d:%d]' % hrange)
-        self.plotter.gp('set yrange [%d:%d]' % urange)
-        self.variables = self.plotter.getvars(sort=True)
+        self.plots = Plotter(filename=filename, integrate=True, intstops=self.default_intstops)
+        self.plots.gp('set style line 1 linecolor rgb "black"')
+        self.plots.gp('set xrange [%d:%d]' % hrange)
+        self.plots.gp('set yrange [%d:%d]' % urange)
+        self.variables = self.plots.getvars(sort=True)
 
         # Set default plotting variable
         self.plotvars = (self.variables[0], self.variables[0])

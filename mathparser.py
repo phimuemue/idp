@@ -89,7 +89,7 @@ def issep(tok):
     return True
 
 def isass(tok):
-    """Returns True if tok is the equality sign."""
+    """Returns True if tok is the equality sign (assignment operator)."""
     return tok == '='
 
 def islist(tok):
@@ -515,11 +515,17 @@ class Plotter():
     def settings(self, **kwargs):
         [self.parsers[name].settings(**kwargs) for name in self.parsers]
 
-    def gp(self, command):
+    def gp(self, command, name=None):
         [self.parsers[name].gp(command) for name in self.parsers]
 
     def plot(self, *args):
         [self.parsers[name].plot(*args) for name in self.parsers]
+
+    def replot(self):
+        [self.parsers[name].replot() for name in self.parsers]
+
+    def export(self, foldername):
+        [self.parsers[name].export(foldername) for name in self.parsers]
 
 class Parser():
     def __init__(self, name=None, input=None, integrate=False, intargs=('x', 'y'), intstart=0.0, intend=1.0, intstops=5):
@@ -1010,6 +1016,17 @@ class Parser():
 
         # Send the formatted commands to Gnuplot instance.
         [self.gp(command) for command in commands]
+
+    def replot(self):
+        if self.sargs:
+            self.gp('replot')
+
+    def export(self, foldername):
+        filename = self.name
+        self.gp('set term pdfcairo size 5.0in,3.0in')
+        self.gp('set output "%s/%s.pdf"' % (foldername, filename))
+        self.replot()
+        self.gp('set term wxt')
 
 if __name__ == '__main__':
     #termstring = 't1 = 0.5*3*h[1]+u[1]*h[2], t2 = 2*t1 + 3/(h[1]*h[2]*u[2]), t3 = 2h[1]+4t2 u[1], t4 = 2 h[1]**2 + t2^3 + t3*u[2]+ 5 t1 *(h[1]*h[2]), t15= t4*u[1]*u[2]*h[1]^2*h[2]**2 +  h[1], t1642 = 0.12t15+h[1]'
