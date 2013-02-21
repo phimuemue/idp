@@ -254,6 +254,18 @@ We conjecture the following two identities \todo{Sind diese irgendwie beweisbar?
 
 We verified these two equations for first and second order using maple (and generic support points). However, we do not know how to prove them by hand and generalized for higher orders. While these two may look a bit farfetched at first, they will later be useful when we examine specific plots.
 
+The second equation can be easily followed from the first one.
+
+The first equation can be derived the following way: If we have basis functions $\phi_1$ to $\phi_n$, o a certain orer (say order $o$ --- which implies $n=\frac{(o+1)(o+2)}{2}$). If we then take the sum $\sum_{i=1}^n \phi_i(x,y)$ we obtain a polynomial of degree $o$. This polynomial has exactly $n$ coefficients that may be obtained by solving a system of linear equations containing $n$ equations These equations are obtained using the $n$ support points, i.e. we have a system of $n$ equations and $n$ coefficients which -- on the other hand -- means, that all the coefficients are determined uniquely (if the system of equations can be solved). 
+
+Note that for any support point $(x_p,y_p)$, we have that
+
+\begin{equation*}
+  \sum_{i=1}^n \phi_i(x_p,y_p) = 1
+\end{equation*}
+
+Uniqueness means, that $\sum_{i=1}^n \phi_i(x,y)$ is the only polynomial that has the property that it evaluates to 1 \emph{for each support point}. However, we know that the ``polynomial'' $f(x,y)=1$ is a polynomial that has this property as well. Uniqueness now tells us that they must be the same: $\sum_{i=1}^n \phi_i(x,y)=1$. 
+
 \section{Discontinuous Galerkin}
 \label{sec:discontinuous-galerkin}
 
