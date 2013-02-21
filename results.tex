@@ -1418,7 +1418,11 @@ That's why we chose to use a similar approach to the one used previously. That i
 
 However, it is no big deal to extend the rectangle method to the two-dimensional case. Recall that we are interested in an integral over triangle $T$, and $T$ is a right triangle with cathetus length 1.
 
-Thus, we derived an approximation for an integral of the form $\int_T f(x,y)\, dT = \int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$. Therefore, we subdivide the triangle into similar sub-triangles such that all sub-triangles together cover the original triangle $T$. 
+Thus, we derived an approximation for an integral of the form 
+\begin{equation*}
+\int_T f(x,y)\, dT = \int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx.
+\end{equation*}
+Therefore, we subdivide the triangle into similar sub-triangles such that all sub-triangles together cover the original triangle $T$. 
 
 Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can try to approximate this volume by comprising it out of smaller subparts. We decided to use prisms to approximate the volume.
 
@@ -1533,7 +1537,11 @@ If we use just one subtriangle (i.e. $r=1$), then this subtriangle coincides wit
 
 The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism whose base area is our triangle $T$ (whose area is $\frac{1}{2}$).
 
-Of course, it is in most cases more appropriate to use more subtriangles. If we use four subtriangles (i.e. $r=2$), we get the following centers of the subtriangles: $\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}$.
+Of course, it is in most cases more appropriate to use more subtriangles. If we use four subtriangles (i.e. $r=2$), we get the following centers of the subtriangles: 
+\begin{equation*}
+\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}.
+\end{equation*}
+
 
 We can now approximate the integral as follows:
 
@@ -1546,6 +1554,29 @@ Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one singl
 Using this technique, one can -- just in the one-dimensional case -- adjust the number of subtriangles to take into account. The more subtriangles are used, the more accurate is the approximation of the integral.
 
 During our studies we recognized that $r=5$ (i.e. using 25 subtriangles) suffices most of the time. Higher values for $r$ result only in minor changes to the plots.
+
+\todo{Erwähnen, dass sich x und y symmetrisch verhalten.}
+
+\section{Singularities}
+\label{sec:stiffness-analysis-singularities}
+
+\todo{Singularity stuff}
+
+\section{How to make error 0}
+\label{sec:stiffness-analysis-how-to-make-error-0}
+
+As we will see later, it is advantageous if the heights resp. $x$-momentums resp. $y$-momentums do not differ very strongly. We will do a short computation to show this: Therefore, we will assume $h_1=h_2=\dots=h_n$ and $u_{x,1}=\dots=u_{x,n}$ and $u_{y,1}=\dots=u_{y,n}$ and compute the error term.
+
+We will showcase some examples here: Let us start with the term $\frac{u_x\cdot u_y}{h}$ (a subterm of $SE$). We will compare the exact and the approximative solution for this subterm:
+
+\begin{align*}
+  \sum_{j=1}^n \left( \frac{u_{x,j}\cdot u_{y,j}}{h_j} \cdot \phi_j\right) - \frac{(\sum_{j=1}^n u_{x,i}\cdot\phi_j) \cdot (\sum_{j=1}^n u_{y,j}\cdot\phi_j)}{\sum_{j=1}^n h_j \phi_j} &= \\
+  \sum_{j=1}^n \left( \frac{u_{x,1}\cdot u_{y,1}}{h_1} \cdot \phi_j\right) - \frac{(\sum_{j=1}^n u_{x,1}\cdot\phi_j) \cdot (\sum_{j=1}^n u_{y,1}\cdot\phi_j)}{\sum_{j=1}^n h_1 \phi_j} &= \\
+  \frac{u_{x,1}\cdot u_{y,1}}{h_1} \cdot \sum_{j=1}^n \phi_j - \frac{u_{x,1} \cdot \sum_{j=1}^n \phi_j \cdot u_{y,1}\cdot \sum_{j=1}^n \phi_j}{ h_1 \cdot \sum_{j=1}^n \phi_j} &= \\
+  \frac{u_{x,1}\cdot u_{y,1}}{h_1} - \frac{u_{x,1} \cdot u_{y,1}}{ h_1 } &= 0 \\
+\end{align*}
+
+Similarily, we get an error value of 0 for the term $\frac{u_x^2}{h}+\frac{1}{2}g h^2$.\todo{Ausführlich errechnen.}
 
 \section{Order 1}
 \label{sec:stiffness-analysis-first-touch}
