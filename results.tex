@@ -1560,7 +1560,34 @@ During our studies we recognized that $r=5$ (i.e. using 25 subtriangles) suffice
 \section{Singularities}
 \label{sec:stiffness-analysis-singularities}
 
-\todo{Singularity stuff}
+When we do a numerical integration, we of course want to know if this is useul at all. It may be the case that we have some singularities (w.r.t. $x$ and $y$) that do not allow us to compute the integral properly. Therefore, we have to ask when these singularities can occur.
+
+Answering this quesion in general is a really challenging (if not impossible) task, so we will show te basic technique that can be used to answer specific questions.
+
+Fist of all, note that singularities (w.r.t. $x$ and $y$) can only occur if tey are in the denominator of some fraction. If one examines the terms $SE_x$ and $SE_y$, it becomes obvious that we only might have singularities if
+
+\begin{equation*}
+  \sum_{j=1}^n h_j \phi_j = 0.
+\end{equation*}
+
+This means -- in particular -- that for singularities, only the heights are decisive. All the momentums do not influence them.
+
+\todo{Genaue Gleichung zeigen und Deflücke aufzeigen.}
+
+\subsection{Order 1}
+\label{sec:stiffness-analysis-singularities-ord1}
+
+We will now focus on a special case: We consider basis functions for order 1 (these can be seen in table \ref{tab:basis-functions-for-low-degrees}) and set all heights except $h_1$ to 10.
+
+If we do so, we have to consider $h_{{1}} \left( 1-2\,y \right) +h_{{2}} \left( -1+2\,x+2\,y \right) +h_
+{{3}} \left( 1-2\,x \right)$ with $h_2=h_3=10$.
+
+
+\subsection{Order 2}
+\label{sec:stiffness-analysis-singularities-ord2}
+
+
+
 
 \section{How to make error 0}
 \label{sec:stiffness-analysis-how-to-make-error-0}

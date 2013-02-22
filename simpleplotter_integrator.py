@@ -471,7 +471,7 @@ def read_file(path):
 if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("--urange", default="[-5:5]")
-    parser.add_option("--hrange", default="[8:12]")
+    parser.add_option("--hrange", default="[0:20]")
     parser.add_option("-f", "--file", default="norm_stuff.txt")
     parser.add_option("-r", "--result", default=None)
     opts, args = parser.parse_args()
