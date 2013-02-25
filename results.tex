@@ -1575,6 +1575,27 @@ As you can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or b
 
 We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour.\todo{Wirklich?}
 
+\subsubsection{Order 2}
+\label{sec:stiffness-analysis-singularities-ord-2}
+
+We now examine the same thing for order 2. Again, we solve equation (\ref{eq:stiffness-analysis-singularities-h1}) for $h_1$. We do so by setting $h_2=\dots=h_6=10$.
+
+% \begin{equation*}
+%   h_1 = -\frac{\left(4\,h_{6}-2\,h_{5}\right)\,y^2+\left(\left(4\,h_{6}-4
+%  \,h_{4}+4\,h_{2}\right)\,x-4\,h_{6}+h_{5}\right)\,y+\left(4\,h_{2}-2
+%  \,h_{3}\right)\,x^2+\left(h_{3}-4\,h_{2}\right)\,x}{2\,y^2+\left(4\,
+%  x-3\right)\,y+2\,x^2-3\,x+1}
+% \end{equation*}
+
+\begin{equation*}
+  h_1 = -\frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
+    \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}
+\end{equation*}
+
+Again, we could test specific values for $(x,y)$, such as e.g. $(0.5, 0.25)$. If we did so, we would obtain $h_1=-90$ --- a very unlikely setting for $h_1$ if all other heights are 10.
+
+\todo{log-plot of this}
+
 \section{Order 1}
 \label{sec:stiffness-analysis-first-touch}
 
