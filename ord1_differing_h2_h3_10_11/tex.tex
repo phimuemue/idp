@@ -2,10 +2,10 @@
 % h_1 = 10.0, h_2 = 10.0, h_3 = 11.0, ux_1 = 0.0, ux_2 = 0.0, ux_3 = 0.0, uy_1 = 0.0, uy_2 = 0.0, uy_3 = 0.0
 \begin{figure}[ht]
 \centering
-  \subfigure[1st basis function, $x$-momentum -- 3rd basis function, $y$-momentum] {
+  \subfigure[$SE_x^1$, $SE_y^3$] {
     \includegraphics[scale=\zoomfactor]{{{ord1_differing_h2_h3_10_11/y_10.0_11.0_0.0_0.0_0.0_0.0_0.0_0.0f00}}}
   }
-  \subfigure[1st basis function, $y$-momentum -- 2nd basis function, $x$-momentum -- 2nd basis function, $y$-momentum -- 3rd basis function, $x$-momentum] {
+  \subfigure[Remaining error plots, $SE_x^2$, $SE_x^3$, $SE_y^1$, $SE_y^2$] {
     \includegraphics[scale=\zoomfactor]{{{ord1_differing_h2_h3_10_11/y_10.0_11.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}}
   }
   % \subfigure[] {
@@ -20,7 +20,7 @@
   % \subfigure[] {
   %   \includegraphics[scale=\zoomfactor]{{{ord1_differing_h2_h3_10_11/y_10.0_11.0_0.0_0.0_0.0_0.0_0.0_0.0f05}}}
   % }
-\caption{Errors in $x$-momentum for second and third basis function. All momentums are set to 0, $h_2=10$ and $h_3=11$.}
+\caption{All momentums are set to 0, $h_2=10$ and $h_3=11$.}
 \label{fig:stiffneses-analysis-ord1-h2-10-h3-11}
 \end{figure}
 

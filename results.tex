@@ -217,11 +217,11 @@ To have an impression of what the basis functions look like, please have a look 
     &  & $-1+2x+2y$ & 2 & 2\\
     &  & $1-2x$ & -2 & 0\\
     \midrule
-    \multirow{6}{*}{2} & \multirow{6}{*}{6} & $1-3\,x-3\,y+2\,{x}^{2}+4\,xy+2\,{y}^{2}$ & $-3+4x+4y$ & $-3+4x+4y$\\ 
-& & $4\,x-4\,{x}^{2}-4\,xy$ & $4-8x-4y$ & $-4x$\\ 
-& & $-x+2\,{x}^{2}$ & $-1+4x$ & 0\\ 
-& & $4\,xy$ & $4y$ & $4x$\\ 
-& & $-y+2\,{y}^{2}$ & $0$ & $-1+4y$\\ 
+    \multirow{6}{*}{2} & \multirow{6}{*}{6} & $1-3\,x-3\,y+2\,{x}^{2}+4\,xy+2\,{y}^{2}$ & $-3+4x+4y$ & $-3+4x+4y$\\
+& & $4\,x-4\,{x}^{2}-4\,xy$ & $4-8x-4y$ & $-4x$\\
+& & $-x+2\,{x}^{2}$ & $-1+4x$ & 0\\
+& & $4\,xy$ & $4y$ & $4x$\\
+& & $-y+2\,{y}^{2}$ & $0$ & $-1+4y$\\
 & & $4\,y-4\,xy-4\,{y}^{2}$ & $-4y$ & $4-4x-8y$ \\
     \bottomrule
   \end{tabular}
@@ -249,22 +249,10 @@ We conjecture the following two identities \todo{Sind diese irgendwie beweisbar?
 
 \begin{align}
   \sum_{i=1}^n \phi_i(x,y) &= 1 \\
-  \left( \sum_{i=1}^n a \cdot \phi_i(x,y) \right)^2 &= a^2 
+  \left( \sum_{i=1}^n a \cdot \phi_i(x,y) \right)^2 &= a^2
 \end{align}
 
 We verified these two equations for first and second order using maple (and generic support points). However, we do not know how to prove them by hand and generalized for higher orders. While these two may look a bit farfetched at first, they will later be useful when we examine specific plots.
-
-The second equation can be easily followed from the first one.
-
-The first equation can be derived the following way: If we have basis functions $\phi_1$ to $\phi_n$, o a certain orer (say order $o$ --- which implies $n=\frac{(o+1)(o+2)}{2}$). If we then take the sum $\sum_{i=1}^n \phi_i(x,y)$ we obtain a polynomial of degree $o$. This polynomial has exactly $n$ coefficients that may be obtained by solving a system of linear equations containing $n$ equations These equations are obtained using the $n$ support points, i.e. we have a system of $n$ equations and $n$ coefficients which -- on the other hand -- means, that all the coefficients are determined uniquely (if the system of equations can be solved). 
-
-Note that for any support point $(x_p,y_p)$, we have that
-
-\begin{equation*}
-  \sum_{i=1}^n \phi_i(x_p,y_p) = 1
-\end{equation*}
-
-Uniqueness means, that $\sum_{i=1}^n \phi_i(x,y)$ is the only polynomial that has the property that it evaluates to 1 \emph{for each support point}. However, we know that the ``polynomial'' $f(x,y)=1$ is a polynomial that has this property as well. Uniqueness now tells us that they must be the same: $\sum_{i=1}^n \phi_i(x,y)=1$. 
 
 \section{Discontinuous Galerkin}
 \label{sec:discontinuous-galerkin}
@@ -396,7 +384,7 @@ To do that, we first have to get rid of the various terms containing $\mathbf{q}
 
 $\mathbf{q}_i$ are the $\mathbf{q}$-values at the corresponding support points. Since those do not depend on the position, it allows us to move them out of the integral, leaving integrals over various combinations of basis functions, which are all independant of $\mathbf{q}$, and hence can be precomputed.
 
-Please note that $\mathbf{q}$ (and all $\mathbf{q}_i$) contain three components: The height $h$, the momentum in $x$-direction $u_x$ and the $y$-momentum $u_y$. This means, equation (\ref{eq:support-point-approximation}) yields three equations (one for each of the components).
+Please note that $\mathbf{q}$ (and all $\mathbf{q}_i$) contain three components: The height $h$, the momentum in $x$-direction $u_x$ and the $y$ momentum $u_y$. This means, equation (\ref{eq:support-point-approximation}) yields three equations (one for each of the components).
 
 \subsection{Mass matrix}
 \label{sec:mass-matrix}
@@ -460,25 +448,6 @@ Again we obtain matrices, denoted by the elements $s_{ij}^x$ and $s_{ij}^y$, sto
 \subsubsection{Second line}
 \label{sec:stiffness-second-line}
 
-\paragraph{Explanation: Point-wise approximation}
-
-Before we compute the second line, let us introduce a ``trick'' that is used in the program for easier (and thus faster) computation.
-
-To compute a function $f(h, u_x, u_y)$, instead of computing
-\begin{equation*}
-  f\left(\sum_{i=1}^n h_i \phi_i,
-    \sum_{i=1}^n u_{x,i} \phi_i,
-    \sum_{i=1}^n u_{y,i} \phi_i\right),
-\end{equation*}
-we compute the value
-\begin{equation*}
-  \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
-\end{equation*}
-
-The accuracy of this varies depending on $f$, so we will introduce an error here. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin.
-
-We will use this approximation later in the transition from (\ref{sec:third-integral-second-line-1}) to (\ref{sec:third-integral-second-line-2}).
-
 An analogous approach to the second and third line gives us:
 
 \begin{eqnarray}
@@ -488,9 +457,9 @@ An analogous approach to the second and third line gives us:
   \begin{pmatrix}
     \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
   \end{pmatrix}
-  \cdot \nabla \phi_i \, dT \approx \\
+  \cdot \nabla \phi_i \, dT \\
   \label{eq:third-integral-second-line-2}
-  & = &
+  & \approx &
   \int_T
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
@@ -506,6 +475,24 @@ An analogous approach to the second and third line gives us:
 \end{eqnarray}
 
 The resulting terms here, $\int_T \phi_j \pd{\phi_i}{x} \, dT$ and $\int_T \phi_j \pd{\phi_i}{y} \, dT$, are the same stiffness matrices we computed before, $S^x$ and $S^y$ respectively.
+
+\paragraph{Explanation: Sum approximation}
+\label{par:sum-approx}
+
+At this point, we need to note an error that we introduce in the approximation from (\ref{eq:third-integral-second-line-1}) to (\ref{eq:third-integral-second-line-2}).
+
+To compute a function $f(h, u_x, u_y)$, instead of computing
+\begin{equation*}
+  f\left(\sum_{i=1}^n h_i \phi_i,
+    \sum_{i=1}^n u_{x,i} \phi_i,
+    \sum_{i=1}^n u_{y,i} \phi_i\right),
+\end{equation*}
+we compute the value
+\begin{equation*}
+  \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
+\end{equation*}
+
+The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. \todo{Cite error?} It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
 
 \todo{More references. Schwaiger-DA only is not sufficient here! Where is the approach taken from}
 
@@ -658,7 +645,7 @@ Since we are dealing with a one dimensional problem, we have to consider the flu
     \begin{pmatrix}
       h \\ u
     \end{pmatrix}
-  \right) = 
+  \right) =
   \begin{pmatrix}
     u \cdot h \\
     \frac{1}{2} g h^2 + u^2 \cdot h
@@ -704,7 +691,7 @@ Figure \ref{fig:two-triangles-and-some-support-points} shows two adjacent triang
       \draw[fill=black] (0.5,0.5) circle (0.02);
       \draw[fill=black] (0,1) circle (0.02);
       \draw[fill=black] (0,0.5) circle (0.02);
-    \end{scope}    
+    \end{scope}
   \end{tikzpicture}
   \caption{Two adjacent triangles with support points}
   \label{fig:two-triangles-and-some-support-points}
@@ -717,7 +704,7 @@ Since we are interested in the situation along the adjacent edges, which is a li
 
 As stated in the introduction, we have to construct $p^L$ and $p^R$, the polynomials describing the height and momentum of the right and left triangle respectively. We construct these polynomials by interpolating certain points.
 
-We do so for the left and the right triangle, and for the height and the momentum. We call the points we've chosen the \emph{support points} for the left and right triangle. For convenience, we have decided to use a naming convention for these points. Assume that we have $n$ points for each triangle. Then we call the (components of the) points of the left triangle 
+We do so for the left and the right triangle, and for the height and the momentum. We call the points we've chosen the \emph{support points} for the left and right triangle. For convenience, we have decided to use a naming convention for these points. Assume that we have $n$ points for each triangle. Then we call the (components of the) points of the left triangle
 \begin{equation*}
 \left(x_1,\begin{pmatrix}
     h_1^R \\ u_1^R
@@ -725,7 +712,7 @@ We do so for the left and the right triangle, and for the height and the momentu
     h_n^R \\ u_n^R
   \end{pmatrix}\right)
 \end{equation*}
-and the points for the right triangle 
+and the points for the right triangle
 \begin{equation*}
 \left(x_1,\begin{pmatrix}
     h_1^L \\ u_1^L
@@ -831,7 +818,7 @@ So we had to use another approach. Here are the three we took into account:
   \begin{equation*}
     \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N\left(x\right) - N^\prime\left(x\right)\ dx \right|,
   \end{equation*}
-  we get a more accurate result as an approximation for $I$ compared to simply computing the integral over $[0,1]$. 
+  we get a more accurate result as an approximation for $I$ compared to simply computing the integral over $[0,1]$.
 
   If we moreover divide each interval $[x_i,x_{i+1}]$ into several smaller sub-intervals, and simply integrate over them, we can reduce the error ad libitum.
 
@@ -845,7 +832,7 @@ So we had to use another approach. Here are the three we took into account:
   We experimented with random polynomials and tried a few of them out, comparing the \texttt{evalf}-result to the exact integration. We experienced that the \texttt{evalf}-result was always equal to the actual result within an error of 0.001.
 
   However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
-\item The last approach we tried was to divide the area under the function 
+\item The last approach we tried was to divide the area under the function
   \begin{equation*}
     \left| N\left(x\right)-N^\prime\left(x\right) \right|
   \end{equation*}
@@ -915,7 +902,7 @@ We are now going to plot (the two components of) the term $I$ as described in eq
 
 Before we actually go into visualizing the error term, let us introduce some concepts that will be useful later when it comes to plotting.
 
-Consider some well-known plots known from school, e.g. the graphs for the functions $y=2\cdot x+3$ or $y=x^2$. \todo{Plots for these simple functions.} These plots are probably well-known to every reader of this paper -- simply a horizontal $x$-axis, and a vertical $y$-axis. 
+Consider some well-known plots known from school, e.g. the graphs for the functions $y=2\cdot x+3$ or $y=x^2$. \todo{Plots for these simple functions.} These plots are probably well-known to every reader of this paper -- simply a horizontal $x$-axis, and a vertical $y$-axis.
 
 \subsubsection{Functions with parameters}
 
@@ -988,7 +975,7 @@ For example, if we fixed all points to $
 \begin{pmatrix}
   10 \\ 0
 \end{pmatrix}
-$ except the first point, this would mean we are interested in 
+$ except the first point, this would mean we are interested in
 \begin{equation*}
   I\left(
     \begin{pmatrix}
@@ -1069,7 +1056,7 @@ $), i.e.\,we are considering the term $I\left(
   \end{pmatrix},
   \begin{pmatrix}
     h_2^R \\ u_2^R
-  \end{pmatrix}, 
+  \end{pmatrix},
   \begin{pmatrix}
     10 \\ 0
   \end{pmatrix},
@@ -1110,7 +1097,7 @@ We implemented several scenarios and present the outcome of some of them using t
     \hline
     2 & $\frac{1}{2}-\frac{1}{6}\cdot \sqrt{3},\  \frac{1}{2}+\frac{1}{6}\cdot \sqrt{3}$ \\
     3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} ,\  0.5,\  \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ \\
-    \hline 
+    \hline
   \end{tabular}
   \caption{$x$-coordinates of support points for Gauss-Quadrature}
   \label{tab:x-coordinates-gauss-quadrature}
@@ -1163,7 +1150,7 @@ $ (i.e.\,we decrease the height component of $p_1^L$).
 
 \input{3_punkte_1_geschwindigkeit_verringert/tex.tex}
 
-You see the results of this experiment in figure \ref{fig:three-points-h1-}. 
+You see the results of this experiment in figure \ref{fig:three-points-h1-}.
 
 Comparing figure \ref{fig:three-points-equal} and \ref{fig:three-points-h1-} it is worth noting that especially the plots for $p_2^L$, $p_3^L$ and $p_3^R$ differ strongly. Additionally, it can be seen that the structure differs as well as the range of the error.
 
@@ -1235,15 +1222,13 @@ What all plots have in common is the fact that it looks as if towards the bounda
 
 \clearpage{}
 
-\part{Stiffness matrix reloaded}
+\part{Stiffness matrix accuracy analysis}
 \label{part:stiffness-matrix}
 
-\section{Point-wise approximation vs. exact solution}
+\section{Sum approximation vs. exact solution}
 \label{sec:point-wise-appr-vs-exact-solution-intro}
 
-We are now going to compare another term used in the approximation: The $u_x$-component (resp. the $u_y$-component) in the stiffness matrix. Recall from section \ref{sec:stiffness-second-line}, and in particular from equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}) that we use a point-wise approximation to compute the emerging integrals.
-
-Here are -- for reference -- the equations we used. For the second line (i.e. for the $u_x$-component), we had:
+While deriving the equations necessary for our calculations, we introduced several approximations. One of them was the approximation of the combination of various sums, as presented in the calculation of the stiffness matrix in section \ref{sec:stiffness-second-line}, in particular in the equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}). For the second line (i.e. for the $u_x$ component), we had:
 
 \begin{eqnarray}
   \label{eq:third-integral-second-line-1-analysis-part}
@@ -1252,9 +1237,9 @@ Here are -- for reference -- the equations we used. For the second line (i.e. fo
   \begin{pmatrix}
     \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
   \end{pmatrix}
-  \cdot \nabla \phi_i \, dT \approx \\
+  \cdot \nabla \phi_i \, dT \\
   \label{eq:third-integral-second-line-2-analysis-part}
-  & = &
+  & \approx &
   \int_T
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
@@ -1266,26 +1251,10 @@ Here are -- for reference -- the equations we used. For the second line (i.e. fo
     \pd{\phi_i}{y}
   \end{pmatrix} dT \\
   & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
-  & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT 
+  & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray}
 
-Let us for a moment focus on the integrand and assign a name to it, since we will use it later:
-
-\begin{equation}
-  \label{eq:point-wise-approx-result-second-line}
-  \overline{F_2(\mathbf{q})} \cdot \nabla \phi =
-  \begin{pmatrix}
-    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
-    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
-  \end{pmatrix}
-  \cdot
-  \begin{pmatrix}
-    \pd{\phi_i}{x} \\
-    \pd{\phi_i}{y}
-  \end{pmatrix}
-\end{equation}
-
-The computation for the $u_y$-component was as follows:
+The equation for the $u_y$ component was analogous:
 
 \begin{eqnarray*}
   \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
@@ -1293,8 +1262,8 @@ The computation for the $u_y$-component was as follows:
   \begin{pmatrix}
     \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
   \end{pmatrix}
-  \cdot \nabla \phi_i \, dT \approx \\
-  & = & \int_T
+  \cdot \nabla \phi_i \, dT \\
+  & \approx & \int_T
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
     \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
@@ -1308,11 +1277,25 @@ The computation for the $u_y$-component was as follows:
   & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
-Similarily to the second line, we define $\overline{F_3(\mathbf{q})} \cdot \nabla \phi$.
+We will introduce this notation to refer to the approximated integrand:
+
+\begin{equation}
+  \label{eq:point-wise-approx-result-second-line}
+  \overline{F}_2(\mathbf{q}) \cdot \nabla \phi =
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_i}{x} \\
+    \pd{\phi_i}{y}
+  \end{pmatrix}
+\end{equation}
 
 \begin{equation}
   \label{eq:point-wise-approx-result-third-line}
-  \overline{F_3(\mathbf{q})} \cdot \nabla \phi =
+  \overline{F}_3(\mathbf{q}) \cdot \nabla \phi =
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
     \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
@@ -1324,78 +1307,68 @@ Similarily to the second line, we define $\overline{F_3(\mathbf{q})} \cdot \nabl
   \end{pmatrix}
 \end{equation}
 
+As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and try to analyze its validity.
 
-Remember that -- from line (\ref{eq:third-integral-second-line-1-analysis-part}) to line (\ref{eq:third-integral-second-line-2-analysis-part}) -- we used the point-wise approximation explained in section \ref{sec:stiffness-second-line}.
-
-This approximation of course implies some loss of precision. We will now look what the equations would look like if we did \emph{not} use a point-wise approximation, but instead looked at the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} solution.
-
-So, let us introspect what the terms would look like if we used the original substitutions (derived in equation (\ref{eq:support-point-approximation})). We do so by exemplaryly examining the third component:
+We do so by exemplarily examining the third component and try to calculate its exact value:
 
 \begin{eqnarray*}
-  \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
+  \int_T F_2\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
   \int_T
   \begin{pmatrix}
     \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
   \end{pmatrix}
-  \cdot \nabla \phi_i \, dT \approx \\
-  & = & \int_T
+  \cdot \nabla \phi_i \, dT \\
+  & \approx & \int_T
   \begin{pmatrix}
     \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \\ \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2
   \end{pmatrix}
   \cdot \nabla \phi_i \, dT = \\
-  & = & 
+  & = &
   \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{x} + \\
   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
 \end{eqnarray*}
 
-Note that the approximation used here is clearly another one than that used in equation (\ref{eq:third-integral-second-line-1-analysis-part}).
+While we approximate here as well, it's the point-wise sampling approximation and is used in both cases, as it's impossible to determine the exact value for a continuous area.
 
-As you can see, these term quickly become huge and difficult to handle manually. To simplify reading, we introduce three shorthand notations for the three components of $\mathbf{q}$:
+These terms are become huge and difficult to handle manually (as well as expensive to compute automatically). We will introduce three shorthand notations for the three components of $\mathbf{q}$:
 
 \begin{equation}
   \label{eq:substitutions-for-all-components-with-hat}
-  \widehat{h} := \sum_{j=1}^n \phi_j h_j \quad 
-  \widehat{u_y} := \sum_{j=1}^n \phi_j u_{y,j} \quad
-  \widehat{u_x} := \sum_{j=1}^n \phi_j u_{x,j}
+  \widehat{h} := \sum_{j=1}^n \phi_j h_j \quad
+  \widehat{u}_y := \sum_{j=1}^n \phi_j u_{y,j} \quad
+  \widehat{u}_x := \sum_{j=1}^n \phi_j u_{x,j}
 \end{equation}
 
-Let us now focus purely on the integrant (i.e. we omit all the integral signs) and use these substitutions. Then, we can simply rewrite the above term to the following simpler form (we use a similar hat-notation for the whole flux-function to indicate the approximation):
+Similarily to before, we can introduce a hat notation to signal the summation of the individual components, only this time we define it for the entire integrand. Doing that, we can simply the above term:
 
 \begin{equation}
   \label{eq:stiffness-analysis-third-line-exact-approx-simple}
-  \widehat{F_3\left(\mathbf{q}\right)} \cdot \nabla \phi= 
-  \frac{\widehat{u_x} \cdot \widehat{u_y} }{\widehat{h}} \cdot \pd{\phi_i}{x} + 
-  \left( \frac{\widehat{u_y}^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{y}
+  \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi=
+  \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{x} +
+  \left( \frac{\widehat{u}_y^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{y}
 \end{equation}
 
-Similarily, we can deduce this for the second (i.e. the $u_x$-)component:
+Analogously, we define this for the second component:
 
 \begin{equation}
   \label{eq:stiffness-analysis-second-line-exact-approx-simple}
-  \widehat{F_2(\mathbf{q})} \cdot \nabla \phi = 
-  \left( \frac{\widehat{u_x}^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{x} +
-  \frac{\widehat{u_x} \cdot \widehat{u_y} }{\widehat{h}} \cdot \pd{\phi_i}{y}
+  \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi =
+  \left( \frac{\widehat{u}_x^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{x} +
+  \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{y}
 \end{equation}
 
 \subsection{What will we compare?}
 
-We have now derived an exact solution and one that uses a point-wise approximation. Recall that we gave a name to the integrands that were obtained using the point-wise apprimation:  $\overline{F_2(\mathbf{q})} \cdot \nabla \phi$ resp. $\overline{F_3(\mathbf{q})} \cdot \nabla \phi$. The exact integrands were defined to be $\widehat{F_2(\mathbf{q})} \cdot \nabla \phi$ resp. $\widehat{F_3(\mathbf{q})} \cdot \nabla \phi$.
-
-We now compare these two solutions. Therefore, we consider the (absolute value) difference between the overline- and the hat-variant of the corresponding components, and compute the $L_1$-norm (i.e. we integrate over the domain (the triangle)).
-
-To cut a long story short, that means we compute the following two things:
+We have now derived an exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L_1$ norm, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
 
 \begin{eqnarray*}
-  SE_x := \int_T \left| \overline{F_2(\mathbf{q})} \cdot \nabla \phi - \widehat{F_2(\mathbf{q})} \cdot \nabla \phi \right| \, dT, \quad
-  SE_y := \int_T \left| \overline{F_3(\mathbf{q})} \cdot \nabla \phi - \widehat{F_3(\mathbf{q})} \cdot \nabla \phi \right| \, dT 
+  SE_x := \int_T \left| \overline{F}_2(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi \right| \, dT, \quad
+  SE_y := \int_T \left| \overline{F}_3(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi \right| \, dT
 \end{eqnarray*}
 
-It is obvious that these terms could be simplified a bit (e.g. by ``factoring out'' $\nabla \phi$), but since the terms are very complicated anyway, we omit such manual simplifications and delegate tasks of this kind to Maple (or any equivalent computer algebra system). We call the resulting terms $SE$ with indices to indicate that they are \textbf{s}tiffness matrix \textbf{e}rrors. We can pack these two into a vector, if simpler notation is needed: $SE :=
-\begin{pmatrix}
-  SE_x \\ SE_y
-\end{pmatrix}$.
+These terms could be simplified a bit further (for example by factoring out $\nabla \phi$), but since the terms are rather complicated anyway, we omit such manual simplifications and delegate tasks of this kind to Maple (or any equivalent computer algebra system).
 
-In the above setting, we showed how we can compute $SE$. As you can see, it involves the term $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That is, we get these two error terms ($SE_x$, $SE_y$) \emph{for each} basis functions. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i=
+As you can see, computing these terms involves the terms $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That means we get these two error terms ($SE_x$, $SE_y$) for \emph{each} basis function. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i=
 \begin{pmatrix}
   SE_x^i \\ SE_y^i
 \end{pmatrix}$ is the error term for basis function $\phi_i$.
@@ -1403,35 +1376,27 @@ In the above setting, we showed how we can compute $SE$. As you can see, it invo
 \subsection{What does $SE$ mean?}
 \label{sec:stiffness-analysis-what-does-se-mean}
 
-It is a very nontrivial task to assign a quickly comprehensible meaning to $SE$. First of all, note that $SE$ (resp. its single components) describe the deviation between two functions (namely the exact solution and the point-wise approximation). They do so by computing an integral over the whole domain affected by the functions.
+Each component of $SE$ describes the deviation between two functions (namely the exact solution and the point-wise approximation). Due to comparing norms for our desired terms, the only thing one can say for sure is that if $SE$ is zero in either component, then the compared functions in that component are equal, i.e. then we have no error at all.
 
-The only thing one can say \emph{for sure} is that if $SE$ (resp. one of its components) is zero, then the compared functions are equal, i.e. then we have no error at all.
+On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where} these functions deviate by just looking at $SE$.
 
-On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where exactly} these functions deviate by just looking at $SE$.
-
-\section{How to evaluate $SE$?}
+\section{How to evaluate $SE$}
 \label{sec:how-to-evaluate-e}
 
-If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain fractional functions and are thus possibly quite hard to compute exactly.
+If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely quite hard to compute exactly, maybe even impossible.
 
-That's why we chose to use a similar approach to the one used previously. That is, we rely on quite simple methods that are accurate enough to fit our needs. While integrating in the one-dimensional case (i.e. something like $\int_a^b f(t)\,dt$) can be easily approximated by the rectangle method (which can be made arbitrarily precise by using more and more rectangles), the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) is not so famous.
+While integrating in the one-dimensional case can be easily approximated by the rectangle method (which can be made arbitrarily precise by a varying number of rectangles), the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a slightly more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
 
-However, it is no big deal to extend the rectangle method to the two-dimensional case. Recall that we are interested in an integral over triangle $T$, and $T$ is a right triangle with cathetus length 1.
+However, it is not difficult to extend the rectangle method to the two-dimensional case. Since we are interested in an integral over a triangle $T$, and $T$ is a right triangle with cathetus length 1, we divide the triangle into smaller right triangles such that all triangles together cover the original triangle $T$.
 
-Thus, we derived an approximation for an integral of the form 
-\begin{equation*}
-\int_T f(x,y)\, dT = \int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx.
-\end{equation*}
-Therefore, we subdivide the triangle into similar sub-triangles such that all sub-triangles together cover the original triangle $T$. 
+Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can try to approximate this volume by comprising it out of smaller parts. We decided to use prisms to approximate that volume.
 
-Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can try to approximate this volume by comprising it out of smaller subparts. We decided to use prisms to approximate the volume.
-
-In principle, we devide the triangle in a way such that we cut the cathetuses (of length 1) into smaller pieces of length $\frac{1}{r}$ (the integer $r$ denotes kind of a parameter for our integral approximation). Then, we can generate the centers of the resulting triangles as follows: We first consider a set of \emph{all possible} centers:
+In principle, we devide the triangle in a way such that we cut the cathetuses (of length 1) into smaller pieces of length $\frac{1}{r}$ (the integer $r$ denotes the parameter for our integral approximation). Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
 
 \begin{equation*}
-  \mathtt{POSSIBLE\_CENTERS} = \left\{ 
+  \mathtt{POSSIBLE\_CENTERS} = \left\{
     \left(\frac{i}{r} + \frac{1}{3r}, \frac{j}{r} + \frac{1}{3r}\right) ,
-    \left(\frac{i}{r} - \frac{1}{3r}, \frac{j}{r} - \frac{1}{3r}\right) 
+    \left(\frac{i}{r} - \frac{1}{3r}, \frac{j}{r} - \frac{1}{3r}\right)
     \mid
     i, j\in \mathbb{N}
   \right\}
@@ -1440,14 +1405,14 @@ In principle, we devide the triangle in a way such that we cut the cathetuses (o
 After this, we filter out the unnecessary centers:
 
 \begin{equation*}
-  \mathtt{CENTERS} = \left\{ 
-    (x,y)\in \mathtt{POSSIBLE\_CENTERS} 
-    \mid 
+  \mathtt{CENTERS} = \left\{
+    (x,y)\in \mathtt{POSSIBLE\_CENTERS}
+    \mid
     (x,y) \in T
   \right\}
 \end{equation*}
 
-If we use this definition, we obtain $r^2$ subtriangles of equal size.
+If we use this definition, we obtain $r^2$ triangles of equal size.
 
 \begin{figure}[h!]
   \newcommand{\mytriangle}[3]{
@@ -1456,12 +1421,12 @@ If we use this definition, we obtain $r^2$ subtriangles of equal size.
     \end{scope}
   }
   \centering
-  \subfigure[One ``subtriangle'' ($r=1$)]{
+  \subfigure[One trianglev($r=1$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
     \end{tikzpicture}
   }
-  \subfigure[Four subtriangles ($r=2$)]{
+  \subfigure[Four triangles ($r=2$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.5}{0}{0};
@@ -1469,7 +1434,7 @@ If we use this definition, we obtain $r^2$ subtriangles of equal size.
       \mytriangle{.5}{1}{0};
     \end{tikzpicture}
   }
-  \subfigure[Nine subtriangles ($r=3$)]{
+  \subfigure[Nine triangles ($r=3$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.3333}{0}{0};
@@ -1480,7 +1445,7 @@ If we use this definition, we obtain $r^2$ subtriangles of equal size.
       \mytriangle{.3333}{1}{1};
     \end{tikzpicture}
   }
-  \subfigure[Sixteen subtriangles ($r=4$)]{
+  \subfigure[Sixteen triangles ($r=4$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.25}{0}{0};
@@ -1495,7 +1460,7 @@ If we use this definition, we obtain $r^2$ subtriangles of equal size.
       \mytriangle{.25}{2}{1};
     \end{tikzpicture}
   }
-  \subfigure[Twenty-five subtriangles ($r=5$) -- accurate enough]{
+  \subfigure[Twenty-five triangles ($r=5$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.2}{0}{0};
@@ -1515,13 +1480,13 @@ If we use this definition, we obtain $r^2$ subtriangles of equal size.
       \mytriangle{.2}{2}{2};
     \end{tikzpicture}
   }
-  \caption{Splitting a triangle into smaller subtriangles. Then, $\mathtt{CENTERS}$ contains all centers of the corresponding subtriangles.}
-  \label{fig:splitting-triangle-into-smaller-subtriangles}
+  \caption{Splitting a triangle into smaller triangles, the centers of which are all contained in  $\mathtt{CENTERS}$.}
+  \label{fig:splitting-triangle-into-smaller-triangles}
 \end{figure}
 
-You can see how the subdivision of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-subtriangles}.
+You can see how the division of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-subtriangles}.
 
-We then can sample the height at the centers and compute the appropriate subvolume of the corresponding prism. Therefore, we have to multiply the height by the base area of the subtriangle. The area of one subtriangle is $\frac{1}{2 r^2}$. This results then in the following equation:
+We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 r^2}$. This results then in the following equation:
 
 \begin{equation}
   \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2r^2}
@@ -1529,19 +1494,15 @@ We then can sample the height at the centers and compute the appropriate subvolu
 
 To clarify this, let us consider some examples:
 
-If we use just one subtriangle (i.e. $r=1$), then this subtriangle coincides with the original triangle, and its center is located at $(\frac{1}{3}, \frac{1}{3})$. If we use this -- probably not very good -- approximation, we obtain the following:
+If we use just one triangle (i.e. $r=1$), then this triangle coincides with the original triangle, and its center is located at $(\frac{1}{3}, \frac{1}{3})$. If we use this approximation, we obtain the following:
 
 \begin{equation*}
   \int_T f(x,y)\, dT \approx \frac{1}{2} \cdot f(\frac{1}{3},\frac{1}{3})
 \end{equation*}
 
-The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism whose base area is our triangle $T$ (whose area is $\frac{1}{2}$).
+The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism, which has the same base area as our triangle $T$ ($\frac{1}{2}$).
 
-Of course, it is in most cases more appropriate to use more subtriangles. If we use four subtriangles (i.e. $r=2$), we get the following centers of the subtriangles: 
-\begin{equation*}
-\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}.
-\end{equation*}
-
+Naturally we need more triangles for an actual approximation. If we use four triangles (i.e. $r=2$), we get the following centers: $\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}$.
 
 We can now approximate the integral as follows:
 
@@ -1549,70 +1510,20 @@ We can now approximate the integral as follows:
   \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y)\cdot \frac{1}{2\cdot 4}
 \end{equation*}
 
-Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one single subtriangle.
+Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one single triangle.
 
-Using this technique, one can -- just in the one-dimensional case -- adjust the number of subtriangles to take into account. The more subtriangles are used, the more accurate is the approximation of the integral.
+Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
-During our studies we recognized that $r=5$ (i.e. using 25 subtriangles) suffices most of the time. Higher values for $r$ result only in minor changes to the plots.
-
-\todo{Erwähnen, dass sich x und y symmetrisch verhalten.}
-
-\section{Singularities}
-\label{sec:stiffness-analysis-singularities}
-
-When we do a numerical integration, we of course want to know if this is useul at all. It may be the case that we have some singularities (w.r.t. $x$ and $y$) that do not allow us to compute the integral properly. Therefore, we have to ask when these singularities can occur.
-
-Answering this quesion in general is a really challenging (if not impossible) task, so we will show te basic technique that can be used to answer specific questions.
-
-Fist of all, note that singularities (w.r.t. $x$ and $y$) can only occur if tey are in the denominator of some fraction. If one examines the terms $SE_x$ and $SE_y$, it becomes obvious that we only might have singularities if
-
-\begin{equation*}
-  \sum_{j=1}^n h_j \phi_j = 0.
-\end{equation*}
-
-This means -- in particular -- that for singularities, only the heights are decisive. All the momentums do not influence them.
-
-\todo{Genaue Gleichung zeigen und Deflücke aufzeigen.}
-
-\subsection{Order 1}
-\label{sec:stiffness-analysis-singularities-ord1}
-
-We will now focus on a special case: We consider basis functions for order 1 (these can be seen in table \ref{tab:basis-functions-for-low-degrees}) and set all heights except $h_1$ to 10.
-
-If we do so, we have to consider $h_{{1}} \left( 1-2\,y \right) +h_{{2}} \left( -1+2\,x+2\,y \right) +h_
-{{3}} \left( 1-2\,x \right)$ with $h_2=h_3=10$.
-
-
-\subsection{Order 2}
-\label{sec:stiffness-analysis-singularities-ord2}
-
-
-
-
-\section{How to make error 0}
-\label{sec:stiffness-analysis-how-to-make-error-0}
-
-As we will see later, it is advantageous if the heights resp. $x$-momentums resp. $y$-momentums do not differ very strongly. We will do a short computation to show this: Therefore, we will assume $h_1=h_2=\dots=h_n$ and $u_{x,1}=\dots=u_{x,n}$ and $u_{y,1}=\dots=u_{y,n}$ and compute the error term.
-
-We will showcase some examples here: Let us start with the term $\frac{u_x\cdot u_y}{h}$ (a subterm of $SE$). We will compare the exact and the approximative solution for this subterm:
-
-\begin{align*}
-  \sum_{j=1}^n \left( \frac{u_{x,j}\cdot u_{y,j}}{h_j} \cdot \phi_j\right) - \frac{(\sum_{j=1}^n u_{x,i}\cdot\phi_j) \cdot (\sum_{j=1}^n u_{y,j}\cdot\phi_j)}{\sum_{j=1}^n h_j \phi_j} &= \\
-  \sum_{j=1}^n \left( \frac{u_{x,1}\cdot u_{y,1}}{h_1} \cdot \phi_j\right) - \frac{(\sum_{j=1}^n u_{x,1}\cdot\phi_j) \cdot (\sum_{j=1}^n u_{y,1}\cdot\phi_j)}{\sum_{j=1}^n h_1 \phi_j} &= \\
-  \frac{u_{x,1}\cdot u_{y,1}}{h_1} \cdot \sum_{j=1}^n \phi_j - \frac{u_{x,1} \cdot \sum_{j=1}^n \phi_j \cdot u_{y,1}\cdot \sum_{j=1}^n \phi_j}{ h_1 \cdot \sum_{j=1}^n \phi_j} &= \\
-  \frac{u_{x,1}\cdot u_{y,1}}{h_1} - \frac{u_{x,1} \cdot u_{y,1}}{ h_1 } &= 0 \\
-\end{align*}
-
-Similarily, we get an error value of 0 for the term $\frac{u_x^2}{h}+\frac{1}{2}g h^2$.\todo{Ausführlich errechnen.}
+We noticed that $r=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that's the case it's never enough to make an impact on the eventual interpretation of the results.
 
 \section{Order 1}
 \label{sec:stiffness-analysis-first-touch}
 
-We begin our analysis by investingating the case for order-1-basis functions (i.e. we have three basis functions $\phi_1,\dots,\phi_3$). For one second, please go back to table \ref{tab:basis-functions-for-low-degrees} and see that we derived some ``symmetries'' between the basis functions. We found out that $\phi_1(x,y)=\phi_3(y,x)$ and $\phi_2(x,y)=\phi_x(y,x)$. We will now exploit these facts.
+We begin our analysis by investigating the case for basis functions of order 1 (i.e. we have three basis functions $\phi_1,\dots,\phi_3$). Looking back at table \ref{tab:basis-functions-for-low-degrees} we derived some symmetries between the basis functions. We found out that $\phi_1(x,y)=\phi_3(y,x)$ and $\phi_2(x,y)=\phi_2(y,x)$. We will now exploit these facts.
+\todo{Display basis functions?}
+Consider e.g. the term $SE_x^i = \int_T \left| \left(\overline{F}_2(\mathbf{q})-\widehat{F}_2(\mathbf{q})\right) \cdot \nabla\phi_i(x,y) \right|$. The terms $\overline{F}_2(\mathbf{q})$ and $\widehat{F}_2(\mathbf{q})$ depend on the height and momentum values of the single support points (i.e. on the values $h_1,\dots,h_3$, $u_{x,1},\dots,u_{x,3}$ and $u_{y,1},\dots,u_{y,3}$).
 
-Consider e.g. the term $SE_x^i = \int_T \left| \left(\overline{F_2(\mathbf{q})}-\widehat{F_2(\mathbf{q})}\right) \cdot \nabla\phi_i(x,y) \right|$. The terms $\overline{F_2(\mathbf{q})}$ and $\widehat{F_2(\mathbf{q})}$ depend on the height and momentum values of the single support points (i.e. on the values $h_1,\dots,h_3$, $u_{x,1},\dots,u_{x,3}$ and $u_{y,1},\dots,u_{y,3}$).
-
-The essence of how we can easily exploit this symmetry is the following: I we have two symmetric basis funcions $\phi_i$ and $\phi_j$ and consider $SE^i$, then we can compute the following:
+If we have two symmetric basis funcions $\phi_i$ and $\phi_j$ and consider $SE^i$, we can compute the following:
 
 \begin{equation*}
   SE^i(h, u_x, u_y) = SE^j(h, u_y, u_x)
@@ -1620,9 +1531,9 @@ The essence of how we can easily exploit this symmetry is the following: I we ha
 
 To examine this, you can look at equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others (in fact they might even be equal). This will later enable us to use some plots for multiple situations.
 
-%This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$-momentum since these plots can be constructed from their counterpart (i.e. the error in $x$-momentum for basis function $\phi_i$ is the same as the error in $y$-momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
+%This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$ momentum since these plots can be constructed from their counterpart (i.e. the error in $x$ momentum for basis function $\phi_i$ is the same as the error in $y$ momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
 
-So, let us start out with some simple graphs obtained by plotting the terms $SE^i =
+Following are reports of various scenarios we have tested, trying to find out any common behavior between the values. All the following graphs will show the calculated error in the stiffness terms for both components, i.e. $SE^i =
 \begin{pmatrix}
   SE_x^i \\ SE_y^i
 \end{pmatrix}$ for $i=1,\dots, n$.
@@ -1631,9 +1542,7 @@ So, let us start out with some simple graphs obtained by plotting the terms $SE^
 
 \subsubsection{Varying $h_1$}
 
-We start out by considering a quite simple example: Basis functions of order 1. As you hopefully remember from section \ref{sec:basis-functions-choice}, choosing order 1 require 3 basis functions $\phi_1,\dots,\phi_n$. These depend upon the three coordinates (height, $x$-momentum, $y$-momentum) of three support points. We now want to research the impact of the value $h_1$ (i.e. the height of the first support point) on the error terms.
-
-We therefore fix the following values:
+As was mentioned in section \ref{sec:basis-functions-choice}, choosing order 1 requires 3 basis functions $\phi_1,\dots,\phi_n$. These depend on the three components (height, $x$ momentum, $y$ momentum) of the three support points. First, we will look into the impact the value $h_1$ (i.e. the height of the first support point) has on the error terms. We fix the following values:
 
 \begin{eqnarray*}
   & h_2 = 10 & h_3 = 10 \\
@@ -1641,19 +1550,17 @@ We therefore fix the following values:
   u_{y,1} = 0 & u_{y,2} = 0 & u_{y,3} = 0
 \end{eqnarray*}
 
-As you can see, the variable $h_1$ is explicitly omitted in the above setting, since we will leave this as the single varying component in this subexperiment. That means, we research how a variation of $h_1$ results in the plots.
+As you can see, the variable $h_1$ is explicitly omitted in the above setting, since we will leave this as the single varying component in this experiment. That means, we examine how a variation of $h_1$ results in the plots.
 
 \input{standardwerte_nach_h1_ord1/tex.tex}
 
-To see the resulting plots, please have a look at figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE^1$ (resulting from the term with basis function $\phi_1$, consisting of error in $x$-momentum and $y$-momentum) is 0 (at least within the depicted range of $h_1$)\todo{Wie schauts mit weiterer range aus?}.
+The resulting plots are displayed in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE_x^1$ and $SE_y^3$ are 0.\todo{Explanation?}
 
-Moreover, the error in the $y$-momentum of $SE^2$ and $SE^3$ is zero as well.
+While this is a good result for us, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. You can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). It looks like a parabola, which makes sense when we examine the equations for the first order.
 
-The most interesting in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the ones for the $x$-momentum of $SE^2$ and $SE^3$. You can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). It looks somewhat like a parabola \todo{checken, ob das mathematisch belegbar ist}.
+The fact that the error is minimal for $h_1=10$ is interesting for the following reason: $h_2$ as well as $h_3$ have the value 10, too, so it \emph{might} be advantageous if the third height (in this case $h_1$) has value 10, as well.
 
-The fact that the error is minimal for $h_1=10$ is interesting for the following reason: We fixed as well $h_2$ as $h_3$ to have the value 10, so it \emph{might} be advantageous if the third height (in this case $h_1$) has value 10, as well. The error term grows up to about 5.
-
-From now on, we will omit plots that depict an error plot (such as in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} all subfigures except the ones for the $x$-momentum of $SE^2$ and $SE^3$).
+From now on, we will omit plots that depict a zero error plot and will leave a remark where necessary.
 
 \subsubsection{Varying $u_{x,1}$}
 
@@ -1661,21 +1568,21 @@ We leave all values as they were and additionally set $h_1=10$, but instead take
 
 \input{standardwerte_nach_ux_ord1/tex.tex}
 
-As you can see, we omitted all plots except those for the $x$-momentum for the second and third base function. These two look -- again -- like parabolas. But note that the error produced lies somewhere between 0 and 0.5.
+As you can see, we omitted all plots except those for the $x$ momentum for the second and third basis function. These two look like parabolas again, but note that theoccurring error lies somewhere between 0 and 0.5.
 
-Moreover, it is again convenient that the minimum error occurs for $u_{x,1}=0$ since these equals the values of $u_{x,2}$ and $u_{x,3}$.
+Moreover, it is again noteworthy that the minimum error occurs for $u_{x,1}=0$ since that equals the values of $u_{x,2}$ and $u_{x,3}$.
 
 \subsubsection{Varying $u_{y,1}$}
 
-Up to now, always the $x$-momentum of the second and third basis function were the most interesting terms to look at. Let us now see, what happens if we choose $u_{y,1}$ as varying comopnent.
+In the last section, the $x$ momentum of the second and third basis function were the most interesting terms to look at. Let us now see, what happens if we choose $u_{y,1}$ as varying comopnent.
 
 \input{standardwerte_nach_uy_ord1/tex.tex}
 
-The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. As one could have suspected, the plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$-momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
+The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. As one could have suspected, the plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$ momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
 
 \subsubsection{Varying $u_{x,1}$ and $u_{y,1}$}
 
-While we restricted ourselves to \emph{one single} varying component, we will now have a look at the situation that appears if we fix all but \emph{two} variables -- namely $u_{x,1}$ and $u_{y,1}$.
+So far we restricted ourselves to one varying component, but now we will examine the situation for two variables (namely $u_{x,1}$ and $u_{y,1}$), while fixing the others to set values.
 
 We will use the following variable assignment for the remaining variables:
 
@@ -1689,14 +1596,14 @@ The resulting plots are shown in figure \ref{fig:standardwerte_nach_ux1_ux2_ord1
 
 \input{standardwerte_nach_ux1_uy1_ord1/tex.tex}
 
-What's interesting here is that \emph{all} error plots seem to have characteristic shapes (i.e. no error is always 0). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Please also note the similarity resp. symmetry between some plots. We will later omit plots that are too similar or mirrored.
+What's interesting here is that \emph{all} error plots have a characteristic shapes (i.e. none of them is 0, like in previous examples). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Once again one can see the similarities between some plots, especially with regard to mirroring/rotating. We will later omit plots that are the same or mirrored.
 
 \clearpage{} % force output of *all* floats up to now, since LaTeX crahes otherwise
 
-\subsection{Order 1 --- non-standard values}
+\subsection{Order 1 -- non-standard values}
 \label{sec:stiffness-analysis-ord1-non-std-values}
 
-While we -- up to now -- considered situations in which all fixed heights resp. momentums were equal. We will now focus on what happens if we choose for example $h_2=10$ and $h_3=11$.
+Up until now we have only considered scenarios in which all fixed heights and momentums were equal. We will now focus on what happens if we choose different fixed values, for example $h_2=10$ and $h_3=11$.
 
 \subsubsection{Different heights}
 \label{sec:stiffness-analysis-ord1-differing-h2-10-h3-11}
@@ -1705,7 +1612,7 @@ Let us begin with a setting that employs different heights, and assigns all mome
 
 \input{ord1_differing_h2_h3_10_11/tex}
 
-You can see the resulting plots in figure \ref{fig:stiffneses-analysis-ord1-h2-10-h3-11}. We only show the plots for the errors in $x$-momentum of second and third basis function since all other plots show a line going through 0.
+You can see the resulting plots in figure \ref{fig:stiffneses-analysis-ord1-h2-10-h3-11}. We only show the plots for the errors in $x$ momentum of second and third basis function since all other plots show 0 error again.
 
 What is remarkable about these plots is the fact that the error is now minimal for a value of $h_1\approx 10.5$ -- which corresponds to the average value of $h_2$ and $h_3$. However, note that now the minimal error is roughly 1, while in the previous setting ($h_2=h_3=10$) the minimal error was 0.
 
@@ -1719,85 +1626,85 @@ Let's see what it looks like if we now set $h_2=12$ and $h_1=10$.
 
 \input{ord1_differing_h2_h3_12_10/tex}
 
-The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10} and they look as expected: The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two.
+The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10} and they look as expected: The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two. This makes sense when examining the equations, which we will cover later.
 
-Let us now inspect the following scenario: We set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$. Let's see if this renders true\dots
+Let us now inspect the following scenario: We set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$.
 
 \input{ord1_differing_h2_h3_12_8/tex.tex}
 
-As you can see in figure \ref{fig:ord1_differing_h2_h3_12_8}, the error is still minimal for a value of $h_1=\frac{12+8}{2}=\frac{h_2+h_3}{2}=10$, but the shape looks different than before. Moreover, the error terms grow up to about 19. Even more blatant, the minimal error grew to up over 16.
+As you can see in figure \ref{fig:ord1_differing_h2_h3_12_8}, the error is still minimal for a value of $h_1=\frac{12+8}{2}=\frac{h_2+h_3}{2}=10$, but the shape looks different than before. Moreover, the error terms grow up to about 19, and more importantly, the minimal error grew to over 16.
 
 \paragraph{Conclusion}
 
 What one can guess from the things seen so far is that -- if we leave all $u_{x,i}=u_{y,i}=0$ ($i=1\dots n$) and take $h_1$ as axis variable -- the error seems to be minimal if $h_1\approx \frac{h_2+h_3}{2}$.
 
-Of course, it is an interesting question if this can be proven (or even disproven) analytically. To examine this, we take -- as an example -- the error in the $x$-momentum of the third basis function and set all $u_{x,i}=u_{y,i}=0$. 
+Of course, it is an interesting question if this can be proven (or even disproven) analytically. To examine this, we take -- as an example -- the error in the $x$ momentum of the third basis function and set all $u_{x,i}=u_{y,i}=0$.
 
-Unfortunately, even with with the help of Maple, we were not able to verify this result. The reason is that it is not true that the error is minimal if $h_1$ is the average of $h_2$ and $h_3$. To illustrate this, let us consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
+Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values. To illustrate this, let us consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
 
 \input{ord1_differing_h2_h3_164/tex.tex}
 
-Figure \ref{fig:ord1_differing_h2_h3_164} shows the plot for this situation. As you can see, the error is \emph{not} minimal for $h_1=10$, even if the average of $h_2=16$ and $h_3=4$ is 10 in this case. Moreover, as one would expect, the error terms become extremely large in this case (from 145 to 147 in the range from 8 to 12).
+Figure \ref{fig:ord1_differing_h2_h3_164} shows the plot for this situation. As you can see, the error is \emph{not} minimal for $h_1=10$, even if the average of $h_2=16$ and $h_3=4$ is 10 in this case. Moreover, as one would expect, the error terms become extremely large in this case (from 145 to 147 in the range from 8 to 12). Although an overall parabola form is still noticeable, there are deviations, probably due to the absolute values in the integrand which also causes the average of $h_2$ and $h_3$ to be a local maximum instead of a minimum.
 
-\todo{Kann man das nicht doch irgendwie herrechnen?}
+\todo{Kann man das nicht doch irgendwie herrechnen? KP\dots}
 
-\subsubsection{Different $x$-momentums}
+\subsubsection{Different $x$ momentums}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-ux}
 
-We are now going doing another experiment: We set all height values to 10, and see what happens if we choose different values for the $u_{x,i}$. For a reference what happens for $u_{x,2}=u_{x,3}=0$, please see figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
+We are now going doing another experiment: We set all height values to 10, and see what happens if we choose different values for the $u_{x,i}$. For a reference what happens for $u_{x,2}=u_{x,3}=0$, see figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
 
-We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting can be seen in figure \ref{fig:ord1_ux1_differing_ux2_ux3}. Again, only the $x$-momentums for the second and third basis function are plot-worthy, since all other plots show a line througt 0.
+We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting can be seen in figure \ref{fig:ord1_ux1_differing_ux2_ux3}. Again, only the $x$ momentums for the second and third basis function are plot-worthy, since all other plots show 0 error.
 
 \input{ord1_ux1_differing_ux2_ux3/tex.tex}
 
-As you can see, the error again describes a paraboly-like shape, having its minimum value at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$.
+As can be seen, the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$.
 
-Of course, we could play this game further, but this would not give so many insights since altering $u_{x,2}$ and $u_{x,3}$ (while using $u_{x,1}$ as axis variable) affects the plots in a similar way to that one if we change $h_2$ and $h_3$ (using $h_1$ as axis variable).
+Further pursuing this direction would not give many more insights since altering $u_{x,2}$ and $u_{x,3}$ (while using $u_{x,1}$ as axis variable) affects the plots in the same way as changing $h_2$ and $h_3$ (using $h_1$ as axis variable).
 
-\subsubsection{Different $y$-momentums}
+\subsubsection{Different $y$ momentums}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
 
-The last thing to be done in analogy to the previous experiments would be the following: We should use $u_{y,1}$ as axis variable, and play around with $u_{y,2}$ and $u_{y,3}$. However, we do not show any plots for this scenario, since they do not provide any useful new information. The only difference to before is that when we use $u_{y,1}$ as axis variable, the $y$-momentums of the first and the second basis function are the interesting plots, while all others show 0.
+To complete the current line of experiments, we could examine different $y$ momentums analogously to before, but it's obvious from the equations that this will present the same results, only with different zero-error functions. In that case, the $y$ momentums of the first and the second basis function are the interesting plots, while all others are 0.
 
-\subsubsection{Different $x$- and $y$-momentums}
+\subsubsection{Different $x$ and $y$ momentums}
 \label{sec:stiffness-analysis-different-ux-uy-momentums}
 
-We now generalize the previous experiments in the sense that we alter some $x$-momentums \emph{and} some $y$-momentums.
+We now generalize the previous experiments in the sense that we alter some $x$ momentums \emph{and} some $y$ momentums.
 
-To visualize these settings, we come back to three-dimensional plots that have two axis variables. To see the ``original situation'' (i.e. heights are 10, momentums are 0), please refer to figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, where we always had a minimal error at $u_{x,1}=u_{y,1}=0$. However, from now on, since the plots are partially highly symmetric, we will omit some of them, stating which plots we omitted and why.
+To visualize these settings, we come back to three-dimensional plots that have two axis variables. Refer to figure \ref{fig:standardwerte_nach_ux1_ux2_ord1} for the original situation (i.e. heights are 10, momentums are 0), where we always had a minimal error at $u_{x,1}=u_{y,1}=0$. From now on, since the plots tend to be highly symmetric, we will omit some of them, stating which plots we omitted and why.
 
-Remember that if we solely changed either the $x$-impulse values resp. the $y$-impulse values, the error (depending on the only non-fixed $x$- resp. $y$-momentum) reached its minimum roughly at the average of the other two $x$- resp. $y$-momentums --- as long as they did not differ too strongly. Will we be able to observe a similar behaviour if we change two variables? 
+Remember that if we only changed either the $x$ or the $y$ impulse values, the error (depending on the only non-fixed $x$ or $y$ momentum) reached its minimum roughly at the average of the other two $x$ or $y$ momentums respectively, as long as they did not differ too strongly.
 
-To answer this question, let us start out by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
+Let us start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
 
 \input{ord1_varying_ux1_uy1_differing_ux2_uy2_1_1/tex.tex}
 
-Consider the plot for the $x$-momentum of the first basis function: You can guess the two bends (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$- resp. $y$-momentums). If you compare this subplot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, you can see that ``originally'' the bends were quite sharp, while now they have been kind of smoothed. Moreover, the error term reaches now the 0.5 mark, while previously only came up to about 0.4.
+Considering the plot for $SE_x^1$, it's easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, you can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term reaches now the 0.5 mark, while previously only came up to about 0.4.
 
-In general (i.e. considering all subplots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), you can guess a slight ``displacement'' of all the plots. This displacement is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$- resp. $y$-momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
+In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), you can guess a slight translation of all the plots. It is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$ and $y$ momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
 
-However, with $u_{x,2}=u_{y,2}=1$ one can still see the strong connection to the original plots. 
+However, with $u_{x,2}=u_{y,2}=1$ one can still see the strong connection to the original plots.
 
 Let us now choose some more extreme values: $u_{x,2}=3$ and $u_{y,2}=3$. The corresponding plots can be found in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_3_3}.
 
 \input{ord1_varying_ux1_uy1_differing_ux2_uy2_3_3/tex.tex}
 
-Now, the deformations in the plots are stronger. While the overal error grew quite a lot, we can still say that it is minimal roughly at $u_{x,1}=\frac{u_{x,2}+u_{x,3}}{2}$ and $u_{y,1}=\frac{u_{y,2}+u_{y,3}}{2}$.
+Now, the deformations in the plots are stronger. While the overall error grew quite a lot, we can still say that it is minimal roughly at $u_{x,1}=\frac{u_{x,2}+u_{x,3}}{2}$ and $u_{y,1}=\frac{u_{y,2}+u_{y,3}}{2}$.
 
-What we can assume from the plots we have seen so far is the following: The more the moments differ, the worse our approximation (i.e. the bigger the error) will get.
+What we can assume from the plots we have seen so far is that the more the moments differ, the worse our approximation (i.e. the bigger the error) will get. We made the same observation about the height values before.
 
-To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=1$ assuming that this should roughly look like the ``original situation'' where all moments were set to 0 -- except that we suspect the error to be minimal at $u_{x,1}=1$ and $u_{y,1}=1$.
+To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=1$ assuming that this should roughly look like the original situation where all moments were set to 0, except that we suspect the error to be minimal at $u_{x,1}=1$ and $u_{y,1}=1$.
 
 \input{ord1_varying_ux1_uy1_differing_ux2_uy2_ux3_uy3_1_1_1_1/tex.tex}
 
-Voilà: The plots confirm our suspiction: The error is minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ --- it even is 0.
+The plots confirm our suspiction: the error is indeed minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ -- it is even 0.
 
 \clearpage{}
 
 \section{Order 2}
 \label{sec:stiffness-analyis-ord-2}
 
-We will now examine the error plots for order 2. Remember from table \ref{tab:basis-functions-for-low-degrees} that we have now 6 basis functions $\phi_1,\dots,\phi_6$. Besides making the approximation more complicated, this gives rise to 12 plots (we have the errors in $x$-momentum and in $y$-momentum for each of the basis functions).
+We will now examine the error plots for order 2. Remember from table \ref{tab:basis-functions-for-low-degrees} that we have now 6 basis functions $\phi_1,\dots,\phi_6$. Besides making the approximation more complicated, this gives rise to 12 plots (we have the errors in $x$ momentum and in $y$ momentum for each of the basis functions).
 
 Similar to before, we will use only one plot for several error plots if they all look the same.
 
@@ -1807,11 +1714,11 @@ Similar to before, we will use only one plot for several error plots if they all
 \subsubsection{Varying $h_1$}
 \label{sec:stiffness-analysis-ord2-default-var-h1}
 
-Again, we start out by using the default values: All heights are set to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. You can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}. 
+Again, we start out by using the default values: All heights are set to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. You can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}.
 
 \input{ord2_varying_h1_default/tex.tex}
 
-As you recognize, we always have a parabola-like shape (except for the $x$-momentum of the 5th and the $y$-momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (e.g. for the $x$-momentum of the 2nd basis function). We -- similarily to before -- recognize that the error is always minimal (in fact even 0) for $h_1=10$.
+As you recognize, we always have a parabola-like shape (except for the $x$ momentum of the 5th and the $y$ momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (e.g. for the $x$ momentum of the 2nd basis function). We -- similarily to before -- recognize that the error is always minimal (in fact even 0) for $h_1=10$.
 
 \subsubsection{Varying $u_{x,1}$}
 \label{sec:stiffness-analysis-ord2-default-var-ux1}
@@ -1820,24 +1727,24 @@ We now choose $u_{x,1}$ to be the axis variable. We set all other momentums to 0
 
 \input{ord2_varying_ux_1/tex.tex}
 
-One can see there that the error for all $y$-momentums is zero. Moreover, the error is zero for the $x$-momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
+One can see there that the error for all $y$ momentums is zero. Moreover, the error is zero for the $x$ momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
 
 The plots mostly look parabola-like which is traceable since we use basis functions of second degree.
 
-The fact that \emph{all} $y$-momentums are zero deserves a special treatment. However, we will do this in a manner that is -- while still suited for this special case -- a bit more general.
+The fact that \emph{all} $y$ momentums are zero deserves a special treatment. However, we will do this in a manner that is -- while still suited for this special case -- a bit more general.
 
 % Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
 
 % Mathematically, we have then
 % \begin{align*}
 %   \pd{\phi_X}{x} &= 0 \\
-%   \pd{\phi_Y}{y} &= 0 
+%   \pd{\phi_Y}{y} &= 0
 % \end{align*}
 
-Let us start out by examining the error of the $y$-momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right)$. Note that $\mathtt{DIFFY}$ is a two-component vector containing an $x$ and an $y$-coordinate.
+Let us start out by examining the error of the $y$ momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right)$. Note that $\mathtt{DIFFY}$ is a two-component vector containing an $x$ and an $y$-coordinate.
 
 \begin{align*}
-  SE_y^X &= \int_T \left| \left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right) \cdot \nabla \phi_X \right| \, dT = \\
+  SE_y^X &= \int_T \left| \left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right) \cdot \nabla \phi_X \right| \, dT = \\
   &= \int_T \left| \mathtt{DIFFY} \cdot \nabla \phi_X \right|\,dT = \\
   &= \int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} + \mathtt{DIFFY}_Y \cdot \underbrace{\pd{\phi_X}{y}}_{=0} \right) \right| \, dT = \\
   &=\int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} \right) \right| \, dT
@@ -1846,9 +1753,9 @@ Let us start out by examining the error of the $y$-momentum for the basis functi
 So, let us now consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$-component between the exact solution and the point-wise approximation:
 
 \begin{equation*}
-  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u_x}^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
+  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
-with $\widehat h, \widehat{u_x}, \widehat{u_y}$ as defined in equation (\ref{eq:substitutions-for-all-components-with-hat}).
+with $\widehat h, \widehat{u}_x, \widehat{u}_y$ as defined in equation (\ref{eq:substitutions-for-all-components-with-hat}).
 
 If we choose all momentums to be 0 (which is what we are doing in this scenario), then we can simplify $\mathtt{DIFF}_Y$ to the following:
 
@@ -1856,9 +1763,9 @@ If we choose all momentums to be 0 (which is what we are doing in this scenario)
   \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
 
-Note that for second order, we have $n=6$. And moreover, we have $\sum_{i=1}^6 \phi(x,y)=1$ -- this can be verified by simple computation. Even more interesting is the fact that $(\sum_{i=1}^6 a \phi(x,y))^2 = a^2$.
+Note that for second order, we have $n=6$. And moreover, we have $\sum_{i=1}^6 \phi(x,y)=1$ -- this can be verified by simple computation. \todo{Interesting!} Even more interesting is the fact that $(\sum_{i=1}^6 a \phi(x,y))^2 = a^2$. \todo{Even more interesting!}
 
-Remember that $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$. We will now exploit the two mentioned identities: We set $h_1=h_2=h_3=\dots=h_n$ and can -- even if it is a somewhat nontrivial computation -- simplify the above to 0. This is why all $y$-momentums are 0 in this scenario.
+Remember that $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$. We will now exploit the two mentioned identities: We set $h_1=h_2=h_3=\dots=h_n$ and can -- even if it is a somewhat nontrivial computation -- simplify the above to 0. This is why all $y$ momentums are 0 in this scenario.
 
 \todo{Kann man das weiter ausrechnen?}
 
@@ -1872,7 +1779,7 @@ We will now alter some values and see how this affects our error plots. We will 
 
 \paragraph{Altering $h_2$}
 
-Let us first do a simple modification to our standard setting: We choose $h_2=11$ and leave all other height values (i.e. $h_3$ to $h_6$ fixed at 10). The resulting plots can be seen in figure \ref{fig:ord2_varying_h1_h2_11}. 
+Let us first do a simple modification to our standard setting: We choose $h_2=11$ and leave all other height values (i.e. $h_3$ to $h_6$ fixed at 10). The resulting plots can be seen in figure \ref{fig:ord2_varying_h1_h2_11}.
 
 \input{ord2_varying_h1_h2_11/tex.tex}
 
@@ -1882,7 +1789,7 @@ This is traceable, since we use 2nd-order approximations for $h, u_x$ and $u_y$ 
 
 While in the 1st-order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), we now can not explore this behaviour for some of the functions.
 
-Remarkably, the errors for the $y$-momentum of the 3rd basis function and the $x$-momentum of the 5th basis function is still 0.\todo{Kann man dies irgendwie herrechnen?}
+Remarkably, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0.\todo{Kann man dies irgendwie herrechnen?} \todo{$\pd{\phi_3}{y} = 0$ and $\pd{\phi_5}{x} = 0$}
 
 \paragraph{Altering $h_3$}
 
@@ -1890,7 +1797,7 @@ We now want to get insights whether modifying another height value results in re
 
 \input{ord2_varying_h1_h3_11/tex.tex}
 
-First of all: The errors in $y$-momentum of the 3rd basis function and the $x$-function of the 5th basis function is still 0. \todo{Herrechenbar?} 
+First of all: The errors in $y$ momentum of the 3rd basis function and the $x$-function of the 5th basis function is still 0. \todo{Herrechenbar?}
 
 However, all other plots resemble sort of polynomials of 4th degree. Again, we can not be sure that the minimum error is at the average of the height values $h_2$ to $h_6$. Moreover, all these errors are \emph{never} 0.
 
@@ -1919,53 +1826,53 @@ Now we have the first time where some plots look drastically different than befo
 
 \paragraph{Altering $u_{x,2}$}
 
-We will now examine what influence has it if we alter one single $x$-momentum. Therefore, we choose $u_{x,2}=1$ and leave all other momentums at 0. We show the corresponding plots in figure \ref{fig:ord2_varying_ux2_1}.
+We will now examine what influence has it if we alter one single $x$ momentum. Therefore, we choose $u_{x,2}=1$ and leave all other momentums at 0. We show the corresponding plots in figure \ref{fig:ord2_varying_ux2_1}.
 
 \input{ord2_varying_ux2_1/tex.tex}
 
-You can see that the curves are no parabolae anymore, but look more like functions of degree 4. Again, this is convincing, since we are multiplying approximations of degree 2 with each other, which results in degree 4. However, the errors in the $x$-momentum of the 5th basis function and the $y$-momentums of all basis functions are still 0.
+You can see that the curves are no parabolae anymore, but look more like functions of degree 4. Again, this is convincing, since we are multiplying approximations of degree 2 with each other, which results in degree 4. However, the errors in the $x$ momentum of the 5th basis function and the $y$ momentums of all basis functions are still 0.
 
 \paragraph{Altering $u_{x,3}$}
 
-We now want to research whether the different $x$-momentums have significantly different impacts on the error term. Therefore, we now exemplarily alter $u_{x,3}$ (instead of -- like before -- altering $u_{x,2}$). The plots are shown in figure \ref{fig:ord2_varying_ux1_ux3_1}.
+We now want to research whether the different $x$ momentums have significantly different impacts on the error term. Therefore, we now exemplarily alter $u_{x,3}$ (instead of -- like before -- altering $u_{x,2}$). The plots are shown in figure \ref{fig:ord2_varying_ux1_ux3_1}.
 
 \input{ord2_varying_ux1_ux3_1/tex.tex}
 
-The plots look quite similar to the ones where we changed $u_{x,2}$, even if the impact seems to be a bit weaker at some points (especially at the $x$-momentums of the 1st, 2nd and 3rd basis function). Therefore, we can suspect that -- if we only alter one single $x$-momentum -- the error plots will look quite similar, i.e. it does not (significantly) matter \emph{which} $x$-momentum we alter, but only how strong we do so.
+The plots look quite similar to the ones where we changed $u_{x,2}$, even if the impact seems to be a bit weaker at some points (especially at the $x$ momentums of the 1st, 2nd and 3rd basis function). Therefore, we can suspect that -- if we only alter one single $x$ momentum -- the error plots will look quite similar, i.e. it does not (significantly) matter \emph{which} $x$ momentum we alter, but only how strong we do so.
 
 \paragraph{Altering $u_{y,2}$}
 
-Let us now inspect what happens if we do not change the $x$-momentum but the $y$-momentum. As a showcase example, we will use $u_{y,2}=1$ and leave all other momentums at 0 (-- all heights are still 10). 
+Let us now inspect what happens if we do not change the $x$ momentum but the $y$ momentum. As a showcase example, we will use $u_{y,2}=1$ and leave all other momentums at 0 (-- all heights are still 10).
 
-The plots are shown in figure \ref{fig:ord2_varying_ux1_uy2_1} and are likely to surprise us. Because these plots are likely to surprise us, we split them up into the errors for the $x$-momentums and the errors for the $y$-momentums.
+The plots are shown in figure \ref{fig:ord2_varying_ux1_uy2_1} and are likely to surprise us. Because these plots are likely to surprise us, we split them up into the errors for the $x$ momentums and the errors for the $y$ momentums.
 
-The errors for the $x$-momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1}, the ones for the $y$-momentums in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent}.
+The errors for the $x$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1}, the ones for the $y$ momentums in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent}.
 
-\subparagraph{Errors in $x$-momentums}
+\subparagraph{Errors in $x$ momentums}
 
-Let us first concentrate on the errors of the $x$-momentums shown in figure \ref{fig:ord2_varying_ux1_uy2_1}.
+Let us first concentrate on the errors of the $x$ momentums shown in figure \ref{fig:ord2_varying_ux1_uy2_1}.
 
 \input{ord2_varying_ux1_uy2_1/tex.tex}
 
-All in all, the error plots look roughly the same -- except for the error of the 5th basis function. All of the other plots still show parabolae, and the error is negligibly bigger than the error used for default values (have a look at figure \ref{fig:ord2_varying_ux_1} for comparison). The most striking difference is -- as said -- the $x$-momentum for the 5th basis function, that has changed from zero to an ``absolute-value-linear'' graph.
+All in all, the error plots look roughly the same -- except for the error of the 5th basis function. All of the other plots still show parabolae, and the error is negligibly bigger than the error used for default values (have a look at figure \ref{fig:ord2_varying_ux_1} for comparison). The most striking difference is -- as said -- the $x$ momentum for the 5th basis function, that has changed from zero to an ``absolute-value-linear'' graph.
 
 Note that \emph{all} errors reach zero for $u_{x,1}=0$ (except possibly the error for the 1st basis function that is shifted to the right by a quantum \todo{Herrechenbar?}).
 
-\subparagraph{Errors in $y$-momentums}
+\subparagraph{Errors in $y$ momentums}
 
-The error plots for the $y$-momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and look a bit chaotic (compared to before where they were all 0).
+The error plots for the $y$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and look a bit chaotic (compared to before where they were all 0).
 
 \input{ord2_varying_ux1_uy2_1/tex_y.tex}
 
-Suddenly, the errors in the $y$-momentums are not zero anymore, but look like piecewise linear functions (at least within the plotted range). Even if the error term didn't grow that much, the shape differs strongly from what we have seen so far.
+Suddenly, the errors in the $y$ momentums are not zero anymore, but look like piecewise linear functions (at least within the plotted range). Even if the error term didn't grow that much, the shape differs strongly from what we have seen so far.
 
-Probably most interesting is the $y$-momentum of the 5th basis function, that is still constant, however not at a value of 0 anymore, but at a value of roughly 0.004835.\todo{Ist das eine numerische Ungenauigkeit? (vermutlich nicht, oder?!)}
+Probably most interesting is the $y$ momentum of the 5th basis function, that is still constant, however not at a value of 0 anymore, but at a value of roughly 0.004835.\todo{Ist das eine numerische Ungenauigkeit? (vermutlich nicht, oder?!)}
 
-We saw that changing an $y$-momentum can result in drastically changed shapes of the error plots,  which is something we did not expect.\todo{Hier noch mehr Experimente durchführen, um genauere Aussagen treffen zu können.}
+We saw that changing an $y$ momentum can result in drastically changed shapes of the error plots,  which is something we did not expect.\todo{Hier noch mehr Experimente durchführen, um genauere Aussagen treffen zu können.}
 
-\paragraph{Setting all $x$-momentums to 1}
+\paragraph{Setting all $x$ momentums to 1}
 
-We will now come back to only modifying the $x$-momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect parabolae whose minima are at $u_{x,1}=1$ (since all other $x$-momentums are 1). You can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
+We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect parabolae whose minima are at $u_{x,1}=1$ (since all other $x$ momentums are 1). You can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
 
 \input{ord2_varying_ux1_ux2-ux6_1/tex.tex}
 
@@ -1978,7 +1885,7 @@ It is not a big surprise that our expectations are confirmed at best.
 \appendix
 
 \clearpage{}
-%\newgeometry{margin=1.5cm}
+\newgeometry{margin=1.5cm}
 \part{Appendix}
 \label{part:cheat-sheet}
 
@@ -2008,7 +1915,7 @@ It is not a big surprise that our expectations are confirmed at best.
 
     $\mathbf{q}$ & $\mypmatrix{
       h \\ u_x \\ u_y
-    }$ & Height, $x$-momentum and $y$-momentum grouped into one vector \\
+    }$ & Height, $x$ momentum and $y$ momentum grouped into one vector \\
 
     $e_x$ & $\mypmatrix{ 1 \\ 0 }$ & \\
     $e_y$ & $\mypmatrix{ 0 \\ 1 }$ & \\
@@ -2019,43 +1926,43 @@ It is not a big surprise that our expectations are confirmed at best.
       h_i \\ u_{x,i} \\ u_{y,i}
     }$ & Same as before, but for $i$-th support point  \\
 
-    $F(\mathbf{q})$ & 
-    $\mypmatrix{ \mathbf{u} \\ \frac{u_x}{h}\mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h}\mathbf{u} + \frac{1}{2} g h^2 e_y }$ & 
+    $F(\mathbf{q})$ &
+    $\mypmatrix{ \mathbf{u} \\ \frac{u_x}{h}\mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h}\mathbf{u} + \frac{1}{2} g h^2 e_y }$ &
     The three components can be extracted with $F_1(\mathbf{q})$, $F_2(\mathbf{q})$, $F_3(\mathbf{q})$ \\
-   
+
     $\mathbf{q}$ & $\sum_{i=1}^n \mathbf{q}_i \phi_i$ & Approximation of $\mathbf{q}$, three components \\
 
-    $\overline{F_2(\mathbf{q})}$ & 
+    $\overline{F}_2(\mathbf{q})$ &
     $\mypmatrix{\sum_{j=1}^n \left( \frac{u_{x,j}^2}{h_j^2}+\frac{1}{2} g h_j^2  \right) \phi_j \\
     \sum_{j=1}^n \left( \frac{u_{x,j} \cdot u_{y,j}}{h_j} \right) \phi_j}$ &
     Point-wise approximation of second flux component \\
 
-    $\overline{F_3(\mathbf{q})}$ & 
+    $\overline{F}_3(\mathbf{q})$ &
     $\mypmatrix{
     \sum_{j=1}^n \left( \frac{u_{x,j} \cdot u_{y,j}}{h_j} \right) \phi_j \\
-      \sum_{j=1}^n \left( \frac{u_{y,j}^2}{h_j^2}+\frac{1}{2} g h_j^2  \right) \phi_j 
+      \sum_{j=1}^n \left( \frac{u_{y,j}^2}{h_j^2}+\frac{1}{2} g h_j^2  \right) \phi_j
 }$ &
     Point-wise approximation of third flux component \\
 
     $\widehat{h}$ & $\sum_{j=1}^n \phi_j h_j$ & Approximation of $h$ \\
-    $\widehat{u_x}$ & $\sum_{j=1}^n \phi_j u_{x,j}$ & Approximation of $u_x$ \\
-    $\widehat{u_y}$ & $\sum_{j=1}^n \phi_j u_{y,j}$ & Approximation of $u_y$ \\
+    $\widehat{u}_x$ & $\sum_{j=1}^n \phi_j u_{x,j}$ & Approximation of $u_x$ \\
+    $\widehat{u}_y$ & $\sum_{j=1}^n \phi_j u_{y,j}$ & Approximation of $u_y$ \\
 
-    $\widehat{F_2(\mathbf{q})}$ & $\mypmatrix{
-      \left( \frac{\widehat{u_x}^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \\
-      \frac{\widehat{u_x}\cdot \widehat{u_y}}{\widehat{h}}
+    $\widehat{F}_2(\mathbf{q})$ & $\mypmatrix{
+      \left( \frac{\widehat{u}_x^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \\
+      \frac{\widehat{u}_x\cdot \widehat{u}_y}{\widehat{h}}
     }$ & Exact solution for second component of flux \\
 
-    $\widehat{F_3(\mathbf{q})}$ & $\mypmatrix{
-      \frac{\widehat{u_x}\cdot \widehat{u_y}}{\widehat{h}} \\
-      \left( \frac{\widehat{u_y}^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) 
+    $\widehat{F}_3(\mathbf{q})$ & $\mypmatrix{
+      \frac{\widehat{u}_x\cdot \widehat{u}_y}{\widehat{h}} \\
+      \left( \frac{\widehat{u}_y^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right)
     }$ & Exact solution for second component of flux \\
 
     $\mypmatrix{A \\ B} \cdot \nabla\phi$ & $A \cdot \pd{\phi}{x} + B \cdot \pd{\phi}{y}$ & Needed, since each line of flux has two ``sublines'' that have to be combined into one\\
 
-    $SE_x^i$ & $\int_T \left| \left( \overline{F_2(\mathbf{q})} - \widehat{F_2(\mathbf{q})} \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $x$-momentum for $i$-th basis function \\
+    $SE_x^i$ & $\int_T \left| \left( \overline{F}_2(\mathbf{q}) - \widehat{F}_2(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $x$ momentum for $i$-th basis function \\
 
-    $SE_y^i$ & $\int_T \left| \left( \overline{F_3(\mathbf{q})} - \widehat{F_3(\mathbf{q})} \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $y$-momentum for $i$-th basis function \\
+    $SE_y^i$ & $\int_T \left| \left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $y$ momentum for $i$-th basis function \\
 
     $SE$ & $\mypmatrix{SE_x \\ SE_y}$ & \\
 
@@ -2069,3 +1976,4 @@ It is not a big surprise that our expectations are confirmed at best.
 %%% Local Variables:
 %%% TeX-master: "results.tex"
 %%% End:
+
