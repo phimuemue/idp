@@ -1363,7 +1363,7 @@ Analogously, we define this for the second component:
   \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{y}
 \end{equation}
 
-\subsection{What will we compare?}
+\subsection{Comparison of exact and approximative solution}
 
 We have now derived an exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L_1$ norm, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
 
@@ -1386,7 +1386,7 @@ Each component of $SE$ describes the deviation between two functions (namely the
 
 On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where} these functions deviate by just looking at $SE$.
 
-\section{How to evaluate $SE$}
+\subsection{How to evaluate $SE$}
 \label{sec:how-to-evaluate-e}
 
 If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely quite hard to compute exactly, maybe even impossible.
@@ -1521,6 +1521,59 @@ Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one singl
 Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
 We noticed that $r=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that's the case it's never enough to make an impact on the eventual interpretation of the results.
+
+\subsection{Singularities in $SE$}
+\label{sec:stiffness-analysis-singularities}
+
+Before we actually generate plots and interpret them, let us for a moment consider the term $SE_x$ (we could also do so for $SE_y$ --- it is just for illustrative purpose).
+
+This term ($SE_x$) depends on $\widehat{F_2}(\mathbf{q})$ and $\overline{F_2}(\mathbf{q})$. Moreover, as you hopefully remember, $\widehat{F_2}(\mathbf{q})$ is defined as follows:
+
+\begin{equation*}
+  \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi =
+  \left( \frac{\widehat{u}_x^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{x} +
+  \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{y}
+\end{equation*}
+
+As you can see, it contains the term $\widehat{h} = \sum_{i=1}^n h_i \cdot \phi_i(x,y)$ as a denominator. Since $\phi_i$ depends upon $x$ and $y$, and we integrate exactly over these two variables, this might imply a problem if we have singularities (w.r.t. the variables $x$ and $y$), i.e. if we have that $\widehat h = 0$ (which would make the denominator 0 and thus the affected fraction undefined).
+
+Note that the term $\overline{F}(\mathbf{q})$ can not produce any singularities since $x$ and $y$ are nowhere in a denominator there (neither are they in a logarithm, or under a root).
+
+We will now investigate where these singularities lie! We start by considering the following equation characterizing the problem cases:
+
+\begin{equation*}
+  \widehat{h} = \sum_{i=1}^n h_j \phi_j(x,y) \stackrel{!}{=} 0
+\end{equation*}
+
+If we solve this equation for -- let's say -- $h_1$, we obtain
+\begin{equation}
+  \label{eq:stiffness-analysis-singularities-h1}
+  h_1 = \frac{-\sum_{i=2}^n h_j \phi_j(x,y)}{\phi_1(x,y)}
+\end{equation}
+
+The meaning of equation (\ref{eq:stiffness-analysis-singularities-h1}) is the following: Given the values for $h_2$ to $h_n$, the values $h_1$, $x$ and $y$ that satisfy equation (\ref{eq:stiffness-analysis-singularities-h1}) yield a singularity. We can exploit this the following way: We know that the point $(x,y)$ must reside within our triangle $T$ (i.e. $x+y\leq 1$ and $x\geq 0$ and $y\geq 0$). That is, we (in principle) can try all values $(x,y)$ that satisfy this property and compute the value $h_1$ that would produce a singularity.
+
+We will do so for illustrating some simple cases.
+
+\subsubsection{Order 1}
+\label{sec:stiffness-analysis-singluarities-ord-1}
+
+Let us start out ba trying order 1, and setting $h_2=h_3=10$. We then obtain the following (by substituting $\phi_1$ to $\phi_3$ as defined in table \ref{tab:basis-functions-for-low-degrees}):
+
+\begin{equation*}
+  h_1 = \frac{1-2x+24y}{-1+2y}
+\end{equation*}
+
+We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-2\cdot 0.25+24\cdot 0.25}{-1+2\cdot 0.25} = -13$. That means: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -13 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -13 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot 
+\begin{equation*}
+\log_{10}\frac{1-2x+24y}{-1+2y}.
+\end{equation*}
+
+\todo{Plot einstellen}
+
+As you can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above. If we go back, we can conclude that either $h_1 \leq 10^0 = 1$ or $h_1\geq 10^{1.25} \approx 17$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
+
+We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour.\todo{Wirklich?}
 
 \section{Order 1}
 \label{sec:stiffness-analysis-first-touch}
