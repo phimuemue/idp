@@ -254,11 +254,24 @@ For second order, the thing involves a bit more elaboration, but is still easy. 
 We conjecture the following two identities \todo{Sind diese irgendwie beweisbar?}
 
 \begin{align}
+  \label{eq:sum-basis-functions-is-1}
   \sum_{i=1}^n \phi_i(x,y) &= 1 \\
   \left( \sum_{i=1}^n a \cdot \phi_i(x,y) \right)^2 &= a^2
 \end{align}
 
 We verified these two equations for first and second order using maple (and generic support points). However, we do not know how to prove them by hand and generalized for higher orders. While these two may look a bit farfetched at first, they will later be useful when we examine specific plots.
+
+The second equation can be easily followed from the first one.
+
+The first equation can be derived the following way: If we have basis functions $\phi_1$ to $\phi_n$, o a certain orer (say order $o$ --- which implies $n=\frac{(o+1)(o+2)}{2}$). If we then take the sum $\sum_{i=1}^n \phi_i(x,y)$ we obtain a polynomial of degree $o$. This polynomial has exactly $n$ coefficients that may be obtained by solving a system of linear equations containing $n$ equations These equations are obtained using the $n$ support points, i.e. we have a system of $n$ equations and $n$ coefficients which -- on the other hand -- means, that all the coefficients are determined uniquely (if the system of equations can be solved). 
+
+Note that for any support point $(x_p,y_p)$, we have that
+
+\begin{equation}
+  \sum_{i=1}^n \phi_i(x_p,y_p) = 1
+\end{equation}
+
+Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfils $\overline{\rho}(x_p,y_p)$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$. Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
 \section{Discontinuous Galerkin}
 \label{sec:discontinuous-galerkin}
@@ -1567,7 +1580,7 @@ We will do so for illustrating some simple cases.
     \label{fig:stiffness-analysis-log-singularities-ord-2}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o2.pdf}
   }
-  \caption{Heatmaps for $\log_{10} h_1$ depending on $(x,y)$ under the assumption that all other height values are set to 10. If all other height values are 10, \emph{reasonable} values for $h_1$ lie in the range $\left[ 6,14 \right] \approx \left[ 10^{0.75}, 10^{1.14} \right]$. I.e. the logarithm of reasonable values for $h_1$ is in $\left[ 0.75, 1.14 \right]$. As you can see, this is never the case.}
+  \caption{Heatmaps for $\log_{10} h_1$ depending on $(x,y)$ under the assumption that all other height values are set to 10. If all other height values are 10, \emph{reasonable} values for $h_1$ lie in the range $\left[ 6,14 \right] \approx \left[ 10^{0.75}, 10^{1.14} \right]$. I.e. the logarithm of reasonable values for $h_1$ is in $\left[ 0.75, 1.14 \right]$. As you can see, this is never the case. This means that -- for reasonable values of $h_1$ -- we do not observe any singularities.}
 \end{figure}
 
 \subsubsection{Order 1}
