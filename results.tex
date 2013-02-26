@@ -113,7 +113,7 @@ Using this scheme, we can simplify a few steps in the calculation process. With 
 
 In addition to rotating, we can also scale the edges of the triangles to always be in a certain shape. We'll use that to scale the catheses to length 1 and hence the hypothenuse to length $\sqrt{2}$. This will help with further calculations, because some of them will rely on the length of an edge, which can be conveniently omitted (or set to the constant $\sqrt{2}$ respectively).
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}[scale=1.5]
     \draw (-2.5,1.5) -- node[above]{$c$} (-1,1.5) -- node[right]{$c$} (-1,0) -- node[below left]{$\sqrt{2}c$} (-2.5,1.5);
@@ -213,7 +213,7 @@ For higher degree, we choose the points derived by Dunavant (see \cite{dunavant1
 
 To have an impression of what the basis functions look like, please have a look at table \ref{tab:basis-functions-for-low-degrees}. It shows the basis functions for orders 0 to 2.
 
-\begin{table}[h]
+\begin{table}[ht]
   \centering
   \begin{tabular}{cclll}
     \toprule
@@ -330,7 +330,7 @@ As for the source term, we can interpret it to be the bathymetry in our case, to
 
 Having defined those terms to suit our purpose, we can rewrite the above as follows:
 
-\begin{eqnarray*}
+\begin{eqnarray}
   \label{eqn:shallow-water-flux}
   \mathbf{q} =
   \begin{pmatrix}
@@ -340,7 +340,7 @@ Having defined those terms to suit our purpose, we can rewrite the above as foll
   \begin{pmatrix}
     \mathbf{u} \\ \frac{u_x}{h}\mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h}\mathbf{u} + \frac{1}{2} g h^2 e_y
   \end{pmatrix}
-\end{eqnarray*}
+\end{eqnarray}
 
 Here we replaced the velocity $\mathbf{v}$ by the momentum $\mathbf{u}$, which, similarly, consists of two dimensions, one in each direction (referred to by $u_x$ and $u_y$). Occasionally we will need only the $x$ components (or $y$ components) from that vector, for which we will write $F^x$ (and $F^y$ respectively):
 
@@ -691,7 +691,7 @@ The original problem arises when two adjacent triangles share one edge. Each tri
 
 Figure \ref{fig:two-triangles-and-some-support-points} shows two adjacent triangles and exemplary positions of the support points. In the case shown we would use six support points, resulting in a two-variable polynomial of degree 2. We could use more support points, thereby increasing the degree of the resulting polynomial.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{tikzpicture}[scale=2]
     \begin{scope}[xshift=-.1em,yshift=-.1em]
@@ -818,7 +818,7 @@ Our goal will then be to compare $N\left(x\right)$ against $N^\prime\left(x\righ
 \end{equation}
 where the integration is to be understood component-wise.
 
-\subsection{How to evaluate $I$?}
+\subsection{\texorpdfstring{How to evaluate $I$}{How to evaluate I}}
 \label{sec:how-to-eval-I}
 
 It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-norm-definition}). Even if we delegate most of the work to the symbolic math program \emph{Maple}, we experienced some pitfalls while evaluating the exact approach.
@@ -913,7 +913,7 @@ Analytically deriving a general formula for where these singularities occur is a
 %   \label{tab:selected-values-for-fracsumme}
 % \end{table}
 
-\section{Visualizing the error term $I$}
+\section{\texorpdfstring{Visualizing the error term $I$}{Visualizing the error term I}}
 \label{sec:making-the-whole-thing-interactive}
 
 We are now going to plot (the two components of) the term $I$ as described in equation (\ref{eq:integral-norm-definition}). First, we have to elaborate on some necessary considerations when it comes plotting such a complicated term. Afterwards, we present our tool that was developed to simplify plotting as much as possible.
@@ -1155,7 +1155,7 @@ Figure \ref{fig:two-points-p1-wider-range} shows a plot that was created using t
 
 Up until now, we saw what the plots look like if all points have the same value. We are now goint to inspect what happens if the single points have different values.
 
-\subsubsection{Decreasing the height of $p_1^L$}
+\subsubsection{\texorpdfstring{Decreasing the height of $p_1^L$}{Decreasing the height of p1L}}
 \label{sec:decreasing-height-p1}
 
 Now we alter the previously described experiment in one detail. We fix all points as before, but we alter one single point slightly. We do this in order to find out if specific points might have more impact than others.
@@ -1175,21 +1175,21 @@ You see the results of this experiment in figure \ref{fig:three-points-h1-}.
 
 Comparing figure \ref{fig:three-points-equal} and \ref{fig:three-points-h1-} it is worth noting that especially the plots for $p_2^L$, $p_3^L$ and $p_3^R$ differ strongly. Additionally, it can be seen that the structure differs as well as the range of the error.
 
-\subsubsection{Decreasing the momentum of $p_1^L$}
+\subsubsection{\texorpdfstring{Decreasing the momentum of $p_1^L$}{Decreasing the momentum of p1L}}
 \label{sec:decreasing-momentum-p1}
 
 While we changed the height in subsection \ref{sec:decreasing-height-p1}, we are now going to change the momentum. The results are shown in figure \ref{fig:three-points-u1-}
 
 \input{3_punkte_1_impuls_verringert/tex.tex}
 
-\subsubsection{Decreasing the height of $p_2^L$}
+\subsubsection{\texorpdfstring{Decreasing the height of $p_2^L$}{Decreasing the height of p2L}}
 \label{sec:decreasing-height-p2}
 
 Now we are going to examine if it makes a difference when we decrease the height of another point, namely $p_2^L$. We show the results in figure \ref{fig:three-points-h2-}. In this case, the graphs for points $p_1^L$ and $p_3^L$ in particular are noteworthy.
 
 \input{3_punkte_2_hoehe_verringert/tex.tex}
 
-\subsubsection{Decreasing the momentum of $p_2^L$}
+\subsubsection{\texorpdfstring{Decreasing the momentum of $p_2^L$}{Decreasing the momentum of p2L}}
 \label{sec:decreasing-momentum-of-p2}
 
 Decreasing the momentum of point $p_2^L$ results in the plots depicted in figure \ref{fig:three-points-u2-}. In particular, the graphs for $p_1^L$ and $p_3^L$ show significant structural differences.
@@ -1396,14 +1396,14 @@ As you can see, computing these terms involves the terms $\phi$ that acts as a r
   SE_x^i \\ SE_y^i
 \end{pmatrix}$ is the error term for basis function $\phi_i$.
 
-\subsection{What does $SE$ mean?}
+\subsection{\texorpdfstring{What does $SE$ mean?}{What does SE mean?}}
 \label{sec:stiffness-analysis-what-does-se-mean}
 
 Each component of $SE$ describes the deviation between two functions (namely the exact solution and the point-wise approximation). Due to comparing norms for our desired terms, the only thing one can say for sure is that if $SE$ is zero in either component, then the compared functions in that component are equal, i.e. then we have no error at all.
 
 On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where} these functions deviate by just looking at $SE$.
 
-\subsection{How to evaluate $SE$}
+\subsection{\texorpdfstring{How to evaluate $SE$}{How to evaluate SE}}
 \label{sec:how-to-evaluate-e}
 
 \todo{$r$ umbenennen!}
@@ -1439,7 +1439,7 @@ After this, we filter out the unnecessary centers:
 
 If we use this definition, we obtain $r^2$ triangles of equal size.
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
   \newcommand{\mytriangle}[3]{
     \begin{scope}[scale=#1*2, xshift=#2cm,yshift=#3cm]
       \draw(0,0) -- (1,0) -- (0,1) -- (0,0);
@@ -1541,7 +1541,7 @@ Using this technique, one can -- just as in the one-dimensional case -- adjust t
 
 We noticed that $r=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that's the case it's never enough to make an impact on the eventual interpretation of the results.
 
-\subsection{Singularities in $SE$}
+\subsection{\texorpdfstring{Singularities in $SE$}{Singularities in SE}}
 \label{sec:stiffness-analysis-singularities}
 
 Before we actually generate plots and interpret them, let us for a moment consider the term $SE_x$ (we could also do so for $SE_y$ --- it is just for illustrative purpose).
@@ -1658,7 +1658,7 @@ Following are reports of various scenarios we have tested, trying to find out an
 
 \subsection{Order 1 -- standard values}
 
-\subsubsection{Varying $h_1$}
+\subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
 
 As was mentioned in section \ref{sec:basis-functions-choice}, choosing order 1 requires 3 basis functions $\phi_1,\dots,\phi_n$. These depend on the three components (height, $x$ momentum, $y$ momentum) of the three support points. First, we will look into the impact the value $h_1$ (i.e. the height of the first support point) has on the error terms. We fix the following values:
 
@@ -1680,7 +1680,7 @@ The fact that the error is minimal for $h_1=10$ is interesting for the following
 
 From now on, we will omit plots that depict a zero error plot and will leave a remark where necessary.
 
-\subsubsection{Varying $u_{x,1}$}
+\subsubsection{\texorpdfstring{Varying $u_{x,1}$}{Varying ux1}}
 
 We leave all values as they were and additionally set $h_1=10$, but instead take $u_{x,1}$ as the varying component. The results are depicted in figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
 
@@ -1690,7 +1690,7 @@ As you can see, we omitted all plots except those for the $x$ momentum for the s
 
 Moreover, it is again noteworthy that the minimum error occurs for $u_{x,1}=0$ since that equals the values of $u_{x,2}$ and $u_{x,3}$.
 
-\subsubsection{Varying $u_{y,1}$}
+\subsubsection{\texorpdfstring{Varying $u_{y,1}$}{Varying uy1}}
 
 In the last section, the $x$ momentum of the second and third basis function were the most interesting terms to look at. Let us now see, what happens if we choose $u_{y,1}$ as varying comopnent.
 
@@ -1698,7 +1698,7 @@ In the last section, the $x$ momentum of the second and third basis function wer
 
 The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. As one could have suspected, the plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$ momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
 
-\subsubsection{Varying $u_{x,1}$ and $u_{y,1}$}
+\subsubsection{\texorpdfstring{Varying $u_{x,1}$ and $u_{y,1}$}{Varying ux1 and uy1}}
 
 So far we restricted ourselves to one varying component, but now we will examine the situation for two variables (namely $u_{x,1}$ and $u_{y,1}$), while fixing the others to set values.
 
@@ -1766,7 +1766,7 @@ Figure \ref{fig:ord1_differing_h2_h3_164} shows the plot for this situation. As 
 
 \todo{Kann man das nicht doch irgendwie herrechnen? KP\dots}
 
-\subsubsection{Different $x$ momentums}
+\subsubsection{\texorpdfstring{Different $x$ momentums}{Different x momentums}}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-ux}
 
 We are now going doing another experiment: We set all height values to 10, and see what happens if we choose different values for the $u_{x,i}$. For a reference what happens for $u_{x,2}=u_{x,3}=0$, see figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
@@ -1779,12 +1779,12 @@ As can be seen, the error describes a parabola-like shape, its minimum value bei
 
 Further pursuing this direction would not give many more insights since altering $u_{x,2}$ and $u_{x,3}$ (while using $u_{x,1}$ as axis variable) affects the plots in the same way as changing $h_2$ and $h_3$ (using $h_1$ as axis variable).
 
-\subsubsection{Different $y$ momentums}
+\subsubsection{\texorpdfstring{Different $y$ momentums}{Different y momentums}}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
 
 To complete the current line of experiments, we could examine different $y$ momentums analogously to before, but it's obvious from the equations that this will present the same results, only with different zero-error functions. In that case, the $y$ momentums of the first and the second basis function are the interesting plots, while all others are 0.
 
-\subsubsection{Different $x$ and $y$ momentums}
+\subsubsection{\texorpdfstring{Different $x$ and $y$ momentums}{Different x and y momentums}}
 \label{sec:stiffness-analysis-different-ux-uy-momentums}
 
 We now generalize the previous experiments in the sense that we alter some $x$ momentums \emph{and} some $y$ momentums.
@@ -1829,7 +1829,7 @@ Similar to before, we will use only one plot for several error plots if they all
 \subsection{Standard values}
 \label{sec:stiffness-analyiss-ord2-default}
 
-\subsubsection{Varying $h_1$}
+\subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
 \label{sec:stiffness-analysis-ord2-default-var-h1}
 
 Again, we start out by using the default values: All heights are set to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. You can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}.
@@ -1838,7 +1838,7 @@ Again, we start out by using the default values: All heights are set to 10 (exce
 
 As you recognize, we always have a parabola-like shape (except for the $x$ momentum of the 5th and the $y$ momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (e.g. for the $x$ momentum of the 2nd basis function). We -- similarily to before -- recognize that the error is always minimal (in fact even 0) for $h_1=10$.
 
-\subsubsection{Varying $u_{x,1}$}
+\subsubsection{\texorpdfstring{Varying $u_{x,1}$}{Varying ux1}}
 \label{sec:stiffness-analysis-ord2-default-var-ux1}
 
 We now choose $u_{x,1}$ to be the axis variable. We set all other momentums to 0 and all height values to 10. If we do so, we obtain the plots shown in figure \ref{fig:ord2_varying_ux_1}.
@@ -1895,7 +1895,7 @@ We will now alter some values and see how this affects our error plots. We will 
 \subsubsection{Altering heights}
 \label{sec:stiffness-analysis-ord2-nondefault-altering-heights}
 
-\paragraph{Altering $h_2$}
+\paragraph{\texorpdfstring{Altering $h_2$}{Altering h2}}
 
 Let us first do a simple modification to our standard setting: We choose $h_2=11$ and leave all other height values (i.e. $h_3$ to $h_6$ fixed at 10). The resulting plots can be seen in figure \ref{fig:ord2_varying_h1_h2_11}.
 
@@ -1909,7 +1909,7 @@ While in the 1st-order case, we saw that the error was minimal roughly at the av
 
 Remarkably, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0.\todo{Kann man dies irgendwie herrechnen?} \todo{$\pd{\phi_3}{y} = 0$ and $\pd{\phi_5}{x} = 0$}
 
-\paragraph{Altering $h_3$}
+\paragraph{\texorpdfstring{Altering $h_3$}{Altering h3}}
 
 We now want to get insights whether modifying another height value results in remarkably different plots. Therefore, we choose $h_3=11$ and consider the resulting plots in figure \ref{fig:ord2_varying_h1_h3_11}.
 
@@ -1942,7 +1942,7 @@ Now we have the first time where some plots look drastically different than befo
 \subsubsection{Altering momentums}
 \label{sec:stiffness-analysis-ord2-altering-momentums}
 
-\paragraph{Altering $u_{x,2}$}
+\paragraph{\texorpdfstring{Altering $u_{x,2}$}{Altering ux2}}
 
 We will now examine what influence has it if we alter one single $x$ momentum. Therefore, we choose $u_{x,2}=1$ and leave all other momentums at 0. We show the corresponding plots in figure \ref{fig:ord2_varying_ux2_1}.
 
@@ -1950,7 +1950,7 @@ We will now examine what influence has it if we alter one single $x$ momentum. T
 
 You can see that the curves are no parabolae anymore, but look more like functions of degree 4. Again, this is convincing, since we are multiplying approximations of degree 2 with each other, which results in degree 4. However, the errors in the $x$ momentum of the 5th basis function and the $y$ momentums of all basis functions are still 0.
 
-\paragraph{Altering $u_{x,3}$}
+\paragraph{\texorpdfstring{Altering $u_{x,3}$}{Altering ux3}}
 
 We now want to research whether the different $x$ momentums have significantly different impacts on the error term. Therefore, we now exemplarily alter $u_{x,3}$ (instead of -- like before -- altering $u_{x,2}$). The plots are shown in figure \ref{fig:ord2_varying_ux1_ux3_1}.
 
@@ -1958,7 +1958,7 @@ We now want to research whether the different $x$ momentums have significantly d
 
 The plots look quite similar to the ones where we changed $u_{x,2}$, even if the impact seems to be a bit weaker at some points (especially at the $x$ momentums of the 1st, 2nd and 3rd basis function). Therefore, we can suspect that -- if we only alter one single $x$ momentum -- the error plots will look quite similar, i.e. it does not (significantly) matter \emph{which} $x$ momentum we alter, but only how strong we do so.
 
-\paragraph{Altering $u_{y,2}$}
+\paragraph{\texorpdfstring{Altering $u_{y,2}$}{Altering uy2}}
 
 Let us now inspect what happens if we do not change the $x$ momentum but the $y$ momentum. As a showcase example, we will use $u_{y,2}=1$ and leave all other momentums at 0 (-- all heights are still 10).
 
@@ -1966,7 +1966,7 @@ The plots are shown in figure \ref{fig:ord2_varying_ux1_uy2_1} and are likely to
 
 The errors for the $x$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1}, the ones for the $y$ momentums in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent}.
 
-\subparagraph{Errors in $x$ momentums}
+\subparagraph{\texorpdfstring{Errors in $x$ momentums}{Errors in x momentums}}
 
 Let us first concentrate on the errors of the $x$ momentums shown in figure \ref{fig:ord2_varying_ux1_uy2_1}.
 
@@ -1976,7 +1976,7 @@ All in all, the error plots look roughly the same -- except for the error of the
 
 Note that \emph{all} errors reach zero for $u_{x,1}=0$ (except possibly the error for the 1st basis function that is shifted to the right by a quantum \todo{Herrechenbar?}).
 
-\subparagraph{Errors in $y$ momentums}
+\subparagraph{\texorpdfstring{Errors in $y$ momentums}{Errors in y momentums}}
 
 The error plots for the $y$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and look a bit chaotic (compared to before where they were all 0).
 
@@ -2023,7 +2023,7 @@ It is not a big surprise that our expectations are confirmed at best.
 }
 
 \begin{center}
-  \begin{longtable}[h!]{ccp{8cm}}
+  \begin{longtable}[ht!]{ccp{8cm}}
     \toprule
     Symbol & Definition & Notes \\
     \midrule{}
