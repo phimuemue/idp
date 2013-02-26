@@ -1555,6 +1555,21 @@ The meaning of equation (\ref{eq:stiffness-analysis-singularities-h1}) is the fo
 
 We will do so for illustrating some simple cases.
 
+\begin{figure}[ht]
+  \centering
+  \subfigure[Heatmap for first order singularities. Plot shows $\log_{10} h_1 = \log_{10}\frac{1-2x+24y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{  
+    \label{fig:stiffness-analysis-log-singularities-ord-1}
+    \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o1.pdf}
+  }
+  \hspace{.5cm}
+  \subfigure[Heatmap for second order singularities. Plot shows $\log_{10} h_1 = \log_{10} \frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
+        \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}$. White area is either undefined or not within the triangle $T$.]{  
+    \label{fig:stiffness-analysis-log-singularities-ord-2}
+    \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o2.pdf}
+  }
+  \caption{Heatmaps for $\log_{10} h_1$ depending on $(x,y)$ under the assumption that all other height values are set to 10. If all other height values are 10, \emph{reasonable} values for $h_1$ lie in the range $\left[ 6,14 \right] \approx \left[ 10^{0.75}, 10^{1.14} \right]$. I.e. the logarithm of reasonable values for $h_1$ is in $\left[ 0.75, 1.14 \right]$. As you can see, this is never the case.}
+\end{figure}
+
 \subsubsection{Order 1}
 \label{sec:stiffness-analysis-singluarities-ord-1}
 
@@ -1568,13 +1583,6 @@ We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-2\cd
 \begin{equation*}
 \log_{10}\frac{1-2x+24y}{-1+2y}.
 \end{equation*}
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics{stiffness_analysis_log_sing_o1.pdf}
-  \caption{Heatmap for $\log_{10} h_1 = \log_{10}\frac{1-2x+24y}{-1+2y}$. White area is either undefined or not within the triangle $T$.}
-  \label{fig:stiffness-analysis-log-singularities-ord-1}
-\end{figure}
 
 You can see the ``graph'' (more precisely a heatmap) for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows: Everything that is red resp. green denotes values above 1.2 resp. below 0.7. Yellow denotes values between 0.7 and 1.2.
 
@@ -1601,16 +1609,7 @@ We now examine the same thing for order 2. Again, we solve equation (\ref{eq:sti
 
 Again, we could test specific values for $(x,y)$, such as e.g. $(0.5, 0.25)$. If we did so, we would obtain $h_1=-90$ --- a very unlikely setting for $h_1$ if all other heights are 10.
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics{stiffness_analysis_log_sing_o2.pdf}
-  \caption{Heatmap for second order singularities. Heatmap plots $\log_{10} h_1 = \log_{10}-\frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
-    \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}$. White area is either undefined or not within the triangle $T$.}
-  \label{fig:stiffness-analysis-log-singularities-ord-2}
-\end{figure}
-
-
-\todo{log-plot of this}
+Have a look at figure \ref{fig:stiffness-analysis-log-singularities-ord-2} and observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle --- very unlikely.
 
 \section{Order 1}
 \label{sec:stiffness-analysis-first-touch}
