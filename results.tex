@@ -84,6 +84,8 @@ and see if all todo's are done}
 
 \todo{Referenzen: Lax-Fridrichs-Löser (Leveque) -- Höhere Ordnung (Castro) -- Eulergleichungen (Cockburn/Geraldo(?)) -- Nodale Basis (Hesthaven)}
 
+\todo{Sollten wir langsam ein Inhaltsverzeichnis reinhauen?}
+
 \begin{abstract}
   The question how to simulate waves on a computer is subject to many difficulties. At several points in the process approximations have to be made to be feasibly computable. One of those points is the discretization of the continuous space into finite segments, usually triangles. Another is the simulation of the domain of each segment by sampling specific points within that segment. Yet another point is not as obvious, and occurs when trying to calculate a complex integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation has to be made.
 
@@ -1244,6 +1246,8 @@ What all plots have in common is the fact that it looks as if towards the bounda
 \part{Stiffness matrix accuracy analysis}
 \label{part:stiffness-matrix}
 
+\emph{Remark:} Since the following part contains a myriad of mathematical symbols, we encourage you to have a copy of the cheat sheet from section \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.
+
 \section{Sum approximation vs. exact solution}
 \label{sec:point-wise-appr-vs-exact-solution-intro}
 
@@ -1402,6 +1406,8 @@ On the other hand, the greater $SE$ grows, the more the two compared functions d
 \subsection{How to evaluate $SE$}
 \label{sec:how-to-evaluate-e}
 
+\todo{$r$ umbenennen!}
+
 If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely quite hard to compute exactly, maybe even impossible.
 
 While integrating in the one-dimensional case can be easily approximated by the rectangle method (which can be made arbitrarily precise by a varying number of rectangles), the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a slightly more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
@@ -1503,7 +1509,7 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
   \label{fig:splitting-triangle-into-smaller-triangles}
 \end{figure}
 
-You can see how the division of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-subtriangles}.
+You can see how the division of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-triangles}.
 
 We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 r^2}$. This results then in the following equation:
 
@@ -1597,9 +1603,13 @@ We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-2\cd
 \log_{10}\frac{1-2x+24y}{-1+2y}.
 \end{equation*}
 
-You can see the ``graph'' (more precisely a heatmap) for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows: Everything that is red resp. green denotes values above 1.2 resp. below 0.7. Yellow denotes values between 0.7 and 1.2.
+We then examine the results of this term.
+
+You can see the ``graph'' (more precisely a heatmap) for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows: Everything that is red resp. green denotes values above 1.2 resp. below 0.7. Yellow denotes values between 0.7 and 1.2. White area is either undefined or out of the triangle.
 
 As you can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only red and green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1} --- no yellow at all). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
+
+The white area is -- as said -- undefined or out of the triangle. Let us for a moment focus on the ``undefined'' ones: If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative --- wich again is not a reasonable value for $h_1$ if all other heights are 10.
 
 We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour.\todo{Wirklich?}
 
@@ -1624,7 +1634,7 @@ Again, we could test specific values for $(x,y)$, such as e.g. $(0.5, 0.25)$. If
 
 Have a look at figure \ref{fig:stiffness-analysis-log-singularities-ord-2} and observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle --- very unlikely.
 
-\section{Order 1}
+\section{Error terms for order 1}
 \label{sec:stiffness-analysis-first-touch}
 
 We begin our analysis by investigating the case for basis functions of order 1 (i.e. we have three basis functions $\phi_1,\dots,\phi_3$). Looking back at table \ref{tab:basis-functions-for-low-degrees} we derived some symmetries between the basis functions. We found out that $\phi_1(x,y)=\phi_3(y,x)$ and $\phi_2(x,y)=\phi_2(y,x)$. We will now exploit these facts.
@@ -1809,7 +1819,7 @@ The plots confirm our suspiction: the error is indeed minimal for our suspected 
 
 \clearpage{}
 
-\section{Order 2}
+\section{Error terms for order 2}
 \label{sec:stiffness-analyis-ord-2}
 
 We will now examine the error plots for order 2. Remember from table \ref{tab:basis-functions-for-low-degrees} that we have now 6 basis functions $\phi_1,\dots,\phi_6$. Besides making the approximation more complicated, this gives rise to 12 plots (we have the errors in $x$ momentum and in $y$ momentum for each of the basis functions).
@@ -1998,6 +2008,7 @@ It is not a big surprise that our expectations are confirmed at best.
 \label{part:cheat-sheet}
 
 \section{Cheat sheet for stiffness matrix analysis}
+\label{sec:cheat-sheet-stiffn}
 
 \newenvironment{meine}{}{}
 \newcommand{\mypmatrix}[1]
