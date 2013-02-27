@@ -255,7 +255,7 @@ For second order, the thing involves a bit more elaboration, but is still easy. 
 \subsubsection{Other properties}
 \label{sec:basis-functions-other-properties}
 
-We conjecture the following two identities \todo{Sind diese irgendwie beweisbar?}
+We conjecture the following two identities \todo[Philipp]{Stimmen die von mir angeführten Beweise/Erklärungen?}
 
 \begin{align}
   \label{eq:sum-basis-functions-is-1}
@@ -925,7 +925,7 @@ We are now going to plot (the two components of) the term $I$ as described in eq
 
 Before we actually go into visualizing the error term, let us introduce some concepts that will be useful later when it comes to plotting.
 
-Consider some well-known plots known from school, e.g. the graphs for the functions $y=2\cdot x+3$ or $y=x^2$. \todo{Plots for these simple functions.} These plots are probably well-known to every reader of this paper -- simply a horizontal $x$-axis, and a vertical $y$-axis.
+Consider some well-known plots known from school, e.g. the graphs for the functions $y=2\cdot x+3$ or $y=x^2$. These plots are probably well-known to every reader of this paper -- simply a horizontal $x$-axis, and a vertical $y$-axis.
 
 \subsubsection{Functions with parameters}
 
@@ -941,8 +941,22 @@ This equation describes a line going through point $(0,1)$ with varying gradient
 \item Focus on specific values of $a$ and plot $y=a\cdot x + 1$ for these values of $a$.
 \item Generate a 3d-plot for varying values of $a$ and $x$. This plot has then two axes for $a$ and $x$ spanning two dimensions, the resulting value $y$ is then denoted by the last dimension.
 
-  That is, each point contained in the graph of this 3d-plot has three coordinates $(x,a,y)$, and these three coordinates have to suffice the condition $y=a\cdot x + 1$.\todo{Plot!}
+  That is, each point contained in the graph of this 3d-plot has three coordinates $(x,a,y)$, and these three coordinates have to suffice the condition $y=a\cdot x + 1$.
 \end{itemize}
+
+You can compare the two methods in figure \ref{fig:simple-parametric-functions}. Note that you can interpret the lines in the two dimensional plot as ``slices'' from the three dimensional plot.
+
+\begin{figure}[ht]
+  \centering
+  \subfigure[Choosing particular values for $a$]{
+    \includegraphics[scale=0.5]{simple_parametric_2d.pdf}
+  }
+  \subfigure[A three dimensional plot]{
+    \includegraphics[scale=0.5]{simple_parametric_3d.pdf}
+  }
+  \caption{Plotting simple parametric functions using different approaches}
+  \label{fig:simple-parametric-functions}
+\end{figure}
 
 Now, let us extend the above function by another variable and consider the function
 
