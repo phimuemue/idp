@@ -255,7 +255,7 @@ For second order, the thing involves a bit more elaboration, but is still easy. 
 \subsubsection{Other properties}
 \label{sec:basis-functions-other-properties}
 
-We conjecture the following two identities \todo[Philipp]{Stimmen die von mir angeführten Beweise/Erklärungen?}
+We conjecture the following two identities: \todo[Philipp]{Stimmen die von mir angeführten Beweise/Erklärungen?}
 
 \begin{align}
   \label{eq:sum-basis-functions-is-1}
@@ -515,7 +515,7 @@ we compute the value
   \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
 \end{equation*}
 
-The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. \todo{Cite error?} It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
+The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
 
 \todo{More references. Schwaiger-DA only is not sufficient here! Where is the approach taken from}
 
@@ -1422,8 +1422,6 @@ On the other hand, the greater $SE$ grows, the more the two compared functions d
 \subsection{\texorpdfstring{How to evaluate $SE$}{How to evaluate SE}}
 \label{sec:how-to-evaluate-e}
 
-\todo{$r$ umbenennen!}
-
 If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely quite hard to compute exactly, maybe even impossible.
 
 While integrating in the one-dimensional case can be easily approximated by the rectangle method (which can be made arbitrarily precise by a varying number of rectangles), the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a slightly more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
@@ -1432,12 +1430,12 @@ However, it is not difficult to extend the rectangle method to the two-dimension
 
 Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can try to approximate this volume by comprising it out of smaller parts. We decided to use prisms to approximate that volume.
 
-In principle, we devide the triangle in a way such that we cut the cathetuses (of length 1) into smaller pieces of length $\frac{1}{r}$ (the integer $r$ denotes the parameter for our integral approximation). Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
+In principle, we devide the triangle in a way such that we cut the cathetuses (of length 1) into smaller pieces of length $\frac{1}{L}$ (the integer $L$ denotes the parameter for our integral approximation). Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
 
 \begin{equation*}
   \mathtt{POSSIBLE\_CENTERS} = \left\{
-    \left(\frac{i}{r} + \frac{1}{3r}, \frac{j}{r} + \frac{1}{3r}\right) ,
-    \left(\frac{i}{r} - \frac{1}{3r}, \frac{j}{r} - \frac{1}{3r}\right)
+    \left(\frac{i}{L} + \frac{1}{3L}, \frac{j}{L} + \frac{1}{3L}\right) ,
+    \left(\frac{i}{L} - \frac{1}{3L}, \frac{j}{L} - \frac{1}{3L}\right)
     \mid
     i, j\in \mathbb{N}
   \right\}
@@ -1453,7 +1451,7 @@ After this, we filter out the unnecessary centers:
   \right\}
 \end{equation*}
 
-If we use this definition, we obtain $r^2$ triangles of equal size.
+If we use this definition, we obtain $L^2$ triangles of equal size.
 
 \begin{figure}[ht!]
   \newcommand{\mytriangle}[3]{
@@ -1462,12 +1460,12 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
     \end{scope}
   }
   \centering
-  \subfigure[One trianglev($r=1$)]{
+  \subfigure[One trianglev($L=1$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
     \end{tikzpicture}
   }
-  \subfigure[Four triangles ($r=2$)]{
+  \subfigure[Four triangles ($L=2$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.5}{0}{0};
@@ -1475,7 +1473,7 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
       \mytriangle{.5}{1}{0};
     \end{tikzpicture}
   }
-  \subfigure[Nine triangles ($r=3$)]{
+  \subfigure[Nine triangles ($L=3$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.3333}{0}{0};
@@ -1486,7 +1484,7 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
       \mytriangle{.3333}{1}{1};
     \end{tikzpicture}
   }
-  \subfigure[Sixteen triangles ($r=4$)]{
+  \subfigure[Sixteen triangles ($L=4$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.25}{0}{0};
@@ -1501,7 +1499,7 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
       \mytriangle{.25}{2}{1};
     \end{tikzpicture}
   }
-  \subfigure[Twenty-five triangles ($r=5$)]{
+  \subfigure[Twenty-five triangles ($L=5$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.2}{0}{0};
@@ -1527,15 +1525,15 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
 
 You can see how the division of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-triangles}.
 
-We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 r^2}$. This results then in the following equation:
+We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 L^2}$. This results then in the following equation:
 
 \begin{equation}
-  \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2r^2}
+  \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2L^2}
 \end{equation}
 
 To clarify this, let us consider some examples:
 
-If we use just one triangle (i.e. $r=1$), then this triangle coincides with the original triangle, and its center is located at $(\frac{1}{3}, \frac{1}{3})$. If we use this approximation, we obtain the following:
+If we use just one triangle (i.e. $L=1$), then this triangle coincides with the original triangle, and its center is located at $(\frac{1}{3}, \frac{1}{3})$. If we use this approximation, we obtain the following:
 
 \begin{equation*}
   \int_T f(x,y)\, dT \approx \frac{1}{2} \cdot f(\frac{1}{3},\frac{1}{3})
@@ -1543,7 +1541,7 @@ If we use just one triangle (i.e. $r=1$), then this triangle coincides with the 
 
 The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism, which has the same base area as our triangle $T$ ($\frac{1}{2}$).
 
-Naturally we need more triangles for an actual approximation. If we use four triangles (i.e. $r=2$), we get the following centers: $\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}$.
+Naturally we need more triangles for an actual approximation. If we use four triangles (i.e. $L=2$), we get the following centers: $\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}$.
 
 We can now approximate the integral as follows:
 
@@ -1555,7 +1553,7 @@ Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one singl
 
 Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
-We noticed that $r=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that's the case it's never enough to make an impact on the eventual interpretation of the results.
+We noticed that $L=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that's the case it's never enough to make an impact on the eventual interpretation of the results.
 
 \subsection{\texorpdfstring{Singularities in $SE$}{Singularities in SE}}
 \label{sec:stiffness-analysis-singularities}
