@@ -14,6 +14,7 @@
 \usepackage{tikz}
 \usepackage{subfigure}
 \usepackage{geometry}
+\usepackage{ifthen}
 
 \usepackage{titlesec}
 \titleformat
@@ -35,7 +36,8 @@
 
 \geometry{margin=3.5cm, bottom=2cm, top=2cm}
 
-\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
+\newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
+\newcommand{\done}[2][]{\textcolor{green!50!black}{Done\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
 %\newcommand{\todo}[1]{}
 \newcommand{\korrektur}[1]{\textcolor{red}{\textbf{Korrektur:} #1}}
 \newcommand{\reals}{\mathbb{R}}
@@ -1897,17 +1899,19 @@ We will now alter some values and see how this affects our error plots. We will 
 
 \paragraph{\texorpdfstring{Altering $h_2$}{Altering h2}}
 
-Let us first do a simple modification to our standard setting: We choose $h_2=11$ and leave all other height values (i.e. $h_3$ to $h_6$ fixed at 10). The resulting plots can be seen in figure \ref{fig:ord2_varying_h1_h2_11}.
+Let us first do a simple modification to our standard setting: We choose $h_2=11$ and leave all other height values (i.e. $h_3$ to $h_6$) fixed at 10. The resulting plots can be seen in figure \ref{fig:ord2_varying_h1_h2_11}.
 
 \input{ord2_varying_h1_h2_11/tex.tex}
 
-As you can see, we have a strongly different situation here compared to that for order 1, where we set one single height to 11 (\todo{Section-referenz}): None of the plots has kept its parabola-like shape, they look much more like 4th-degree polynomials.
+As you can see, we have a strongly different situation here compared to that for order 1, where we set one single height to 11 (see section \ref{sec:stiffness-analysis-ord1-differing-h2-10-h3-11} for reference): None of the plots has kept its parabola-like shape, they look much more like 4th-degree polynomials.
 
 This is traceable, since we use 2nd-order approximations for $h, u_x$ and $u_y$ (because we use 2nd-order basis functions) that are multiplied with each other. This results in the fourth degree.
 
 While in the 1st-order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), we now can not explore this behaviour for some of the functions.
 
-Remarkably, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0.\todo{Kann man dies irgendwie herrechnen?} \todo{$\pd{\phi_3}{y} = 0$ and $\pd{\phi_5}{x} = 0$}
+As expected from our calculations in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and , the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0.
+
+\todo{Kann man dies irgendwie herrechnen?} \done[Philipp]{Bereits in vorigem Abschnitt hergerechnet.} \todo{$\pd{\phi_3}{y} = 0$ and $\pd{\phi_5}{x} = 0$} \done[Philipp]{Die Ableitungsgeschichte sollte aber nicht das ausschlaggebende sein, oder?}
 
 \paragraph{\texorpdfstring{Altering $h_3$}{Altering h3}}
 
