@@ -2062,7 +2062,64 @@ Let us first concentrate on the errors of the $x$ momentums shown in figure \ref
 
 All in all, the error plots look roughly the same -- except for the error of the 5th basis function. All of the other plots still show parabolae, and the error is negligibly bigger than the error used for default values (have a look at figure \ref{fig:ord2_varying_ux_1} for comparison). The most striking difference is -- as said -- the $x$ momentum for the 5th basis function, that has changed from zero to an ``absolute-value-linear'' graph.
 
-Note that \emph{all} errors reach zero for $u_{x,1} = 0$ (except possibly the error for the first basis function that is shifted to the right by a quantum \todo{Herrechenbar?}).
+Note that \emph{all} errors (for $x$ momentum) reach zero for $u_{x,1} = 0$. We can confirm this result analytically as follows: Let us start out by considering (once again) $SE_x^i$:
+
+\begin{align*}
+  SE_x^i = \int_T \left| \left(\overline{F_2}(\mathbf{q}) - \widehat{F_2}(\mathbf{q})\right) \cdot \nabla \phi_i \right|\, dT
+\end{align*}
+
+We will focus on the integrand and show that it becomes 0 for $u_{x,1}=0$. We continue by examining $\overline{F_2}(\mathbf{q})$ for the desired setting (all height values the same, all moments except $u_{y,2}$ fixed to 0, $u_{y,2}=1$):
+
+\begin{equation*}
+  \overline{F_2}(\mathbf{q}) =
+  \begin{pmatrix}
+    \sum_{j=1}^n \left( \frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2 \right) \cdot \phi_j \\
+    \sum_{j=1}^n \left( \frac{u_{x,j}\cdot u_{y,j}}{h_j} \right) \cdot \phi_j
+  \end{pmatrix} =
+  \begin{pmatrix}
+    \sum_{j=1}^n \frac{1}{2} g h_j^2 \phi_j \\
+    0
+  \end{pmatrix} =
+  \begin{pmatrix}
+    h_1^2 \\ 0
+  \end{pmatrix}
+\end{equation*}
+
+Analogously, we proceed for $\widehat{F_2}(\mathbf{q})$:
+
+\begin{equation*}
+  \widehat{F_2}(\mathbf{q}) =
+  \begin{pmatrix}
+    \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat h ^2 \\
+    \frac{\widehat u_x \cdot \widehat u_y}{\widehat h}
+  \end{pmatrix} =
+  \begin{pmatrix}
+    \frac{1}{2} g \left( \sum_{j=1}^n h_j \phi_j \right) ^2 \\
+    0
+  \end{pmatrix} =
+  \begin{pmatrix}
+    h_1^2 \\ 0
+  \end{pmatrix}
+\end{equation*}
+
+This means, we can simplify as follows (for the current scenario):
+
+\begin{equation*}
+  SE_x^i = \int_T \left| \left(\overline{F_2}(\mathbf{q}) - \widehat{F_2}(\mathbf{q})\right) \cdot \nabla \phi_i \right|\, dT = \int_T \left|
+    \left(
+      \begin{pmatrix}
+        \frac{1}{2} g h_1^2 \\ 0
+      \end{pmatrix} -
+      \begin{pmatrix}
+        \frac{1}{2} g h_1^2 \\ 0
+      \end{pmatrix}
+    \right)
+    \cdot \nabla \phi_i \right|\, dT = 
+  0
+\end{equation*}
+
+
+\todo{Auch für $u_{y,2}=3$ ausprobieren und schauen, ob Fehler für $u_{x,1}=0$ ebenfalls 0 wird. Auch andere $u_{y,i}$ mal auf andere Werte setzen. Vielleicht ist der Fehler immer minimal für $u_{x,1}=0$, sofern man nur an den $u_y$ rumschraubt... Eigentlich müsste das ja sogar noch gehen, wenn die $u_y$ irgendwie gesetzt sind, oder?}
 
 \subparagraph{\texorpdfstring{Errors in $y$ momentums}{Errors in y momentums}}
 
@@ -2163,14 +2220,14 @@ Which confirms our expectations.
     $\mathbf{q}$ & $\sum_{i=1}^n \mathbf{q}_i \phi_i$ & Approximation of $\mathbf{q}$, three components \\
 
     $\overline{F}_2(\mathbf{q})$ &
-    $\mypmatrix{\sum_{j=1}^n \left( \frac{u_{x,j}^2}{h_j^2}+\frac{1}{2} g h_j^2  \right) \phi_j \\
+    $\mypmatrix{\sum_{j=1}^n \left( \frac{u_{x,j}^2}{h_j}+\frac{1}{2} g h_j^2  \right) \phi_j \\
     \sum_{j=1}^n \left( \frac{u_{x,j} \cdot u_{y,j}}{h_j} \right) \phi_j}$ &
     Point-wise approximation of second flux component \\
 
     $\overline{F}_3(\mathbf{q})$ &
     $\mypmatrix{
     \sum_{j=1}^n \left( \frac{u_{x,j} \cdot u_{y,j}}{h_j} \right) \phi_j \\
-      \sum_{j=1}^n \left( \frac{u_{y,j}^2}{h_j^2}+\frac{1}{2} g h_j^2  \right) \phi_j
+      \sum_{j=1}^n \left( \frac{u_{y,j}^2}{h_j}+\frac{1}{2} g h_j^2  \right) \phi_j
 }$ &
     Point-wise approximation of third flux component \\
 
