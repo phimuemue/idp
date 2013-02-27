@@ -267,7 +267,7 @@ We verified these two equations for first and second order using maple (and gene
 
 The second equation can be easily followed from the first one.
 
-The first equation can be derived the following way: If we have basis functions $\phi_1$ to $\phi_n$, o a certain orer (say order $o$ --- which implies $n=\frac{(o+1)(o+2)}{2}$). If we then take the sum $\sum_{i=1}^n \phi_i(x,y)$ we obtain a polynomial of degree $o$. This polynomial has exactly $n$ coefficients that may be obtained by solving a system of linear equations containing $n$ equations These equations are obtained using the $n$ support points, i.e. we have a system of $n$ equations and $n$ coefficients which -- on the other hand -- means, that all the coefficients are determined uniquely (if the system of equations can be solved). 
+The first equation can be derived the following way: If we have basis functions $\phi_1$ to $\phi_n$, o a certain orer (say order $o$ --- which implies $n=\frac{(o+1)(o+2)}{2}$). If we then take the sum $\sum_{i=1}^n \phi_i(x,y)$ we obtain a polynomial of degree $o$. This polynomial has exactly $n$ coefficients that may be obtained by solving a system of linear equations containing $n$ equations These equations are obtained using the $n$ support points, i.e. we have a system of $n$ equations and $n$ coefficients which -- on the other hand -- means, that all the coefficients are determined uniquely (if the system of equations can be solved).
 
 Note that for any support point $(x_p,y_p)$, we have that
 
@@ -1578,13 +1578,13 @@ We will do so for illustrating some simple cases.
 
 \begin{figure}[ht]
   \centering
-  \subfigure[Heatmap for first order singularities. Plot shows $\log_{10} h_1 = \log_{10}\frac{1-2x+24y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{  
+  \subfigure[Heatmap for first order singularities. Plot shows $\log_{10} h_1 = \log_{10}\frac{1-2x+24y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-1}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o1.pdf}
   }
   \hspace{.5cm}
   \subfigure[Heatmap for second order singularities. Plot shows $\log_{10} h_1 = \log_{10} \frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
-        \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}$. White area is either undefined or not within the triangle $T$.]{  
+        \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-2}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o2.pdf}
   }
@@ -1600,7 +1600,7 @@ Let us start out ba trying order 1, and setting $h_2=h_3=10$. We then obtain the
   h_1 = \frac{1-2x+24y}{-1+2y}
 \end{equation*}
 
-We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-2\cdot 0.25+24\cdot 0.25}{-1+2\cdot 0.25} = -13$. That means: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -13 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -13 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot 
+We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-2\cdot 0.25+24\cdot 0.25}{-1+2\cdot 0.25} = -13$. That means: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -13 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -13 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot
 \begin{equation*}
 \log_{10}\frac{1-2x+24y}{-1+2y}.
 \end{equation*}
@@ -1764,34 +1764,32 @@ Unfortunately, we were not able to verify this result. The reason for that is th
 
 \input{ord1_differing_h2_h3_164/tex.tex}
 
-Figure \ref{fig:ord1_differing_h2_h3_164} shows the plot for this situation. As you can see, the error is \emph{not} minimal for $h_1=10$, even if the average of $h_2=16$ and $h_3=4$ is 10 in this case. Moreover, as one would expect, the error terms become extremely large in this case (from 145 to 147 in the range from 8 to 12). Although an overall parabola form is still noticeable, there are deviations, probably due to the absolute values in the integrand which also causes the average of $h_2$ and $h_3$ to be a local maximum instead of a minimum.
+Figure \ref{fig:ord1_differing_h2_h3_164} shows the plot for this situation. As you can see, the error is \emph{not} minimal for $h_1=10$, even if the average of $h_2=16$ and $h_3=4$ is 10 in this case. As one would expect, the error terms become extremely large in this case (from 145 to 147 in the range from 8 to 12). Although an overall parabola form is still noticeable, there are deviations, probably due to the absolute values in the integrand which also causes the average of $h_2$ and $h_3$ to be a local maximum instead of a minimum.
 
 \todo{Kann man das nicht doch irgendwie herrechnen? KP\dots}
 
 \subsubsection{\texorpdfstring{Different $x$ momentums}{Different x momentums}}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-ux}
 
-We are now going doing another experiment: We set all height values to 10, and see what happens if we choose different values for the $u_{x,i}$. For a reference what happens for $u_{x,2}=u_{x,3}=0$, see figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
+For the next test, we set all height values to 10, and see what happens if we choose different values for the $u_{x,i}$. For a reference what happens for $u_{x,2}=u_{x,3}=0$, see figure \ref{fig:stiffness-analysis-order-1-standard-values-ux1}.
 
-We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting can be seen in figure \ref{fig:ord1_ux1_differing_ux2_ux3}. Again, only the $x$ momentums for the second and third basis function are plot-worthy, since all other plots show 0 error.
+We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting can be seen in figure \ref{fig:ord1_ux1_differing_ux2_ux3}. Again, only the $x$ momentums for the second and third basis function are shown, since all other plots show 0 error.
 
 \input{ord1_ux1_differing_ux2_ux3/tex.tex}
 
-As can be seen, the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$.
-
-Further pursuing this direction would not give many more insights since altering $u_{x,2}$ and $u_{x,3}$ (while using $u_{x,1}$ as axis variable) affects the plots in the same way as changing $h_2$ and $h_3$ (using $h_1$ as axis variable).
+As can be seen, the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$. However, further investigating this direction is not necessary, since altering $u_{x,2}$ and $u_{x,3}$ (while leaving $u_{x,1}$ variable) affects the plots in the same way as changing $h_2$ and $h_3$ (with $h_1$ variable).
 
 \subsubsection{\texorpdfstring{Different $y$ momentums}{Different y momentums}}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
 
-To complete the current line of experiments, we could examine different $y$ momentums analogously to before, but it's obvious from the equations that this will present the same results, only with different zero-error functions. In that case, the $y$ momentums of the first and the second basis function are the interesting plots, while all others are 0.
+To complete the current line of experiments, we could examine different $y$ momentums analogously to before, but it's obvious from the equations that this will present the same results, only with a different zero-error functions. In that case, the $y$ momentums of the first and the second basis function are the interesting plots, while all others are 0.
 
 \subsubsection{\texorpdfstring{Different $x$ and $y$ momentums}{Different x and y momentums}}
 \label{sec:stiffness-analysis-different-ux-uy-momentums}
 
-We now generalize the previous experiments in the sense that we alter some $x$ momentums \emph{and} some $y$ momentums.
+We now generalize the previous experiments by altering both $x$ momentums and $y$ momentums.
 
-To visualize these settings, we come back to three-dimensional plots that have two axis variables. Refer to figure \ref{fig:standardwerte_nach_ux1_ux2_ord1} for the original situation (i.e. heights are 10, momentums are 0), where we always had a minimal error at $u_{x,1}=u_{y,1}=0$. From now on, since the plots tend to be highly symmetric, we will omit some of them, stating which plots we omitted and why.
+To visualize these settings, we will revisit three-dimensional plots that have two axis variables. Refer to figure \ref{fig:standardwerte_nach_ux1_ux2_ord1} for the original situation (i.e. heights are 10, momentums are 0), where we always had a minimal error at $u_{x,1}=u_{y,1}=0$. From now on, since the plots tend to be highly symmetric, we will omit some of them, stating which plots we omitted and why.
 
 Remember that if we only changed either the $x$ or the $y$ impulse values, the error (depending on the only non-fixed $x$ or $y$ momentum) reached its minimum roughly at the average of the other two $x$ or $y$ momentums respectively, as long as they did not differ too strongly.
 
@@ -1799,9 +1797,9 @@ Let us start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in 
 
 \input{ord1_varying_ux1_uy1_differing_ux2_uy2_1_1/tex.tex}
 
-Considering the plot for $SE_x^1$, it's easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, you can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term reaches now the 0.5 mark, while previously only came up to about 0.4.
+Considering the plot for $SE_x^1$, it's easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, you can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term now reaches the 0.5 mark, while previously only came up to about 0.4.
 
-In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), you can guess a slight translation of all the plots. It is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$ and $y$ momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
+In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), you can observe a slight translation of all the plots. It is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$ and $y$ momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
 
 However, with $u_{x,2}=u_{y,2}=1$ one can still see the strong connection to the original plots.
 
@@ -1809,9 +1807,9 @@ Let us now choose some more extreme values: $u_{x,2}=3$ and $u_{y,2}=3$. The cor
 
 \input{ord1_varying_ux1_uy1_differing_ux2_uy2_3_3/tex.tex}
 
-Now, the deformations in the plots are stronger. While the overall error grew quite a lot, we can still say that it is minimal roughly at $u_{x,1}=\frac{u_{x,2}+u_{x,3}}{2}$ and $u_{y,1}=\frac{u_{y,2}+u_{y,3}}{2}$.
+Now, the deformations in the plots are stronger. While the overall error grew by a significant amount, we can still say that it is minimal roughly at $u_{x,1}=\frac{u_{x,2}+u_{x,3}}{2}$ and $u_{y,1}=\frac{u_{y,2}+u_{y,3}}{2}$.
 
-What we can assume from the plots we have seen so far is that the more the moments differ, the worse our approximation (i.e. the bigger the error) will get. We made the same observation about the height values before.
+What we can assume from the plots we have seen so far is that the more the momentums differ, the worse our approximation (i.e. the bigger the error) will get. We made the same observation about the height values before.
 
 To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=1$ assuming that this should roughly look like the original situation where all moments were set to 0, except that we suspect the error to be minimal at $u_{x,1}=1$ and $u_{y,1}=1$.
 
@@ -1824,7 +1822,7 @@ The plots confirm our suspiction: the error is indeed minimal for our suspected 
 \section{Error terms for order 2}
 \label{sec:stiffness-analyis-ord-2}
 
-We will now examine the error plots for order 2. Remember from table \ref{tab:basis-functions-for-low-degrees} that we have now 6 basis functions $\phi_1,\dots,\phi_6$. Besides making the approximation more complicated, this gives rise to 12 plots (we have the errors in $x$ momentum and in $y$ momentum for each of the basis functions).
+We will now examine the error plots for order 2. Remember from table \ref{tab:basis-functions-for-low-degrees} that we now have 6 basis functions $\phi_1,\dots,\phi_6$. Besides making the approximation more complicated, this gives rise to 12 plots (we have the errors in $x$ momentum and in $y$ momentum for each of the basis functions).
 
 Similar to before, we will use only one plot for several error plots if they all look the same.
 
@@ -1834,24 +1832,24 @@ Similar to before, we will use only one plot for several error plots if they all
 \subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
 \label{sec:stiffness-analysis-ord2-default-var-h1}
 
-Again, we start out by using the default values: All heights are set to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. You can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}.
+Again, we start out by using the default values, setting all heights to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. You can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}.
 
 \input{ord2_varying_h1_default/tex.tex}
 
-As you recognize, we always have a parabola-like shape (except for the $x$ momentum of the 5th and the $y$ momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (e.g. for the $x$ momentum of the 2nd basis function). We -- similarily to before -- recognize that the error is always minimal (in fact even 0) for $h_1=10$.
+As one can see, we always have a parabola-like shape (except for the $x$ momentum of the 5th and the $y$ momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (for $SE_x^2$). We observe that the error is always minimal (in fact even 0) for $h_1=10$. The results of $SE_x^5$ and $SE_y^3$ are a natural consequence of $\pd{\phi_5}{x}=\pd{\phi_3}{y}=0$, analogous to the order 1 case.
 
 \subsubsection{\texorpdfstring{Varying $u_{x,1}$}{Varying ux1}}
 \label{sec:stiffness-analysis-ord2-default-var-ux1}
 
-We now choose $u_{x,1}$ to be the axis variable. We set all other momentums to 0 and all height values to 10. If we do so, we obtain the plots shown in figure \ref{fig:ord2_varying_ux_1}.
+Next we choose $u_{x,1}$ to be the axis variable. We set all other momentums to 0 and all height values to 10. If we do so, we obtain the plots shown in figure \ref{fig:ord2_varying_ux_1}.
 
 \input{ord2_varying_ux_1/tex.tex}
 
 One can see there that the error for all $y$ momentums is zero. Moreover, the error is zero for the $x$ momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
 
-The plots mostly look parabola-like which is traceable since we use basis functions of second degree.
+For the most part, the plots all look parabola-like which is traceable since we use basis functions of second degree. \todo{Sollte es nicht $2\cdot deg(\phi)$ = 4 sein?}
 
-The fact that \emph{all} $y$ momentums are zero deserves a special treatment. However, we will do this in a manner that is -- while still suited for this special case -- a bit more general.
+The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain that later for a more generalized case.
 
 % Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
 
@@ -1861,7 +1859,7 @@ The fact that \emph{all} $y$ momentums are zero deserves a special treatment. Ho
 %   \pd{\phi_Y}{y} &= 0
 % \end{align*}
 
-Let us start out by examining the error of the $y$ momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right)$. Note that $\mathtt{DIFFY}$ is a two-component vector containing an $x$ and an $y$-coordinate.
+Let us start out by examining the error of the $y$ momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right)$. That makes $\mathtt{DIFFY}$ a two-component vector containing an $x$ and an $y$ coordinate.
 
 \begin{align*}
   SE_y^X &= \int_T \left| \left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right) \cdot \nabla \phi_X \right| \, dT = \\
@@ -1870,7 +1868,7 @@ Let us start out by examining the error of the $y$ momentum for the basis functi
   &=\int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} \right) \right| \, dT
 \end{align*}
 
-So, let us now consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$-component between the exact solution and the point-wise approximation:
+Consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$ component between the exact solution and the approximation:
 
 \begin{equation*}
   \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
@@ -1883,31 +1881,29 @@ If we choose all momentums to be 0 (which is what we are doing in this scenario)
   \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
 
-Note that for second order, we have $n=6$. And moreover, we have $\sum_{i=1}^6 \phi(x,y)=1$ -- this can be verified by simple computation. \todo{Interesting!} Even more interesting is the fact that $(\sum_{i=1}^6 a \phi(x,y))^2 = a^2$. \todo{Even more interesting!}
+For second order, we have $n=6$. And moreover, we have $\sum_{i=1}^6 \phi(x,y)=1$ and  $(\sum_{i=1}^6 a \phi(x,y))^2 = a^2$ as defined above. \todo{Ref}
 
-Remember that $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$. We will now exploit the two mentioned identities: We set $h_1=h_2=h_3=\dots=h_n$ and can -- even if it is a somewhat nontrivial computation -- simplify the above to 0. This is why all $y$ momentums are 0 in this scenario.
-
-\todo{Kann man das weiter ausrechnen?}
-
+With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$, we can set $h_1=h_2=h_3=\dots=h_n$ and can simplify the above to 0, thereby explaining the above result.
+\todo{Genauer}
 \subsection{Non-standard values}
 \label{sec:stiffness-analysis-ord2-nondefault}
 
-We will now alter some values and see how this affects our error plots. We will do similar alterations to the ones used in section \ref{sec:stiffness-analysis-ord1-non-std-values} and see if we have a similar behaviour to before.
+We will now alter some values and see how this affects our error plots. We will do similar alterations to the ones used in section \ref{sec:stiffness-analysis-ord1-non-std-values} and see if we have a similar behavior to before.
 
 \subsubsection{Altering heights}
 \label{sec:stiffness-analysis-ord2-nondefault-altering-heights}
 
 \paragraph{\texorpdfstring{Altering $h_2$}{Altering h2}}
 
-Let us first do a simple modification to our standard setting: We choose $h_2=11$ and leave all other height values (i.e. $h_3$ to $h_6$) fixed at 10. The resulting plots can be seen in figure \ref{fig:ord2_varying_h1_h2_11}.
+We choose $h_2=11$ and leave all other height values ($h_3$ to $h_6$) fixed at 10. The resulting plots can be seen in figure \ref{fig:ord2_varying_h1_h2_11}.
 
 \input{ord2_varying_h1_h2_11/tex.tex}
 
-As you can see, we have a strongly different situation here compared to that for order 1, where we set one single height to 11 (see section \ref{sec:stiffness-analysis-ord1-differing-h2-10-h3-11} for reference): None of the plots has kept its parabola-like shape, they look much more like 4th-degree polynomials.
+As you can see, we have a strongly different situation here compared to that for order 1, where we set one single height to 11 (section \ref{sec:stiffness-analysis-ord1-differing-h2-10-h3-11}). All of the plots assume the shape of a fourth degree polynomials.
 
-This is traceable, since we use 2nd-order approximations for $h, u_x$ and $u_y$ (because we use 2nd-order basis functions) that are multiplied with each other. This results in the fourth degree.
+This is traceable, since we use second order approximations for $h, u_x$ and $u_y$ (due to the second order basis functions) that are multiplied with each other. This results in the fourth degree.
 
-While in the 1st-order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), we now can not explore this behaviour for some of the functions.
+While in the first order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), this does not hold true anymore. Trying to derive the local minima analytically is made too difficult because of the absolute value used in the integrand.
 
 As expected from our calculations in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and , the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0.
 
@@ -1919,9 +1915,9 @@ We now want to get insights whether modifying another height value results in re
 
 \input{ord2_varying_h1_h3_11/tex.tex}
 
-First of all: The errors in $y$ momentum of the 3rd basis function and the $x$-function of the 5th basis function is still 0. \todo{Herrechenbar?}
+First of all, we notice that $SE_y^3$ and $SE_x^5$ remain zero, which is not surprising considering the above. \todo{Herrechenbar?}
 
-However, all other plots resemble sort of polynomials of 4th degree. Again, we can not be sure that the minimum error is at the average of the height values $h_2$ to $h_6$. Moreover, all these errors are \emph{never} 0.
+However, all other plots still resemble polynomials of the fourth degree. Again, we can not be sure that the minimum error is at the average of the height values $h_2$ to $h_6$. Moreover, all these errors are \emph{never} 0.
 
 What we can see from these plots is that it has a significant influence which of the height values we modify. Even if we still look at 4th degree polynomials, they have significantly different shapes than the ones obtained by setting $h_2=11$.
 
