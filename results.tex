@@ -1590,7 +1590,7 @@ We will do so for illustrating some simple cases.
 
 \begin{figure}[ht]
   \centering
-  \subfigure[Heatmap for first order singularities. Plot shows $\log_{10} h_1 = \log_{10}\frac{1-2x+24y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
+  \subfigure[Heatmap for first order singularities. Plot shows $\log_{10} h_1 = \log_{10}\frac{20y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-1}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o1.pdf}
   }
@@ -1609,12 +1609,12 @@ We will do so for illustrating some simple cases.
 Let us start out ba trying order 1, and setting $h_2=h_3=10$. We then obtain the following (by substituting $\phi_1$ to $\phi_3$ as defined in table \ref{tab:basis-functions-for-low-degrees}):
 
 \begin{equation*}
-  h_1 = \frac{1-2x+24y}{-1+2y}
+  h_1 = \frac{20y}{-1+2y}
 \end{equation*}
 
-We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-2\cdot 0.25+24\cdot 0.25}{-1+2\cdot 0.25} = -13$. That means: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -13 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -13 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot
+We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot
 \begin{equation*}
-\log_{10}\frac{1-2x+24y}{-1+2y}.
+\log_{10}\frac{20y}{-1+2y}.
 \end{equation*}
 
 We then examine the results of this term.
@@ -1625,7 +1625,7 @@ As you can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or b
 
 The white area is -- as said -- undefined or out of the triangle. Let us for a moment focus on the ``undefined'' ones: If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative --- wich again is not a reasonable value for $h_1$ if all other heights are 10.
 
-We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour.\todo{Wirklich?}
+We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour. 
 
 \subsubsection{Order 2}
 \label{sec:stiffness-analysis-singularities-ord-2}
