@@ -1267,7 +1267,7 @@ While deriving the equations necessary for our calculations, we introduced sever
   & \approx &
   \int_T
   \begin{pmatrix}
-    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
     \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
   \end{pmatrix}
   \cdot
@@ -1275,7 +1275,7 @@ While deriving the equations necessary for our calculations, we introduced sever
     \pd{\phi_i}{x} \\
     \pd{\phi_i}{y}
   \end{pmatrix} dT \\
-  & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+  & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
   & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray}
 
@@ -1291,7 +1291,7 @@ The equation for the $u_y$ component was analogous:
   & \approx & \int_T
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
-    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
   \end{pmatrix}
   \cdot
   \begin{pmatrix}
@@ -1299,7 +1299,7 @@ The equation for the $u_y$ component was analogous:
     \pd{\phi_i}{y}
   \end{pmatrix} dT \\
   & = & \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
-  & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+  & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
 We will introduce this notation to refer to the approximated integrand:
@@ -1308,7 +1308,7 @@ We will introduce this notation to refer to the approximated integrand:
   \label{eq:point-wise-approx-result-second-line}
   \overline{F}_2(\mathbf{q}) \cdot \nabla \phi =
   \begin{pmatrix}
-    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
     \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
   \end{pmatrix}
   \cdot
@@ -1323,7 +1323,7 @@ We will introduce this notation to refer to the approximated integrand:
   \overline{F}_3(\mathbf{q}) \cdot \nabla \phi =
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
-    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
   \end{pmatrix}
   \cdot
   \begin{pmatrix}
@@ -1387,7 +1387,7 @@ Analogously, we define this for the second component:
 We have now derived an exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L_1$ norm, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
 
 \begin{eqnarray*}
-  SE_x := \int_T \left| \overline{F}_2(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi \right| \, dT, \quad
+  SE_x := \int_T \left| \overline{F}_2(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi \right| \, dT\\
   SE_y := \int_T \left| \overline{F}_3(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi \right| \, dT
 \end{eqnarray*}
 
@@ -1871,7 +1871,7 @@ Let us start out by examining the error of the $y$ momentum for the basis functi
 Consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$ component between the exact solution and the approximation:
 
 \begin{equation*}
-  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
+  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
 with $\widehat h, \widehat{u}_x, \widehat{u}_y$ as defined in equation (\ref{eq:substitutions-for-all-components-with-hat}).
 
@@ -1974,27 +1974,49 @@ Let us first concentrate on the errors of the $x$ momentums shown in figure \ref
 
 All in all, the error plots look roughly the same -- except for the error of the 5th basis function. All of the other plots still show parabolae, and the error is negligibly bigger than the error used for default values (have a look at figure \ref{fig:ord2_varying_ux_1} for comparison). The most striking difference is -- as said -- the $x$ momentum for the 5th basis function, that has changed from zero to an ``absolute-value-linear'' graph.
 
-Note that \emph{all} errors reach zero for $u_{x,1}=0$ (except possibly the error for the 1st basis function that is shifted to the right by a quantum \todo{Herrechenbar?}).
+Note that \emph{all} errors reach zero for $u_{x,1} = 0$ (except possibly the error for the first basis function that is shifted to the right by a quantum \todo{Herrechenbar?}).
 
 \subparagraph{\texorpdfstring{Errors in $y$ momentums}{Errors in y momentums}}
 
-The error plots for the $y$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and look a bit chaotic (compared to before where they were all 0).
+The error plots for the $y$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and don't look as structured anymoore (compared to before where they were all 0).
 
 \input{ord2_varying_ux1_uy2_1/tex_y.tex}
 
-Suddenly, the errors in the $y$ momentums are not zero anymore, but look like piecewise linear functions (at least within the plotted range). Even if the error term didn't grow that much, the shape differs strongly from what we have seen so far.
+Suddenly, the errors in the $y$ momentums are not zero anymore, but look like piecewise linear functions (at least within the plotted range). Even if the error term did not grow that much, the shape differs strongly from what we have seen so far.
 
-Probably most interesting is the $y$ momentum of the 5th basis function, that is still constant, however not at a value of 0 anymore, but at a value of roughly 0.004835.\todo{Ist das eine numerische Ungenauigkeit? (vermutlich nicht, oder?!)}
+Probably most interesting is $SE_y^5$, which is now constant and almost zero. This can be explained by $\pd{phi_5}{x}=0$, which leads to the following derivation:
+
+\begin{eqnarray*}
+  SE_y^5 & := & \int_T \left| \left(\overline{F}_3\left(\mathbf{q}\right) - \widehat{F}_3\left(\mathbf{q}\right)\right) \cdot \begin{pmatrix}\pd{\phi_5}{x} \\ \pd{\phi_5}{y}\end{pmatrix}\right| \\
+  {} & = & \int_T \left| \left(\overline{F}_3\left(\mathbf{q}\right) - \widehat{F}_3\left(\mathbf{q}\right)\right) \cdot \begin{pmatrix}0 \\ \pd{\phi_5}{y}\end{pmatrix}\right| \\
+  {} & = & \int_T \left| \left( \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j - \left( \frac{\widehat{u}_y^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \phi_j \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
+\end{eqnarray*}
+
+We already see here that $u_{x,1}$ is not present, and since all other variables are set to specific values, that implies that the resulting value must be a constant. Seeing how all $h_j$ are 10, we can treat them as a constant $h$ and factor them out of both sums, where they eliminate each other, simplifying the term to this:
+
+\begin{eqnarray*}
+  SE_y^5 & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\widehat{u}_y^2}{\widehat{h}} \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
+  {} & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n h\phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
+\end{eqnarray*}
+
+Using that $\sum_{j=1}^n \phi_j = 1$ and that all $u_{y,j} = 0$ for $j \neq 2$, we finally obtain:
+
+\begin{eqnarray*}
+  SE_y^5 & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n h\phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
+  {} & = & \int_T \left| \left( \frac{1}{h} \sum_{j=1}^n u_{y,j}^2 \phi_j - \frac{1}{h} \cdot \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n \phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
+{} & = & \int_T \left| \left( \frac{1}{h} u_{y,2}^2 \phi_2 - \frac{1}{h} \left(u_{y,2}\phi_2\right)^2 \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
+	{} & = & \int_T \left| \left( \frac{u_{y,2}^2 \phi_2}{h} \left( 1 - \phi_2\right) \right) \cdot \left(\pd{\phi_5}{y}\right) \right|
+\end{eqnarray*}
 
 We saw that changing an $y$ momentum can result in drastically changed shapes of the error plots,  which is something we did not expect.\todo{Hier noch mehr Experimente durchführen, um genauere Aussagen treffen zu können.}
 
 \paragraph{Setting all $x$ momentums to 1}
 
-We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect parabolae whose minima are at $u_{x,1}=1$ (since all other $x$ momentums are 1). You can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
+We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect parabolae with minima at $u_{x,1}=1$ (since all other $x$ momentums are 1). You can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
 
 \input{ord2_varying_ux1_ux2-ux6_1/tex.tex}
 
-It is not a big surprise that our expectations are confirmed at best.
+Which confirms our expectations.
 
 \cleardoublepage{}
 
