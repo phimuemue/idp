@@ -1686,7 +1686,42 @@ As you can see, the variable $h_1$ is explicitly omitted in the above setting, s
 
 \input{standardwerte_nach_h1_ord1/tex.tex}
 
-The resulting plots are displayed in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE_x^1$ and $SE_y^3$ are 0.\todo{Explanation?}
+The resulting plots are displayed in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE_x^1$ and $SE_y^3$ are 0.
+
+This can be explained quite straightforward, if one considers the fact that -- for order 1 -- we have the following two facts (see table \ref{tab:basis-functions-for-low-degrees} for reference):
+\begin{eqnarray*}
+  \pd{\phi_1}{x} = 0 & \pd{\phi_3}{y} = 0 
+\end{eqnarray*}
+
+Now remember that $SE_x^1$ is computed by integrating over the absolute value of the following term:
+
+\begin{align*}
+  \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_1 - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_1,
+\end{align*} 
+which can be expanded to 
+\begin{align*}
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_1}{x} \\
+    \pd{\phi_1}{y}
+  \end{pmatrix} -
+  \left( \frac{\widehat{u}_x^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_1}{x} +
+  \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_1}{y}.
+\end{align*}
+
+Using the fact that $\pd{\phi_i}x = 0$, we can simplify the above to
+\begin{align*}
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j 
+    \cdot
+    \pd{\phi_1}{y} -
+    \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_1}{y}.
+\end{align*}
+
+We now use the fact that $u_{x,i}=u_{y,i}=0$ for all support points and can confirm that the overall integrand becomes 0.
 
 While this is a good result for us, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. You can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). It looks like a parabola, which makes sense when we examine the equations for the first order.
 
