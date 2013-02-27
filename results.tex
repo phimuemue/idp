@@ -273,7 +273,37 @@ Note that for any support point $(x_p,y_p)$, we have that
   \sum_{i=1}^n \phi_i(x_p,y_p) = 1
 \end{equation}
 
-Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfils $\overline{\rho}(x_p,y_p)$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$. Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
+Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfils $\overline{\rho}(x_p,y_p)=1$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$. 
+
+It must be the same because of the following: The sum of all basis functions $\phi_i$ yields a new polynomial, whose coefficients must be all zero, except the ``constant coefficient'' that must be 1. This can be seen as follows: Imagine you would like to solve the following system of linear equations:
+
+\setcounter{MaxMatrixCols}{20}
+
+\begin{equation*}
+  \begin{pmatrix}
+    1 & x_1 & y_1 & x_1^2 & x_1 y_1 & y_1^2 & x_1^3 & x_1^2 y_1 & x_1 y_1^2 & y_1^3 & \dots & y_1^n \\
+    1 & x_2 & y_2 & x_2^2 & x_2 y_2 & y_2^2 & x_2^3 & x_2^2 y_2 & x_2 y_2^2 & y_2^3 & \dots & y_2^n \\
+    \vdots & &&&&&&&&&& \vdots \\
+    1 & x_n & y_n & x_n^2 & x_n y_n & y_n^2 & x_n^3 & x_n^2 y_n & x_n y_n^2 & y_n^3 & \dots & y_n^n \\
+  \end{pmatrix} \cdot
+  \begin{pmatrix}
+    \alpha_{0,0} \\
+    \alpha_{1,0} \\
+    \alpha_{0,1} \\
+    \alpha_{2,0} \\
+    \alpha_{1,1} \\
+    \alpha_{0,2} \\
+    \hdots \\
+    \alpha{0,n}
+  \end{pmatrix} =
+  \begin{pmatrix}
+    1 \\ 1 \\ 1 \\ \vdots \\ 1
+  \end{pmatrix}
+\end{equation*}
+
+If you solve the above system, you arrive at the fact that $\alpha_{0,0}=1$ and all other $\alpha_{i,j}=0$ --- at least if all columns within the huge matrix are linearly independent.
+
+Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
 \section{Discontinuous Galerkin}
 \label{sec:discontinuous-galerkin}
