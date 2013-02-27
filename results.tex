@@ -1926,7 +1926,7 @@ One can see there that the error for all $y$ momentums is zero. Moreover, the er
 
 For the most part, the plots all look parabola-like which is traceable since the error term contains $\widehat{u}_x^2$, which itself contains $u_{x,1}^2$. Thus, we can explain the parabola-like shape.
 
-The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain that later for a more generalized case.
+The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain this fact in a more generalized setting --- we won't restrict ourselves to second order and will assume that all heights are equal (not exactly 10).
 
 % Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
 
@@ -1941,27 +1941,39 @@ Let us start out by examining the error of the $y$ momentum for the basis functi
 \begin{align*}
   SE_y^X &= \int_T \left| \left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right) \cdot \nabla \phi_X \right| \, dT = \\
   &= \int_T \left| \mathtt{DIFFY} \cdot \nabla \phi_X \right|\,dT = \\
-  &= \int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} + \mathtt{DIFFY}_Y \cdot \underbrace{\pd{\phi_X}{y}}_{=0} \right) \right| \, dT = \\
+  &= \int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} + \underbrace{\mathtt{DIFFY}_Y}_{=0} \cdot \pd{\phi_X}{y} \right) \right| \, dT = \\
   &=\int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} \right) \right| \, dT
 \end{align*}
 
-Consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$ component between the exact solution and the approximation:
+We could simplify $\mathtt{DIFFY}_Y$ to 0 because $\mathtt{DIFFY}_Y=\sum_{j=1}^n\left( \frac{u_{x,j}\cdot u_{y,j}}{h_j} \right)-\frac{\widehat{u_x}\cdot\widehat{u_y}}{\widehat{h}}$. If all $y$ momentums are 0 (which is the case in our scenario), then this term becomes 0.
+
+Consider the term $\mathtt{DIFFY}_X$ that describes the difference in the $x$ component between the exact solution and the approximation:
 
 \begin{equation*}
-  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
+  \mathtt{DIFFY}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
 with $\widehat h, \widehat{u}_x, \widehat{u}_y$ as defined in equation (\ref{eq:substitutions-for-all-components-with-hat}).
 
-If we choose all momentums to be 0 (which is what we are doing in this scenario), then we can simplify $\mathtt{DIFF}_Y$ to the following:
+If we choose all momentums to be 0 (which is what we are doing in this scenario), then we can simplify $\mathtt{DIFFY}_X$ to the following:
 
 \begin{equation*}
   \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
 
-For second order, we have $n=6$. And moreover, we have $\sum_{i=1}^6 \phi(x,y)=1$ and  $(\sum_{i=1}^6 a \phi(x,y))^2 = a^2$ as defined above (see section \ref{sec:basis-functions-other-properties}).
+%For second order, we have $n=6$. 
 
-With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$, we can set $h_1=h_2=h_3=\dots=h_n$ and can simplify the above to 0, thereby explaining the above result.
-\todo{Genauer}
+We have $\sum_{i=1}^n \phi(x,y)=1$ and  $(\sum_{i=1}^n a \phi(x,y))^2 = a^2$ as calculated in section \ref{sec:basis-functions-other-properties}.
+
+With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$, we can set $h_1=h_2=h_3=\dots=h_n$ (remember: we fixed all height values at 10) and simplify as follows:
+
+\begin{align*}
+  \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right) &= \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \left( \sum_{j=1}^n h_j\phi_j \right)^2\right) = \\
+  &= \left( \sum_{j=1}^n \left(\frac{1}{2} g h_1^2\right) \phi_j \right) - \left( \frac{1}{2} g \left( \sum_{j=1}^n h_1\phi_j \right)^2\right) = \\
+  &= \frac{1}{2} g h_1^2 \cdot \sum_{j=1}^n \phi_j - \frac{1}{2} g h_1^2 = \\
+  &= 0
+\end{align*}
+
+That means, we can simplify the above to 0, thereby explaining the result: If all heights are equal, and all $x$ momentums are 0, then the error for \emph{all} $y$ momentums will be 0.
 
 \subsection{Non-standard values}
 \label{sec:stiffness-analysis-ord2-nondefault}
