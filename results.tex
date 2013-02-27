@@ -255,7 +255,7 @@ For second order, the thing involves a bit more elaboration, but is still easy. 
 \subsubsection{Other properties}
 \label{sec:basis-functions-other-properties}
 
-We conjecture the following two identities \todo{Sind diese irgendwie beweisbar?}
+We conjecture the following two identities: \todo[Philipp]{Stimmen die von mir angeführten Beweise/Erklärungen?}
 
 \begin{align}
   \label{eq:sum-basis-functions-is-1}
@@ -515,7 +515,7 @@ we compute the value
   \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
 \end{equation*}
 
-The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. \todo{Cite error?} It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
+The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
 
 \todo{More references. Schwaiger-DA only is not sufficient here! Where is the approach taken from}
 
@@ -925,7 +925,7 @@ We are now going to plot (the two components of) the term $I$ as described in eq
 
 Before we actually go into visualizing the error term, let us introduce some concepts that will be useful later when it comes to plotting.
 
-Consider some well-known plots known from school, e.g. the graphs for the functions $y=2\cdot x+3$ or $y=x^2$. \todo{Plots for these simple functions.} These plots are probably well-known to every reader of this paper -- simply a horizontal $x$-axis, and a vertical $y$-axis.
+Consider some well-known plots known from school, e.g. the graphs for the functions $y=2\cdot x+3$ or $y=x^2$. These plots are probably well-known to every reader of this paper -- simply a horizontal $x$-axis, and a vertical $y$-axis.
 
 \subsubsection{Functions with parameters}
 
@@ -941,8 +941,22 @@ This equation describes a line going through point $(0,1)$ with varying gradient
 \item Focus on specific values of $a$ and plot $y=a\cdot x + 1$ for these values of $a$.
 \item Generate a 3d-plot for varying values of $a$ and $x$. This plot has then two axes for $a$ and $x$ spanning two dimensions, the resulting value $y$ is then denoted by the last dimension.
 
-  That is, each point contained in the graph of this 3d-plot has three coordinates $(x,a,y)$, and these three coordinates have to suffice the condition $y=a\cdot x + 1$.\todo{Plot!}
+  That is, each point contained in the graph of this 3d-plot has three coordinates $(x,a,y)$, and these three coordinates have to suffice the condition $y=a\cdot x + 1$.
 \end{itemize}
+
+You can compare the two methods in figure \ref{fig:simple-parametric-functions}. Note that you can interpret the lines in the two dimensional plot as ``slices'' from the three dimensional plot.
+
+\begin{figure}[ht]
+  \centering
+  \subfigure[Choosing particular values for $a$]{
+    \includegraphics[scale=0.5]{simple_parametric_2d.pdf}
+  }
+  \subfigure[A three dimensional plot]{
+    \includegraphics[scale=0.5]{simple_parametric_3d.pdf}
+  }
+  \caption{Plotting simple parametric functions using different approaches}
+  \label{fig:simple-parametric-functions}
+\end{figure}
 
 Now, let us extend the above function by another variable and consider the function
 
@@ -1408,8 +1422,6 @@ On the other hand, the greater $SE$ grows, the more the two compared functions d
 \subsection{\texorpdfstring{How to evaluate $SE$}{How to evaluate SE}}
 \label{sec:how-to-evaluate-e}
 
-\todo{$r$ umbenennen!}
-
 If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely quite hard to compute exactly, maybe even impossible.
 
 While integrating in the one-dimensional case can be easily approximated by the rectangle method (which can be made arbitrarily precise by a varying number of rectangles), the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a slightly more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
@@ -1418,12 +1430,12 @@ However, it is not difficult to extend the rectangle method to the two-dimension
 
 Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can try to approximate this volume by comprising it out of smaller parts. We decided to use prisms to approximate that volume.
 
-In principle, we devide the triangle in a way such that we cut the cathetuses (of length 1) into smaller pieces of length $\frac{1}{r}$ (the integer $r$ denotes the parameter for our integral approximation). Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
+In principle, we devide the triangle in a way such that we cut the cathetuses (of length 1) into smaller pieces of length $\frac{1}{L}$ (the integer $L$ denotes the parameter for our integral approximation). Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
 
 \begin{equation*}
   \mathtt{POSSIBLE\_CENTERS} = \left\{
-    \left(\frac{i}{r} + \frac{1}{3r}, \frac{j}{r} + \frac{1}{3r}\right) ,
-    \left(\frac{i}{r} - \frac{1}{3r}, \frac{j}{r} - \frac{1}{3r}\right)
+    \left(\frac{i}{L} + \frac{1}{3L}, \frac{j}{L} + \frac{1}{3L}\right) ,
+    \left(\frac{i}{L} - \frac{1}{3L}, \frac{j}{L} - \frac{1}{3L}\right)
     \mid
     i, j\in \mathbb{N}
   \right\}
@@ -1439,7 +1451,7 @@ After this, we filter out the unnecessary centers:
   \right\}
 \end{equation*}
 
-If we use this definition, we obtain $r^2$ triangles of equal size.
+If we use this definition, we obtain $L^2$ triangles of equal size.
 
 \begin{figure}[ht!]
   \newcommand{\mytriangle}[3]{
@@ -1448,12 +1460,12 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
     \end{scope}
   }
   \centering
-  \subfigure[One trianglev($r=1$)]{
+  \subfigure[One trianglev($L=1$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
     \end{tikzpicture}
   }
-  \subfigure[Four triangles ($r=2$)]{
+  \subfigure[Four triangles ($L=2$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.5}{0}{0};
@@ -1461,7 +1473,7 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
       \mytriangle{.5}{1}{0};
     \end{tikzpicture}
   }
-  \subfigure[Nine triangles ($r=3$)]{
+  \subfigure[Nine triangles ($L=3$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.3333}{0}{0};
@@ -1472,7 +1484,7 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
       \mytriangle{.3333}{1}{1};
     \end{tikzpicture}
   }
-  \subfigure[Sixteen triangles ($r=4$)]{
+  \subfigure[Sixteen triangles ($L=4$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.25}{0}{0};
@@ -1487,7 +1499,7 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
       \mytriangle{.25}{2}{1};
     \end{tikzpicture}
   }
-  \subfigure[Twenty-five triangles ($r=5$)]{
+  \subfigure[Twenty-five triangles ($L=5$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.2}{0}{0};
@@ -1513,15 +1525,15 @@ If we use this definition, we obtain $r^2$ triangles of equal size.
 
 You can see how the division of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-triangles}.
 
-We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 r^2}$. This results then in the following equation:
+We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 L^2}$. This results then in the following equation:
 
 \begin{equation}
-  \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2r^2}
+  \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2L^2}
 \end{equation}
 
 To clarify this, let us consider some examples:
 
-If we use just one triangle (i.e. $r=1$), then this triangle coincides with the original triangle, and its center is located at $(\frac{1}{3}, \frac{1}{3})$. If we use this approximation, we obtain the following:
+If we use just one triangle (i.e. $L=1$), then this triangle coincides with the original triangle, and its center is located at $(\frac{1}{3}, \frac{1}{3})$. If we use this approximation, we obtain the following:
 
 \begin{equation*}
   \int_T f(x,y)\, dT \approx \frac{1}{2} \cdot f(\frac{1}{3},\frac{1}{3})
@@ -1529,7 +1541,7 @@ If we use just one triangle (i.e. $r=1$), then this triangle coincides with the 
 
 The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism, which has the same base area as our triangle $T$ ($\frac{1}{2}$).
 
-Naturally we need more triangles for an actual approximation. If we use four triangles (i.e. $r=2$), we get the following centers: $\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}$.
+Naturally we need more triangles for an actual approximation. If we use four triangles (i.e. $L=2$), we get the following centers: $\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}$.
 
 We can now approximate the integral as follows:
 
@@ -1541,7 +1553,7 @@ Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one singl
 
 Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
-We noticed that $r=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that's the case it's never enough to make an impact on the eventual interpretation of the results.
+We noticed that $L=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that's the case it's never enough to make an impact on the eventual interpretation of the results.
 
 \subsection{\texorpdfstring{Singularities in $SE$}{Singularities in SE}}
 \label{sec:stiffness-analysis-singularities}
@@ -1578,7 +1590,7 @@ We will do so for illustrating some simple cases.
 
 \begin{figure}[ht]
   \centering
-  \subfigure[Heatmap for first order singularities. Plot shows $\log_{10} h_1 = \log_{10}\frac{1-2x+24y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
+  \subfigure[Heatmap for first order singularities. Plot shows $\log_{10} h_1 = \log_{10}\frac{20y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-1}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o1.pdf}
   }
@@ -1597,12 +1609,12 @@ We will do so for illustrating some simple cases.
 Let us start out ba trying order 1, and setting $h_2=h_3=10$. We then obtain the following (by substituting $\phi_1$ to $\phi_3$ as defined in table \ref{tab:basis-functions-for-low-degrees}):
 
 \begin{equation*}
-  h_1 = \frac{1-2x+24y}{-1+2y}
+  h_1 = \frac{20y}{-1+2y}
 \end{equation*}
 
-We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-2\cdot 0.25+24\cdot 0.25}{-1+2\cdot 0.25} = -13$. That means: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -13 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -13 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot
+We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot
 \begin{equation*}
-\log_{10}\frac{1-2x+24y}{-1+2y}.
+\log_{10}\frac{20y}{-1+2y}.
 \end{equation*}
 
 We then examine the results of this term.
@@ -1613,7 +1625,7 @@ As you can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or b
 
 The white area is -- as said -- undefined or out of the triangle. Let us for a moment focus on the ``undefined'' ones: If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative --- wich again is not a reasonable value for $h_1$ if all other heights are 10.
 
-We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour.\todo{Wirklich?}
+We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour. 
 
 \subsubsection{Order 2}
 \label{sec:stiffness-analysis-singularities-ord-2}
@@ -1674,7 +1686,42 @@ As you can see, the variable $h_1$ is explicitly omitted in the above setting, s
 
 \input{standardwerte_nach_h1_ord1/tex.tex}
 
-The resulting plots are displayed in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE_x^1$ and $SE_y^3$ are 0.\todo{Explanation?}
+The resulting plots are displayed in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE_x^1$ and $SE_y^3$ are 0.
+
+This can be explained quite straightforward, if one considers the fact that -- for order 1 -- we have the following two facts (see table \ref{tab:basis-functions-for-low-degrees} for reference):
+\begin{eqnarray*}
+  \pd{\phi_1}{x} = 0 & \pd{\phi_3}{y} = 0 
+\end{eqnarray*}
+
+Now remember that $SE_x^1$ is computed by integrating over the absolute value of the following term:
+
+\begin{align*}
+  \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_1 - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_1,
+\end{align*} 
+which can be expanded to 
+\begin{align*}
+  \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+  \end{pmatrix}
+  \cdot
+  \begin{pmatrix}
+    \pd{\phi_1}{x} \\
+    \pd{\phi_1}{y}
+  \end{pmatrix} -
+  \left( \frac{\widehat{u}_x^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_1}{x} +
+  \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_1}{y}.
+\end{align*}
+
+Using the fact that $\pd{\phi_i}x = 0$, we can simplify the above to
+\begin{align*}
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j 
+    \cdot
+    \pd{\phi_1}{y} -
+    \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_1}{y}.
+\end{align*}
+
+We now use the fact that $u_{x,i}=u_{y,i}=0$ for all support points and can confirm that the overall integrand becomes 0.
 
 While this is a good result for us, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. You can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). It looks like a parabola, which makes sense when we examine the equations for the first order.
 
