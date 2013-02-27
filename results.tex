@@ -82,9 +82,7 @@ and see if all todo's are done}
 
 \todo{plots weiter stauchen}
 
-\todo{Kantenintegration: Woher haben wir die Nullstellen - Referenz?}
-
-\todo{Referenzen: Lax-Fridrichs-Löser (Leveque) -- Höhere Ordnung (Castro) -- Eulergleichungen (Cockburn/Geraldo(?)) -- Nodale Basis (Hesthaven)}
+\todo{Referenzen: Gauss-Quadratur Nullstellen -- Nodale Basis (Hesthaven)}
 
 \todo{Sollten wir langsam ein Inhaltsverzeichnis reinhauen?}
 
@@ -186,7 +184,7 @@ Another set of points are \emph{Gaussian quadrature} points, which we will use l
 
 For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$. The name already gives away the nature of these functions, because they are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $d$ as a linear combination of these basis functions.
 
-A relatively simple way of constructing basis functions is to use Lagrange interpolation:
+A relatively simple way of constructing basis functions is to use Lagrange interpolation\footnote{For another method, see \cite{castro07high-order-ader-fv-dg-numerical-methods, hesthaven2007nodal}}:
 \begin{itemize}
 \item Choose a certain set of $n$ points $p_1$ through $p_n$ (see \ref{sec:choice-support-points}).
 \item Construct function $\phi_i$ such that $\phi_i(p_j) = \delta_{ij} \  \forall i,j \in \{1 \dots n\}$ using Lagrange polynomials (with $\delta_{ij}$ being the Kronecker delta function).
@@ -221,7 +219,7 @@ To have an impression of what the basis functions look like, please have a look 
     \toprule
     Order & $n$ & Basis functions & $x$-derivative & $y$-derivative \\
     \midrule
-    \multirow{1}{*}{0} & 1 & 1 \\
+    \multirow{1}{*}{0} & 1 & 1 & 0 & 0\\
     \midrule
     \multirow{3}{*}{1} & \multirow{3}{*}{3} & $1-2y$ & 0 & -2\\
     &  & $-1+2x+2y$ & 2 & 2\\
@@ -678,13 +676,18 @@ Since we are dealing with a one dimensional problem, we have to consider the flu
 \subsection{Lax-Friedrich-Flux}
 \label{sec:lax-friedrich-definition}
 
-The Lax-Friedrichs flux is defined as follows:
+The Lax-Friedrichs flux is defined as follows \cite{leveque2002finite}:
 \begin{equation}
   \label{eq:lax-friedrich-definition}
   F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
 \end{equation}
 
 In (\ref{eq:lax-friedrich-definition}), $p^R$ and $p^L$ stand for the height and velocity along the right and the left edge, respectively. The term $F(p)$ is defined as in equation (\ref{eq:flux-function-definition}), and $p$ is a two-component vector. $p^R$ and $p^L$ are polynomials depending on a variable ($x$ in our one dimensional case). These polynomials are containing two components (for height and momentum). $p$ is technically a function $[0,1]\rightarrow\reals$, thus we should write $p\left(x\right)$ and $F\left(p\left(x\right)\right)$. For simplicity, we will simply use $p$ and $F\left(p\right)$ respectively, but we need to remember that fact when we differentiate or integrate over $x$, because we cannot treat $p$ and $F\left(p\right)$ as constants.
+
+The factor $\alpha$ is used to regulate the quality of the resulting term.
+Lowering it results in more accurate values, but reduces the stability of the algorithm. This relationship is discussed in detail in \cite{cockburn1999discontinuous}.
+
+Depending on how $\alpha$ is handled, it results in different methods. Sometimes it's set globally and treated the same for all triangles, other times it's determined based on the qualities of certain triangles at run time, which obviously results in higher computation time. The various methods and their properties are discussed in \cite{leveque2002finite}. For our purposes, we will leave it invariant in time and space across the whole domain.
 
 \subsection{Original situation: A 2D problem}
 \label{sec:original-situation-2d-problem}
@@ -1625,7 +1628,7 @@ As you can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or b
 
 The white area is -- as said -- undefined or out of the triangle. Let us for a moment focus on the ``undefined'' ones: If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative --- wich again is not a reasonable value for $h_1$ if all other heights are 10.
 
-We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour. 
+We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour.
 
 \subsubsection{Order 2}
 \label{sec:stiffness-analysis-singularities-ord-2}
@@ -1690,15 +1693,15 @@ The resulting plots are displayed in figure \ref{fig:stiffness-analysis-order-1-
 
 This can be explained quite straightforward, if one considers the fact that -- for order 1 -- we have the following two facts (see table \ref{tab:basis-functions-for-low-degrees} for reference):
 \begin{eqnarray*}
-  \pd{\phi_1}{x} = 0 & \pd{\phi_3}{y} = 0 
+  \pd{\phi_1}{x} = 0 & \pd{\phi_3}{y} = 0
 \end{eqnarray*}
 
 Now remember that $SE_x^1$ is computed by integrating over the absolute value of the following term:
 
 \begin{align*}
   \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_1 - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_1,
-\end{align*} 
-which can be expanded to 
+\end{align*}
+which can be expanded to
 \begin{align*}
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
@@ -1715,7 +1718,7 @@ which can be expanded to
 
 Using the fact that $\pd{\phi_i}x = 0$, we can simplify the above to
 \begin{align*}
-    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j 
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j
     \cdot
     \pd{\phi_1}{y} -
     \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_1}{y}.
