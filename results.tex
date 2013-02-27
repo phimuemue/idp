@@ -252,7 +252,7 @@ For second order, the thing involves a bit more elaboration, but is still easy. 
 \subsubsection{Other properties}
 \label{sec:basis-functions-other-properties}
 
-We conjecture the following two identities: \todo[Philipp]{Stimmen die von mir angeführten Beweise/Erklärungen?}
+We conjecture the following two identities: 
 
 \begin{align}
   \label{eq:sum-basis-functions-is-1}
@@ -300,7 +300,7 @@ It must be the same because of the following: The sum of all basis functions $\p
   \end{pmatrix}
 \end{equation*}
 
-If you solve the above system, you arrive at the fact that $\alpha_{0,0}=1$ and all other $\alpha_{i,j}=0$ --- at least if all columns within the huge matrix are linearly independent.
+If you solve the above system, you arrive at the fact that $\alpha_{0,0}=1$ and all other $\alpha_{i,j}=0$ --- at least if all columns within the huge matrix are linearly independent (which is the case if all support points are pairwise different).
 
 Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
@@ -2062,15 +2062,26 @@ Let us first concentrate on the errors of the $x$ momentums shown in figure \ref
 
 All in all, the error plots look roughly the same -- except for the error of the 5th basis function. All of the other plots still show parabolae, and the error is negligibly bigger than the error used for default values (have a look at figure \ref{fig:ord2_varying_ux_1} for comparison). The most striking difference is -- as said -- the $x$ momentum for the 5th basis function, that has changed from zero to an ``absolute-value-linear'' graph.
 
-Note that \emph{all} errors (for $x$ momentum) reach zero for $u_{x,1} = 0$. We can confirm this result analytically as follows: Let us start out by considering (once again) $SE_x^i$:
+Note that \emph{all} errors (for $x$ momentum) reach zero for $u_{x,1} = 0$. We can confirm this result analytically. Again, we choose a slightly generalized setting which is as follows:
+
+\begin{itemize}
+\item All heights values are equal.
+\item All $x$ momentums are 0.
+\item The $y$ momentums can be chosen ad libitum.
+\end{itemize}
+
+Note that the plots show a special case of these three conditions.
+
+Let us start analyzing by considering (once again) $SE_x^i$:
 
 \begin{align*}
   SE_x^i = \int_T \left| \left(\overline{F_2}(\mathbf{q}) - \widehat{F_2}(\mathbf{q})\right) \cdot \nabla \phi_i \right|\, dT
 \end{align*}
 
-We will focus on the integrand and show that it becomes 0 for $u_{x,1}=0$. We continue by examining $\overline{F_2}(\mathbf{q})$ for the desired setting (all height values the same, all moments except $u_{y,2}$ fixed to 0, $u_{y,2}=1$):
+We will focus on the integrand and show that it becomes 0 for $u_{x,1}=0$. We continue by examining $\overline{F_2}(\mathbf{q})$ for the desired setting (all height values the same, all $x$ moments are 0, $y$ moments arbitrary):
 
-\begin{equation*}
+\begin{equation}
+  \label{eq:1}
   \overline{F_2}(\mathbf{q}) =
   \begin{pmatrix}
     \sum_{j=1}^n \left( \frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2 \right) \cdot \phi_j \\
@@ -2083,11 +2094,12 @@ We will focus on the integrand and show that it becomes 0 for $u_{x,1}=0$. We co
   \begin{pmatrix}
     h_1^2 \\ 0
   \end{pmatrix}
-\end{equation*}
+\end{equation}
 
 Analogously, we proceed for $\widehat{F_2}(\mathbf{q})$:
 
-\begin{equation*}
+\begin{equation}
+  \label{eq:2}
   \widehat{F_2}(\mathbf{q}) =
   \begin{pmatrix}
     \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat h ^2 \\
@@ -2100,7 +2112,9 @@ Analogously, we proceed for $\widehat{F_2}(\mathbf{q})$:
   \begin{pmatrix}
     h_1^2 \\ 0
   \end{pmatrix}
-\end{equation*}
+\end{equation}
+
+From equations (\ref{eq:1}) and (\ref{eq:2}) you can see the reason that you can choose the $y$ momentums as you like it --- it won't influence the error term $SE_x^i$.
 
 This means, we can simplify as follows (for the current scenario):
 
@@ -2117,9 +2131,6 @@ This means, we can simplify as follows (for the current scenario):
     \cdot \nabla \phi_i \right|\, dT = 
   0
 \end{equation*}
-
-
-\todo{Auch für $u_{y,2}=3$ ausprobieren und schauen, ob Fehler für $u_{x,1}=0$ ebenfalls 0 wird. Auch andere $u_{y,i}$ mal auf andere Werte setzen. Vielleicht ist der Fehler immer minimal für $u_{x,1}=0$, sofern man nur an den $u_y$ rumschraubt... Eigentlich müsste das ja sogar noch gehen, wenn die $u_y$ irgendwie gesetzt sind, oder?}
 
 \subparagraph{\texorpdfstring{Errors in $y$ momentums}{Errors in y momentums}}
 
