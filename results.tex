@@ -185,7 +185,7 @@ Another set of points are \emph{Gaussian quadrature} points, which we will use l
 
 For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$. The name already gives away the nature of these functions, because they are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $d$ as a linear combination of these basis functions.
 
-A relatively simple way of constructing basis functions is to use Lagrange interpolation\footnote{For another method, see \cite{castro07high-order-ader-fv-dg-numerical-methods, hesthaven2007nodal}}:
+A relatively simple way of constructing basis functions is to use Lagrange interpolation\footnote{For another method involving Jacobi polynomials, see \cite{castro07high-order-ader-fv-dg-numerical-methods, hesthaven2007nodal}}:
 \begin{itemize}
 \item Choose a certain set of $n$ points $p_1$ through $p_n$ (see \ref{sec:choice-support-points}).
 \item Construct function $\phi_i$ such that $\phi_i(p_j) = \delta_{ij} \  \forall i,j \in \{1 \dots n\}$ using Lagrange polynomials (with $\delta_{ij}$ being the Kronecker delta function).
@@ -274,7 +274,7 @@ Note that for any support point $(x_p,y_p)$, we have that
   \sum_{i=1}^n \phi_i(x_p,y_p) = 1
 \end{equation}
 
-Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfils $\overline{\rho}(x_p,y_p)=1$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$. 
+Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfills $\overline{\rho}(x_p,y_p)=1$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$.
 
 It must be the same because of the following: The sum of all basis functions $\phi_i$ yields a new polynomial, whose coefficients must be all zero, except the ``constant coefficient'' that must be 1. This can be seen as follows: Imagine you would like to solve the following system of linear equations:
 
@@ -545,8 +545,6 @@ we compute the value
 \end{equation*}
 
 The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
-
-\todo{More references. Schwaiger-DA only is not sufficient here! Where is the approach taken from}
 
 \subsubsection{Stiffness matrix, third line}
 
@@ -1962,8 +1960,11 @@ If we choose all momentums to be 0 (which is what we are doing in this scenario)
 
 For second order, we have $n=6$. And moreover, we have $\sum_{i=1}^6 \phi(x,y)=1$ and  $(\sum_{i=1}^6 a \phi(x,y))^2 = a^2$ as defined above (see section \ref{sec:basis-functions-other-properties}).
 
-With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$, we can set $h_1=h_2=h_3=\dots=h_n$ and can simplify the above to 0, thereby explaining the above result.
-\todo{Genauer}
+With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$, we can set $h_1=h_2=h_3=\dots=h_n$ and can simplify the above to 0, thereby explaining the above result
+
+\begin{eqnarray*}
+	\left( \sum_{j=1}^n \left(\frac{1}{2} g h^2\right) \phi_j \right) - \left( \frac{1}{2} g \left( \sum_{j=1}^n h \phi_j \right)^2\right) = \frac{1}{2} g h^2 \cdot 1 - \frac{1}{2} g h^2 = 0
+\end{eqnarray*}
 
 \subsection{Non-standard values}
 \label{sec:stiffness-analysis-ord2-nondefault}
