@@ -33,8 +33,6 @@
 
 \usetikzlibrary{decorations.pathmorphing}
 
-\bibliographystyle{plain}
-
 \geometry{margin=3.5cm, bottom=2cm, top=2cm}
 
 \newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
@@ -254,7 +252,7 @@ For second order, the thing involves a bit more elaboration, but is still easy. 
 \subsubsection{Other properties}
 \label{sec:basis-functions-other-properties}
 
-We conjecture the following two identities: \todo[Philipp]{Stimmen die von mir angeführten Beweise/Erklärungen?}
+We conjecture the following two identities:
 
 \begin{align}
   \label{eq:sum-basis-functions-is-1}
@@ -274,7 +272,7 @@ Note that for any support point $(x_p,y_p)$, we have that
   \sum_{i=1}^n \phi_i(x_p,y_p) = 1
 \end{equation}
 
-Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfills $\overline{\rho}(x_p,y_p)=1$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$.
+Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfils $\overline{\rho}(x_p,y_p)=1$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$.
 
 It must be the same because of the following: The sum of all basis functions $\phi_i$ yields a new polynomial, whose coefficients must be all zero, except the ``constant coefficient'' that must be 1. This can be seen as follows: Imagine you would like to solve the following system of linear equations:
 
@@ -302,7 +300,7 @@ It must be the same because of the following: The sum of all basis functions $\p
   \end{pmatrix}
 \end{equation*}
 
-If you solve the above system, you arrive at the fact that $\alpha_{0,0}=1$ and all other $\alpha_{i,j}=0$ --- at least if all columns within the huge matrix are linearly independent.
+If you solve the above system, you arrive at the fact that $\alpha_{0,0}=1$ and all other $\alpha_{i,j}=0$ --- at least if all columns within the huge matrix are linearly independent (which is the case if all support points are pairwise different).
 
 Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
@@ -545,6 +543,8 @@ we compute the value
 \end{equation*}
 
 The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
+
+\todo{More references. Schwaiger-DA only is not sufficient here! Where is the approach taken from}
 
 \subsubsection{Stiffness matrix, third line}
 
@@ -1926,7 +1926,7 @@ One can see there that the error for all $y$ momentums is zero. Moreover, the er
 
 For the most part, the plots all look parabola-like which is traceable since the error term contains $\widehat{u}_x^2$, which itself contains $u_{x,1}^2$. Thus, we can explain the parabola-like shape.
 
-The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain that later for a more generalized case.
+The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain this fact in a more generalized setting --- we won't restrict ourselves to second order and will assume that all heights are equal (not exactly 10).
 
 % Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
 
@@ -1941,30 +1941,39 @@ Let us start out by examining the error of the $y$ momentum for the basis functi
 \begin{align*}
   SE_y^X &= \int_T \left| \left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right) \cdot \nabla \phi_X \right| \, dT = \\
   &= \int_T \left| \mathtt{DIFFY} \cdot \nabla \phi_X \right|\,dT = \\
-  &= \int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} + \mathtt{DIFFY}_Y \cdot \underbrace{\pd{\phi_X}{y}}_{=0} \right) \right| \, dT = \\
+  &= \int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} + \underbrace{\mathtt{DIFFY}_Y}_{=0} \cdot \pd{\phi_X}{y} \right) \right| \, dT = \\
   &=\int_T \left| \left( \mathtt{DIFFY}_X \cdot \pd{\phi_X}{x} \right) \right| \, dT
 \end{align*}
 
-Consider the term $\mathtt{DIFF}_X$ that describes the difference in the $x$ component between the exact solution and the approximation:
+We could simplify $\mathtt{DIFFY}_Y$ to 0 because $\mathtt{DIFFY}_Y=\sum_{j=1}^n\left( \frac{u_{x,j}\cdot u_{y,j}}{h_j} \right)-\frac{\widehat{u_x}\cdot\widehat{u_y}}{\widehat{h}}$. If all $y$ momentums are 0 (which is the case in our scenario), then this term becomes 0.
+
+Consider the term $\mathtt{DIFFY}_X$ that describes the difference in the $x$ component between the exact solution and the approximation:
 
 \begin{equation*}
-  \mathtt{DIFF}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
+  \mathtt{DIFFY}_X = \left( \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
 with $\widehat h, \widehat{u}_x, \widehat{u}_y$ as defined in equation (\ref{eq:substitutions-for-all-components-with-hat}).
 
-If we choose all momentums to be 0 (which is what we are doing in this scenario), then we can simplify $\mathtt{DIFF}_Y$ to the following:
+If we choose all momentums to be 0 (which is what we are doing in this scenario), then we can simplify $\mathtt{DIFFY}_X$ to the following:
 
 \begin{equation*}
   \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
 
-For second order, we have $n=6$. And moreover, we have $\sum_{i=1}^6 \phi(x,y)=1$ and  $(\sum_{i=1}^6 a \phi(x,y))^2 = a^2$ as defined above (see section \ref{sec:basis-functions-other-properties}).
+%For second order, we have $n=6$.
 
-With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$, we can set $h_1=h_2=h_3=\dots=h_n$ and can simplify the above to 0, thereby explaining the above result
+We have $\sum_{i=1}^n \phi(x,y)=1$ and  $(\sum_{i=1}^n a \phi(x,y))^2 = a^2$ as calculated in section \ref{sec:basis-functions-other-properties}.
 
-\begin{eqnarray*}
-	\left( \sum_{j=1}^n \left(\frac{1}{2} g h^2\right) \phi_j \right) - \left( \frac{1}{2} g \left( \sum_{j=1}^n h \phi_j \right)^2\right) = \frac{1}{2} g h^2 \cdot 1 - \frac{1}{2} g h^2 = 0
-\end{eqnarray*}
+With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$, we can set $h_1=h_2=h_3=\dots=h_n$ (remember: we fixed all height values at 10) and simplify as follows:
+
+\begin{align*}
+  \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right) &= \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \left( \sum_{j=1}^n h_j\phi_j \right)^2\right) = \\
+  &= \left( \sum_{j=1}^n \left(\frac{1}{2} g h_1^2\right) \phi_j \right) - \left( \frac{1}{2} g \left( \sum_{j=1}^n h_1\phi_j \right)^2\right) = \\
+  &= \frac{1}{2} g h_1^2 \cdot \sum_{j=1}^n \phi_j - \frac{1}{2} g h_1^2 = \\
+  &= 0
+\end{align*}
+
+That means, we can simplify the above to 0, thereby explaining the result: If all heights are equal, and all $x$ momentums are 0, then the error for \emph{all} $y$ momentums will be 0.
 
 \subsection{Non-standard values}
 \label{sec:stiffness-analysis-ord2-nondefault}
@@ -2053,7 +2062,75 @@ Let us first concentrate on the errors of the $x$ momentums shown in figure \ref
 
 All in all, the error plots look roughly the same -- except for the error of the 5th basis function. All of the other plots still show parabolae, and the error is negligibly bigger than the error used for default values (have a look at figure \ref{fig:ord2_varying_ux_1} for comparison). The most striking difference is -- as said -- the $x$ momentum for the 5th basis function, that has changed from zero to an ``absolute-value-linear'' graph.
 
-Note that \emph{all} errors reach zero for $u_{x,1} = 0$ (except possibly the error for the first basis function that is shifted to the right by a quantum \todo{Herrechenbar?}).
+Note that \emph{all} errors (for $x$ momentum) reach zero for $u_{x,1} = 0$. We can confirm this result analytically. Again, we choose a slightly generalized setting which is as follows:
+
+\begin{itemize}
+\item All heights values are equal.
+\item All $x$ momentums are 0.
+\item The $y$ momentums can be chosen ad libitum.
+\end{itemize}
+
+Note that the plots show a special case of these three conditions.
+
+Let us start analyzing by considering (once again) $SE_x^i$:
+
+\begin{align*}
+  SE_x^i = \int_T \left| \left(\overline{F_2}(\mathbf{q}) - \widehat{F_2}(\mathbf{q})\right) \cdot \nabla \phi_i \right|\, dT
+\end{align*}
+
+We will focus on the integrand and show that it becomes 0 for $u_{x,1}=0$. We continue by examining $\overline{F_2}(\mathbf{q})$ for the desired setting (all height values the same, all $x$ moments are 0, $y$ moments arbitrary):
+
+\begin{equation}
+  \label{eq:1}
+  \overline{F_2}(\mathbf{q}) =
+  \begin{pmatrix}
+    \sum_{j=1}^n \left( \frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2 \right) \cdot \phi_j \\
+    \sum_{j=1}^n \left( \frac{u_{x,j}\cdot u_{y,j}}{h_j} \right) \cdot \phi_j
+  \end{pmatrix} =
+  \begin{pmatrix}
+    \sum_{j=1}^n \frac{1}{2} g h_j^2 \phi_j \\
+    0
+  \end{pmatrix} =
+  \begin{pmatrix}
+    h_1^2 \\ 0
+  \end{pmatrix}
+\end{equation}
+
+Analogously, we proceed for $\widehat{F_2}(\mathbf{q})$:
+
+\begin{equation}
+  \label{eq:2}
+  \widehat{F_2}(\mathbf{q}) =
+  \begin{pmatrix}
+    \frac{\widehat{u}_x^2}{\widehat h} + \frac{1}{2} g \widehat h ^2 \\
+    \frac{\widehat u_x \cdot \widehat u_y}{\widehat h}
+  \end{pmatrix} =
+  \begin{pmatrix}
+    \frac{1}{2} g \left( \sum_{j=1}^n h_j \phi_j \right) ^2 \\
+    0
+  \end{pmatrix} =
+  \begin{pmatrix}
+    h_1^2 \\ 0
+  \end{pmatrix}
+\end{equation}
+
+From equations (\ref{eq:1}) and (\ref{eq:2}) you can see the reason that you can choose the $y$ momentums as you like it --- it won't influence the error term $SE_x^i$.
+
+This means, we can simplify as follows (for the current scenario):
+
+\begin{equation*}
+  SE_x^i = \int_T \left| \left(\overline{F_2}(\mathbf{q}) - \widehat{F_2}(\mathbf{q})\right) \cdot \nabla \phi_i \right|\, dT = \int_T \left|
+    \left(
+      \begin{pmatrix}
+        \frac{1}{2} g h_1^2 \\ 0
+      \end{pmatrix} -
+      \begin{pmatrix}
+        \frac{1}{2} g h_1^2 \\ 0
+      \end{pmatrix}
+    \right)
+    \cdot \nabla \phi_i \right|\, dT =
+  0
+\end{equation*}
 
 \subparagraph{\texorpdfstring{Errors in $y$ momentums}{Errors in y momentums}}
 
@@ -2099,7 +2176,7 @@ Which confirms our expectations.
 
 \cleardoublepage{}
 
-\bibliographystyle{plain}
+\bibliographystyle{alpha}
 \bibliography{bibliography}
 
 \appendix
@@ -2154,14 +2231,14 @@ Which confirms our expectations.
     $\mathbf{q}$ & $\sum_{i=1}^n \mathbf{q}_i \phi_i$ & Approximation of $\mathbf{q}$, three components \\
 
     $\overline{F}_2(\mathbf{q})$ &
-    $\mypmatrix{\sum_{j=1}^n \left( \frac{u_{x,j}^2}{h_j^2}+\frac{1}{2} g h_j^2  \right) \phi_j \\
+    $\mypmatrix{\sum_{j=1}^n \left( \frac{u_{x,j}^2}{h_j}+\frac{1}{2} g h_j^2  \right) \phi_j \\
     \sum_{j=1}^n \left( \frac{u_{x,j} \cdot u_{y,j}}{h_j} \right) \phi_j}$ &
     Point-wise approximation of second flux component \\
 
     $\overline{F}_3(\mathbf{q})$ &
     $\mypmatrix{
     \sum_{j=1}^n \left( \frac{u_{x,j} \cdot u_{y,j}}{h_j} \right) \phi_j \\
-      \sum_{j=1}^n \left( \frac{u_{y,j}^2}{h_j^2}+\frac{1}{2} g h_j^2  \right) \phi_j
+      \sum_{j=1}^n \left( \frac{u_{y,j}^2}{h_j}+\frac{1}{2} g h_j^2  \right) \phi_j
 }$ &
     Point-wise approximation of third flux component \\
 
