@@ -73,18 +73,6 @@
 
 \maketitle{}
 
-\todo{Before submission, run
-  \begin{center}
-    \texttt{grep -nri 'todo' . --include=*.tex}
-  \end{center}
-and see if all todo's are done}
-
-\todo{plots weiter stauchen}
-
-\todo{Referenzen: Gauss-Quadratur Nullstellen -- Nodale Basis (Hesthaven)}
-
-\todo{Sollten wir langsam ein Inhaltsverzeichnis reinhauen?}
-
 \begin{abstract}
   The question how to simulate waves on a computer is subject to many difficulties. At several points in the process approximations have to be made to be feasibly computable. One of those points is the discretization of the continuous space into finite segments, usually triangles. Another is the simulation of the domain of each segment by sampling specific points within that segment. Yet another point is not as obvious, and occurs when trying to calculate a complex integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation has to be made.
 
@@ -544,8 +532,6 @@ we compute the value
 
 The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
 
-\todo{More references. Schwaiger-DA only is not sufficient here! Where is the approach taken from}
-
 \subsubsection{Stiffness matrix, third line}
 
 The third line is computationally equivalent to the previous, with the respective values switched. The terms $S^x$ and $S^y$ appear again:
@@ -619,7 +605,7 @@ Here $\tilde{F^e}$ means a vector of all calculated $F_k^e$, similarly to $\tild
 \section{Time stepping}
 \label{sec:computing-integrals}
 
-\todo{Explain that a more sophisticated technique than Euler might be used here. It is well known that on should use 2nd order accuracy here.}
+For time stepping, we use the classical Euler method. It is a well-known fact that there are other techniques such as Runge-Kutta, but since this subproblem does not affect our later analysis, we use it to demonstrate the technique of time stepping (see \cite{hans2009schwarz} for more information).
 
 \subsection{Explicit Euler}
 \label{subsec:explicit-euler}
@@ -859,7 +845,7 @@ It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-n
 
 The main problem with exact integration is that Maple has to compute the zeroes of $N\left(x\right)-N^\prime\left(x\right)$, which is, depending on the degree of the polynomials, a time consuming task.
 
-There are several possibilities to overcome this problem. The first that might come to one's mind is to use a Gaussian integration. However, using a Gaussian integration requires that the integrand at least ``looks somehow'' like a polynomial -- something we explicitly can \emph{not} be sure of.
+There are several possibilities to overcome this problem. The first that might come to one's mind is to use a Gaussian quadrature. However, using a Gaussian quadrature requires that the integrand at least ``looks somehow'' like a polynomial -- something we explicitly can \emph{not} be sure of.
 
 So we had to use another approach. Here are the three we took into account:
 
@@ -1156,7 +1142,7 @@ To plot $u$ and $h$ we need to know their respective ranges as well. This is not
 \section{Results: Distribution of support points according to Gaussian quadrature}
 \label{sec:results}
 
-We implemented several scenarios and present the outcome of some of them using the support points one would use when doing a Gaussian quadrature. The $x$ values of these support points are summed up in table \ref{tab:x-coordinates-gauss-quadrature} and can be read in any book on Gaussian quadrature.
+We implemented several scenarios and present the outcome of some of them using the support points one would use when doing a Gaussian quadrature. The $x$ values of these support points are summed up in table \ref{tab:x-coordinates-gauss-quadrature} and can be read in any book on Gaussian quadrature (e.g. \cite{hans2009schwarz}) --- they can be derived from the zeroes of the Legendre polynomials (see \cite{abramowitzstegun1964handbook}).
 
 \begin{table}[ht]
   \renewcommand\arraystretch{1.5}
@@ -2166,7 +2152,7 @@ Using that $\sum_{j=1}^n \phi_j = 1$ and that all $u_{y,j} = 0$ for $j \neq 2$, 
 	{} & = & \int_T \left| \left( \frac{u_{y,2}^2 \phi_2}{h} \left( 1 - \phi_2\right) \right) \cdot \left(\pd{\phi_5}{y}\right) \right|
 \end{eqnarray*}
 
-We saw that changing an $y$ momentum can result in drastically changed shapes of the error plots,  which is something we did not expect.\todo{Hier noch mehr Experimente durchführen, um genauere Aussagen treffen zu können.}
+We saw that changing an $y$ momentum can result in drastically changed shapes of the error plots,  which is something we did not expect. We examined several other assignments for $u_{y,i}$ while leaving the heights and $x$ momentums as they were in this experiment and observed similar piecewise linear function plots for $SE_y^i$.
 
 \paragraph{Setting all $x$ momentums to 1}
 
