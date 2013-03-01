@@ -225,16 +225,17 @@
     \end{pmatrix}
   \end{equation}
 
-  \begin{eqnarray*}
-    \mathbf{q} =
-    \begin{pmatrix}
-      h \\ h v_x \\ h v_y
-    \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
-    \begin{pmatrix}
-      h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
-      v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
-    \end{pmatrix}
-  \end{eqnarray*}
+  % \begin{eqnarray*}
+  %   \mathbf{q} =
+  %   \begin{pmatrix}
+  %     h \\ h v_x \\ h v_y
+  %   \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
+  %   \begin{pmatrix}
+  %     h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
+  %     v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
+  %   \end{pmatrix}
+  % \end{eqnarray*}
+
   \begin{eqnarray*}
     \mathbf{q} =
     \begin{pmatrix}
@@ -251,14 +252,17 @@
   where $\mathbf{u}=
   \begin{pmatrix}
     u_x \\ u_y
-  \end{pmatrix}$, $\mathbf{v} =
-  \begin{pmatrix}
-    v_x \\ v_y
-  \end{pmatrix}$ and $\mathbf{u} = h\mathbf{v}$
-%$\nabla \cdot
-%  \begin{pmatrix}
-%    a \\ b
-%  \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
+  \end{pmatrix}$
+  % , 
+  % $\mathbf{v} =
+  % \begin{pmatrix}
+  %   v_x \\ v_y
+  % \end{pmatrix}$ 
+  % and $\mathbf{u} = h\mathbf{v}$
+  % $\nabla \cdot
+  % \begin{pmatrix}
+  %   a \\ b
+  % \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
 \end{frame}
 
 \section{Discontinuous Galerkin}
@@ -521,396 +525,123 @@
 %   \end{block}
 % \end{frame}
 
-\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrichs Flux}
-\label{part:polynomialstuff}
+\part{Stiffness matrix accuracy analysis}
+\label{part:stiffness-matrix-accuracy-analysis}
 
-\section{A 1D problem}
-\label{sec:interpretation-as-1d-problem}
-
-\newcommand{\twopoints}[3]{
-  \draw[fill=#3] (#1,#2) circle (0.05);
-  \draw[xshift=0.1cm,yshift=0.1cm,fill=#3] (#1,#2) circle (0.05);
-}
+\section{Big picture}
+\label{sec:stiffness-big-picture}
 
 \begin{frame}
-  \frametitle{Original Situation: 2D problem}
-  \begin{itemize}
-  %\item Two adjacent triangles
-  \item Height and impulse are separate polynomial functions for \emph{each} triangle 
-
-    $\rightarrow$ Discontinuity along common edges
-    % \item We are interested in the situation along the common edge
-  \item Simplification: Interpret as 1D problem
-    
-    $\rightarrow$ Parametrize edge by $x\in \left[ 0,1 \right]$ to describe the edge depending only on one variable
-  \end{itemize}
-  \begin{center}
-    \begin{tikzpicture}[scale=2]
-      \draw[draw=white] (-.1,-.3) rectangle (1.6,1.2);
-      \begin{scope}[xshift=-.1em,yshift=-.1em]
-        \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0); 
-        \draw[thick] (0,1) -- (1,0);
-      \end{scope}
-      \draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
-      \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
-        \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0); 
-        \draw[thick] (0,1) -- (1,0);
-      \end{scope}
-      \node[below, text width=3cm, align=center] at (.6,0) {\scriptsize{Parametrization $x\in\left[ 0,1 \right]$}};
-    \end{tikzpicture}
-    \begin{tikzpicture}[scale=2]
-      \draw[draw=white] (-.1,-.3) rectangle (1.9,1.2);
-      \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
-      \draw[xshift=0.1cm,yshift=0.1cm] 
-      (1,0) -- (0,1) -- (1,1) -- (1,0);
-      \twopoints{0.887}{1-0.887}{blue};
-      \twopoints{0.5}{0.5}{red};
-      \twopoints{1-0.887}{0.887}{yellow};
-      % \begin{scope}[xshift=1.5cm,yshift=1cm]
-      %   \draw[fill=blue] (0,0) circle (0.05) node[right]{\,$x=0$};
-      %   \draw[fill=red] (0,-.3) circle (0.05) node[right]{\,$x=0.3$};
-      %   \draw[fill=yellow] (0,-.8) circle (0.05) node[right]{\,$x=0.8$};
-      % \end{scope}
-      \node[below, text width=3cm, align=center] at (.6,0) {\scriptsize{Support points for Gauss quadrature}};
-    \end{tikzpicture}
-  \end{center}
-\end{frame}
-
-\begin{frame}
-  \frametitle{One dimensional (Lax-Friedrichs) flux}
-  Flux function:
-  \begin{equation}
-    \label{eq:flux-function-definition}
-    F\left(
-      \begin{pmatrix}
-        h \\ u
-      \end{pmatrix}
-    \right) = 
-    \begin{pmatrix}
-      u \\
-      \frac{1}{2} \frac{u^2}{h} + g h^2 
-    \end{pmatrix}
-  \end{equation}
-  Lax-Friedrichs flux:
-  \begin{equation}
-    \label{eq:lax-friedrich-definition}
-    F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
-  \end{equation}
-  \begin{block}{Remarks:}
+  \frametitle{The big picture}
+  \begin{block}{Stiffness matrix accuracy analysis}
     \begin{itemize}
-    \item $p^R, p^L$: Data from the right and left triangle, respectively, containing height and impulse ($h$ and $u$)
-    \item $p^R, p^L$ can be fixed over the whole triangle or can be functions (e.g. polynomials) returning two components
-    \todo{Muesen wir das mit fixed ueberhaupt erwaehnen? Ist ja nur ein Spezialfall von Polynomen}
+    \item Stiffness matrix computation involves integrals
+      
+      \dots over fractional functions
+
+      $\rightarrow$ quite complicated and expensive to compute
+    \item Solution: Use approximation
+
+      $\rightarrow$ \alert<2>{Question: How good is this approximation?}
+    \item We will showcase error in $x$ momentums, $y$ momentums similar (symmetric etc.)
     \end{itemize}
   \end{block}
 \end{frame}
 
-\section{Polynomials}
-\label{sec:constructing-polynomials}
-
-\begin{frame}
-  \frametitle{Choice of Support Points for Polynomials}
-  \begin{itemize}
-  \item In principle: arbitrary
-  \item In practice: Use support points from Gaussian quadrature since we'll apply it later
-  \item Sample values for $h$ and $u$ for those points.
-    \begin{center}
-      \begin{tikzpicture}[scale=2]
-        \begin{scope}[scale=0.8]
-          \begin{scope}[xshift=-.1em,yshift=-.1em]
-            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-            \draw[fill=blue] (0.113,0.887) circle (0.05); 
-            \draw[fill=blue] (0.5,0.5) circle (0.05); 
-            \draw[fill=blue] (0.887,0.113) circle (0.05); 
-            \node at (0.3,0.3) {$L$};
-          \end{scope}
-          %\draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
-          \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
-            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-            \draw[fill=blue] (0.113,0.887) circle (0.05); 
-            \draw[fill=blue] (0.5,0.5) circle (0.05); 
-            \draw[fill=blue] (0.887,0.113) circle (0.05); 
-            \node at (0.3, 0.3) {$R$};
-          \end{scope}
-        \end{scope}
-        \draw[decorate,decoration=snake,->]
-        (1.2,.51) -- (1.7,.51);
-        \begin{scope}[xshift=2cm]
-          \draw[->](0,0)--node[below]{edge$_L$}(1.2,0) node[right]{$x$};
-          \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
-          \draw(0,0) -- (0,-.032) node[below]{0};
-          \draw(1,0) -- (1,-.032) node[below]{1};
-          \draw[fill=blue] (0.113, 0.205) circle (0.025);
-          \draw[fill=blue] (0.500, 0.125) circle (0.025);
-          \draw[fill=blue] (0.887, 0.63) circle (0.025);
-        \end{scope}
-        \begin{scope}[xshift=3.5cm]
-          \draw[->](0,0)--node[below]{edge$_R$}(1.2,0) node[right]{$x$};
-          \draw[->](0,0)--(0,1) node[above]{Imp.$_R$};
-          \draw(0,0) -- (0,-.032) node[below]{0};
-          \draw(1,0) -- (1,-.032) node[below]{1};
-          \draw[fill=blue] (0.113, 0.56) circle (0.025);
-          \draw[fill=blue] (0.500, 0.72) circle (0.025);
-          \draw[fill=blue] (0.887, 0.8) circle (0.025);
-        \end{scope}
-
-      \end{tikzpicture}
-    \end{center}
-    % \item We also tested equidistant support points
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Constructing the Polynomials}
-  Remember:
-  \begin{equation*}
-    F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
-  \end{equation*}
-  \begin{itemize}
-  \item Pick $m$ points for each of the edges: 
-    % Points of the left triangle:
-    % $\left(x_1,\begin{pmatrix}
-    %     h_1^R \\ u_1^R
-    %   \end{pmatrix}\right), \dots , \left(x_n, \begin{pmatrix}
-    %     h_n^R \\ u_n^R
-    %   \end{pmatrix}\right)$ and the points for the right triangle 
-    % $\left(x_1,\begin{pmatrix}
-    %     h_1^L \\ u_1^L
-    %   \end{pmatrix}\right), \dots , \left(x_n,\begin{pmatrix}
-    %     h_n^L \\ u_n^L
-    %   \end{pmatrix}\right)$. (Each point has height and impulse.)
-  \item Right triangle points: $\left(x_1,\begin{pmatrix}
-        h_1^R \\ u_1^R
-      \end{pmatrix}\right), \dots , \left(x_m, \begin{pmatrix}
-        h_m^R \\ u_m^R
-      \end{pmatrix}\right)$
-  \item Analogous for the left triangle
-  \item Each point has height ($h$) and impulse ($u$)
-  %\item Assign height and impulse to each of the $2n$ points
-    % \item Generate 4 polynomials by interpolation (height/impulse for left/right triangle)
-
-    %   $\rightarrow$ Example: Impulse, right triangle: $(x_i, u_i^R)$
-    %   \begin{itemize}
-    %   \item Height, right triangle: $(x_i, h_i^R)$
-    %   \item Impulse, right triangle: $(x_i, u_i^R)$
-    %   \item Height, left triangle: $(x_i, h_i^L)$
-    %   \item Impulse, left triangle: $(x_i, u_i^L)$
-    %   \end{itemize}
-    % \item Group right polynomials into $p^R$, left polynomials into $p^L$
-  \end{itemize}
-
-  \begin{center}
-    \begin{tikzpicture}[scale=1.5]
-      \begin{scope}[xshift=2cm]
-        \draw[->](0,0) --
-        %node[below]{edge$_L$}
-        (1.2,0) node[right]{$x$};
-        \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
-        \draw(0,0) -- (0,-.032) node[below]{0};
-        \draw(1,0) -- (1,-.032) node[below]{1};
-        \draw[] (0.,0.3) parabola bend (0.4,0.1) (1,0.9);
-        \draw[fill=blue] (0.113, 0.205) circle (0.025);
-        \draw[fill=blue] (0.500, 0.125) circle (0.025);
-        \draw[fill=blue] (0.887, 0.63) circle (0.025);
-      \end{scope}
-      \begin{scope}[xshift=3.5cm]
-        \draw[->](0,0) --
-        %node[below]{edge$_R$}
-        (1.2,0) node[right]{$x$};
-        \draw[->](0,0)--(0,1) node[above]{Imp.$_R$};
-        \draw(0,0) -- (0,-.032) node[below]{0};
-        \draw(1,0) -- (1,-.032) node[below]{1};
-        \draw[] (0.,0.5) parabola bend (1,0.8) (1,0.8);
-        \draw[fill=blue] (0.113, 0.56) circle (0.025);
-        \draw[fill=blue] (0.500, 0.72) circle (0.025);
-        \draw[fill=blue] (0.887, 0.8) circle (0.025);
-      \end{scope}
-    \end{tikzpicture}
-  \end{center}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Interpolation}
-  Interpolation routine:
-  \begin{equation*}
-    interpolate(\{(x_i,y_i) \mid i \in \{1 \dots n\}\})
-  \end{equation*}
-  yields a polynomial of minimum degree (i.e. $n-1$) interpolating all given points $(x_i,y_i)$.
-
-  Shorter notation: 
-  \begin{equation*}
-    interpolate(x,y)
-  \end{equation*}
-
-  \begin{itemize}
-  \item $p^L_h(x) := interpolate (x,h^L)$. Height for left triangle.
-  \item $p^L_u(x) := interpolate (x,u^L)$. Impulse for left triangle.
-  \item $p^R_h(x) := interpolate (x,h^R)$. Height for right triangle.
-  \item $p^R_u(x) := interpolate (x,u^R)$. Impulse for right triangle.
-  \end{itemize}
-
-  \begin{equation*}
-    p^L(x) :=
-    \begin{pmatrix}
-      p^L_h(x) \\ p^L_u(x)
-    \end{pmatrix}, \quad
-    p^R(x) :=
-    \begin{pmatrix}
-      p^R_h(x) \\ p^R_u(x)
-    \end{pmatrix}
-  \end{equation*}
-\end{frame}
-
 \section{Approximation vs. Exact Result}
-\label{sec:comparing-approx-and-exact-result}
+\label{sec:stiffness-exact-approx}
 
 \begin{frame}
-  \frametitle{Comparison of $N(x)$ and $N'(x)$}
-  \begin{columns}
-    \begin{column}{.5\textwidth}
-      \begin{block}{Exact solution}
-        \vspace{-.3cm} % sorry
-        \begin{equation*}
-          N(x) := F_{LF}(p^R(x),p^L(x))
-        \end{equation*}
-      \end{block}
-      \begin{block}{Approximate solution}
-        \vspace{-.5cm} % sorry
-        \begin{equation*}
-          F_{LF}\left(
-            \begin{pmatrix}
-              h_i^R \\ u_i^R
-            \end{pmatrix},
-            \begin{pmatrix}
-              h_i^L \\ u_i^L
-            \end{pmatrix}
-          \right) :=
-          \begin{pmatrix}
-            h_i^F \\ u_i^F
-          \end{pmatrix} %= F_i % wird später nicht referenziert
-        \end{equation*}
-        \vspace{-.1cm} % sorry
-        \begin{equation*}
-          N'(x) :=
-          \begin{pmatrix}
-            interpolate(x,h^F) \\ interpolate(x,u^F)
-          \end{pmatrix}
-        \end{equation*}        
-      \end{block}
-    \end{column}
-    \begin{column}{.4\textwidth}
-      \begin{center}
-        \begin{tikzpicture}[scale=0.7]
-          \draw[->] (0,0) -- (5.5,0) node[right]{$x$};
-          \draw[->] (0,0) -- (0,5) node[above]{$y$};
-          \draw (0,0) -- (0,-0.1) node[below]{0};
-          \draw (5,0) -- (5,-0.1) node[below]{1};
-          \draw[red] 
-          (0,0) .. controls(2.5,4) .. (5,4.5) 
-          node[right,yshift=-.1cm]{$N'(x)$};
-          \draw[blue] 
-          (0,0.4) .. controls(1.5,0.5) and (2.1,3.7) .. 
-          (2.9,4) .. controls (4.5,4.2) .. 
-          (5,5) 
-          node[right,yshift=.1cm]{$N(x)$};
-          \draw[fill opacity=0.5,fill=yellow,draw opacity=0] 
-          (0,0) .. controls(2.5,4) .. (5,4.5) -- (5,5)
-          .. controls (4.5,4.2) .. (2.9,4)
-          .. controls (2.1,3.7) and (1.5,0.5) .. (0,0.4) 
-          ;
-          \draw[dashed, draw opacity=0.5] (5,5) -- (5,0);
-        \end{tikzpicture}
-        % \includegraphics[scale=0.3]{quadrature_vs_analytic}
-      \end{center}
-    \end{column}
-  \end{columns}
-  
-  \begin{center}
-    $\rightarrow$ Quality of approximation? $L^1$ norm: $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$ \todo{Hier wollte der Martin $L^1$-Norm drinstehen haben. Zu wenig Platz}
-  \end{center}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Some Considerations}
-  \begin{equation*}
-    I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
-  \end{equation*}
+  \frametitle{Stiffness matrix --- exact computation}
+  \begin{align*}
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = 
+    \int_T
+    \begin{pmatrix}
+      \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    & =
+    \int_T
+    \begin{pmatrix}
+      \frac{\left(\sum_{j=1}^n u_{x,j} \phi_j \right)^2}{\sum_{j=1}^n h_j \phi_j} + \frac{1}{2} g \left( \sum_{j=1}^n h_j \phi_j \right)^2 \\ \frac{\left( \sum_{j=1}^n u_{x,j} \phi_j \right) \left( \sum_{j=1}^n u_{y,j} \phi_j \right)}{\left( \sum_{j=1}^n h_{j} \phi_j \right)}
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    & =: \int_T \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
+  \end{align*}
   \begin{itemize}
-  \item $N$ might have singularities (w.r.t. $x$ -- depending on $h_i$ and $u_i$) 
+  \item We integrate over $x$ and $y$ (variables of $\phi_j$)
 
-    $\rightarrow$ Not in $[0,1]$ for reasonable values of $h_i$ and $u_i$
-  \item $N(x)-N'(x)$ depends on $4n$ variables
-    
-    ($n$ support points $\rightarrow$ $2n$ parameters per triangle)
-    % \begin{itemize}
-    % \item Two edges
-    % \item $n$ points on each edge
-    % \item Each point has height and impulse
-    % \end{itemize}
-    % $\rightarrow$ $I$ depends on $4n$ variables
-  \item Maple could not find general analytic solutions \todo{Rausnehmen?}
-  \item Alternative: Visualization -- fix all but at most 2 variables
+    $\rightarrow$ fractional function since $\phi_j$ occur in denominators
+  \item Solution: Use point-wise approximation (see next slide)
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Evaluating the Expression $I$}
-  \vspace{-.3cm} % sorry
-  \begin{equation*}
-    I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
-  \end{equation*}
+  \frametitle{Stiffness matrix --- approximation}
+  \begin{align}
+    \label{eq:third-integral-second-line-1-analysis-part}
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = 
+    \int_T
+    \begin{pmatrix}
+      \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    \label{eq:third-integral-second-line-2-analysis-part}
+    & \approx 
+    \int_T
+    \begin{pmatrix}
+      \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
+      \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+    \end{pmatrix}
+    \cdot
+    \begin{pmatrix}
+      \pd{\phi_i}{x} \\
+      \pd{\phi_i}{y}
+    \end{pmatrix} dT \\
+    & =: \int_T \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
+    % \\
+    % & =  \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+    % & {}  + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+  \end{align}
+  \begin{itemize}
+  \item Equation \eqref{eq:third-integral-second-line-1-analysis-part} shows $x$ momentum 
 
-  \begin{columns}
-    \begin{column}{.55\textwidth}
-      \begin{itemize}
-      \item Analytic solution -- not feasible (zeroes hard to compute)
-      \item Approximate without absolute value -- not accurate
-      \item Piecewise integration between support points $x_i$ -- too slow
-      \item Maple's \texttt{evalf} -- too slow
-      \item $\rightarrow$ Simple: 
-        Numerical integration using the 
-        rectangle method using $s$ rectangles
-      \end{itemize}
-    \end{column}
-    \begin{column}{.45\textwidth}
-      \begin{center}
-        \begin{tikzpicture}[scale=1.5]
-          \draw[help lines, -] (0,0) node[below,color=black]{0} -- (0,2.25);
-          \draw[help lines, -] (2,0) node[below,color=black]{1} -- (2,2.25);
-          \draw[->] (-0.25,0) -- (2.25,0) node[right]{$x$};
-          \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (0,0) rectangle (0.5,1.890625);
-          \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (0.5,0) rectangle (1,1.296875);
-          \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (1,0) rectangle (1.5,0.828125);
-          \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (1.5,0) rectangle (2,1.234375);
-          \draw[domain=-0.2:2.1] plot (\x, {\x*\x*\x-2*\x*\x+2}) node[above]{$|N(x)-N'(x)|$};
-          \draw[fill=blue] (0.25,1.890625) circle (0.02);
-          \draw[fill=blue] (0.75,1.296875) circle (0.02);
-          \draw[fill=blue] (1.25,0.828125) circle (0.02);
-          \draw[fill=blue] (1.75,1.234375) circle (0.02);
-          \draw[decorate,decoration=brace,-] (1,-0.05) -- node[below]{\scriptsize{$\frac{1}{s}$}} (0.5,-0.05);
-        \end{tikzpicture}
-      \end{center}
-      
-    \end{column}
-  \end{columns}
+    $\rightarrow$ analogous computation for $y$ momentum
+  \item Approximation introduces error $\rightarrow$ how big?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Error term}
+  Error is measured by two dimensional $L_1$ norm:
   
+  \begin{equation}
+    \label{eq:SE-definition}
+    SE_x^i = \int_T \left| \left( \widehat F_2 (\mathbf{q}) - \overline{F_2}(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT
+  \end{equation}
+
+  \begin{itemize}
+  \item Exact integration too expensive
+  \item We approximate integral by two dimensional rectangle method
+  \item $SE_x^i$ can be interpreted as a function of $h_1,\dots,h_n$, $u_{x,1},\dots,u_{x,n}$, $u_{y,1},\dots,u_{y,n}$
+  \item Visualization: Fix all but one variable, and plot!
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Demonstration}
-  \begin{center}
-    \Large{Demo}
-  \end{center}
+  \centerline{\Large{Demo}}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Results}
-  \begin{itemize}
-  \item Height error almost zero
-  \item Impulse error mainly influenced by $h$ component
+\section{Conclusion}
+\label{sec:stiffness-conclusion}
 
-  $\rightarrow$ lowest near the average $h$ value
-  \item Impulse error unbounded
+\begin{frame}
+  \frametitle{Conclusion}
+  \begin{itemize}
+  \item If all height values, all $x$ momentums and all $y$ momentums are the same, error is 0 (can be shown mathematically)
+  \item If heights, $x$ and $y$ momentums do not differ very strongly, the error is relatively small
+  \item Approximation used in practice --- works quite well
   \end{itemize}
 \end{frame}
 
@@ -1628,10 +1359,424 @@
 
 \end{comment}
 
+\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrichs Flux}
+\label{part:polynomialstuff}
+
+\section{A 1D problem}
+\label{sec:interpretation-as-1d-problem}
+
+\newcommand{\twopoints}[3]{
+  \draw[fill=#3] (#1,#2) circle (0.05);
+  \draw[xshift=0.1cm,yshift=0.1cm,fill=#3] (#1,#2) circle (0.05);
+}
+
+\begin{frame}
+  \frametitle{Original Situation: 2D problem}
+  \begin{itemize}
+  %\item Two adjacent triangles
+  \item Height and impulse are separate polynomial functions for \emph{each} triangle 
+
+    $\rightarrow$ Discontinuity along common edges
+    % \item We are interested in the situation along the common edge
+  \item Simplification: Interpret as 1D problem
+    
+    $\rightarrow$ Parametrize edge by $x\in \left[ 0,1 \right]$ to describe the edge depending only on one variable
+  \end{itemize}
+  \begin{center}
+    \begin{tikzpicture}[scale=2]
+      \draw[draw=white] (-.1,-.3) rectangle (1.6,1.2);
+      \begin{scope}[xshift=-.1em,yshift=-.1em]
+        \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0); 
+        \draw[thick] (0,1) -- (1,0);
+      \end{scope}
+      \draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
+      \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
+        \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0); 
+        \draw[thick] (0,1) -- (1,0);
+      \end{scope}
+      \node[below, text width=3cm, align=center] at (.6,0) {\scriptsize{Parametrization $x\in\left[ 0,1 \right]$}};
+    \end{tikzpicture}
+    \begin{tikzpicture}[scale=2]
+      \draw[draw=white] (-.1,-.3) rectangle (1.9,1.2);
+      \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
+      \draw[xshift=0.1cm,yshift=0.1cm] 
+      (1,0) -- (0,1) -- (1,1) -- (1,0);
+      \twopoints{0.887}{1-0.887}{blue};
+      \twopoints{0.5}{0.5}{red};
+      \twopoints{1-0.887}{0.887}{yellow};
+      % \begin{scope}[xshift=1.5cm,yshift=1cm]
+      %   \draw[fill=blue] (0,0) circle (0.05) node[right]{\,$x=0$};
+      %   \draw[fill=red] (0,-.3) circle (0.05) node[right]{\,$x=0.3$};
+      %   \draw[fill=yellow] (0,-.8) circle (0.05) node[right]{\,$x=0.8$};
+      % \end{scope}
+      \node[below, text width=3cm, align=center] at (.6,0) {\scriptsize{Support points for Gauss quadrature}};
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{One dimensional (Lax-Friedrichs) flux}
+  Flux function:
+  \begin{equation}
+    \label{eq:flux-function-definition}
+    F\left(
+      \begin{pmatrix}
+        h \\ u
+      \end{pmatrix}
+    \right) = 
+    \begin{pmatrix}
+      u \\
+      \frac{1}{2} \frac{u^2}{h} + g h^2 
+    \end{pmatrix}
+  \end{equation}
+  Lax-Friedrichs flux:
+  \begin{equation}
+    \label{eq:lax-friedrich-definition}
+    F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
+  \end{equation}
+  \begin{block}{Remarks:}
+    \begin{itemize}
+    \item $p^R, p^L$: Data from the right and left triangle, respectively, containing height and impulse ($h$ and $u$)
+    \item $p^R, p^L$ can be fixed over the whole triangle or can be functions (e.g. polynomials) returning two components
+    \todo{Muesen wir das mit fixed ueberhaupt erwaehnen? Ist ja nur ein Spezialfall von Polynomen}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\section{Polynomials}
+\label{sec:constructing-polynomials}
+
+\begin{frame}
+  \frametitle{Choice of Support Points for Polynomials}
+  \begin{itemize}
+  \item In principle: arbitrary
+  \item In practice: Use support points from Gaussian quadrature since we'll apply it later
+  \item Sample values for $h$ and $u$ for those points.
+    \begin{center}
+      \begin{tikzpicture}[scale=2]
+        \begin{scope}[scale=0.8]
+          \begin{scope}[xshift=-.1em,yshift=-.1em]
+            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
+            \draw[fill=blue] (0.113,0.887) circle (0.05); 
+            \draw[fill=blue] (0.5,0.5) circle (0.05); 
+            \draw[fill=blue] (0.887,0.113) circle (0.05); 
+            \node at (0.3,0.3) {$L$};
+          \end{scope}
+          %\draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
+          \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
+            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
+            \draw[fill=blue] (0.113,0.887) circle (0.05); 
+            \draw[fill=blue] (0.5,0.5) circle (0.05); 
+            \draw[fill=blue] (0.887,0.113) circle (0.05); 
+            \node at (0.3, 0.3) {$R$};
+          \end{scope}
+        \end{scope}
+        \draw[decorate,decoration=snake,->]
+        (1.2,.51) -- (1.7,.51);
+        \begin{scope}[xshift=2cm]
+          \draw[->](0,0)--node[below]{edge$_L$}(1.2,0) node[right]{$x$};
+          \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
+          \draw(0,0) -- (0,-.032) node[below]{0};
+          \draw(1,0) -- (1,-.032) node[below]{1};
+          \draw[fill=blue] (0.113, 0.205) circle (0.025);
+          \draw[fill=blue] (0.500, 0.125) circle (0.025);
+          \draw[fill=blue] (0.887, 0.63) circle (0.025);
+        \end{scope}
+        \begin{scope}[xshift=3.5cm]
+          \draw[->](0,0)--node[below]{edge$_R$}(1.2,0) node[right]{$x$};
+          \draw[->](0,0)--(0,1) node[above]{Imp.$_R$};
+          \draw(0,0) -- (0,-.032) node[below]{0};
+          \draw(1,0) -- (1,-.032) node[below]{1};
+          \draw[fill=blue] (0.113, 0.56) circle (0.025);
+          \draw[fill=blue] (0.500, 0.72) circle (0.025);
+          \draw[fill=blue] (0.887, 0.8) circle (0.025);
+        \end{scope}
+
+      \end{tikzpicture}
+    \end{center}
+    % \item We also tested equidistant support points
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Constructing the Polynomials}
+  Remember:
+  \begin{equation*}
+    F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
+  \end{equation*}
+  \begin{itemize}
+  \item Pick $m$ points for each of the edges: 
+    % Points of the left triangle:
+    % $\left(x_1,\begin{pmatrix}
+    %     h_1^R \\ u_1^R
+    %   \end{pmatrix}\right), \dots , \left(x_n, \begin{pmatrix}
+    %     h_n^R \\ u_n^R
+    %   \end{pmatrix}\right)$ and the points for the right triangle 
+    % $\left(x_1,\begin{pmatrix}
+    %     h_1^L \\ u_1^L
+    %   \end{pmatrix}\right), \dots , \left(x_n,\begin{pmatrix}
+    %     h_n^L \\ u_n^L
+    %   \end{pmatrix}\right)$. (Each point has height and impulse.)
+  \item Right triangle points: $\left(x_1,\begin{pmatrix}
+        h_1^R \\ u_1^R
+      \end{pmatrix}\right), \dots , \left(x_m, \begin{pmatrix}
+        h_m^R \\ u_m^R
+      \end{pmatrix}\right)$
+  \item Analogous for the left triangle
+  \item Each point has height ($h$) and impulse ($u$)
+  %\item Assign height and impulse to each of the $2n$ points
+    % \item Generate 4 polynomials by interpolation (height/impulse for left/right triangle)
+
+    %   $\rightarrow$ Example: Impulse, right triangle: $(x_i, u_i^R)$
+    %   \begin{itemize}
+    %   \item Height, right triangle: $(x_i, h_i^R)$
+    %   \item Impulse, right triangle: $(x_i, u_i^R)$
+    %   \item Height, left triangle: $(x_i, h_i^L)$
+    %   \item Impulse, left triangle: $(x_i, u_i^L)$
+    %   \end{itemize}
+    % \item Group right polynomials into $p^R$, left polynomials into $p^L$
+  \end{itemize}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=1.5]
+      \begin{scope}[xshift=2cm]
+        \draw[->](0,0) --
+        %node[below]{edge$_L$}
+        (1.2,0) node[right]{$x$};
+        \draw[->](0,0)--(0,1) node[above]{Imp.$_L$};
+        \draw(0,0) -- (0,-.032) node[below]{0};
+        \draw(1,0) -- (1,-.032) node[below]{1};
+        \draw[] (0.,0.3) parabola bend (0.4,0.1) (1,0.9);
+        \draw[fill=blue] (0.113, 0.205) circle (0.025);
+        \draw[fill=blue] (0.500, 0.125) circle (0.025);
+        \draw[fill=blue] (0.887, 0.63) circle (0.025);
+      \end{scope}
+      \begin{scope}[xshift=3.5cm]
+        \draw[->](0,0) --
+        %node[below]{edge$_R$}
+        (1.2,0) node[right]{$x$};
+        \draw[->](0,0)--(0,1) node[above]{Imp.$_R$};
+        \draw(0,0) -- (0,-.032) node[below]{0};
+        \draw(1,0) -- (1,-.032) node[below]{1};
+        \draw[] (0.,0.5) parabola bend (1,0.8) (1,0.8);
+        \draw[fill=blue] (0.113, 0.56) circle (0.025);
+        \draw[fill=blue] (0.500, 0.72) circle (0.025);
+        \draw[fill=blue] (0.887, 0.8) circle (0.025);
+      \end{scope}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Interpolation}
+  Interpolation routine:
+  \begin{equation*}
+    interpolate(\{(x_i,y_i) \mid i \in \{1 \dots n\}\})
+  \end{equation*}
+  yields a polynomial of minimum degree (i.e. $n-1$) interpolating all given points $(x_i,y_i)$.
+
+  Shorter notation: 
+  \begin{equation*}
+    interpolate(x,y)
+  \end{equation*}
+
+  \begin{itemize}
+  \item $p^L_h(x) := interpolate (x,h^L)$. Height for left triangle.
+  \item $p^L_u(x) := interpolate (x,u^L)$. Impulse for left triangle.
+  \item $p^R_h(x) := interpolate (x,h^R)$. Height for right triangle.
+  \item $p^R_u(x) := interpolate (x,u^R)$. Impulse for right triangle.
+  \end{itemize}
+
+  \begin{equation*}
+    p^L(x) :=
+    \begin{pmatrix}
+      p^L_h(x) \\ p^L_u(x)
+    \end{pmatrix}, \quad
+    p^R(x) :=
+    \begin{pmatrix}
+      p^R_h(x) \\ p^R_u(x)
+    \end{pmatrix}
+  \end{equation*}
+\end{frame}
+
+\section{Approximation vs. Exact Result}
+\label{sec:comparing-approx-and-exact-result}
+
+\begin{frame}
+  \frametitle{Comparison of $N(x)$ and $N'(x)$}
+  \begin{columns}
+    \begin{column}{.5\textwidth}
+      \begin{block}{Exact solution}
+        \vspace{-.3cm} % sorry
+        \begin{equation*}
+          N(x) := F_{LF}(p^R(x),p^L(x))
+        \end{equation*}
+      \end{block}
+      \begin{block}{Approximate solution}
+        \vspace{-.5cm} % sorry
+        \begin{equation*}
+          F_{LF}\left(
+            \begin{pmatrix}
+              h_i^R \\ u_i^R
+            \end{pmatrix},
+            \begin{pmatrix}
+              h_i^L \\ u_i^L
+            \end{pmatrix}
+          \right) :=
+          \begin{pmatrix}
+            h_i^F \\ u_i^F
+          \end{pmatrix} %= F_i % wird später nicht referenziert
+        \end{equation*}
+        \vspace{-.1cm} % sorry
+        \begin{equation*}
+          N'(x) :=
+          \begin{pmatrix}
+            interpolate(x,h^F) \\ interpolate(x,u^F)
+          \end{pmatrix}
+        \end{equation*}        
+      \end{block}
+    \end{column}
+    \begin{column}{.4\textwidth}
+      \begin{center}
+        \begin{tikzpicture}[scale=0.7]
+          \draw[->] (0,0) -- (5.5,0) node[right]{$x$};
+          \draw[->] (0,0) -- (0,5) node[above]{$y$};
+          \draw (0,0) -- (0,-0.1) node[below]{0};
+          \draw (5,0) -- (5,-0.1) node[below]{1};
+          \draw[red] 
+          (0,0) .. controls(2.5,4) .. (5,4.5) 
+          node[right,yshift=-.1cm]{$N'(x)$};
+          \draw[blue] 
+          (0,0.4) .. controls(1.5,0.5) and (2.1,3.7) .. 
+          (2.9,4) .. controls (4.5,4.2) .. 
+          (5,5) 
+          node[right,yshift=.1cm]{$N(x)$};
+          \draw[fill opacity=0.5,fill=yellow,draw opacity=0] 
+          (0,0) .. controls(2.5,4) .. (5,4.5) -- (5,5)
+          .. controls (4.5,4.2) .. (2.9,4)
+          .. controls (2.1,3.7) and (1.5,0.5) .. (0,0.4) 
+          ;
+          \draw[dashed, draw opacity=0.5] (5,5) -- (5,0);
+        \end{tikzpicture}
+        % \includegraphics[scale=0.3]{quadrature_vs_analytic}
+      \end{center}
+    \end{column}
+  \end{columns}
+  
+  \begin{center}
+    $\rightarrow$ Quality of approximation? $L^1$ norm: $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$ \todo{Hier wollte der Martin $L^1$-Norm drinstehen haben. Zu wenig Platz}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Some Considerations}
+  \begin{equation*}
+    I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
+  \end{equation*}
+  \begin{itemize}
+  \item $N$ might have singularities (w.r.t. $x$ -- depending on $h_i$ and $u_i$) 
+
+    $\rightarrow$ Not in $[0,1]$ for reasonable values of $h_i$ and $u_i$
+  \item $N(x)-N'(x)$ depends on $4n$ variables
+    
+    ($n$ support points $\rightarrow$ $2n$ parameters per triangle)
+    % \begin{itemize}
+    % \item Two edges
+    % \item $n$ points on each edge
+    % \item Each point has height and impulse
+    % \end{itemize}
+    % $\rightarrow$ $I$ depends on $4n$ variables
+  \item Maple could not find general analytic solutions \todo{Rausnehmen?}
+  \item Alternative: Visualization -- fix all but at most 2 variables
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Evaluating the Expression $I$}
+  \vspace{-.3cm} % sorry
+  \begin{equation*}
+    I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
+  \end{equation*}
+
+  \begin{columns}
+    \begin{column}{.55\textwidth}
+      \begin{itemize}
+      \item Analytic solution -- not feasible (zeroes hard to compute)
+      \item Approximate without absolute value -- not accurate
+      \item Piecewise integration between support points $x_i$ -- too slow
+      \item Maple's \texttt{evalf} -- too slow
+      \item $\rightarrow$ Simple: 
+        Numerical integration using the 
+        rectangle method using $s$ rectangles
+      \end{itemize}
+    \end{column}
+    \begin{column}{.45\textwidth}
+      \begin{center}
+        \begin{tikzpicture}[scale=1.5]
+          \draw[help lines, -] (0,0) node[below,color=black]{0} -- (0,2.25);
+          \draw[help lines, -] (2,0) node[below,color=black]{1} -- (2,2.25);
+          \draw[->] (-0.25,0) -- (2.25,0) node[right]{$x$};
+          \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (0,0) rectangle (0.5,1.890625);
+          \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (0.5,0) rectangle (1,1.296875);
+          \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (1,0) rectangle (1.5,0.828125);
+          \draw[draw opacity=0.5, draw=black, fill opacity=0.5, fill=yellow] (1.5,0) rectangle (2,1.234375);
+          \draw[domain=-0.2:2.1] plot (\x, {\x*\x*\x-2*\x*\x+2}) node[above]{$|N(x)-N'(x)|$};
+          \draw[fill=blue] (0.25,1.890625) circle (0.02);
+          \draw[fill=blue] (0.75,1.296875) circle (0.02);
+          \draw[fill=blue] (1.25,0.828125) circle (0.02);
+          \draw[fill=blue] (1.75,1.234375) circle (0.02);
+          \draw[decorate,decoration=brace,-] (1,-0.05) -- node[below]{\scriptsize{$\frac{1}{s}$}} (0.5,-0.05);
+        \end{tikzpicture}
+      \end{center}
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Demonstration}
+  \begin{center}
+    \Large{Demo}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Results}
+  \begin{itemize}
+  \item Height error almost zero
+  \item Impulse error mainly influenced by $h$ component
+
+  $\rightarrow$ lowest near the average $h$ value
+  \item Impulse error unbounded
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Outlook}
+  \begin{block}{Within this IDP}
+    \begin{itemize}
+    \item Analysis of stiffness matrix
+      % \begin{equation}
+      %   \label{eq:stiffness-matrix-overview}
+      %   S^x = \int_T \phi_j \pd{\phi_i}{x} \quad
+      %   S^y = \int_T \phi_j \pd{\phi_i}{y}
+      % \end{equation}
+    \end{itemize}
+  \end{block}
+  \begin{block}{Related questions}
+    \begin{itemize}
+    \item Other flux functions \todo{Beispiele?}
+    \item Different placement of support points
+    \item Bathymetry
+    \end{itemize}
+  \end{block}
+\end{frame}
+
 \backupend
 
 \end{document}
 
 %%% Local Variables:
-%%% TeX-master: "../results.tex"
+%%% TeX-master: "slides.tex"
 %%% End:
