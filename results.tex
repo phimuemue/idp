@@ -54,7 +54,9 @@
 %\renewcommand{\zoomfactor}{0.3}
 %\renewcommand{\autozoomfactor}{0.075}
 
-\title{Some aspects regarding shallow water equations in connection with the Lax-Friedrich-Flux}
+\title{Discontinous Galerkin Methods for Shallow Water Equations\\
+\small{Empirical studies on accuracy of quadrature rules for shallow water equations with the discontinous Galerkin method}
+}
 \author{Stjepan Bakrac \and Philipp M\"uller}
 \date{}
 
@@ -74,34 +76,53 @@
 \maketitle{}
 
 \begin{abstract}
-  The question how to simulate waves on a computer is subject to many difficulties. At several points in the process approximations have to be made to be feasibly computable. One of those points is the discretization of the continuous space into finite segments, usually triangles. Another is the simulation of the domain of each segment by sampling specific points within that segment. Yet another point is not as obvious, and occurs when trying to calculate a complex integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation has to be made.
+  The question how to simulate waves on a computer is subject to many difficulties. At several points in the process of transferring continous to discrete formulations, approximations have to be made.
+One of those points is the discretization of the continuous space into finite segments.%, usually triangles.
+%Another is the simulation of the domain of each segment by sampling specific points within that segment.
+Yet another point is not as obvious, and occurs when trying to calculate an integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation-error is introduced.
 
-  Despite all of this, the accuracy loss can normally be minized by sacrificing computing time. However, the specific approximation of an integrated fractional function using Gaussian quadrature has to be analyzed separately. It occurs when calculating how much of the relevant quantities are passed from one segment to another, which, due discontinuities along the separating lines, has to be handled in a way that preserves as much accuracy as possible.
+Despite all of this, the accuracy loss can normally be minized by sacrificing computing time.
+However, the specific approximation of an integrated fractional function using Gaussian quadrature has to be analyzed separately.
+It occurs when calculating how much of the relevant quantities are passed from one segment to another, which, due discontinuities along the separating lines, has to be handled in a way that preserves as much accuracy as possible.
 
-  This paper aims to explain the derivation of the necessary equations for calculating those quantities, and goes into detail about comparing the analytical solution to the approximate solution using Gaussian quadrature.
+Based on the shallow water equations, this work aims to explain the derivation of the discretization, the necessary equations for calculating those quantities, and gives insight to the quadrature error by comparing the analytical solution to the approximate solution using Gaussian quadrature.
 \end{abstract}
 
 \setcounter{tocdepth}{2}
 \tableofcontents{}
 
-\part{Deriving necessary equations}
+\part{Basic discontinous Galerkin equations}
 \label{part:introduction}
 
-\section{Problem statement}
+\section{Shallow water simulation}
 \label{sec:problem-statement}
 
-We want to simulate wave propagation along a certain area. There are several equations, suited for different situations, that deal with those kind of problems. The main problem for computer simulation is that the entire domain has to be discretized, usually in sets of triangles that all contain several fields of information (such as mass/height, velocity, etc.). But even without discretization problems, accurately simulating wave propagation is a challenging task, because several of the involved factors are very hard to calculate. Especially in tsunami-related environments even non-local factors like bathymetry information, tidal forces and the coriolis effect have to be considered to get accurate results.
+We want to simulate wave propagation in a certain simulation domain.
+There are several equations, suited for different situations, that deal with those kind of problems.
+The main problem \marginpar{Ist das ein Problem?} for computer simulation is the entire domain being discretized.
+This discretization is commonly done with a set of cells that contain several fields of information (such as mass/height, velocity, etc.).
+Beside the domain discretization, also accurate simulation of the wave propagation itself is a challenging task, making the simulation even more computational complex and compute intensive.
+Especially in tsunami-related environments even non-local factors like bathymetry information, tidal forces and the coriolis effect have to be considered to get accurate results.
 
-In this documentation we will focus mainly on the derivation of the shallow water equations, which serve as a starting point for calculating wave propagation, along with an analysis of the discretization problem, as well as numerical solutions for it.
+In this work we focus mainly on the derivation of the shallow water equations\marginpar{Die habt ihr nicht hergeleitet, ihr baut darauf auf}, serving as a starting point for computation \marginpar{calculate ist nicht berechnen. Im Englischen ist das compute} of wave propagation, along with an analysis of the discretization problem, as well as numerical solutions for it.
 
 \section{Adaptive triangle grid}
 \label{sec:triangles}
 
-For our purposes we use an adaptive triangle grid. In areas with many variations, the grid adapts to a finer resolution, allowing for more detailed calculations, while not wasting unnecessary computation time in areas with lower variation.
+For our purposes we use an adaptive triangle grid \marginpar{Wieso? Gutes Argument: Da gibt's das Sierpinski Framework, welches Dreiecksgitter verwendet. Deshalb machen wir auch mit Dreiecken weiter}.
+In feature rich areas, the grid adapts to a finer resolution allowing for more detailed computations without wasting unnecessary computation time in areas with less features.
 
-Using this scheme, we can simplify a few steps in the calculation process. With a suitable library for coordinate projection, we can rotate triangles and edges into a space that's relevant for us. So instead of having to adjust how we apply the functions, based on which edges the triangles are touching on (because different edges suggest different positions in space), we just rotate the triangles into a certain space, so we only need to consider this space when applying funtions and algorithms.
 
-In addition to rotating, we can also scale the edges of the triangles to always be in a certain shape. We'll use that to scale the catheses to length 1 and hence the hypothenuse to length $\sqrt{2}$. This will help with further calculations, because some of them will rely on the length of an edge, which can be conveniently omitted (or set to the constant $\sqrt{2}$ respectively).
+\section{Reference space and DG}
+\marginpar{Ich wuerde hier eine neue Section aufmachen, da das nichts mit Adaptiven Dreiecksgittern zu tun hat.}
+
+Using this scheme\marginpar{Welches scheme?}, we can simplify a few steps in the calculation process.
+With a suitable library for coordinate projection, we can rotate triangles and edges into a space that's relevant for us.
+Instead of applying cell update rules for each individual triangle, we apply a transformation to the triangles enabling the application of the cell update rules in a single reference space only.
+
+In addition to rotating, we can also scale the edges of the triangles to always be in a certain shape.
+Our reference space assumes triangle legs of length 1 and the hypothenuse of length $\sqrt{2}$.
+%This will help with further calculations, because some of them will rely on the length of an edge, which can be conveniently omitted (or set to the constant $\sqrt{2}$ respectively).
 
 \begin{figure}[ht]
   \centering
@@ -117,7 +138,9 @@ In addition to rotating, we can also scale the edges of the triangles to always 
   \label{fig:triangle-projection}
 \end{figure}
 
-For further reference, we will be calling the domain of the entire triangle $T$ (the set of all points on the triangle), and the set of edges $E$, enumerated with $e_i$, $\forall i \in {1,2,3}$. Points on the triangle (both on the edge and inside) will be denoted by $p$. In the implementation we will be referring to the edges \texttt{left}, \texttt{hyp} and \texttt{right} by $e_1$, $e_2$ and $e_3$ respectively.
+The domain support of the entire triangle is given by $T$ (the set of all points on the triangle)\marginpar{Meint ihr damit das gesamte Dreieck? oder die Quadraturpunkte?}, and the set of edges $E$, enumerated with $e_i$, $\forall i \in {1,2,3}$.
+Points on the triangle (both on the edge and inside) will be denoted by $p$.
+In the implementation we will be referring to the edges \texttt{left}, \texttt{hyp} and \texttt{right} by $e_1$, $e_2$ and $e_3$ respectively.
 
 \begin{figure}[ht]
   \centering
@@ -165,29 +188,38 @@ For further reference, we will be calling the domain of the entire triangle $T$ 
   \label{fig:triangle-support-points-var-degrees}
 \end{figure}
 
-The points in the triangle are support points. The number depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is impossible to calculate the propagation exactly, we need to find a numerical approximation. This will be done with the discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin}. However, for each test function used for the method we will need one point in the triangle to save the calculated information to. They can be regarded as sample points that are representative for the values within the triangle. The higher polynomial degree we operate on, the more support points we will have. While this increases accuracy, it has a negative impact on efficiency, so a proper balance is desired.
+The points in the triangle are support points.
+The number depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is impossible \marginpar{Da werden euch Mathematiker was anderes sagen :-). Impossible evtl. uncommon ersetzen} to calculate the propagation exactly due to its computational complexity, we need to find a numerical approximation.
+This will be done with the Discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin}. However, for each test function used for the method we will need one point in the triangle to save the calculated information to. They can be regarded as sample points that are representative for the values within the triangle.
+\marginpar{Hier wurden noch keine Polynome eingefuehrt. Die fallen einfach vom Himmel.}
+The higher polynomial degree we operate on, the more support points we will have. While this increases accuracy, it has a negative impact on efficiency\marginpar{Was ist bei euch Effizienz? Computation? Cache? Flops?}, so a proper balance is desired.
 
-Another set of points are \emph{Gaussian quadrature} points, which we will use later on to approximate integrals along the edges. Accordingly, they will also be located on the respective edges. They will be explained in more detail in section \ref{sec:boundary-integral}.
+Another set of points are \emph{Gaussian quadrature} points, which we will use later on to approximate integrals along the edges\marginpar{Auch die Punkte im Dreieck selbst sind Gauss quadraturpunkte}.
+Accordingly, they will also be located on the respective edges. They will be explained in more detail in section \ref{sec:boundary-integral}.
 
 \section{Choice of basis functions}
 \label{sec:basis-functions-choice}
 
-For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$. The name already gives away the nature of these functions, because they are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $d$ as a linear combination of these basis functions.
+For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$.
+Those functions are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $d$ as a linear combination of these basis functions.
 
-A relatively simple way of constructing basis functions is to use Lagrange interpolation\footnote{For another method involving Jacobi polynomials, see \cite{castro07high-order-ader-fv-dg-numerical-methods, hesthaven2007nodal}}:
+A relatively simple way of constructing basis functions is to use Lagrange interpolation:
+%\footnote{For another method involving Jacobi polynomials, see \cite{castro07high-order-ader-fv-dg-numerical-methods, hesthaven2007nodal}}
 \begin{itemize}
 \item Choose a certain set of $n$ points $p_1$ through $p_n$ (see \ref{sec:choice-support-points}).
 \item Construct function $\phi_i$ such that $\phi_i(p_j) = \delta_{ij} \  \forall i,j \in \{1 \dots n\}$ using Lagrange polynomials (with $\delta_{ij}$ being the Kronecker delta function).
 \end{itemize}
 
-The (minimum) number of basis functions $n$ is not arbitrary, but it depends on the degree of the polynomials. If we only employ polynomials of degree 0 (i.e.\,constants), we only need one basis function. Increasing the degree by 1 involves introducing variables $x$ and $y$. Thus, we need three polynomials to construct every polynomial of degree 1, one to create polynomials containing $x$, one to create polynomials containing $y$ and one to create other constant polynomials.
+The (minimum) number of basis functions $n$ is not arbitrary, but it depends on the degree of the polynomials. If we only employ polynomials of degree 0 (i.e.\,constants), we only need one basis function. Increasing the degree by 1 involves introducing variables $x$ and $y$\marginpar{X und Y fallen hier vom Himmel. Fuehrt diese evtl. als $p_i = (x_i, y_i)^T$ ein.}. Thus, we need three polynomials to construct every polynomial of degree 1, one to create polynomials containing $x$, one to create polynomials containing $y$ and one to create other constant polynomials.
 
-Generalizing this scheme we observe the following: if we want to use polynomials of degree $d$, a polynomial can contain terms $x^a y^b$ with $a+b \leq d$. A simple combinatorial arguments indicates that we need $\frac{(d+2) \cdot (d+1)}{2}$ basis functions to span the function space containing all the polynomials up to degree $d$.
+Generalizing this scheme we observe the following: if we want to use polynomials of degree $d$, a polynomial can contain terms $x^a y^b$ with $a+b \leq d$. A simple combinatorial arguments indicates that we need $\frac{(d+2) \cdot (d+1)}{2}$ basis functions to span the function space containing all the polynomials up to degree $d$ \marginpar{Hier fehlt die Referenz}.
+
 
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
 
-As mentioned before, we construct the basis functions with the help of some support points. However, arbitrary choosing those can lead to accuracy loss in the best case, and malconditioned matrices, which can prevent precomputing arrays in the worst.
+As mentioned before, we construct the basis functions with the help of some support points.
+However, arbitrary choosing those can lead to accuracy loss in the best case, and malconditioned matrices, which can prevent precomputing arrays in the worst\marginpar{Der Satz klingt seltsam, insbesondere das Ende. Wenn ihr solche Statements macht, muesst ihr immer Referenzen angeben.}.
 
 For low degree polynomials, we choose specific distribution of the support points within the triangle:
 \begin{description}
@@ -196,12 +228,9 @@ For low degree polynomials, we choose specific distribution of the support point
 \item[Degree 2] We choose the support points at the triangle corners and at the center of each edge.
 \end{description}
 
-For higher degree, we choose the points derived by Dunavant (see \cite{dunavant1985high}). The distributions of support points are illustrated in figure \ref{fig:triangle-support-points-var-degrees}.
+For higher degree, we choose the points derived by Dunavant (see \cite{dunavant1985high})\marginpar{Gebt diese Referenz auch bei der Tabelle an}. The distributions of support points are illustrated in figure \ref{fig:triangle-support-points-var-degrees}.
 
-\subsection{Summary: Basis functions for low degrees}
-\label{sec:basis-functions-for-low-degrees}
-
-To have an impression of what the basis functions look like, please have a look at table \ref{tab:basis-functions-for-low-degrees}. It shows the basis functions for orders 0 to 2.
+Table \ref{tab:basis-functions-for-low-degrees} shows the basis functions for orders 0 to 2.
 
 \begin{table}[ht]
   \centering
@@ -223,37 +252,48 @@ To have an impression of what the basis functions look like, please have a look 
 & & $4\,y-4\,xy-4\,{y}^{2}$ & $-4y$ & $4-4x-8y$ \\
     \bottomrule
   \end{tabular}
-  \caption{Basis functions for low degree. Note that these basis functions are not the only possible choosings. We, however, will focus on them throughout this text. The second column ($n$) denotes the number of basis functions used for the respective order.}
+  \caption{Basis functions for low degree. While other basis functions can be derived by different means, we will focus on these throughout this project. The second column ($n$) denotes the number of basis functions used for the respective order.}
   \label{tab:basis-functions-for-low-degrees}
 \end{table}
 
-\subsubsection{Symmetry in basis function}
+\subsubsection{Symmetry in basis functions}
 \label{sec:basis-function-symmetry}
 
-If you consider table \ref{tab:basis-functions-for-low-degrees}, you'll recognize that there are some symmetries for the basis functions. We will point out some of these symmetries here because they will make our lives easier later.
+As you \marginpar{Niemals den Leser per 'you' ansprechen. Besser: As we can see in table ...} can see in table \ref{tab:basis-functions-for-low-degrees}, there are some symmetries for the basis functions. We will point out some of these symmetries here because they will help us in the analysis later.
 
 \paragraph{Order 1}
 
-For order 1, we see that the third and the first basis function look somewhat similar. To be precise, we recognize that $\phi_1(x,y)=\phi_3(y,x)$. This symmetry -- of course -- also holds for the respective derivatives.
+Here we see that the third and the first basis function look somewhat similar and are inversed w.r.t their arguments: $\phi_1(x,y)=\phi_3(y,x)$. This same symmetry also holds for their respective derivatives. In that sense, the second basis function can be considered symmetric to itself.
 
 \paragraph{Order 2}
 
-For second order, the thing involves a bit more elaboration, but is still easy. We obtain that $\phi_2(x,y)=\phi_6(y,x)$ and $\phi_3(x,y)=\phi_5(y,x)$. The basis functions $\phi_1$ and $\phi_4$ can be interpreted to be ``symmetric to themselves'': $\phi_1(x,y)=\phi_1(y,x)$ and $\phi_4(x,y)=\phi_4(y,x)$.
+Analogously to the first order, we notice argument-inversed symmetries involving all basis functions:
+
+\begin{eqnarray*}
+  \phi_2(x,y) & = & \phi_6(y,x) \\
+  \phi_3(x,y) & = & \phi_5(y,x) \\
+  \phi_1(x,y) & = & \phi_1(y,x) \\
+  \phi_4(x,y) & = & \phi_4(y,x)
+\end{eqnarray*}
+
+The same pattern does not hold for higher orders, as it relied on points being chosen in a certain pattern, which differs for order 3 and higher. However, these symmetries will merely help with displaying certain plots, and will not actually be relevant for the error estimation.
 
 \subsubsection{Other properties}
 \label{sec:basis-functions-other-properties}
 
-We conjecture the following two identities:
+We can derive the following two identities:
 
-\begin{align}
+\begin{equation}
   \label{eq:sum-basis-functions-is-1}
-  \sum_{i=1}^n \phi_i(x,y) &= 1 \\
-  \left( \sum_{i=1}^n a \cdot \phi_i(x,y) \right)^2 &= a^2
-\end{align}
+  \sum_{i=1}^n \phi_i(x,y) = 1
+\end{equation}
 
-We verified these two equations for first and second order using maple (and generic support points). However, we do not know how to prove them by hand and generalized for higher orders. While these two may look a bit farfetched at first, they will later be useful when we examine specific plots.
+From this, we can easily follow:
 
-The second equation can be easily followed from the first one.
+\begin{equation}
+  \label{eq:sum-basis-functions-squared}
+  \left( \sum_{i=1}^n a \cdot \phi_i(x,y) \right)^2 = a^2
+\end{equation}
 
 The first equation can be derived the following way: If we have basis functions $\phi_1$ to $\phi_n$, o a certain orer (say order $o$ --- which implies $n=\frac{(o+1)(o+2)}{2}$). If we then take the sum $\sum_{i=1}^n \phi_i(x,y)$ we obtain a polynomial of degree $o$. This polynomial has exactly $n$ coefficients that may be obtained by solving a system of linear equations containing $n$ equations These equations are obtained using the $n$ support points, i.e. we have a system of $n$ equations and $n$ coefficients which -- on the other hand -- means, that all the coefficients are determined uniquely (if the system of equations can be solved).
 
