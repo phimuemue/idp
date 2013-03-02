@@ -104,17 +104,19 @@ This discretization is commonly done with a set of cells that contain several fi
 Beside the domain discretization, also accurate simulation of the wave propagation itself is a challenging task, making the simulation even more computational complex and compute intensive.
 Especially in tsunami-related environments even non-local factors like bathymetry information, tidal forces and the coriolis effect have to be considered to get accurate results.
 
-In this work we focus mainly on the derivation of the shallow water equations\marginpar{Die habt ihr nicht hergeleitet, ihr baut darauf auf}, serving as a starting point for computation \marginpar{calculate ist nicht berechnen. Im Englischen ist das compute} of wave propagation, along with an analysis of the discretization problem, as well as numerical solutions for it.
+In this work we focus mainly on computations based on the shallow water equations\marginpar{Die habt ihr nicht hergeleitet, ihr baut darauf auf\done[Philipp]{Passt das so?}}, serving as a starting point for computation \marginpar{calculate ist nicht berechnen. Im Englischen ist das compute} of wave propagation, along with an analysis of the discretization problem, as well as numerical solutions for it.
 
 \section{Adaptive triangle grid}
 \label{sec:triangles}
 
-For our purposes we use an adaptive triangle grid \marginpar{Wieso? Gutes Argument: Da gibt's das Sierpinski Framework, welches Dreiecksgitter verwendet. Deshalb machen wir auch mit Dreiecken weiter}.
+For our purposes we use an adaptive triangle grid\marginpar{Wieso? Gutes Argument: Da gibt's das Sierpinski Framework, welches Dreiecksgitter verwendet. Deshalb machen wir auch mit Dreiecken weiter\done[Philipp]{Passt das?}}. We do so, since a framework established at the TUM (called Sierpinski) using this kind of triangle grid.
 In feature rich areas, the grid adapts to a finer resolution allowing for more detailed computations without wasting unnecessary computation time in areas with less features.
 
 
 \section{Reference space and DG}
-\marginpar{Ich wuerde hier eine neue Section aufmachen, da das nichts mit Adaptiven Dreiecksgittern zu tun hat.}
+\label{sec:reference-space-dg}
+
+\marginpar{Ich wuerde hier eine neue Section aufmachen, da das nichts mit Adaptiven Dreiecksgittern zu tun hat.\done[Philipp]{Ok.}}
 
 Using this scheme\marginpar{Welches scheme?}, we can simplify a few steps in the calculation process.
 With a suitable library for coordinate projection, we can rotate triangles and edges into a space that's relevant for us.
@@ -189,24 +191,30 @@ In the implementation we will be referring to the edges \texttt{left}, \texttt{h
 \end{figure}
 
 The points in the triangle are support points.
-The number depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is impossible \marginpar{Da werden euch Mathematiker was anderes sagen :-). Impossible evtl. uncommon ersetzen} to calculate the propagation exactly due to its computational complexity, we need to find a numerical approximation.
-This will be done with the Discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin}. However, for each test function used for the method we will need one point in the triangle to save the calculated information to. They can be regarded as sample points that are representative for the values within the triangle.
-\marginpar{Hier wurden noch keine Polynome eingefuehrt. Die fallen einfach vom Himmel.}
-The higher polynomial degree we operate on, the more support points we will have. While this increases accuracy, it has a negative impact on efficiency\marginpar{Was ist bei euch Effizienz? Computation? Cache? Flops?}, so a proper balance is desired.
+The number depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is uncommon to calculate the propagation exactly due to its computational complexity, we need to find a numerical approximation.
 
-Another set of points are \emph{Gaussian quadrature} points, which we will use later on to approximate integrals along the edges\marginpar{Auch die Punkte im Dreieck selbst sind Gauss quadraturpunkte}.
+This will be done with the Discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin}. However, for each test function used for the method we will need one point in the triangle to save the calculated information to. They can be regarded as sample points that are representative for the values within the triangle.
+
+In our case, the test functions will be polynomials of a certain degree.\todo[Philipp]{Polynome eingeführt. Passts so? Sind test functions das gleiche wie basis functions?}
+
+The higher polynomial degree we operate on, the more support points we will have. While this increases accuracy, it also makes the involved equations more complex and complicates (or even disallows) certain simplifications\done[Philipp]{``Efficiency'' is raus.},
+%as a negative impact on efficiency\marginpar{Was ist bei euch Effizienz? Computation? Cache? Flops?}, 
+so a proper balance is desired.
+
+Another set of points are \emph{Gaussian quadrature} points, which we will use later on to approximate integrals along the edges\marginpar{Auch die Punkte im Dreieck selbst sind Gauss quadraturpunkte \todo[Philipp]{Das glaube ich nicht, Timm!}}.
 Accordingly, they will also be located on the respective edges. They will be explained in more detail in section \ref{sec:boundary-integral}.
 
 \section{Choice of basis functions}
 \label{sec:basis-functions-choice}
 
-For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$.
+For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$. The variables $x$ and $y$ represent coordinates within our triangle.
+
 Those functions are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $d$ as a linear combination of these basis functions.
 
 A relatively simple way of constructing basis functions is to use Lagrange interpolation:
 %\footnote{For another method involving Jacobi polynomials, see \cite{castro07high-order-ader-fv-dg-numerical-methods, hesthaven2007nodal}}
 \begin{itemize}
-\item Choose a certain set of $n$ points $p_1$ through $p_n$ (see \ref{sec:choice-support-points}).
+\item Choose a certain set of $n$ points $p_1=\left( x_1,y_1 \right)^T$ through $p_n=\left( x_n,y_n \right)^T$ (see \ref{sec:choice-support-points}).
 \item Construct function $\phi_i$ such that $\phi_i(p_j) = \delta_{ij} \  \forall i,j \in \{1 \dots n\}$ using Lagrange polynomials (with $\delta_{ij}$ being the Kronecker delta function).
 \end{itemize}
 
@@ -252,7 +260,7 @@ Table \ref{tab:basis-functions-for-low-degrees} shows the basis functions for or
 & & $4\,y-4\,xy-4\,{y}^{2}$ & $-4y$ & $4-4x-8y$ \\
     \bottomrule
   \end{tabular}
-  \caption{Basis functions for low degree. While other basis functions can be derived by different means, we will focus on these throughout this project. The second column ($n$) denotes the number of basis functions used for the respective order.}
+  \caption{Basis functions for low degree. While other basis functions can be derived by different means, we will focus on these throughout this project. The second column ($n$) denotes the number of basis functions used for the respective order. See \cite{dunavant1985high} for more information.\todo[Philipp]{Stimmt das wirklich?}}
   \label{tab:basis-functions-for-low-degrees}
 \end{table}
 
