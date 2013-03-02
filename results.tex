@@ -55,6 +55,7 @@
 %\renewcommand{\autozoomfactor}{0.075}
 
 \title{Discontinous Galerkin Methods for Shallow Water Equations\\
+  \vspace{.2cm}
 \small{Empirical studies on accuracy of quadrature rules for shallow water equations with the discontinous Galerkin method}
 }
 \author{Stjepan Bakrac \and Philipp M\"uller}
@@ -227,7 +228,14 @@ Generalizing this scheme we observe the following: if we want to use polynomials
 \label{sec:choice-support-points}
 
 As mentioned before, we construct the basis functions with the help of some support points.
-However, arbitrary choosing those can lead to accuracy loss in the best case, and malconditioned matrices, which can prevent precomputing arrays in the worst\marginpar{Der Satz klingt seltsam, insbesondere das Ende. Wenn ihr solche Statements macht, muesst ihr immer Referenzen angeben.}.
+However, arbitrary choosing those can lead to the following disadvantages:
+
+\begin{itemize}
+\item Accuracy loss (which is the lesser evil).
+\item Malconditioned matrices, which can prevent precomputing arrays.
+  \marginpar{Der Satz klingt seltsam, insbesondere das Ende. Wenn ihr solche Statements macht, muesst ihr immer Referenzen angeben.\todo[Philipp]{Keine Ahnung, woher das ist.}}.
+\end{itemize}
+
 
 For low degree polynomials, we choose specific distribution of the support points within the triangle:
 \begin{description}
