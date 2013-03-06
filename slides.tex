@@ -9,7 +9,6 @@
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{tikz}
-\usepackage{pgfplots}
 \usepackage{units}
 %\usepackage{multicol}
 %\usepackage{moreverb}
@@ -190,8 +189,6 @@
 
 \definecolor{lightgray}{rgb}{0.6,0.6,0.8}
 
-\pgfplotsset{width=5cm,compat=1.5}
-
 \begin{document}
 
 \part{Short Introduction to Shallow Water Equations}
@@ -200,15 +197,6 @@
 \section{Motivation}
 
 \frame{\titlepage}
-
-\begin{frame}
-  \begin{tikzpicture}
-    \begin{axis}
-      \addplot3[surf, domain=0:1, samples=10]
-        {sin(x)*sin(x)};
-    \end{axis}
-  \end{tikzpicture}
-\end{frame}
 
 \begin{frame}
   \frametitle{Introduction}
@@ -658,9 +646,35 @@
   \begin{itemize}
   \item Exact integration too expensive
   \item We approximate integral by two dimensional rectangle method
+  \end{itemize}
+  \begin{center}
+    \includegraphics[scale=0.15]{dreieck_weich.png}
+    \includegraphics[scale=0.15]{dreieck_prismen.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Visualization}
+  \begin{itemize}
   \item $SE_x^i$ can be interpreted as a function of $h_1,\dots,h_n$, $u_{x,1},\dots,u_{x,n}$, $u_{y,1},\dots,u_{y,n}$
   \item Visualization: Fix all but one variable, and plot!
   \end{itemize}
+
+  \begin{exampleblock}{Example}
+    \begin{columns}
+      \begin{column}{.45\textwidth}
+    \includegraphics[scale=0.5]{{{ord2_varying_h1_default/y_10.0_10.0_10.0_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0f00}}}         
+      \end{column}
+      \begin{column}{.45\textwidth}
+        \begin{eqnarray*}
+          h_1 \text{ variable}, \\
+          h_2 = 10, h_3 = 10 \\
+          u_{x,1} = u_{x,2} = u_{x,3} = 0 \\
+          u_{y,1} = u_{y,2} = u_{y,3} = 0 
+        \end{eqnarray*}
+      \end{column}
+    \end{columns}
+  \end{exampleblock}
 \end{frame}
 
 \begin{frame}
@@ -677,7 +691,6 @@
   \item If all height values, all $x$ momentums and all $y$ momentums are the same, error is 0 (can be shown mathematically)
   \item If heights, $x$ and $y$ momentums do not differ very strongly, the error is relatively small
   \item Approximation used in practice --- works quite well
-  \item Exact quantitative results out of this IDP's scope
   \end{itemize}
 \end{frame}
 
@@ -698,6 +711,7 @@
     \item Other flux functions \todo{Beispiele?}
     \item Different placement of support points
     \item Bathymetry
+    \item Exact quantitative results
     \end{itemize}
   \end{block}
 \end{frame}
