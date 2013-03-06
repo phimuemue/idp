@@ -9,6 +9,7 @@
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{tikz}
+\usepackage{pgfplots}
 \usepackage{units}
 %\usepackage{multicol}
 %\usepackage{moreverb}
@@ -30,7 +31,7 @@
 }
 \newcommand{\backupend}{
    \addtocounter{framenumbervorappendix}{-\value{framenumber}}
-   \addtocounter{framenumber}{\value{framenumbervorappendix}} 
+   \addtocounter{framenumber}{\value{framenumbervorappendix}}
 }
 
 %%% now my own formatting
@@ -52,7 +53,7 @@
   \begin{beamercolorbox}[center,ht=.5\paperheight, wd=\paperwidth]{title}
     \begin{beamercolorbox}[center,ht=.5\paperheight, wd=.8\paperwidth]{title}
       \Large \inserttitle
-      
+
       \normalsize\insertsubtitle
       \vspace{1cm}
     \end{beamercolorbox}
@@ -63,9 +64,9 @@
     \vspace{.25cm}
 
     \insertinstitute
-    
+
     \vspace{.25cm}
-    
+
     \insertdate
   \end{center}
 }
@@ -189,15 +190,25 @@
 
 \definecolor{lightgray}{rgb}{0.6,0.6,0.8}
 
-\begin{document}
+\pgfplotsset{width=5cm,compat=1.5}
 
-\todo{Nicht vergessen, wieder reinzukommentieren!}
-\frame{\titlepage}
+\begin{document}
 
 \part{Short Introduction to Shallow Water Equations}
 \label{part:introduction}
 
 \section{Motivation}
+
+\frame{\titlepage}
+
+\begin{frame}
+  \begin{tikzpicture}
+    \begin{axis}
+      \addplot3[surf, domain=0:1, samples=10]
+        {sin(x)*sin(x)};
+    \end{axis}
+  \end{tikzpicture}
+\end{frame}
 
 \begin{frame}
   \frametitle{Introduction}
@@ -253,11 +264,11 @@
   \begin{pmatrix}
     u_x \\ u_y
   \end{pmatrix}$
-  % , 
+  % ,
   % $\mathbf{v} =
   % \begin{pmatrix}
   %   v_x \\ v_y
-  % \end{pmatrix}$ 
+  % \end{pmatrix}$
   % and $\mathbf{u} = h\mathbf{v}$
   % $\nabla \cdot
   % \begin{pmatrix}
@@ -271,7 +282,7 @@
 \begin{frame}
   \frametitle{Discontinuous Galerkin}
   Multiply the equation by a test function $\phi$ and integrate over the domain:
-  
+
   \begin{equation}
     \label{eq:shallow-water-weak-form}
     \int_T \pd {\mathbf{q}}{t} \phi \, dT + \int_T \nabla \cdot F(\mathbf{q}) \phi \, dT = 0
@@ -285,7 +296,7 @@
     \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
   \end{equation}
-  
+
   \begin{itemize}
   \item $T$ is a single triangle
   \item Whole domain $\Omega$ is represented by finite set of disjunct triangles
@@ -302,10 +313,10 @@
     $\rightarrow$ numerical approximation
   \end{itemize}
   We use nodal basis functions:
-  \begin{itemize}  
+  \begin{itemize}
   \item Sample values at $n$ support points
   \item A basis function $\phi_i$ for each support point $\rightarrow$ nodal basis
-  \item Approximate 
+  \item Approximate
     $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$ $\rightarrow$ Error since flux function not linear \todo{Correct?}
   \item Result: $\mathbf{q}_i$ does not depend on $x$ and $y$ anymore
   \end{itemize}
@@ -321,7 +332,7 @@
 \begin{frame}
   \frametitle{Numerical approximation for $\mathbf{q}$}
   \begin{equation*}
-    \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y) 
+    \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)
     \quad \text{ resp. } \quad
     \begin{pmatrix}
       h \\ u_x \\ u_y
@@ -330,7 +341,7 @@
     \begin{pmatrix}
       h_i \\ u_{x,i} \\ u_{y,i}
     \end{pmatrix}
-    \phi_i(x,y) 
+    \phi_i(x,y)
   \end{equation*}
   \begin{itemize}
   \item Our basis functions: polynomials of a certain degree
@@ -351,7 +362,7 @@
 %     \label{sec:first-integral}
 %     \int_T \pd {\mathbf{q}}{t} \phi_i \, dT \approx \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{m_{ij}} \pd{\mathbf{q}_j}{t}
 %   \end{equation*}
-  
+
 %   \begin{eqnarray*}
 %     \label{sec:third-integral}
 %     \int_T F_k(\mathbf{q}) \cdot \nabla \phi_i \, dT \approx &
@@ -537,7 +548,7 @@
 %   \begin{block}{Polynomial basis functions}
 %     \begin{itemize}
 %     \item Polynomial functions that span the space of all polynomials up to a certain degree
-%     \item Construct function $\phi_i$ so that 
+%     \item Construct function $\phi_i$ so that
 %       $\forall i,j \in \{1, \dots, n\}$:
 %       \begin{equation*}
 %         \phi_i(p_j) = \delta_{ij}
@@ -560,7 +571,7 @@
   \begin{block}{Stiffness matrix accuracy analysis}
     \begin{itemize}
     \item Stiffness matrix computation involves integrals
-      
+
       \dots over fractional functions
 
       $\rightarrow$ quite complicated and expensive to compute
@@ -578,7 +589,7 @@
 \begin{frame}
   \frametitle{Stiffness matrix --- exact computation}
   \begin{align*}
-    \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = 
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & =
     \int_T
     \begin{pmatrix}
       \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
@@ -604,14 +615,14 @@
   \frametitle{Stiffness matrix --- approximation}
   \begin{align}
     \label{eq:third-integral-second-line-1-analysis-part}
-    \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = 
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & =
     \int_T
     \begin{pmatrix}
       \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
     \end{pmatrix}
     \cdot \nabla \phi_i \, dT \\
     \label{eq:third-integral-second-line-2-analysis-part}
-    & \approx 
+    & \approx
     \int_T
     \begin{pmatrix}
       \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
@@ -628,7 +639,7 @@
     % & {}  + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
   \end{align}
   \begin{itemize}
-  \item Equation \eqref{eq:third-integral-second-line-1-analysis-part} shows $x$ momentum 
+  \item Equation \eqref{eq:third-integral-second-line-1-analysis-part} shows $x$ momentum
 
     $\rightarrow$ analogous computation for $y$ momentum
   \item Approximation introduces error $\rightarrow$ how big?
@@ -638,7 +649,7 @@
 \begin{frame}
   \frametitle{Error term}
   Error is measured by two dimensional $L_1$ norm:
-  
+
   \begin{equation}
     \label{eq:SE-definition}
     SE_x^i = \int_T \left| \left( \widehat F_2 (\mathbf{q}) - \overline{F_2}(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT
@@ -710,7 +721,7 @@
     \int_T \pd {\left( \sum_{j=1}^n \mathbf{q}_j \phi_j \right) }{t} \phi_i \, dT \\
     & = & \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{m_{ij}} \pd{\mathbf{q}_j}{t}
   \end{eqnarray*}
-  
+
   \begin{itemize}
   \item Result: Mass matrix $M = [m_{ij}]_{n \times n}$
   \item Interpret the above as a matrix multiplication
@@ -733,18 +744,18 @@
       u_x \\ u_y
     \end{pmatrix}
     \cdot \nabla \phi_i \, dT \\
-    & \approx & \int_T 
-    \begin{pmatrix} 
+    & \approx & \int_T
+    \begin{pmatrix}
       \sum_{j=1}^n u_{x,j} \phi_j \\
       \sum_{j=1}^n u_{y,j} \phi_j \\
     \end{pmatrix}
-    \cdot 
+    \cdot
     {
       \renewcommand\arraystretch{2}
       \begin{pmatrix}
         \pd{\phi_i}{x} \\
-        \pd{\phi_i}{y} 
-      \end{pmatrix} dT 
+        \pd{\phi_i}{y}
+      \end{pmatrix} dT
     }\\
     & = & \sum_{j=1}^n u_{x,j} \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{s^x_{ij}} + \sum_{j=1}^n u_{y,j} \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{s^y_{ij}}
   \end{eqnarray*}
@@ -778,7 +789,7 @@
 %     \end{equation*}
 %   \end{itemize}
 % \end{frame}
-% 
+%
 \begin{frame}
   \frametitle{Third Integral: Stiffness matrix -- $u_x$ component}
   \begin{eqnarray*}
@@ -791,20 +802,20 @@
     \cdot \nabla \phi_i \, dT \\
     \label{sec:third-integral-second-line-2}
     & \approx &
-    \int_T 
+    \int_T
     \begin{pmatrix}
       \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
       \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
     \end{pmatrix}
-    \cdot 
+    \cdot
     {
       \renewcommand{\arraystretch}{2}
       \begin{pmatrix}
         \pd{\phi_i}{x} \\
-        \pd{\phi_i}{y} 
-      \end{pmatrix} dT 
+        \pd{\phi_i}{y}
+      \end{pmatrix} dT
     } \\
-    & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\ 
+    & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
     & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
   \end{eqnarray*}
   \begin{itemize}
@@ -819,21 +830,21 @@
     \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi_i \, dT & = &
     \int_T
     \begin{pmatrix}
-      \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2 
+      \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
     \end{pmatrix}
     \cdot \nabla \phi_i \, dT \\
-    & \approx & \int_T 
+    & \approx & \int_T
     \begin{pmatrix}
       \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
       \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
     \end{pmatrix}
-    \cdot 
+    \cdot
     {
       \renewcommand{\arraystretch}{2}
       \begin{pmatrix}
         \pd{\phi_i}{x} \\
-        \pd{\phi_i}{y} 
-      \end{pmatrix} dT 
+        \pd{\phi_i}{y}
+      \end{pmatrix} dT
     } \\
     & = & \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
     & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
@@ -880,14 +891,14 @@
     \pd{x(t)}{t} &=& f(t, x(t)). \\
     x(t_0) &=& x_0
   \end{eqnarray}
-  
+
   Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
-  
+
   \begin{equation}
     \label{eq:euler-step-solution}
     x_{k+1} = x_k + \tau f(t_k, x_k), \quad k=0,1,2,\dots
   \end{equation}
-  
+
 \end{frame}
 
 
@@ -902,7 +913,7 @@
   \begin{itemize}
   \item Complicated analycital solution (absolute value/rational function)
   \item Possibility 1: Approximate $I$ by $\int\limits_{x=0}^1 N(x) - N'(x) \  dx$. Bad!
-  \item Fact: $N(x_i) = N'(x_i)$ 
+  \item Fact: $N(x_i) = N'(x_i)$
     $\rightarrow$ $N(x_i) - N'(x_i) = 0$
   \item Piecewise integration between the $x_i$'s:
     \begin{equation*}
@@ -919,7 +930,7 @@
 \begin{frame}
   \frametitle{Evaluating $I$ -- Numerical integration}
   \begin{itemize}
-  \item Maple's intrinsic integration:  
+  \item Maple's intrinsic integration:
     \begin{center}
       \texttt{evalf(Int(abs(N(x)-N'(x)),x=0..1))}
     \end{center}
@@ -930,7 +941,7 @@
     %   \int\limits_{x=0}^1 N(x)-N'(x)\,dx \approx \sum_{i=0}^{s-1} \left| N\left(\frac{1}{2s} + \frac{i}{s}\right) - N'\left(\frac{1}{2s} + \frac{i}{s}\right) \right| \cdot \frac{1}{s}
     % \end{equation*}
     % \todo{Skizze dazu unbedingt nötig!}
-    
+
     \begin{center}
 
       \begin{tikzpicture}[scale=1.5]
@@ -963,7 +974,7 @@
   \begin{pmatrix}
     10 \\ 0
   \end{pmatrix}
-  $ except the first point, this would mean we are interested in 
+  $ except the first point, this would mean we are interested in
   \begin{equation*}
     I\left(
       \begin{pmatrix}
@@ -996,7 +1007,7 @@
     \end{pmatrix},
     \begin{pmatrix}
       h_2^R \\ u_2^R
-    \end{pmatrix}, 
+    \end{pmatrix},
     \begin{pmatrix}
       10 \\ 0
     \end{pmatrix},
@@ -1037,7 +1048,7 @@
       \hline
       2 & $\frac{1}{2}-\frac{1}{6}\cdot \sqrt{3}, \frac{1}{2}+\frac{1}{6}\cdot \sqrt{3}$ \\
       3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} , 0.5, \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ \\
-      \hline 
+      \hline
     \end{tabular}
     \caption{$x$ coordinates of support points for Gaussian quadrature}
     \label{tab:x-coordinates-gauss-quadrature}
@@ -1051,21 +1062,21 @@
   \begin{figure}[ht]
     \centering
     \subfigure[$p_1$: 1/0.04]{
-      \includegraphics[scale=\zoomfactor]{2_equal_10_0/1_h.png} 
+      \includegraphics[scale=\zoomfactor]{2_equal_10_0/1_h.png}
       \includegraphics[scale=\zoomfactor]{2_equal_10_0/1_u.png}
     }
     \subfigure[$p_2$: 1/0.04]{
       \label{subfig:fixing-p2-in-first-example}
-      \includegraphics[scale=\zoomfactor]{2_equal_10_0/2_h.png} 
+      \includegraphics[scale=\zoomfactor]{2_equal_10_0/2_h.png}
       \includegraphics[scale=\zoomfactor]{2_equal_10_0/2_u.png}
     }
     \subfigure[$P_1$: 1 / 0.04]{
-      \includegraphics[scale=\zoomfactor]{2_equal_10_0/3_h.png} 
+      \includegraphics[scale=\zoomfactor]{2_equal_10_0/3_h.png}
       \includegraphics[scale=\zoomfactor]{2_equal_10_0/3_u.png}
     }
     \subfigure[$P_2$: 1 / 0.04]{
-      \includegraphics[scale=\zoomfactor]{2_equal_10_0/4_h.png} 
-      \includegraphics[scale=\zoomfactor]{2_equal_10_0/4_u.png} 
+      \includegraphics[scale=\zoomfactor]{2_equal_10_0/4_h.png}
+      \includegraphics[scale=\zoomfactor]{2_equal_10_0/4_u.png}
     }
     \caption{Two points for each triangle. All support points have height 10 and impulse 0. $h$ ranges from 9.5 to 10.5, $u$ from -1 to 1.}
     \label{fig:two-points-all-the-same}
@@ -1081,30 +1092,30 @@
     \centering
     \subfigure[$p_1$: 0.8 / 0.03]{
       \label{subfig:3-points-equal-p1}
-      \includegraphics[scale=\zoomfactor]{3_equal/1_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal/1_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal/1_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal/1_u.png}
     }
     \subfigure[$p_2$: 1.2 / 0.05]{
-      \includegraphics[scale=\zoomfactor]{3_equal/2_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal/2_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal/2_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal/2_u.png}
     }
     \subfigure[$p_3$: 0.8 / 0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal/3_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal/3_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal/3_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal/3_u.png}
     }
     \subfigure[$P_1$: 0.8 / 0.03]{
       \label{subfig:3-points-ranging-P1}
-      \includegraphics[scale=\zoomfactor]{3_equal/4_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal/4_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal/4_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal/4_u.png}
     }
     \subfigure[$P_2$: 1.2 / 0.05]{
       \label{subfig:3-points-ranging-P2}
-      \includegraphics[scale=\zoomfactor]{3_equal/5_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal/5_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal/5_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal/5_u.png}
     }
     \subfigure[$P_3$: 0.8 / 0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal/6_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal/6_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal/6_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal/6_u.png}
     }
     \caption{Three points for each triangle. Points have height 10, impulse 0.}
     \label{fig:three-points-equal}
@@ -1131,30 +1142,30 @@
     \centering
     \subfigure[$p_1$: 0.8 / 0.03]{
       \label{subfig:3-points-h1--equal-p1}
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/1_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/1_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/1_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/1_u.png}
     }
     \subfigure[$p_2$: 1.6 / 0.1]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/2_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/2_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/2_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/2_u.png}
     }
     \subfigure[$p_3$: 0.5 / 0.04]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/3_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/3_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/3_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/3_u.png}
     }
     \subfigure[$P_1$: 1.1 / 0.03]{
       \label{subfig:3-points-h1--ranging-P1}
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/4_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/4_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/4_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/4_u.png}
     }
     \subfigure[$P_2$: 1.3 / 0.05]{
       \label{subfig:3-points-h1--ranging-P2}
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/5_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/5_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/5_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/5_u.png}
     }
     \subfigure[$P_3$: {$[0.25,0.55]$} /  0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/6_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h1-/6_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/6_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h1-/6_u.png}
     }
     \caption{Three points for each triangle. All points except $p_1$ have height 10, impulse 0. Point $p_1$ is set to $(9,0)$.}
     \label{fig:three-points-h1-}
@@ -1172,29 +1183,29 @@
   \begin{figure}[ht]
     \centering
     \subfigure[$p_1$: 0.8 / 0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/1_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/1_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/1_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/1_u.png}
     }
     \subfigure[$p_2$: 2.5 / 0.07]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/2_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/2_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/2_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/2_u.png}
     }
     \subfigure[$p_3$: 1 / 0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/3_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/3_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/3_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/3_u.png}
     }
     \subfigure[$P_1$: {$[0.7, 1.5]$} / 0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/4_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/4_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/4_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/4_u.png}
     }
     \subfigure[$P_2$: 1 / 0.05]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/5_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/5_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/5_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/5_u.png}
     }
     \subfigure[$P_3$: {$[0.45,0.65]$} /  0.03]{
       \label{subfig:example-with-range}
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/6_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u1-/6_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/6_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u1-/6_u.png}
     }
     \caption{Three points for each triangle. All points except $p_1$ have height 10, impulse 0. Point $p_1$ is set to $(10,-1)$.}
     \label{fig:three-points-u1-}
@@ -1220,28 +1231,28 @@
   \begin{figure}[ht]
     \centering
     \subfigure[$p_1$: {$[0.4, 1.4]$} / 0.1]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/1_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/1_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/1_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/1_u.png}
     }
     \subfigure[$p_2$: 1.2 / 0.05]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/2_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/2_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/2_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/2_u.png}
     }
     \subfigure[$p_3$: {$[0.6, 1.4]$} / 0.1]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/3_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/3_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/3_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/3_u.png}
     }
     \subfigure[$P_1$: {$[0.5, 1]$} / 0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/4_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/4_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/4_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/4_u.png}
     }
     \subfigure[$P_2$: {$[0.6, 1.6]$} / 0.05]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/5_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/5_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/5_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/5_u.png}
     }
     \subfigure[$P_3$: {$[0.6, 1]$} /  0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/6_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_h2-/6_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/6_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_h2-/6_u.png}
     }
     \caption{Three points for each triangle. All points except $p_2$ have height 10, impulse 0. Point $p_2$ is set to $(9,0)$.}
     \label{fig:three-points-h2-}
@@ -1255,28 +1266,28 @@
   \begin{figure}[ht]
     \centering
     \subfigure[$p_1$: {$[0.6, 2.5]$} / 0.06]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/1_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/1_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/1_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/1_u.png}
     }
     \subfigure[$p_2$: 1.2 / 0.05]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/2_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/2_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/2_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/2_u.png}
     }
     \subfigure[$p_3$: {$[0.5, 2.7]$} / 0.06]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/3_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/3_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/3_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/3_u.png}
     }
     \subfigure[$P_1$: {$[1, 1.4]$} / 0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/4_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/4_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/4_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/4_u.png}
     }
     \subfigure[$P_2$: {$[1.2, 2.2]$} / 0.05]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/5_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/5_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/5_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/5_u.png}
     }
     \subfigure[$P_3$: {$[1, 1.4]$} /  0.03]{
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/6_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_equal_u2-/6_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/6_h.png}
+      \includegraphics[scale=\zoomfactor]{3_equal_u2-/6_u.png}
     }
     \caption{Three points for each triangle. All points except $p_2$ have height 10, impulse 0. Point $p_2$ is set to $(10,-1)$.}
     \label{fig:three-points-u2-}
@@ -1295,20 +1306,20 @@
   \begin{figure}[ht]
     \centering
     \subfigure[$p_1$: {$[1,3]$} / 0.1]{
-      \includegraphics[scale=\zoomfactor]{2_random/1_h.png} 
+      \includegraphics[scale=\zoomfactor]{2_random/1_h.png}
       \includegraphics[scale=\zoomfactor]{2_random/1_u.png}
     }
     \subfigure[$p_2$: {$[1, 2.6]$} / 0.16]{
-      \includegraphics[scale=\zoomfactor]{2_random/2_h.png} 
+      \includegraphics[scale=\zoomfactor]{2_random/2_h.png}
       \includegraphics[scale=\zoomfactor]{2_random/2_u.png}
-    }  
+    }
     \subfigure[$P_1$: 4 / 0.2]{
-      \includegraphics[scale=\zoomfactor]{2_random/3_h.png} 
+      \includegraphics[scale=\zoomfactor]{2_random/3_h.png}
       \includegraphics[scale=\zoomfactor]{2_random/3_u.png}
     }
     \subfigure[$P_2$: {$[1,6]$} / 0.2]{
-      \includegraphics[scale=\zoomfactor]{2_random/4_h.png} 
-      \includegraphics[scale=\zoomfactor]{2_random/4_u.png} 
+      \includegraphics[scale=\zoomfactor]{2_random/4_h.png}
+      \includegraphics[scale=\zoomfactor]{2_random/4_u.png}
     }
     \caption{Two points for each triangle. Values for the points are: $u_1^R = -0.082$, $h_1^R = 9.4$, $u_2^R = -0.45$, $h_2^R = 10.33$, $u_1^L = -1.32$, $h_1^L = 9.45$, $u_2^L = -0.75$, $h_2^L = 10.72$. }
     \label{fig:two-points-random}
@@ -1322,28 +1333,28 @@
   \begin{figure}[ht]
     \centering
     \subfigure[$p_1$: {$[1, 2.2]$} / 0.12]{
-      \includegraphics[scale=\zoomfactor]{3_random/1_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_random/1_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_random/1_h.png}
+      \includegraphics[scale=\zoomfactor]{3_random/1_u.png}
     }
     \subfigure[$p_2$: {$[1, 3]$} / 0.12]{
-      \includegraphics[scale=\zoomfactor]{3_random/2_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_random/2_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_random/2_h.png}
+      \includegraphics[scale=\zoomfactor]{3_random/2_u.png}
     }
     \subfigure[$p_3$: {$[1.2, 1.7]$} / {$[0.05, 0.11]$}]{
-      \includegraphics[scale=\zoomfactor]{3_random/3_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_random/3_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_random/3_h.png}
+      \includegraphics[scale=\zoomfactor]{3_random/3_u.png}
     }
     \subfigure[$P_1$: {$[1, 4.5]$} / 0.18]{
-      \includegraphics[scale=\zoomfactor]{3_random/4_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_random/4_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_random/4_h.png}
+      \includegraphics[scale=\zoomfactor]{3_random/4_u.png}
     }
     \subfigure[$P_2$: {$[1, 4.5]$} / {$[0.04, 0.16]$}]{
-      \includegraphics[scale=\zoomfactor]{3_random/5_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_random/5_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_random/5_h.png}
+      \includegraphics[scale=\zoomfactor]{3_random/5_u.png}
     }
     \subfigure[$P_3$: {$[1.5, 5]$} /  {$[0.06, 0.12]$}]{
-      \includegraphics[scale=\zoomfactor]{3_random/6_h.png} 
-      \includegraphics[scale=\zoomfactor]{3_random/6_u.png} 
+      \includegraphics[scale=\zoomfactor]{3_random/6_h.png}
+      \includegraphics[scale=\zoomfactor]{3_random/6_u.png}
     }
     \caption{Three random points for each triangle}
     \label{fig:three-points-random}
@@ -1399,24 +1410,24 @@
   \frametitle{Original Situation: 2D problem}
   \begin{itemize}
   %\item Two adjacent triangles
-  \item Height and impulse are separate polynomial functions for \emph{each} triangle 
+  \item Height and impulse are separate polynomial functions for \emph{each} triangle
 
     $\rightarrow$ Discontinuity along common edges
     % \item We are interested in the situation along the common edge
   \item Simplification: Interpret as 1D problem
-    
+
     $\rightarrow$ Parametrize edge by $x\in \left[ 0,1 \right]$ to describe the edge depending only on one variable
   \end{itemize}
   \begin{center}
     \begin{tikzpicture}[scale=2]
       \draw[draw=white] (-.1,-.3) rectangle (1.6,1.2);
       \begin{scope}[xshift=-.1em,yshift=-.1em]
-        \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0); 
+        \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0);
         \draw[thick] (0,1) -- (1,0);
       \end{scope}
       \draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
       \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
-        \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0); 
+        \draw[opacity=0.5] (0,0) -- (0,1) -- (1,0) -- (0,0);
         \draw[thick] (0,1) -- (1,0);
       \end{scope}
       \node[below, text width=3cm, align=center] at (.6,0) {\scriptsize{Parametrization $x\in\left[ 0,1 \right]$}};
@@ -1424,7 +1435,7 @@
     \begin{tikzpicture}[scale=2]
       \draw[draw=white] (-.1,-.3) rectangle (1.9,1.2);
       \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
-      \draw[xshift=0.1cm,yshift=0.1cm] 
+      \draw[xshift=0.1cm,yshift=0.1cm]
       (1,0) -- (0,1) -- (1,1) -- (1,0);
       \twopoints{0.887}{1-0.887}{blue};
       \twopoints{0.5}{0.5}{red};
@@ -1448,10 +1459,10 @@
       \begin{pmatrix}
         h \\ u
       \end{pmatrix}
-    \right) = 
+    \right) =
     \begin{pmatrix}
       u \\
-      \frac{1}{2} \frac{u^2}{h} + g h^2 
+      \frac{1}{2} \frac{u^2}{h} + g h^2
     \end{pmatrix}
   \end{equation}
   Lax-Friedrichs flux:
@@ -1481,18 +1492,18 @@
       \begin{tikzpicture}[scale=2]
         \begin{scope}[scale=0.8]
           \begin{scope}[xshift=-.1em,yshift=-.1em]
-            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-            \draw[fill=blue] (0.113,0.887) circle (0.05); 
-            \draw[fill=blue] (0.5,0.5) circle (0.05); 
-            \draw[fill=blue] (0.887,0.113) circle (0.05); 
+            \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
+            \draw[fill=blue] (0.113,0.887) circle (0.05);
+            \draw[fill=blue] (0.5,0.5) circle (0.05);
+            \draw[fill=blue] (0.887,0.113) circle (0.05);
             \node at (0.3,0.3) {$L$};
           \end{scope}
           %\draw[->,semithick] (0,1.075) -- node[right]{$x$} (1.075,0);
           \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
-            \draw (0,0) -- (0,1) -- (1,0) -- (0,0); 
-            \draw[fill=blue] (0.113,0.887) circle (0.05); 
-            \draw[fill=blue] (0.5,0.5) circle (0.05); 
-            \draw[fill=blue] (0.887,0.113) circle (0.05); 
+            \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
+            \draw[fill=blue] (0.113,0.887) circle (0.05);
+            \draw[fill=blue] (0.5,0.5) circle (0.05);
+            \draw[fill=blue] (0.887,0.113) circle (0.05);
             \node at (0.3, 0.3) {$R$};
           \end{scope}
         \end{scope}
@@ -1530,13 +1541,13 @@
     F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
   \end{equation*}
   \begin{itemize}
-  \item Pick $m$ points for each of the edges: 
+  \item Pick $m$ points for each of the edges:
     % Points of the left triangle:
     % $\left(x_1,\begin{pmatrix}
     %     h_1^R \\ u_1^R
     %   \end{pmatrix}\right), \dots , \left(x_n, \begin{pmatrix}
     %     h_n^R \\ u_n^R
-    %   \end{pmatrix}\right)$ and the points for the right triangle 
+    %   \end{pmatrix}\right)$ and the points for the right triangle
     % $\left(x_1,\begin{pmatrix}
     %     h_1^L \\ u_1^L
     %   \end{pmatrix}\right), \dots , \left(x_n,\begin{pmatrix}
@@ -1600,7 +1611,7 @@
   \end{equation*}
   yields a polynomial of minimum degree (i.e. $n-1$) interpolating all given points $(x_i,y_i)$.
 
-  Shorter notation: 
+  Shorter notation:
   \begin{equation*}
     interpolate(x,y)
   \end{equation*}
@@ -1658,7 +1669,7 @@
           \begin{pmatrix}
             interpolate(x,h^F) \\ interpolate(x,u^F)
           \end{pmatrix}
-        \end{equation*}        
+        \end{equation*}
       \end{block}
     \end{column}
     \begin{column}{.4\textwidth}
@@ -1668,18 +1679,18 @@
           \draw[->] (0,0) -- (0,5) node[above]{$y$};
           \draw (0,0) -- (0,-0.1) node[below]{0};
           \draw (5,0) -- (5,-0.1) node[below]{1};
-          \draw[red] 
-          (0,0) .. controls(2.5,4) .. (5,4.5) 
+          \draw[red]
+          (0,0) .. controls(2.5,4) .. (5,4.5)
           node[right,yshift=-.1cm]{$N'(x)$};
-          \draw[blue] 
-          (0,0.4) .. controls(1.5,0.5) and (2.1,3.7) .. 
-          (2.9,4) .. controls (4.5,4.2) .. 
-          (5,5) 
+          \draw[blue]
+          (0,0.4) .. controls(1.5,0.5) and (2.1,3.7) ..
+          (2.9,4) .. controls (4.5,4.2) ..
+          (5,5)
           node[right,yshift=.1cm]{$N(x)$};
-          \draw[fill opacity=0.5,fill=yellow,draw opacity=0] 
+          \draw[fill opacity=0.5,fill=yellow,draw opacity=0]
           (0,0) .. controls(2.5,4) .. (5,4.5) -- (5,5)
           .. controls (4.5,4.2) .. (2.9,4)
-          .. controls (2.1,3.7) and (1.5,0.5) .. (0,0.4) 
+          .. controls (2.1,3.7) and (1.5,0.5) .. (0,0.4)
           ;
           \draw[dashed, draw opacity=0.5] (5,5) -- (5,0);
         \end{tikzpicture}
@@ -1687,7 +1698,7 @@
       \end{center}
     \end{column}
   \end{columns}
-  
+
   \begin{center}
     $\rightarrow$ Quality of approximation? $L^1$ norm: $I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx$ \todo{Hier wollte der Martin $L^1$-Norm drinstehen haben. Zu wenig Platz}
   \end{center}
@@ -1699,11 +1710,11 @@
     I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
   \end{equation*}
   \begin{itemize}
-  \item $N$ might have singularities (w.r.t. $x$ -- depending on $h_i$ and $u_i$) 
+  \item $N$ might have singularities (w.r.t. $x$ -- depending on $h_i$ and $u_i$)
 
     $\rightarrow$ Not in $[0,1]$ for reasonable values of $h_i$ and $u_i$
   \item $N(x)-N'(x)$ depends on $4n$ variables
-    
+
     ($n$ support points $\rightarrow$ $2n$ parameters per triangle)
     % \begin{itemize}
     % \item Two edges
@@ -1730,8 +1741,8 @@
       \item Approximate without absolute value -- not accurate
       \item Piecewise integration between support points $x_i$ -- too slow
       \item Maple's \texttt{evalf} -- too slow
-      \item $\rightarrow$ Simple: 
-        Numerical integration using the 
+      \item $\rightarrow$ Simple:
+        Numerical integration using the
         rectangle method using $s$ rectangles
       \end{itemize}
     \end{column}
@@ -1753,10 +1764,10 @@
           \draw[decorate,decoration=brace,-] (1,-0.05) -- node[below]{\scriptsize{$\frac{1}{s}$}} (0.5,-0.05);
         \end{tikzpicture}
       \end{center}
-      
+
     \end{column}
   \end{columns}
-  
+
 \end{frame}
 
 \begin{frame}
