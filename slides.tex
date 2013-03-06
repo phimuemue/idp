@@ -299,7 +299,7 @@
   \begin{itemize}
   \item Analytical solution for realistic scenarios still not found
 
-  $\rightarrow$ numerical approximation
+    $\rightarrow$ numerical approximation
   \end{itemize}
   We use nodal basis functions:
   \begin{itemize}  
@@ -316,6 +316,30 @@
     \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi_i \, ds -
     \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
   \end{equation}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Numerical approximation for $\mathbf{q}$}
+  \begin{equation*}
+    \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y) 
+    \quad \text{ resp. } \quad
+    \begin{pmatrix}
+      h \\ u_x \\ u_y
+    \end{pmatrix} \approx
+    \sum_{i=1}^n
+    \begin{pmatrix}
+      h_i \\ u_{x,i} \\ u_{y,i}
+    \end{pmatrix}
+    \phi_i(x,y) 
+  \end{equation*}
+  \begin{itemize}
+  \item Our basis functions: polynomials of a certain degree
+    \begin{itemize}
+    \item $\frac{(d+1)(d+2)}{2}$ support points needed for polynomials of degree $d$
+    \item $\phi_i (x_j,y_j) = \delta_{i,j}$ ($(x_j,y_j)$ coordinates of $i$-th support point)
+    \end{itemize}
+  \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
+  \end{itemize}
 \end{frame}
 
 \section{Matrices}
