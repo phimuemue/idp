@@ -2217,8 +2217,8 @@ We will now come back to only modifying the $x$ momentums. We will set them all 
 \section{Conclusion}
 \label{sec:stiffness-analysis-conclusion}
 
-% \subsection{When the error is zero}
-% \label{sec:stiffness-analysis-concl-error-0}
+\subsection{Minimizing the error}
+\label{sec:stiffness-analysis-concl-error-0}
 
 If we have a situation, where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components. For the respective calculations, please refer to the previous sections.
 
@@ -2229,6 +2229,11 @@ As a rule of thumb, one can deduce the following from the plot: The lower the de
 That means, that even if we produce an error, it will probably be so small that it has no influence on the realism of the simulation.
 
 It is hard to make accurate claims because the $L_1$ norm absorbs some information that might be useful. However, since the approximations shown in this paper are actually used in software (and the software looks good), the error seems small enough to be negligible.
+
+\subsection{Higher orders}
+\label{sec:stiffness-analysis-conclusion-higher-order}
+
+We also examined the situation for order 3. While the plots look similar in shape to the plots we have seen so far, the error value is larger. The explanations for these plots are analogous to the ones we have given for order 1 and order 2, even if the computations are more expensive and lengthy.
 
 \bibliographystyle{alpha}
 \bibliography{bibliography}
