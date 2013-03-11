@@ -964,8 +964,7 @@ We consider three possibilities for computing the error:
   \begin{center}
     \texttt{evalf(Int(abs(N(x)-N(x)),x=0..1))},
   \end{center}
-  we get a good result, if we wait long enough.
-  \todo{Stimmt zwar, wuerde ich aber etwas anders schreiben: Computational infeasible for detailed analysis of higher order...}
+  we get a good result. The downside of this method is that is computationally infeasible for a detailed analysis of higher order.
   \todo{Ich wuerden das ganz nach vorne ziehen. Erst habt ihr es naemlich mit Maple versucht. Das hat zu lange gedauert. Dann ging's weiter zur zweiten methode}
 
   We experimented with random polynomials and tried a few of them out, comparing the \texttt{evalf}-result to the exact integration. We experienced that the \texttt{evalf}-result was always equal to the actual result within an error of 0.001.
