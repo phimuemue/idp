@@ -122,7 +122,7 @@ In feature rich areas, the grid adapts to a finer resolution allowing for more d
 \label{sec:reference-space-dg}
 
 Using these triangles, we can simplify a few steps in the calculation process.
-With a suitable library for coordinate projection, we can rotate triangles and edges into a space that's relevant for us.
+With a suitable library for coordinate projection, we can rotate triangles and edges into a space that is relevant for us.
 Instead of applying cell update rules for each individual triangle, we apply a transformation to the triangles enabling the application of the cell update rules in a single reference space only.
 
 In addition to rotating, we can also scale the edges of the triangles to always be in a certain shape.
@@ -745,9 +745,9 @@ We have to keep in mind that equation (\ref{eq:swe-euler-step-solution}) is actu
 \section{Setting}
 \label{sec:setting}
 
-When analyzing wave propagation along a grid of triangles, it's\todo{Abkuerzungen sind schlechter Stil. Immer ausschreiben. Bitte auch ganzen Text durchsehen} essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it's determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
+When analyzing wave propagation along a grid of triangles, it is\todo{Abkuerzungen sind schlechter Stil. Immer ausschreiben. Bitte auch ganzen Text durchsehen} essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
 
-This may sometimes be acquired by exact means, however those computations are long and complex and can result in prohibitively high computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We want\todo{Wir wollen das nicht analysieren, wir \textbf{haben} das im Rahmen dieser Arbeit analysiert und evaluiert :-)} to analyze what kind of accuracy loss that implies and if it's a suitable method for realistic computation.
+This may sometimes be acquired by exact means, however those computations are long and complex and can result in prohibitively high computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We want\todo{Wir wollen das nicht analysieren, wir \textbf{haben} das im Rahmen dieser Arbeit analysiert und evaluiert :-)} to analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.
 
 We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$.
 Each triangle has its own polynomial for every component ($h$ and $u$), evaluated over coordinates on the triangle. After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and triangle, resulting in four polynomials.
@@ -789,7 +789,7 @@ For our purposes, we will leave it invariant in time and space across the whole 
 We refer to \cite{cockburn1999discontinuous,leveque2002finite} for readers interested in this issue and other choices of flux functions.
 
 \todo{Efficiency-Bemerkung umformulieren}
-Depending on how $\alpha$ is handled, it results in different methods. Sometimes it's set globally and treated the same for all triangles, other times it's determined based on the qualities of certain triangles at run time, which obviously results in higher computation time. The various methods and their properties are discussed in \cite{leveque2002finite}. For our purposes, we will leave it invariant in time and space across the whole domain.
+Depending on how $\alpha$ is handled, it results in different methods. Sometimes it is set globally and treated the same for all triangles, other times it is determined based on the qualities of certain triangles at run time, which obviously results in higher computation time. The various methods and their properties are discussed in \cite{leveque2002finite}. For our purposes, we will leave it invariant in time and space across the whole domain.
 
 \subsection{Original situation: A 2D problem}
 \label{sec:original-situation-2d-problem}
@@ -834,7 +834,7 @@ Since we are interested in the situation along the adjacent edges, which is a li
 
 As stated in the introduction, we have to construct $p^L$ and $p^R$, the polynomials describing the height and momentum of the right and left triangle respectively. We construct these polynomials by interpolating certain points.
 
-We do so for the left and the right triangle, and for the height and the momentum. We call the points we've \todo{Keine Abkuerzungen} chosen the \emph{support points} for the left and right triangle. For convenience, we have decided to use a naming convention for these points.
+We do so for the left and the right triangle, and for the height and the momentum. We call the points we have \todo{Keine Abkuerzungen} chosen the \emph{support points} for the left and right triangle. For convenience, we have decided to use a naming convention for these points.
 Assume that we have $n$ points for each triangle.
 We denote the components of the points of the left triangle
 \begin{equation*}
@@ -857,7 +857,7 @@ i.e.\,we introduce a superscript indicating whether we are dealing with points w
 As you can see, each point consists of two components, first a position on the edge ($x_i, i \in \{1 \dots n\}$) and second a vector with the corresponding height and momentum, ($h_i^R$ and $u_i^R$ for the left triangle and $h_i^L$ and $u_i^L$ for the right, with $i \in \{1 \dots n\}$).
 
 Intuitively one would think the support points should be equidistant to each other, but other distributions yield better results.
-Eventually we will need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we'll employ the Gaussian quadrature\todo{Es gibt mehrer Versionen der Gauss quadratur. z. B. auch fuer $e^x$. Wir verwenden die Gauss Quadratur fuer Polynome und analysieren diese, da diese auch von anderen verwendet wird. Referenz nicht vergessen!}. This method requires its own support points \todo{Satz versteh ich nicht. Einfach schreiben, dass man die Gauss Quadratur verwendet sollte ausreichen.}to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}\todo{Ist die Wahl der Stuetzpunkte wirklich ein Resultat?}.
+Eventually we will need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we will employ the Gaussian quadrature\todo{Es gibt mehrer Versionen der Gauss quadratur. z. B. auch fuer $e^x$. Wir verwenden die Gauss Quadratur fuer Polynome und analysieren diese, da diese auch von anderen verwendet wird. Referenz nicht vergessen!}. This method requires its own support points \todo{Satz versteh ich nicht. Einfach schreiben, dass man die Gauss Quadratur verwendet sollte ausreichen.}to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}\todo{Ist die Wahl der Stuetzpunkte wirklich ein Resultat?}.
 
 However, we also investigated the situation for an equidistant distribution of support points. You find the corresponding results, as well as a short explanation of why this setting may be useful, in section \ref{sec:equidistant-distribution-of-support-points}.
 
@@ -913,7 +913,7 @@ We first analyze the difference between the following two ways to compute the fl
     \end{pmatrix} = F_i
   \end{equation*}
 
-  We introduce shorthand notation $F_i$ for the resulting values. Each $F_i$ has the same structure as the $x_i$, only it's evaluated by the flux function. Next we interpolate the points (i.e.\,we interpolate the first components to obtain one polynomial, and we interpolate the second components to obtain another polynomial). The resulting polynomials are called $N^\prime\left(x\right)$ (interpreted like $N\left(x\right)$ as explained above).
+  We introduce shorthand notation $F_i$ for the resulting values. Each $F_i$ has the same structure as the $x_i$, only it is evaluated by the flux function. Next we interpolate the points (i.e.\,we interpolate the first components to obtain one polynomial, and we interpolate the second components to obtain another polynomial). The resulting polynomials are called $N^\prime\left(x\right)$ (interpreted like $N\left(x\right)$ as explained above).
 
   That is, we set
   \begin{equation*}
@@ -1158,7 +1158,7 @@ To plot our results we considered several options. Maple supports dynamic plotti
 
 However, we realized that this method had some downsides. We are always interested in plotting two graphs, one for the height error and one for the momentum error (both components of $I$). Showing two plots simultaneously affected by the same sliders proved to be a challenge, and was not doable with the native plotting services due to limited customization. It may have been able to write a custom Maplet (interactive Maple applet) which did what we wanted, but that turned out to be just as cumbersome due to Maple's limited applet functionality.\todo{Ihr koenntet das "wissenschaftlicher" formulieren ala "Due to restrictions of Maples functionality regarding applet programming, our requirements were not satisfied". Oder so.}
 
-Moreover, we wanted to be able to quickly switch the coordinate axes, so that we can compare plots with each other in real time, which also did not work with the native implementation. Finally, Maple's user interface is not intended to be used with that many variables, which posed a challenge for our $4n$ variables in $I$. The only alternative would have been to cut some of them out, which would make the tool less interactive.
+Moreover, we wanted to be able to quickly switch the coordinate axes, so that we can compare plots with each other in real time, which also did not work with the native implementation. Finally, the user interface of Maple is not intended to be used with that many variables, which posed a challenge for our $4n$ variables in $I$. The only alternative would have been to cut some of them out, which would make the tool less interactive.
 
 We decided to develop a tool that helps us visualizing our data properly.
 We implemented a simple\todo{Simple muss raus :-)} program that is capable of doing the following:
@@ -1500,7 +1500,7 @@ We do so by exemplarily examining the third component and try to calculate its e
   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
 \end{eqnarray*}
 
-While we approximate here as well, it's the point-wise sampling approximation and is used in both cases, as it's impossible to determine the exact value for a continuous area.
+While we approximate here as well, it is the point-wise sampling approximation and is used in both cases, as it is impossible to determine the exact value for a continuous area.
 
 These terms are become huge and difficult to handle manually (as well as expensive to compute automatically). We will introduce three shorthand notations for the three components of $\mathbf{q}$:
 
@@ -1686,7 +1686,7 @@ Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one singl
 
 Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
-We noticed that $L=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that's the case it's never enough to make an impact on the eventual interpretation of the results.
+We noticed that $L=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that is the case it is never enough to make an impact on the eventual interpretation of the results.
 
 \subsection{\texorpdfstring{Singularities in $SE$}{Singularities in SE}}
 \label{sec:stiffness-analysis-singularities}
@@ -1711,7 +1711,7 @@ We will now investigate where these singularities lie! We start by considering t
   \widehat{h} = \sum_{i=1}^n h_j \phi_j(x,y) \stackrel{!}{=} 0
 \end{equation*}
 
-If we solve this equation for -- let's say -- $h_1$, we obtain
+If we solve this equation for e.g. $h_1$, we obtain
 \begin{equation}
   \label{eq:stiffness-analysis-singularities-h1}
   h_1 = \frac{-\sum_{i=2}^n h_j \phi_j(x,y)}{\phi_1(x,y)}
@@ -1898,7 +1898,7 @@ The resulting plots are shown in figure \ref{fig:standardwerte_nach_ux1_ux2_ord1
 
 \input{standardwerte_nach_ux1_uy1_ord1/tex.tex}
 
-What's interesting here is that \emph{all} error plots have a characteristic shapes (i.e. none of them is 0, like in previous examples). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Once again one can see the similarities between some plots, especially with regard to mirroring/rotating. We will later omit plots that are the same or mirrored.
+What is interesting here is that \emph{all} error plots have a characteristic shapes (i.e. none of them is 0, like in previous examples). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Once again one can see the similarities between some plots, especially with regard to mirroring/rotating. We will later omit plots that are the same or mirrored.
 
 \clearpage{} % force output of *all* floats up to now, since LaTeX crahes otherwise
 
@@ -1924,7 +1924,7 @@ Let us investigate, if we can find a minimal at $h_1=11$ error if we do the same
 
 We can see the resulting plots in figure \ref{fig:stiffneses-analysis-ord1-h2-10-h3-12}. And, indeed, the error is now minimal at $h_1\approx 11$ -- the average of $h_2=10$ and $h_3=12$. The minimal error grew up to 4.
 
-Let's see what it looks like if we now set $h_2=12$ and $h_1=10$.
+Let us see what it looks like if we now set $h_2=12$ and $h_1=10$.
 
 \input{ord1_differing_h2_h3_12_10/tex}
 
@@ -1962,7 +1962,7 @@ As can be seen, the error describes a parabola-like shape, its minimum value bei
 \subsubsection{\texorpdfstring{Different $y$ momentums}{Different y momentums}}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
 
-To complete the current line of experiments, we could examine different $y$ momentums analogously to before, but it's obvious from the equations that this will present the same results, only with a different zero-error functions. In that case, the $y$ momentums of the first and the second basis function are the interesting plots, while all others are 0.
+To complete the current line of experiments, we could examine different $y$ momentums analogously to before, but it is obvious from the equations that this will present the same results, only with a different zero-error functions. In that case, the $y$ momentums of the first and the second basis function are the interesting plots, while all others are 0.
 
 \subsubsection{\texorpdfstring{Different $x$ and $y$ momentums}{Different x and y momentums}}
 \label{sec:stiffness-analysis-different-ux-uy-momentums}
@@ -1977,7 +1977,7 @@ Remember that if we only changed either the $x$ or the $y$ impulse values, the e
 
 Let us start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
 
-Considering the plot for $SE_x^1$, it's easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, you can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term now reaches the 0.5 mark, while previously only came up to about 0.4.
+Considering the plot for $SE_x^1$, it is easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, you can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term now reaches the 0.5 mark, while previously only came up to about 0.4.
 
 In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), you can observe a slight translation of all the plots. It is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$ and $y$ momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
 
@@ -2029,7 +2029,7 @@ One can see there that the error for all $y$ momentums is zero. Moreover, the er
 
 For the most part, the plots all look parabola-like which is traceable since the error term contains $\widehat{u}_x^2$, which itself contains $u_{x,1}^2$. Thus, we can explain the parabola-like shape.
 
-The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain this fact in a more generalized setting --- we won't restrict ourselves to second order and will assume that all heights are equal (not exactly 10).
+The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain this fact in a more generalized setting --- we will not restrict ourselves to second order and will assume that all heights are equal (not exactly 10).
 
 % Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
 
@@ -2217,7 +2217,7 @@ Analogously, we proceed for $\widehat{F_2}(\mathbf{q})$:
   \end{pmatrix}
 \end{equation}
 
-From equations (\ref{eq:1}) and (\ref{eq:2}) we can see the reason that we can choose the $y$ momentums as we like it --- it won't influence the error term $SE_x^i$.
+From equations (\ref{eq:1}) and (\ref{eq:2}) we can see the reason that we can choose the $y$ momentums as we like it --- it will not influence the error term $SE_x^i$.
 
 This means, we can simplify as follows (for the current scenario):
 
@@ -2237,7 +2237,7 @@ This means, we can simplify as follows (for the current scenario):
 
 \subparagraph{\texorpdfstring{Errors in $y$ momentums}{Errors in y momentums}}
 
-The error plots for the $y$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and don't look as structured anymoore (compared to before where they were all 0).
+The error plots for the $y$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and does not look as structured anymoore (compared to before where they were all 0).
 
 \input{ord2_varying_ux1_uy2_1/tex_y.tex}
 
@@ -2287,7 +2287,7 @@ If we have a situation, where all heights are the same, all $x$ momentums are th
 
 The error can become 0 even for other combinations, but it is very difficult to derive a simple pattern that must be fulfilled by the parameters. Moreover, as we saw, it can become zero if certain basis functions have a derivative that is 0 (as seen e.g. in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
 
-As a rule of thumb, one can deduce the following from the plot: The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error (roughly). This is advantageous since in practice it is very unlikely that the values will differ like we assumed in some extreme scenarios. The sierpi framework uses height values around 10 and momentums whose absolute value might grow up to 4. The difference in height is almost always very small (say less han 0.5), while the difference in momentums might grow up to 1 --- even if that's not too often the case.
+As a rule of thumb, one can deduce the following from the plot: The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error (roughly). This is advantageous since in practice it is very unlikely that the values will differ like we assumed in some extreme scenarios. The sierpi framework uses height values around 10 and momentums whose absolute value might grow up to 4. The difference in height is almost always very small (say less han 0.5), while the difference in momentums might grow up to 1 --- even if that is not too often the case.
 
 That means, that even if we produce an error, it will probably be so small that it has no influence on the realism of the simulation.
 
