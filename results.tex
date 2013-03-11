@@ -435,15 +435,14 @@ We obtain the following, called the weak form:
   \int_T \pd{\mathbf{q}}{t} \phi \,dT + \int_T \nabla \cdot F(\mathbf{u}) \phi \,dT = 0
 \end{equation}
 
-The operator $\nabla \cdot$ is the divergence operator, computing the sum of the $x$ derivative of the first component and the $y$ derivative of the second component. \todo{Nabla/Del operator im Fliesstext kurz beschreiben.}
-Using the operator $\nabla$ and applying the Gaussian divergence theorem, we can transform the equation given above to
+The operator $\nabla \cdot$ is the divergence operator, computing the sum of the $x$ derivative of the first component and the $y$ derivative of the second component. Using the operator $\nabla$ and applying the Gaussian divergence theorem, we can transform the equation given above to
 
 \begin{equation}
   \label{eq:shallow-water-weak-form-div-applied}
   \int_T \pd {\mathbf{q}}{t} \phi \, dT +
   \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds -
-  \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
-\end{equation}.
+  \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0.
+\end{equation}
 
 Note at this point, that these are actually six equations\todo{Wo seht ihr hier 6 Gleichungen?}, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates. The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result. The last integral contains the symbol $\nabla$. This operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
 
