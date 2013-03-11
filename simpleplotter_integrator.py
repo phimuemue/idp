@@ -74,10 +74,11 @@ class SimplePlotter:
                 print '%s=%f' % (varname, varval)
                 self.gnuplot[i]('%s=%f' % (varname, varval))
 
-    def adjust_and_plot(self, widget, data=None, two_dim=True):
+    def adjust_and_plot(self, widget, data=None):
         """Determines which variables are plot-axes-variables and wich
         ones are parameters. Decides whether to use a 2D- or a 3D-plot."""
         # numerical integration by streifensumme
+        two_dim = self.combo2d3d.get_active() == 1
         stripe_amount = int(self.stripes_spin.get_value()) 
         if not two_dim:
             stripe_width = 1./stripe_amount
@@ -272,8 +273,8 @@ class SimplePlotter:
         # 2d or 3d integration stuff
         hbox = gtk.HBox()
         model2d3d = gtk.ListStore(int, str)
-        model2d3d.append([0, "2d integration"])
-        model2d3d.append([1, "3d integration"])
+        model2d3d.append([0, "1d integration"])
+        model2d3d.append([1, "2d integration"])
         combo2d3d = gtk.ComboBox()
         cr = gtk.CellRendererText()
         combo2d3d.pack_start(cr)
@@ -281,6 +282,7 @@ class SimplePlotter:
         combo2d3d.set_model(model2d3d)
         hbox.pack_start(combo2d3d)
         combo2d3d.set_active(1)
+        combo2d3d.connect("changed", self.adjust_and_plot)
         self.combo2d3d = combo2d3d
         self.settings_box.pack_start(hbox, fill=False, expand=False)
 
