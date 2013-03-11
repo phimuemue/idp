@@ -960,10 +960,10 @@ We consider three possibilities for computing the error:
   The downside of this method is that is computationally infeasible for a detailed analysis of higher order due to the increasingly complex formulae.
 \item[Exact integration betwee certain points] $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
   \begin{equation*}
-    N\left(x_i^F\right) = N^\prime\left(x_i^F\right), \forall i \in \{1 \dots n\}.
+    N\left(x_i^F\right) = N^\prime\left(x_i^F\right) \text{ resp. } N\left( x_i^F \right) - n^\prime\left( x_i^F \right) = 0 \quad , \forall i \in \{1 \dots n\}.
   \end{equation*}
 
-  Knowing this, we can derive some zeroes (but possibly not all)\todo{Wo kommen denn auf einmal die 'zeros' her? Meinst du die zero-crossings?}. If we compute
+  Knowing this, we can derive some zeroe crossings of the function $N(x)-N'(x)$ (but possibly not all). If we compute
   \begin{equation*}
     \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N\left(x\right) - N^\prime\left(x\right)\ dx \right|,
   \end{equation*}
