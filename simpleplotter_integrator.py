@@ -269,6 +269,21 @@ class SimplePlotter:
         hbox.pack_start(self.stripes_spin)
         self.settings_box.pack_start(hbox)
         self.stripes_spin.connect("value_changed", self.adjust_and_plot) 
+        # 2d or 3d integration stuff
+        hbox = gtk.HBox()
+        model2d3d = gtk.ListStore(int, str)
+        model2d3d.append([0, "2d integration"])
+        model2d3d.append([1, "3d integration"])
+        combo2d3d = gtk.ComboBox()
+        cr = gtk.CellRendererText()
+        combo2d3d.pack_start(cr)
+        combo2d3d.add_attribute(cr, 'text', 1)
+        combo2d3d.set_model(model2d3d)
+        hbox.pack_start(combo2d3d)
+        combo2d3d.set_active(1)
+        self.combo2d3d = combo2d3d
+        self.settings_box.pack_start(hbox, fill=False, expand=False)
+
 
     def init_variables_page(self):
         """Creates sliders and radio buttons for the single variables."""
