@@ -1271,12 +1271,12 @@ First we set all support points to one single value ensuring homogenous height a
 \input{2_punkte_alles_10_0/tex.tex}
 
 Figure \ref{fig:two-points-all-the-same} shows the case for two points on each adjacent edge. Each subfigure shows what happens if we fix all but one specific support point. For example, subfigure \ref{subfig:fixing-p2-in-first-example} shows constant values of all support points except $p_2^L$ (containing the variables $h_2^L$ and $u_2^L$) and variable $h_2^L$ in the range from 8 to 12 and $u_2^L$ from $-4$ to 4.
-The left part of subfigure \ref{subfig:fixing-p2-in-first-example} shows the (normalized\todo{Was ist hier normalisiert? Was ist die 'baseline'?}) error in the $h$ component, while the right half depicts the error in the $u$ component.
+The left part of subfigure \ref{subfig:fixing-p2-in-first-example} shows the error in the $h$ component\footnote{Computed as described in equation (\ref{eq:integral-norm-definition}).}, while the right half depicts the error in the $u$ component.
 The error in the $h$ component is always zero in the range depicted here (about $10^{-15}$ to be precise, which can be interpreted as numerical error). We will generally omit plots that show no error similar to that.
 
 As the plot shows, the error for the $h$ component ranges up to 2.5.
 
-We did the same thing for three support points along each edge (and it can be done for an arbitrary number of support points). We\todo{We} can see the results in figure \ref{fig:three-points-equal}. In general it seems that the structure of the error plots is quite similar across different settings: the error in the height component is almost zero, while the error in the momentum component looks similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
+We did the same thing for three support points along each edge (and it can be done for an arbitrary number of support points). We can see the results in figure \ref{fig:three-points-equal}. In general it seems that the structure of the error plots is quite similar across different settings: the error in the height component is almost zero, while the error in the momentum component looks similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
 
 \input{3_punkte_gleich/tex.tex}
 
