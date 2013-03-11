@@ -944,9 +944,8 @@ There are several possibilities to overcome this problem. The first that might c
 
 We consider three possibilities for computing the error:
 
-\todo{Ich wuerde bei jedem bullet-point noch fett ein schlagwort davor schreiben}
-\begin{enumerate}
-\item Another approach was to use Maple's numerical integration facilities. If we tell Maple to
+\begin{description}
+\item[Numerical integration in Maple] Another approach was to use Maple's numerical integration facilities. If we tell Maple to
   \begin{center}
     \texttt{evalf(Int(abs(N(x)-N(x)),x=0..1))},
   \end{center}
@@ -959,7 +958,7 @@ We consider three possibilities for computing the error:
   % However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
 
   The downside of this method is that is computationally infeasible for a detailed analysis of higher order due to the increasingly complex formulae.
-\item $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
+\item[Exact integration betwee certain points] $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
   \begin{equation*}
     N\left(x_i^F\right) = N^\prime\left(x_i^F\right), \forall i \in \{1 \dots n\}.
   \end{equation*}
@@ -973,16 +972,16 @@ We consider three possibilities for computing the error:
   If we moreover divide each interval $[x_i,x_{i+1}]$ into several smaller sub-intervals, and simply integrate over them, we can reduce the error ad libitum.
 
   While we can tweak this method by simply evaluating more and more sub-intervals, this comes at the price of more computations.
-\item The last approach we tried was to divide the area under the function
+\item[Numerical quadrature with rectangle method] The last approach we tried was to divide the area under the function
   \begin{equation*}
     \left| N\left(x\right)-N^\prime\left(x\right) \right|
   \end{equation*}
   into several stripes, and compute the area of these stripes. The more stripes we have, the more accurate our result will be, at the expense of computation time.
-\end{enumerate}
+\end{description}
 
-We eventually went for the last of these approaches\todo{Hier schreibt ihr schon wie es weiter geht, erst in den folgenden Saetzen aber, warum ihr das gemacht habt. Ich wuerde die Entscheidung nach hinten setzen}. It is just as well possible to use the second one, or the first, although this requires to tell Maple that it should \emph{first} make all necessary substitutions, and \emph{second} plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore this option further.
+It is just as well possible to use the first or second approach, although this requires to tell Maple that it should \emph{first} make all necessary substitutions, and \emph{second} plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore these options further. So we eventually went for the last of these approaches using the rectangle method for quadrature.
 
-We present some more information about the developed tool in section \ref{sec:making-the-whole-thing-interactive}.
+We implemented this strategy in an own tool and present some more information about it in section \ref{sec:making-the-whole-thing-interactive}.
 
 \subsection{Singularities}
 \label{sec:singularities}
