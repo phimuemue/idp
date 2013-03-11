@@ -636,7 +636,7 @@ Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because
 \end{equation}
 where $m$ is the number of integration points and $w_k$ denotes the Gauss weight for point $p_k^e$ for an arbitrary edge $e$ as the weight is determined normalized in one dimension, and as such is the same for all edges. This also contains the edge length (which was normalized to 1, but the hypotenuse still has length $\sqrt{2}$ in that case), which is why it has to be stored separately for every edge. Similar to the previous examples, the values $\phi_i\left(p_k^e\right) \cdot w_k$ can be precomputed for every edge as well, and added onto the term $F^e\left(p_k^e\right)$ when required. $F^e\left(p_k^e\right)$ itself is called the \emph{numerical flux} and can be computed in different ways, which we will get to in part \ref{part:polynomial-comparison}.
 
-\section{Matrix listing\todo{Passendere Ueberschrift finden}}
+\section{Matrix overview\todo{Passendere Ueberschrift finden}\done{Keine Ahnung, ob das jetzt besser ist}}
 \label{sec:matrix-listing}
 
 The matrices we obtained from section \ref{sec:matrix-extraction} are the following:
