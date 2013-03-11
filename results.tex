@@ -812,7 +812,7 @@ In the case shown we would use six support points, resulting in a two-variable p
       \draw[fill=black] (0,1) circle (0.02);
       \draw[fill=black] (0,0.5) circle (0.02);
     \end{scope}
-    \draw[->,thick] (0,1.075) -- node[right]{$x$} (1.075,0);
+    \draw[->,thick] (0,1.075) -- node[right]{$\lambda$} (1.075,0);
     \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
       \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
       \draw[fill=black] (0,0) circle (0.02);
@@ -827,7 +827,8 @@ In the case shown we would use six support points, resulting in a two-variable p
   \label{fig:two-triangles-and-some-support-points}
 \end{figure}
 
-Since we are interested in the situation along the adjacent edges, which is a linear curve, we can remodel the problem to one dimension, which will reduce the computational complexity. This means that we do not actually construct two-variable polynomials for the whole triangles\todo{Braucht man auch nicht, wenn man die 2 Variablen mit einer enizigen parametrisieren wuerde}, but instead consider just polynomials that depend on one variable $x \in [0,1]$. The variable $x$ simultaneously traverses both adjacent edges.\todo{Beruft euch z. B. darauf, dass die Berechnung im Kanten Referenzraum identisch ist. Vorausgesetzt, das wurde vorher erklaert :-).}
+Since we are interested in the situation along the adjacent edges, which is a linear curve, we can remodel the problem to one dimension, which will reduce the computational complexity. This means that we do not actually construct two-variable polynomials for the whole triangles, but instead consider just polynomials that depend on one variable $\lambda \in [0,1]$. The variable $\lambda$ simultaneously traverses both adjacent edges (see figure \ref{fig:two-triangles-and-some-support-points}).
+\todo{Beruft euch z. B. darauf, dass die Berechnung im Kanten Referenzraum identisch ist. Vorausgesetzt, das wurde vorher erklaert :-).}
 
 \subsection{Constructing the polynomials}
 \label{sec:constructing-polynomials}
@@ -925,13 +926,13 @@ We first analyze the difference between the following two ways to compute the fl
 
 \end{description}
 
-Our goal will then be to compare $N\left(x\right)$ against\todo{Evtl. 'with'? Bin mir nicht sicher} $N^\prime\left(x\right)$ (component-wise, of course). We compare the quality of an approximation by considering the following term:
+Our goal will then be to compare $N\left(x\right)$ against\todo{Evtl. 'with'? Bin mir nicht sicher} $N^\prime\left(x\right)$ (component-wise, of course). We compare the quality of an approximation by considering the $L_1$ norm:
 
 \begin{equation}
   \label{eq:integral-norm-definition}
   I := \int\limits_{x=0}^1 | N\left(x\right) - N^\prime\left(x\right) |\  dx,
 \end{equation}
-where the integration is to be understood component-wise\todo{Das Kind (die Norm) hat auch einen Namen: L1 Norm wenn mich nicht alles taeuscht}.
+where the integration is to be understood component-wise.
 
 \subsection{\texorpdfstring{How to evaluate $I$}{How to evaluate I}}
 \label{sec:how-to-eval-I}
