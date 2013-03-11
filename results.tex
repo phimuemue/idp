@@ -979,7 +979,7 @@ We consider three possibilities for computing the error:
   into several stripes, and compute the area of these stripes. The more stripes we have, the more accurate our result will be, at the expense of computation time.
 \end{enumerate}
 
-We eventually \todo{Eventuell?} went for the last of these approaches\todo{Hier schreibt ihr schon wie es weiter geht, erst in den folgenden Saetzen aber, warum ihr das gemacht habt. Ich wuerde die Entscheidung nach hinten setzen}. It is just as well possible to use the second one, or the first, although this requires to tell Maple that it should \emph{first} make all necessary substitutions, and \emph{second} plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore this option further.
+We eventually went for the last of these approaches\todo{Hier schreibt ihr schon wie es weiter geht, erst in den folgenden Saetzen aber, warum ihr das gemacht habt. Ich wuerde die Entscheidung nach hinten setzen}. It is just as well possible to use the second one, or the first, although this requires to tell Maple that it should \emph{first} make all necessary substitutions, and \emph{second} plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore this option further.
 
 We present some more information about the developed tool in section \ref{sec:making-the-whole-thing-interactive}.
 
@@ -1003,8 +1003,8 @@ Since we take the integral between 0 and 1, it is of particular interest if the 
 
 We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. So we see that for this particular case we have singularities only for values of $h_1$ that differ greatly from all other values for the height (that are in this case set to 10).
 
-We tried these calculations for other scenarios, including a variation in support points\todo{... leading to similar results. [Den folgenden Satz wuerde ich dann streichen]}.
-The results were always the same, that the height would have to differ in absurd levels to even approach the required region of the singularity.
+We tried these calculations for other scenarios, including a variation in support points leading to similar results.
+%The results were always the same, that the height would have to differ in absurd levels to even approach the required region of the singularity. %gestrichen auf Martins Vorschlag
 
 However, it is still important to note that these singularities do in fact occur. While they did not interfere with our calculations, similar application with largely differing sample values may encounter a problem at this point.
 
