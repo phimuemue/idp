@@ -854,12 +854,12 @@ and the points for the right triangle
 \end{equation*}
 i.e.\,we introduce a superscript indicating whether we are dealing with points within the left or the right triangle.
 
-As you can see, each point consists of two components, first a position on the edge ($x_i, i \in \{1 \dots n\}$) and second a vector with the corresponding height and momentum, ($h_i^R$ and $u_i^R$ for the left triangle and $h_i^L$ and $u_i^L$ for the right, with $i \in \{1 \dots n\}$).
+As we can see, each point consists of two components, first a position on the edge ($x_i, i \in \{1 \dots n\}$) and second a vector with the corresponding height and momentum, ($h_i^R$ and $u_i^R$ for the left triangle and $h_i^L$ and $u_i^L$ for the right, with $i \in \{1 \dots n\}$).
 
 Intuitively one would think the support points should be equidistant to each other, but other distributions yield better results.
 Eventually we will need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we will employ the Gaussian quadrature\todo{Es gibt mehrer Versionen der Gauss quadratur. z. B. auch fuer $e^x$. Wir verwenden die Gauss Quadratur fuer Polynome und analysieren diese, da diese auch von anderen verwendet wird. Referenz nicht vergessen!}. This method requires its own support points \todo{Satz versteh ich nicht. Einfach schreiben, dass man die Gauss Quadratur verwendet sollte ausreichen.}to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}\todo{Ist die Wahl der Stuetzpunkte wirklich ein Resultat?}.
 
-However, we also investigated the situation for an equidistant distribution of support points. You find the corresponding results, as well as a short explanation of why this setting may be useful, in section \ref{sec:equidistant-distribution-of-support-points}.
+However, we also investigated the situation for an equidistant distribution of support points. We show the corresponding results, as well as a short explanation of why this setting may be useful, in section \ref{sec:equidistant-distribution-of-support-points}.
 
 To construct the polynomials assume we have a method $interpolate\left(\{\left(x_i,y_i\right) \mid i \in \{1 \dots n\}\}\right)$.
 This method takes a set of points $\left(x_1,y_1\right),\dots,\left(x_n,y_n\right)$ and returns the polynomial of degree $n-1$ that goes through all the points within the set.
@@ -981,7 +981,7 @@ We consider three possibilities for computing the error:
 
 We eventually \todo{Eventuell?} went for the last of these approaches\todo{Hier schreibt ihr schon wie es weiter geht, erst in den folgenden Saetzen aber, warum ihr das gemacht habt. Ich wuerde die Entscheidung nach hinten setzen}. It is just as well possible to use the second one\todo{Wenn ihr erster/zweiter/dritter verwendet, verwendet auch enumerate statt itemize}, or the first, although this requires to tell Maple that it should \emph{first} make all necessary substitutions, and \emph{second} plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore this option further.
 
-You can find some more information about the developed tool in section \ref{sec:making-the-whole-thing-interactive}.
+We present some more information about the developed tool in section \ref{sec:making-the-whole-thing-interactive}.
 
 \subsection{Singularities}
 \label{sec:singularities}
@@ -1189,7 +1189,7 @@ The implementation turned out to be quite useful and easier to handle than any e
   \label{fig:plotting-tool}
 \end{figure}
 
-Subfigure \ref{subfig:plotting-tool-variables} shows the page that is used to adjust the variables. As you can see, the tool has detected variables \texttt{u\_1}, \texttt{h\_1}, \texttt{U\_1}, and so on. Moreover you can see that e.g.\, the parameter \texttt{u\_2} is set to a value of 3.2, while \texttt{u\_1} is set to 0.0.
+Subfigure \ref{subfig:plotting-tool-variables} shows the page that is used to adjust the variables. As we can see, the tool has detected variables \texttt{u\_1}, \texttt{h\_1}, \texttt{U\_1}, and so on. Moreover we can see that e.g.\, the parameter \texttt{u\_2} is set to a value of 3.2, while \texttt{u\_1} is set to 0.0.
 
 The radio buttons determine which variables are used as axes. In subfigure \ref{subfig:plotting-tool-variables}, in the first option row, the column for \texttt{u\_1} is selected, while in the second row, we chose \texttt{h\_1}. This means that the plotter uses \texttt{u\_1} as $x$ axis, and \texttt{h\_1} as $y$ axis for the 3D plot.
 
@@ -1276,7 +1276,7 @@ The error in the $h$ component is always zero in the range depicted here (about 
 
 As the plot shows, the error for the $h$ component ranges up to 2.5.
 
-We did the same thing for three support points along each edge (and it can be done for an arbitrary number of support points). You\todo{You} can see the results in figure \ref{fig:three-points-equal}. In general it seems that the structure of the error plots is quite similar across different settings: the error in the height component is almost zero, while the error in the momentum component looks similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
+We did the same thing for three support points along each edge (and it can be done for an arbitrary number of support points). We\todo{We} can see the results in figure \ref{fig:three-points-equal}. In general it seems that the structure of the error plots is quite similar across different settings: the error in the height component is almost zero, while the error in the momentum component looks similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
 
 \input{3_punkte_gleich/tex.tex}
 
@@ -1289,7 +1289,7 @@ Remember that we saw in section \ref{sec:singularities} that there might be sing
 
 \input{2_points_def_luecke/tex.tex}
 
-Figure \ref{fig:two-points-p1-wider-range} shows a plot that was created using two points per edge, each point having coordinates $(10,0)$. We use the coordinates of $p_1^L$ as axes (i.e.\,$h_1$ and $u_1$). But the axes of this plot now have a wider range than the ones in previous plots. As you can see there, the error suddendly grows to about 200 -- a much larger value t han the one we have seen before! We realize that these discontinuities arise if $h_1$ takes a values of about 1.6 and 0. In fact, there are even more discontinuities that can not be seen here since they occur at more distant values for $h_1$.
+Figure \ref{fig:two-points-p1-wider-range} shows a plot that was created using two points per edge, each point having coordinates $(10,0)$. We use the coordinates of $p_1^L$ as axes (i.e.\,$h_1$ and $u_1$). But the axes of this plot now have a wider range than the ones in previous plots. As we can see there, the error suddendly grows to about 200 -- a much larger value t han the one we have seen before! We realize that these discontinuities arise if $h_1$ takes a values of about 1.6 and 0. In fact, there are even more discontinuities that can not be seen here since they occur at more distant values for $h_1$.
 
 \subsection{One point variation}
 \label{sec:one-point-variation}
@@ -1312,7 +1312,7 @@ $ (i.e.\,we decrease the height component of $p_1^L$).
 
 \input{3_punkte_1_geschwindigkeit_verringert/tex.tex}
 
-You see the results of this experiment in figure \ref{fig:three-points-h1-}.
+We see the results of this experiment in figure \ref{fig:three-points-h1-}.
 
 Comparing figure \ref{fig:three-points-equal} and \ref{fig:three-points-h1-} it is worth noting that especially the plots for $p_2^L$, $p_3^L$ and $p_3^R$ differ strongly. Additionally, it can be seen that the structure differs as well as the range of the error.
 
@@ -1693,7 +1693,7 @@ We noticed that $L=5$ (i.e. using 25 triangles) suffices most of the time. Highe
 
 Before we actually generate plots and interpret them, let us for a moment consider the term $SE_x$ (we could also do so for $SE_y$ --- it is just for illustrative purpose).
 
-This term ($SE_x$) depends on $\widehat{F_2}(\mathbf{q})$ and $\overline{F_2}(\mathbf{q})$. Moreover, as you hopefully remember, $\widehat{F_2}(\mathbf{q})$ is defined as follows:
+This term ($SE_x$) depends on $\widehat{F_2}(\mathbf{q})$ and $\overline{F_2}(\mathbf{q})$. Moreover, as we remember, $\widehat{F_2}(\mathbf{q})$ is defined as follows:
 
 \begin{equation*}
   \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi =
@@ -1733,7 +1733,7 @@ We will do so for illustrating some simple cases.
     \label{fig:stiffness-analysis-log-singularities-ord-2}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o2.pdf}
   }
-  \caption{Heatmaps for $\log_{10} h_1$ depending on $(x,y)$ under the assumption that all other height values are set to 10. If all other height values are 10, \emph{reasonable} values for $h_1$ lie in the range $\left[ 6,14 \right] \approx \left[ 10^{0.75}, 10^{1.14} \right]$. I.e. the logarithm of reasonable values for $h_1$ is in $\left[ 0.75, 1.14 \right]$. As you can see, this is never the case. This means that -- for reasonable values of $h_1$ -- we do not observe any singularities.}
+  \caption{Heatmaps for $\log_{10} h_1$ depending on $(x,y)$ under the assumption that all other height values are set to 10. If all other height values are 10, \emph{reasonable} values for $h_1$ lie in the range $\left[ 6,14 \right] \approx \left[ 10^{0.75}, 10^{1.14} \right]$. I.e. the logarithm of reasonable values for $h_1$ is in $\left[ 0.75, 1.14 \right]$. As we can see, this is never the case. This means that -- for reasonable values of $h_1$ -- we do not observe any singularities.}
 \end{figure}
 
 \subsubsection{Order 1}
@@ -1821,7 +1821,7 @@ As we can see, the variable $h_1$ is explicitly omitted in the above setting, si
 
 \input{standardwerte_nach_h1_ord1/tex.tex}
 
-The resulting plots are displayed in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As you can see in these plots, the error terms $SE_x^1$ and $SE_y^3$ are 0.
+The resulting plots are displayed in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1}. As we can see in these plots, the error terms $SE_x^1$ and $SE_y^3$ are 0.
 
 This can be explained quite straightforward, if one considers the fact that -- for order 1 -- we have the following two facts (see table \ref{tab:basis-functions-for-low-degrees} for reference):
 \begin{eqnarray*}
@@ -1858,7 +1858,7 @@ Using the fact that $\pd{\phi_i}x = 0$, we can simplify the above to
 
 We now use the fact that $u_{x,i}=u_{y,i}=0$ for all support points and can confirm that the overall integrand becomes 0.
 
-While this is a good result for us, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. You can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). It looks like a parabola, which makes sense when we examine the equations for the first order.
+While this is a good result for us, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. We can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). It looks like a parabola, which makes sense when we examine the equations for the first order.
 
 The fact that the error is minimal for $h_1=10$ is interesting for the following reason: $h_2$ as well as $h_3$ have the value 10, too, so it \emph{might} be advantageous if the third height (in this case $h_1$) has value 10, as well.
 
@@ -1977,9 +1977,9 @@ Remember that if we only changed either the $x$ or the $y$ impulse values, the e
 
 Let us start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
 
-Considering the plot for $SE_x^1$, it is easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, you can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term now reaches the 0.5 mark, while previously only came up to about 0.4.
+Considering the plot for $SE_x^1$, it is easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, we can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term now reaches the 0.5 mark, while previously only came up to about 0.4.
 
-In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), you can observe a slight translation of all the plots. It is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$ and $y$ momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
+In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), we can observe a slight translation of all the plots. It is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$ and $y$ momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
 
 However, with $u_{x,2}=u_{y,2}=1$ one can still see the strong connection to the original plots.
 
@@ -2012,7 +2012,7 @@ Similar to before, we will use only one plot for several error plots if they all
 \subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
 \label{sec:stiffness-analysis-ord2-default-var-h1}
 
-Again, we start out by using the default values, setting all heights to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. You can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}.
+Again, we start out by using the default values, setting all heights to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. We can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}.
 
 \input{ord2_varying_h1_default/tex.tex}
 
@@ -2031,7 +2031,7 @@ For the most part, the plots all look parabola-like which is traceable since the
 
 The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain this fact in a more generalized setting --- we will not restrict ourselves to second order and will assume that all heights are equal (not exactly 10).
 
-% Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. You can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
+% Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. We can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
 
 % Mathematically, we have then
 % \begin{align*}
@@ -2092,7 +2092,7 @@ We choose $h_2=11$ and leave all other height values ($h_3$ to $h_6$) fixed at 1
 
 \input{ord2_varying_h1_h2_11/tex.tex}
 
-As you can see, we have a strongly different situation here compared to that for order 1, where we set one single height to 11 (section \ref{sec:stiffness-analysis-ord1-differing-h2-10-h3-11}). All of the plots assume the shape of a fourth degree polynomials.
+As we can see, we have a strongly different situation here compared to that for order 1, where we set one single height to 11 (section \ref{sec:stiffness-analysis-ord1-differing-h2-10-h3-11}). All of the plots assume the shape of a fourth degree polynomials.
 
 This is traceable, since we use second order approximations for $h, u_x$ and $u_y$ (due to the second order basis functions) that are multiplied with each other. This results in the fourth degree.
 
@@ -2271,7 +2271,7 @@ We saw that changing an $y$ momentum can result in drastically changed shapes of
 
 \paragraph{Setting all $x$ momentums to 1}
 
-We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect parabolae with minima at $u_{x,1}=1$ (since all other $x$ momentums are 1). You can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
+We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect parabolae with minima at $u_{x,1}=1$ (since all other $x$ momentums are 1). We can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
 
 \input{ord2_varying_ux1_ux2-ux6_1/tex.tex}
 
