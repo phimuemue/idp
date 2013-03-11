@@ -429,7 +429,10 @@ Here we replaced the velocity $\mathbf{v}$ by the momentum $\mathbf{u}$, which, 
 \end{eqnarray*}
 
 At this point we apply the discontinuous Galerkin method as mentioned above.
-\todo{Ab hier faengt die diskretisierung an. Macht das vllt. mit einer neuen section klar.}
+
+\section{Discretization}
+\label{sec:discretization}
+
 \todo{Vllt. kann man die oben beschriebenen Informationen (Ritz Galerkin, etc.) auch hier bringen und oben etwas kuerzen.}
 We obtain the following, called the weak form:
 
@@ -757,7 +760,7 @@ What we want to do now is take a number of sample points along the edge and eval
 \subsection{Flux function}
 \label{sec:flux-function-intro}
 
-Since we are dealing with a one dimensional problem, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function, which is the same problem as started in section \ref{sec:shallow-water-equations} of the introduction, only mapped to one dimension\todo{Wie funktioniert das Mapping? Punktprodukt mit der Normalen}:
+Since we are dealing with a one dimensional problem, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function, which is the same problem as started in section \ref{sec:shallow-water-equations} of the introduction, only mapped to one dimension\todo{Wie funktioniert das Mapping? Punktprodukt mit der Normalen -- macht Punktprodukt mit der Normalen nicht die Trafo zwischen Spaces?}:
 
 \begin{equation}
   \label{eq:flux-function-definition}
@@ -768,7 +771,7 @@ Since we are dealing with a one dimensional problem, we have to consider the flu
   \right) =
   \begin{pmatrix}
     u \cdot h \\
-    \frac{1}{2} g h^2 + u^2 \cdot h
+    \frac{u^2}{h} + \frac{1}{2} g h^2
   \end{pmatrix}
 \end{equation}
 
@@ -859,7 +862,9 @@ i.e.\,we introduce a superscript indicating whether we are dealing with points w
 As we can see, each point consists of two components, first a position on the edge ($x_i, i \in \{1 \dots n\}$) and second a vector with the corresponding height and momentum, ($h_i^R$ and $u_i^R$ for the left triangle and $h_i^L$ and $u_i^L$ for the right, with $i \in \{1 \dots n\}$).
 
 Intuitively one would think the support points should be equidistant to each other, but other distributions yield better results.
-Eventually we will need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we will employ the Gaussian quadrature\todo{Es gibt mehrer Versionen der Gauss quadratur. z. B. auch fuer $e^x$. Wir verwenden die Gauss Quadratur fuer Polynome und analysieren diese, da diese auch von anderen verwendet wird. Referenz nicht vergessen!}. This method requires its own support points \todo{Satz versteh ich nicht. Einfach schreiben, dass man die Gauss Quadratur verwendet sollte ausreichen.}to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}\todo{Ist die Wahl der Stuetzpunkte wirklich ein Resultat?}.
+Eventually we will need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we will employ the Gaussian quadrature.
+
+\todo{Es gibt mehrer Versionen der Gauss quadratur. z. B. auch fuer $e^x$. Wir verwenden die Gauss Quadratur fuer Polynome und analysieren diese, da diese auch von anderen verwendet wird. Referenz nicht vergessen!} This method requires its own support points \todo{Satz versteh ich nicht. Einfach schreiben, dass man die Gauss Quadratur verwendet sollte ausreichen.}to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}\todo{Ist die Wahl der Stuetzpunkte wirklich ein Resultat?}.
 
 However, we also investigated the situation for an equidistant distribution of support points. We show the corresponding results, as well as a short explanation of why this setting may be useful, in section \ref{sec:equidistant-distribution-of-support-points}.
 
@@ -927,7 +932,7 @@ We first analyze the difference between the following two ways to compute the fl
 
 \end{description}
 
-Our goal will then be to compare $N\left(x\right)$ against\todo{Evtl. 'with'? Bin mir nicht sicher} $N^\prime\left(x\right)$ (component-wise, of course). We compare the quality of an approximation by considering the $L_1$ norm:
+Our goal will then be to compare $N\left(x\right)$ to $N^\prime\left(x\right)$ (component-wise, of course). We compare the quality of an approximation by considering the $L_1$ norm:
 
 \begin{equation}
   \label{eq:integral-norm-definition}
