@@ -945,7 +945,7 @@ There are several possibilities to overcome this problem. The first that might c
 We consider three possibilities for computing the error:
 
 \todo{Ich wuerde bei jedem bullet-point noch fett ein schlagwort davor schreiben}
-\begin{itemize}
+\begin{enumerate}
 \item $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
   \begin{equation*}
     N\left(x_i^F\right) = N^\prime\left(x_i^F\right), \forall i \in \{1 \dots n\}.
@@ -977,9 +977,9 @@ We consider three possibilities for computing the error:
     \left| N\left(x\right)-N^\prime\left(x\right) \right|
   \end{equation*}
   into several stripes, and compute the area of these stripes. The more stripes we have, the more accurate our result will be, at the expense of computation time.
-\end{itemize}
+\end{enumerate}
 
-We eventually \todo{Eventuell?} went for the last of these approaches\todo{Hier schreibt ihr schon wie es weiter geht, erst in den folgenden Saetzen aber, warum ihr das gemacht habt. Ich wuerde die Entscheidung nach hinten setzen}. It is just as well possible to use the second one\todo{Wenn ihr erster/zweiter/dritter verwendet, verwendet auch enumerate statt itemize}, or the first, although this requires to tell Maple that it should \emph{first} make all necessary substitutions, and \emph{second} plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore this option further.
+We eventually \todo{Eventuell?} went for the last of these approaches\todo{Hier schreibt ihr schon wie es weiter geht, erst in den folgenden Saetzen aber, warum ihr das gemacht habt. Ich wuerde die Entscheidung nach hinten setzen}. It is just as well possible to use the second one, or the first, although this requires to tell Maple that it should \emph{first} make all necessary substitutions, and \emph{second} plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore this option further.
 
 We present some more information about the developed tool in section \ref{sec:making-the-whole-thing-interactive}.
 
