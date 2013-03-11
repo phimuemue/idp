@@ -479,7 +479,7 @@ We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. T
 Equation \ref{eq:shallow-water-weak-form-div-applied-approximation} gives a lot of room to improve regarding efficiency.
 Upon closer examination, some terms stand out as being constant, or independent of the values at specific points, which means we can extract them and precompute them to save computation time while the program is running. For that, we will try to extract as much information as possible into matrices.
 \todo{Wir haben noch keine Gauss Quadratur angewandt. Die Integrale koennen also nicht einfach ausgewertet werden sondern muessen approximiert werden. Erst dann ergibt sich eine Matrix Formulierung.
-Ich wuerde auch zuvor die Quadratur auf dem Rand einfuehren und dann zur Matrix Formulierung uebergehen.
+Ich wuerde auch zuvor die Quadratur auf dem Rand einfuehren und dann zur Matrix Formulierung uebergehen.\done{Die Gauss-Quadratur ist aber doch nur für das Randintegral nötig, die anderen Zeugs kann man doch auch ohne Gauss-Quadratur auf Matrixschreibweise bringen, oder?}
 }
 
 %To do that, we first have to get rid of \todo{"get rid of" ist zu salopp} the various terms containing $\mathbf{q}$.
@@ -505,7 +505,7 @@ The first integral of (\ref{eq:shallow-water-weak-form-div-applied-approximation
   & = & \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{m_{ij}} \pd{\mathbf{q}_j}{t}
 \end{eqnarray*}
 
-The elements $m_{ij}$ form the $n \times n$ mass matrix $M$. That means we have a product between $M$ and a vector containing all $\mathbf{q}$ components differentiated by $t$. For a shorthand notation, we can define $\tilde{\mathbf{q}} := \begin{pmatrix} \mathbf{q}_1 \\ \vdots \\ \mathbf{q}_n \end{pmatrix}$. Using this, we can now translate the above into the following formula:
+The elements $m_{ij}$ form the $n \times n$ mass matrix $M$. That means we have a product between $M$ and a vector containing all $\mathbf{q}$ components differentiated by $t$. For a shorthand notation, we can define $\tilde{\mathbf{q}} := \left( \mathbf{q}_1 , \dots , \mathbf{q}_n \right)^T$. Using this, we can now translate the above into the following formula:
 
 \begin{equation*}
   \int_T \pd {\mathbf{q}}{t} \phi_i \, dT \approx
@@ -534,6 +534,22 @@ Using the same method as in \ref{sec:mass-matrix}, we obtain:
 \begin{eqnarray*}
   \int_T F_1(\mathbf{q}) \cdot \nabla \phi \, dT & = &
   \int_T
+  % Allgemeine Formulierung schaut viel komplizierter und beschissener aus!
+  % \begin{pmatrix}
+  %   F_{1,1}(\mathbf{q}) \\ F_{1,2}(\mathbf{1})
+  % \end{pmatrix}
+  % \cdot \nabla \phi_i \, dT \approx \\
+  % &=& \int_T
+  % \begin{pmatrix}
+  %   \sum_{j=1}^n F_{1,1}(\mathbf{q}_j)\cdot \phi_j \\
+  %   \sum_{j=1}^n F_{1,2}(\mathbf{q}_j)\cdot \phi_j \\
+  % \end{pmatrix}
+  % \cdot
+  % \begin{pmatrix}
+  %   \pd{\phi_i}{x} \\
+  %   \pd{\phi_i}{y}
+  % \end{pmatrix} dT \\
+  % & = & \sum_{j=1}^n F_{1,1}(\mathbf{q}_j) \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{s_{ij}^x} + \sum_{j=1}^n F_{1,2}(\mathbf{q}_j) \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{s_{ij}^y}
   \begin{pmatrix}
     u_x \\ u_y
   \end{pmatrix}
@@ -556,33 +572,52 @@ Again we obtain matrices, denoted by the elements $s_{ij}^x$ and $s_{ij}^y$, sto
 \subsubsection{Second line}
 \label{sec:stiffness-second-line}
 
-An analogous approach to the second and third line gives us:
+An analogous approach to the second and third line gives us the following (we do not actually substitute the values for $F_2^x(\mathbf{q})$ and $F_2^y(\mathbf{q})$ because that would just unnecessarily complicate the equations):
 
 \begin{eqnarray}
   \label{eq:third-integral-second-line-1}
   \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = &
   \int_T
   \begin{pmatrix}
-    \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+    F_2^x(\mathbf{q}) \\ F_2^y(\mathbf{q})
   \end{pmatrix}
   \cdot \nabla \phi_i \, dT \\
   \label{eq:third-integral-second-line-2}
   & \approx &
   \int_T
   \begin{pmatrix}
-    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
-    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+    \sum_{j=1}^n F_2^x(\mathbf{q}_j) \phi_j \\
+    \sum_{j=1}^n F_2^y(\mathbf{q}_j) \phi_j \\
   \end{pmatrix}
   \cdot
   \begin{pmatrix}
     \pd{\phi_i}{x} \\
     \pd{\phi_i}{y}
   \end{pmatrix} dT \\
-  & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
-  & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+  & = & \nonumber \sum_{j=1}^n F_2^x(\mathbf{q}_j) \cdot \int_T \phi_j \pd{\phi_i}{x} \, dT 
+   {}  + \nonumber \sum_{j=1}^n F_2^y(\mathbf{q}_j) \cdot \int_T \phi_j \pd{\phi_i}{y} \, dT
+  % hier das Zeug, aber wenn alle Flussterme eingesetzt sind!
+  % \int_T
+  % \begin{pmatrix}
+  %   \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+  % \end{pmatrix}
+  % \cdot \nabla \phi_i \, dT \\
+  % \label{eq:third-integral-second-line-2}
+  % & \approx &
+  % \int_T
+  % \begin{pmatrix}
+  %   \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+  %   \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+  % \end{pmatrix}
+  % \cdot
+  % \begin{pmatrix}
+  %   \pd{\phi_i}{x} \\
+  %   \pd{\phi_i}{y}
+  % \end{pmatrix} dT \\
+  % & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+  % & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray}
 
-\todo{Bei der Herleitung der ersten Stiffness Matrix habt ihr schon die ausformulierten Flussterme weggelassen. Das wuerde ich hier der Uebersichtlichkeit halber auch vorschlagen.}
 The resulting terms here, $\int_T \phi_j \pd{\phi_i}{x} \, dT$ and $\int_T \phi_j \pd{\phi_i}{y} \, dT$, are the same stiffness matrices we computed before, $S^x$ and $S^y$ respectively.
 
 \paragraph{Explanation: Sum approximation}
@@ -602,7 +637,6 @@ we compute the value
 \end{equation*}
 
 The accuracy of this varies depending on $f$. However, as shown in \cite{cockburn1999discontinuous}, this approximation can be used in practice and give results well within the accepted error margin. It will also be the main part of analysis of part \ref{part:stiffness-matrix}.
-\todo{Sehr schoen geschrieben!}
 
 \subsubsection{Stiffness matrix, third line}
 
@@ -612,24 +646,41 @@ The third line is computationally equivalent to the previous, with the respectiv
   \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
   \int_T
   \begin{pmatrix}
-    \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+    F_3^x(\mathbf{q}) \\ F_3^y(\mathbf{q})
   \end{pmatrix}
-  \cdot \nabla \phi_i \, dT \approx \\
-  & = & \int_T
+  \cdot \nabla \phi_i \, dT \\
+  & \approx & \int_T
   \begin{pmatrix}
-    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
-    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+    \sum_{j=1}^n F_3^x(\mathbf{q}_j)\cdot \phi_j \\
+    \sum_{j=1}^n F_3^y(\mathbf{q}_j)\cdot \phi_j \\
   \end{pmatrix}
   \cdot
   \begin{pmatrix}
     \pd{\phi_i}{x} \\
     \pd{\phi_i}{y}
   \end{pmatrix} dT \\
-  & = & \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
-  & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
+  & = & \sum_{j=1}^n F_3^x(\mathbf{q}_j) \int_T \phi_j \pd{\phi_i}{x} \, dT 
+  {} + \sum_{j=1}^n F_3^y(\mathbf{q}_j) \int_T \phi_j \pd{\phi_i}{y} \, dT
+  % \int_T
+  % \begin{pmatrix}
+  %   \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+  % \end{pmatrix}
+  % \cdot \nabla \phi_i \, dT \approx \\
+  % & = & \int_T
+  % \begin{pmatrix}
+  %   \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+  %   \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \phi_j \\
+  % \end{pmatrix}
+  % \cdot
+  % \begin{pmatrix}
+  %   \pd{\phi_i}{x} \\
+  %   \pd{\phi_i}{y}
+  % \end{pmatrix} dT \\
+  % & = & \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
+  % & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j^2} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
-\todo{Am Besten auch analog zur vorherigen kuerzen.}
+We again observe the stiffness matrices $S^x$ resp. $S^y$.
 
 \subsection{Inspecting the boundary integral}
 \label{sec:boundary-integral}
