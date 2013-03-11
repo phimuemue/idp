@@ -1094,47 +1094,24 @@ As we can see, this function contains two parameters, namely $a$ and $b$. Again,
 
 Of course, as the number of parameters increases, the number of possibilities for plotting grows drastically. This is why we have to pick specific assignments for parameters and generate the corresponding plots.
 
-\subsection{Some considerations to take into account\todo{Schoener Section Name}}
+\subsection{\texorpdfstring{Interpreting $I$ as a function of support points}{Interpreting I as a function of support points}}
 \label{sec:some-considerations}
 
 Recall from section \ref{sec:constructing-polynomials}, that the terms $p^L$ and $p^R$ depend on the chosen support points. Moreover, $N\left(x\right)$ depends on these polynomials. Thus, the term $N\left(x\right)-N^\prime\left(x\right)$ also depends on the polynomials and by extension on the support points. This means, we have $4n$ variables\footnote{We have $n$ points for each of the two adjacent edges, each point consisting of a height and a momentum component, resulting in $4n$ variables.} in this term.
-This implies that $I$ (see equation (\ref{eq:integral-norm-definition})) also depends on the single points\todo{Ich wuerde die Vektoren quergestellt und transponiert schreiben. Dann sieht das nicht so zerhackt aus}
-$
-\begin{pmatrix}
-  h_1^L \\ u_1^L
-\end{pmatrix},\dots,
-\begin{pmatrix}
-  h_n^L \\ u_n^L
-\end{pmatrix},
-\begin{pmatrix}
-  h_1^R \\ u_1^R
-\end{pmatrix},\dots,
-\begin{pmatrix}
-  h_n^R \\ u_n^R
-\end{pmatrix}$.
+This implies that $I$ (see equation (\ref{eq:integral-norm-definition})) also depends on the single points
+$( h_1^L , \dots, u_1^L)^T ,\dots, ( h_n^L , \dots, u_n^L)^T$ and $( h_1^R , \dots, u_1^R)^T ,\dots,( h_n^R , \dots, u_n^R)^T $.
 For plotting, the amount of variables requires us to later mask out some of them to be able to obtain useful plots.
 
 We could interpret $I$ as a function over these $4n$ values onto a two-component vector containing the integral from the $h$ and $u$ components. If we were precise, we would then write it in function notation $
-I\left(\begin{pmatrix}
-    h_1^L \\ u_1^L
-  \end{pmatrix},\dots,
-  \begin{pmatrix}
-    h_n^L \\ u_n^L
-  \end{pmatrix},
-  \begin{pmatrix}
-    h_1^R \\ u_1^R
-  \end{pmatrix},\dots,
-  \begin{pmatrix}
-    h_n^R \\ u_n^R
-  \end{pmatrix}\right)$ instead of simply $I$. However, most of the time we prefer $I$, since we are interested in notational simplicity.
+I\left(
+  ( h_1^L , \dots, u_1^L)^T ,\dots,
+( h_n^L , \dots, u_n^L)^T ,
+( h_1^R , \dots, u_1^R)^T ,\dots,
+( h_n^R , \dots, u_n^R)^T \right)$ instead of simply $I$. However, most of the time we prefer $I$, since we are interested in notational simplicity.
 
 We decided to use 3D plots, where we have two axes representing two of the $4n$ variables. All the other variables are fixed to certain values.
 % Later we will explain how we can visualize $I$. Since there are many variables to choose, we decided to fix all but one point and visualize the result.
-For example, if we fixed all points to $
-\begin{pmatrix}
-  10 \\ 0
-\end{pmatrix}
-$ except the first point, this would mean we are interested in
+For example, if we fixed all points to $( 10 , \dots, 0)^T$ except the first point, this would mean we are interested in
 \begin{equation*}
   I\left(
     \begin{pmatrix}
