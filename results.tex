@@ -230,6 +230,7 @@ This means that we need ${(d+2) \cdot (d+1)}/{2}$ basis functions to span the fu
 As mentioned before, we construct the basis functions with the help of some support points. However, arbitrarily choosing those can lead to the following disadvantages:
 
 \begin{itemize}
+\item As we will see later, we integrate over the basis functions (using Gaussian quadrature). Therefore it is convenient to choose support points in a way such that they can serve as support points in this Gaussian quadrature.
 \item Accuracy loss (which is the lesser evil).\todo{Referenz: Martin.}
 \item Malconditioned matrices, which can prevent precomputing arrays.\todo{Selbst getestet}
 \end{itemize}
