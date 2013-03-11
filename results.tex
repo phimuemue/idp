@@ -476,17 +476,15 @@ Upon closer examination, some terms stand out as being constant, or independent 
 Ich wuerde auch zuvor die Quadratur auf dem Rand einfuehren und dann zur Matrix Formulierung uebergehen.
 }
 
-To do that, we first have to get rid of \todo{"get rid of" ist zu salopp} the various terms containing $\mathbf{q}$.
-Since $\mathbf{q}$ depends on the position, we cannot extract it from the integral.
-To achieve this regardless\todo{was meinst ihr mit regardless?}, we use the following approximation over all support points and corresponding basis functions:
+%To do that, we first have to get rid of \todo{"get rid of" ist zu salopp} the various terms containing $\mathbf{q}$.
+Since $\mathbf{q}$ depends on the position, we cannot extract it from the integral. To simplify the terms further, we use the following approximation over all support points and corresponding basis functions for $\mathbf{q}$:
 
 \begin{equation}
   \label{eq:support-point-approximation}
   \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i\left(x,y\right)
 \end{equation}
 
-$\mathbf{q}_i$ are the $\mathbf{q}$-values at the corresponding support points.
-Since those do not depend on the position, it allows us to move them out of the integral, leaving integrals over various combinations of basis functions, which are all independant of $\mathbf{q}$, and hence can be precomputed.
+The values $\mathbf{q}_i$ are the $\mathbf{q}$-values at the corresponding support points. Since those do not depend on the position, it allows us to move them out of the integral, leaving integrals over various combinations of basis functions, which are all independent of $\mathbf{q}$, and hence can be precomputed.
 
 Please note that $\mathbf{q}$ (and all $\mathbf{q}_i$) contain three components: The height $h$, the momentum in $x$-direction $u_x$ and the $y$ momentum $u_y$. This means, equation (\ref{eq:support-point-approximation}) yields three equations (one for each of the components).
 
