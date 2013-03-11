@@ -17,7 +17,7 @@
 \usepackage{ifthen}
 \usepackage{cite}
 
-\usepackage{todonotes}
+%\usepackage{todonotes}
 
 \usepackage{titlesec}
 \titleformat
@@ -37,7 +37,7 @@
 
 \geometry{margin=3.5cm, bottom=2cm, top=2cm}
 
-%\newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
+\newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
 \newcommand{\done}[2][]{\textcolor{green!50!black}{Done\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
 %\newcommand{\todo}[1]{}
 \newcommand{\korrektur}[1]{\textcolor{red}{\textbf{Korrektur:} #1}}
@@ -714,8 +714,8 @@ We can apply this method to our modified equation (\ref{eq:swe-matrix-form}) onc
 This can only be done if $M$ is actually invertible, which is something we can not be sure of in general.
 However, we have seen that for the polynomials we choose, $M$ is actually invertible.
 The matrix $M$ depends heavily on the chosen basis functions $\phi_1,\dots,\phi_n$.
-A diagonal matrix can be derived by using \emph{orthogonal} polynomials\todo{Referenziert hier am Besten die Jacobi Polynome.}.
-For polynomial degree 1, it is no problem to obtain orthogonal polynomials using the technique described in section \ref{sec:basis-functions-choice}\todo{Satz hat wenig Aussage.}.
+A diagonal matrix can be derived by using \emph{orthogonal} polynomials, one of which are the Jacobi polynomials (see \cite{abramowitzstegun1964handbook}).
+%For polynomial degree 1, it is no problem to obtain orthogonal polynomials using the technique described in section \ref{sec:basis-functions-choice}\todo{Satz hat wenig Aussage.}. %entfernt, da ich nicht wusste, was ich da besseres schreiben könnte
 
 We can see that this has the form we are looking for to apply the euler step. The result looks like this:
 
@@ -745,9 +745,9 @@ We have to keep in mind that equation (\ref{eq:swe-euler-step-solution}) is actu
 \section{Setting}
 \label{sec:setting}
 
-When analyzing wave propagation along a grid of triangles, it is\todo{Abkuerzungen sind schlechter Stil. Immer ausschreiben. Bitte auch ganzen Text durchsehen} essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
+When analyzing wave propagation along a grid of triangles, it is essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
 
-This may sometimes be acquired by exact means, however those computations are long and complex and can result in prohibitively high computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We want\todo{Wir wollen das nicht analysieren, wir \textbf{haben} das im Rahmen dieser Arbeit analysiert und evaluiert :-)} to analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.
+This may sometimes be acquired by exact means, however those computations are long and complex and can result in prohibitively high computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We have analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.\todo{Dann brauchen wir noch eine Antwort in der Conclusion, ob's wirklich suitable ist, was meinst Du?}
 
 We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$.
 Each triangle has its own polynomial for every component ($h$ and $u$), evaluated over coordinates on the triangle. After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and triangle, resulting in four polynomials.
@@ -784,7 +784,7 @@ In (\ref{eq:lax-friedrich-definition}), $p^R$ and $p^L$ stand for the height and
 
 The factor $\alpha$ is used to regulate the quality of the resulting term.
 Lower values result in increased accuracy but reduces the stability of the algorithm.
-Depending on simulation circumstances, $\alpha$ is set globally and treated the same for all triangles or is determined based on the quantities stored for certain triangles at run time, which obviously results in higher computation time\todo{Nein: Adaptive $\alpha$ bestimmung ermoeglichst genauere und voraussichtlich groessere Zeitschrittweiten und damit voraussichtlich kuerzere Simulationen}. The various methods and their properties are discussed in \cite{leveque2002finite}.
+Depending on simulation circumstances, $\alpha$ is set globally and treated the same for all triangles or is determined based on the quantities stored for certain triangles at run time, which obviously results in higher computation time with respect to one single time-step.\todo{Nein: Adaptive $\alpha$ bestimmung ermoeglichst genauere und voraussichtlich groessere Zeitschrittweiten und damit voraussichtlich kuerzere Simulationen} \done[Philipp]{abgeändert auf ``one single time-step''. Passt das dann?}. The various methods and their properties are discussed in \cite{leveque2002finite}.
 For our purposes, we will leave it invariant in time and space across the whole domain.
 We refer to \cite{cockburn1999discontinuous,leveque2002finite} for readers interested in this issue and other choices of flux functions.
 
