@@ -112,17 +112,19 @@ Especially in tsunami-related environments even non-local factors like bathymetr
 
 In this work we focus mainly on computations based on the shallow water equations, serving as a starting point for computation of wave propagation, along with an analysis of the discretization problem, as well as numerical solutions for it.
 
-\section{Adaptive triangle grid}
+\section{Adaptive vs. non-adaptive triangle grid}
 \label{sec:triangles}
 
-For our purposes we use an adaptive triangle grid. We do so, since a framework established at the TUM (called Sierpinski) is using this kind of triangle grid.
+For our purposes we could use an adaptive triangle grid. We do so, since a framework established at the TUM (called Sierpinski) is using this kind of triangle grid.
 In feature rich areas, the grid adapts to a finer resolution allowing for more detailed computations without wasting unnecessary computation time in areas with less features.
 
+However, we research effects within a non-adaptive grid and focus on the respective equations.
+\todo[Philipp]{Brauchts die Section? -- Wirkt etwas verloren.}
 
 \section{Reference space and Discontinous Galerkin}
 \label{sec:reference-space-dg}
 
-Using these triangles, we can simplify a few steps in the calculation process.
+Using a triangle grid, we can simplify a few steps in the calculation process.
 With a suitable library for coordinate projection, we can rotate triangles and edges into a space that is relevant for us.
 Instead of applying cell update rules for each individual triangle, we apply a transformation to the triangles enabling the application of the cell update rules in a single reference space only.
 
