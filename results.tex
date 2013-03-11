@@ -38,7 +38,8 @@
 \geometry{margin=3.5cm, bottom=2cm, top=2cm}
 
 \newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
-\newcommand{\done}[2][]{\textcolor{green!50!black}{Done\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
+\newcommand{\done}[2][]{\textcolor{green!50!black}{DONE\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
+\newcommand{\remark}[2][]{\textcolor{red!70!yellow}{REMARK\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
 %\newcommand{\todo}[1]{}
 \newcommand{\korrektur}[1]{\textcolor{red}{\textbf{Korrektur:} #1}}
 \newcommand{\reals}{\mathbb{R}}
@@ -818,7 +819,7 @@ We have to keep in mind that equation (\ref{eq:swe-euler-step-solution}) is actu
 
 When analyzing wave propagation along a grid of triangles, it is essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
 
-This may sometimes be acquired by exact means, however those computations are long and complex and can result in prohibitively high computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We have analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.\todo{Dann brauchen wir noch eine Antwort in der Conclusion, ob's wirklich suitable ist, was meinst Du?}
+This may sometimes be acquired by exact means, however those computations are long and complex and can result in prohibitively high computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We have analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.\todo[Philipp]{Dann brauchen wir noch eine Antwort in der Conclusion, ob's wirklich suitable ist, was meinst Du?}
 
 We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$.
 Each triangle has its own polynomial for every component ($h$ and $u$), evaluated over coordinates on the triangle. After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and triangle, resulting in four polynomials.
@@ -827,7 +828,7 @@ What we want to do now is take a number of sample points along the edge and eval
 \subsection{Flux function}
 \label{sec:flux-function-intro}
 
-Since we are dealing with a one dimensional problem, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function, which is the same problem as started in section \ref{sec:shallow-water-equations} of the introduction, only mapped to one dimension\todo{Wie funktioniert das Mapping? Punktprodukt mit der Normalen -- macht Punktprodukt mit der Normalen nicht die Trafo zwischen Spaces?}:
+Since we are dealing with a one dimensional problem, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function, which is the same problem as started in section \ref{sec:shallow-water-equations} of the introduction, only mapped to one dimension\todo{Wie funktioniert das Mapping? Punktprodukt mit der Normalen --\done{macht Punktprodukt mit der Normalen nicht die Trafo zwischen Spaces? Wir haben die Formel einfach so vom Martin bekommen.}}:
 
 \begin{equation}
   \label{eq:flux-function-definition}
@@ -1014,7 +1015,7 @@ It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-n
 
 The main challenge with exact integration is that Maple has to compute the zeroes of $N\left(x\right)-N^\prime\left(x\right)$, which is, depending on the degree of the polynomials, a time consuming task.
 
-There are several possibilities to overcome this problem. The first that might come to one's mind is to use a Gaussian quadrature. However, using a Gaussian quadrature requires that the integrand at least ``looks somehow'' like a polynomial -- something we explicitly can \emph{not} be sure of.\todo{Da wird ein Mathematiker bei dem was ihr spaeter macht aber sofort gegenargumentieren, dass Gauss ja N-ter ordnung genau ist und ihr lediglich 0-ter Ordnung quadriert wenn mich nicht alles taeuscht. \done{-- Aber warum sollte denn zweiter Ordnung besser sein als nullte Ordnung, \emph{wenn wir bereits wissen, dass wir es eh nicht mit Polynomen, sondern gebrochenrationalen Funktionen zu tun haben?}}}
+There are several possibilities to overcome this problem. The first that might come to one's mind is to use a Gaussian quadrature. However, using a Gaussian quadrature requires that the integrand at least ``looks somehow'' like a polynomial -- something we explicitly can \emph{not} be sure of.\todo{Da wird ein Mathematiker bei dem was ihr spaeter macht aber sofort gegenargumentieren, dass Gauss ja N-ter ordnung genau ist und ihr lediglich 0-ter Ordnung quadriert wenn mich nicht alles taeuscht. \remark{-- Aber warum sollte denn zweiter Ordnung besser sein als nullte Ordnung, \emph{wenn wir bereits wissen, dass wir es eh nicht mit Polynomen, sondern gebrochenrationalen Funktionen zu tun haben?}}}
 
 We consider three possibilities for computing the error:
 
