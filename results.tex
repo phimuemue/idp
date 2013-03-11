@@ -634,11 +634,27 @@ The third line is computationally equivalent to the previous, with the respectiv
 \subsection{Inspecting the boundary integral}
 \label{sec:boundary-integral}
 
-Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because the term $F^e$ is located and evaluated on the edge, and hence cannot be moved out of the integral, so the same techniques employed with the previous two integrals will not work here. Instead, we employ a Gaussian quadrature and integrate numerically. To do that we substitute the inner integral as follows:
+Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because the term $F^e$ is located and evaluated on the edge, and hence cannot be moved out of the integral, so the same techniques employed with the previous two integrals will not work here. Instead, we employ a Gaussian quadrature and integrate numerically. To do that we substitute the integral as follows:
 \begin{equation}
   \int_{e} F^e \phi_i \, ds \approx \sum_{k=1}^{m} F^e\left(p_k^e\right) \underbrace{\phi_i\left(p_k^e\right) \cdot w_k}_{w_{ik}^e},
 \end{equation}
 where $m$ is the number of integration points and $w_k$ denotes the Gauss weight for point $p_k^e$ for an arbitrary edge $e$ as the weight is determined normalized in one dimension, and as such is the same for all edges. This also contains the edge length (which was normalized to 1, but the hypotenuse still has length $\sqrt{2}$ in that case), which is why it has to be stored separately for every edge. Similar to the previous examples, the values $\phi_i\left(p_k^e\right) \cdot w_k$ can be precomputed for every edge as well, and added onto the term $F^e\left(p_k^e\right)$ when required. $F^e\left(p_k^e\right)$ itself is called the \emph{numerical flux} and can be computed in different ways, which we will get to in part \ref{part:polynomial-comparison}.
+
+The abscissal values and weights of the support points for Gaussian quadrature are summed up in table \ref{tab:x-coordinates-gauss-quadrature} and can be read in any book on the topic (e.g. \cite{hans2009schwarz}) --- they can be derived from the zeroes of the Legendre polynomials (see \cite{abramowitzstegun1964handbook}). We show these values for the one dimensional case, but they can easily been projected onto the two dimensional case using linear interpolation.
+
+\begin{table}[ht]
+  \renewcommand\arraystretch{1.5}
+  \centering
+  \begin{tabular}[ht]{cll}
+    Order & $x$-coordinates & Respective weights \\
+    \hline
+    2 & $\frac{1}{2}-\frac{1}{6}\cdot \sqrt{3},\  \frac{1}{2}+\frac{1}{6}\cdot \sqrt{3}$ & 1, 1\\
+    3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} ,\  0.5,\  \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ & $\frac{5}{9}, \frac{8}{9}, \frac{5}{9}$ \\
+    \hline
+  \end{tabular}
+  \caption{$x$-coordinates of support points for Gauss-Quadrature if we integrate within the range $\left[ 0,1 \right]$. Coordinates can be scaled to an arbitrary interval and be transformed onto any line using linear interpolation.}
+  \label{tab:x-coordinates-gauss-quadrature}
+\end{table}
 
 \section{Matrix overview\todo{Passendere Ueberschrift finden}\done{Keine Ahnung, ob das jetzt besser ist}}
 \label{sec:matrix-listing}
@@ -1234,22 +1250,8 @@ To plot $u$ and $h$ we need to know their respective ranges as well. This is not
 
 \section{Results: Distribution of support points according to Gaussian quadrature}
 \label{sec:results}
-\todo{Das muss zur Herleitung der Kanten-Matrizen}
-We implemented several scenarios and present the outcome of some of them using the support points one would use when doing a Gaussian quadrature. The $x$ values of these support points are summed up in table \ref{tab:x-coordinates-gauss-quadrature} and can be read in any book on Gaussian quadrature (e.g. \cite{hans2009schwarz}) --- they can be derived from the zeroes of the Legendre polynomials (see \cite{abramowitzstegun1964handbook}).
 
-\begin{table}[ht]
-  \renewcommand\arraystretch{1.5}
-  \centering
-  \begin{tabular}[ht]{cl}
-    Order & $x$-coordinates \\
-    \hline
-    2 & $\frac{1}{2}-\frac{1}{6}\cdot \sqrt{3},\  \frac{1}{2}+\frac{1}{6}\cdot \sqrt{3}$ \\
-    3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} ,\  0.5,\  \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ \\
-    \hline
-  \end{tabular}
-  \caption{$x$-coordinates of support points for Gauss-Quadrature}
-  \label{tab:x-coordinates-gauss-quadrature}
-\end{table}
+\done{Lt. Martin hab ich das zur Herleitung der Kantenmatrizen gesteckt.}
 
 \subsection{Setting all support points to the same value}
 \label{sec:setting-all-support-points-to-the-same-value}
