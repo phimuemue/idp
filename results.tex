@@ -1374,9 +1374,13 @@ We started as in section \ref{sec:setting-all-support-points-to-the-same-value} 
 \section{Conclusions}
 \label{sec:conslusions}
 
-All plots have the fact in common that it looks like an error growing towards the boundarys\todo{Was meint ihr mit buondaries? Habt ihr Randbedingungen analysiert?}.
-However, trying to determine an exact formula for the deviation is impracticle due to the amount of variables that all interact with each other, and may even be impossible.
-\todo{Hier sollte schon noch mehr rein. Das ist etwas spaehrlich. Irgendetwas in der Richtung "Wenn die gegenueberliegende Stuetzstelle von den Werten sehr stark abweicht, gibt es hohe Abweichungen. Die Hoehe ist nicht so anfaellig wie die Geschwindigkeit (wenn das stimmt :-) ), etc.}
+We have seen in the plots that the errors in height and impulse show two very different behaviours. The impulse error highly depends upon the height values chosen, while the impulse values have a minor impact only. The height error, on the other hand, is largely depending on the chosen impulse values.
+
+Moreover, and as a rule of thumb, we observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets. This is good, since in practice it may be well the case that all support points have similar values and often do not show extreme deviations between each other.
+
+However, trying to determine an exact formula for the deviation is impractical due to the amount of variables that all interact with each other, and may even be impossible.
+
+Additionally, we saw that singularities do not play a significant role in our computations since they only occur for unrealistic scenarios. This is highly advantageous since we then can be sure that the integral exists and quadrature methods give meaningful results.
 
 \clearpage{}
 
