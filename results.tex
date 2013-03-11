@@ -220,8 +220,9 @@ A relatively simple way of constructing basis functions is to use Lagrange inter
 
 The (minimum) number of basis functions $n$ is not arbitrary, but it depends on the degree of the polynomials. If we only employ polynomials of degree 0 (i.e.\,constants), we only need one basis function. Increasing the degree by 1 involves introducing variables $x$ and $y$. Thus, we need three polynomials to construct every polynomial of degree 1, one to create polynomials containing $x$, one to create polynomials containing $y$ and one to create other constant polynomials.
 
-Generalizing this scheme we observe the following: if we want to use polynomials of degree $d$, a polynomial can contain terms $x^a y^b$ with $a+b \leq d$. A simple combinatorial argument indicates that we need $\frac{(d+2) \cdot (d+1)}{2}$ basis functions to span the function space containing all the polynomials up to degree $d$ \marginpar{Hier fehlt die Referenz}.
-
+Generalizing this scheme we observe the following: if we want to use polynomials of degree $d$, a polynomial can contain terms $x^a y^b$ with $a+b \leq d$. That is, we have combinations $x^a y^b=\tilde{d}$ for $\tilde{d} \in \left\{ 0,1,2,\dots,d \right\}$. If we fix $\tilde d$, we see that we can construct exactly $\tilde d + 1$ combinations, namely $x^{\tilde{d}} y^0, x^{\tilde d -1} y^1,x^{\tilde d -2} y^2, \dots, x^0 y^{\tilde d}$.
+Since $\tilde d \in \left\{ 0,1,2,\dots,d \right\}$, we have $\sum_{\tilde d = 0}^d \tilde d = {(d+2) \cdot (d+1)}/{2}$ combinations in total.
+This means that we need ${(d+2) \cdot (d+1)}/{2}$ basis functions to span the function space containing all the polynomials up to degree $d$ \done{Passt das so?}.
 
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
@@ -457,7 +458,7 @@ This also implies three normal vectors $\mathbf{n}_e$, one for each edge.
   \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds = \sum_{e \in E} \int_{e} F(\mathbf{q}) \cdot \mathbf{n}_e \, \phi \, ds = \sum_{e \in E} \int_{e} F^e \phi \, ds =: \text{Boundary integral}
 \end{equation}
 
-We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a standardized \todo{Reference space} space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:triangles}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
+We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a \todo{Reference space\done{Reicht das so?}} reference space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:triangles}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
 
 \begin{equation}
   \label{eq:shallow-water-weak-form-div-applied-approximation}
