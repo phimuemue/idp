@@ -315,40 +315,42 @@ The first equation can be derived the following way: If we have basis functions 
 Note that for any support point $(x_p,y_p)$, we have that
 
 \begin{equation}
-  \sum_{i=1}^n \phi_i(x_p,y_p) = 1
+  \sum_{i=1}^n \phi_i(x_p,y_p) = 1.
 \end{equation}
 
-Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfils $\overline{\rho}(x_p,y_p)=1$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$.
+From this -- and using the fundamental theorem of algebra -- we can conclude that the polynomial $\sum_{i=1}^n \phi_i(x,y)$ must be 1.
 
-It must be the same because of the following: The sum of all basis functions $\phi_i$ yields a new polynomial, whose coefficients must be all zero, except the ``constant coefficient'' that must be 1. This can be seen as follows: Imagine we would like to solve the following system of linear equations:
+% Moreover, we know that the polynomial $\overline{\rho}(x,y)=1$ is a polynomial that fulfils $\overline{\rho}(x_p,y_p)=1$ for all support points $(x_p,y_p)$. Since the coefficients for the polynomial are uniquely determined we know that $\sum_{i=1}^n \phi_i(x,y)$ must be the same as $\rho$.
 
-\setcounter{MaxMatrixCols}{20}
+% It must be the same because of the following: The sum of all basis functions $\phi_i$ yields a new polynomial, whose coefficients must be all zero, except the ``constant coefficient'' that must be 1. This can be seen as follows: Imagine we would like to solve the following system of linear equations:
 
-\begin{equation*}
-  \begin{pmatrix}
-    1 & x_1 & y_1 & x_1^2 & x_1 y_1 & y_1^2 & x_1^3 & x_1^2 y_1 & x_1 y_1^2 & y_1^3 & \dots & y_1^n \\
-    1 & x_2 & y_2 & x_2^2 & x_2 y_2 & y_2^2 & x_2^3 & x_2^2 y_2 & x_2 y_2^2 & y_2^3 & \dots & y_2^n \\
-    \vdots & &&&&&&&&&& \vdots \\
-    1 & x_n & y_n & x_n^2 & x_n y_n & y_n^2 & x_n^3 & x_n^2 y_n & x_n y_n^2 & y_n^3 & \dots & y_n^n \\
-  \end{pmatrix} \cdot
-  \begin{pmatrix}
-    \alpha_{0,0} \\
-    \alpha_{1,0} \\
-    \alpha_{0,1} \\
-    \alpha_{2,0} \\
-    \alpha_{1,1} \\
-    \alpha_{0,2} \\
-    \hdots \\
-    \alpha_{0,n}
-  \end{pmatrix} =
-  \begin{pmatrix}
-    1 \\ 1 \\ 1 \\ \vdots \\ 1
-  \end{pmatrix}
-\end{equation*}
+% \setcounter{MaxMatrixCols}{20}
 
-If we solve the above system, we arrive at the fact that $\alpha_{0,0}=1$ and all other $\alpha_{i,j}=0$ --- at least if all columns within the huge matrix are linearly independent (which is the case if all support points are pairwise different).
+% \begin{equation*}
+%   \begin{pmatrix}
+%     1 & x_1 & y_1 & x_1^2 & x_1 y_1 & y_1^2 & x_1^3 & x_1^2 y_1 & x_1 y_1^2 & y_1^3 & \dots & y_1^n \\
+%     1 & x_2 & y_2 & x_2^2 & x_2 y_2 & y_2^2 & x_2^3 & x_2^2 y_2 & x_2 y_2^2 & y_2^3 & \dots & y_2^n \\
+%     \vdots & &&&&&&&&&& \vdots \\
+%     1 & x_n & y_n & x_n^2 & x_n y_n & y_n^2 & x_n^3 & x_n^2 y_n & x_n y_n^2 & y_n^3 & \dots & y_n^n \\
+%   \end{pmatrix} \cdot
+%   \begin{pmatrix}
+%     \alpha_{0,0} \\
+%     \alpha_{1,0} \\
+%     \alpha_{0,1} \\
+%     \alpha_{2,0} \\
+%     \alpha_{1,1} \\
+%     \alpha_{0,2} \\
+%     \hdots \\
+%     \alpha_{0,n}
+%   \end{pmatrix} =
+%   \begin{pmatrix}
+%     1 \\ 1 \\ 1 \\ \vdots \\ 1
+%   \end{pmatrix}
+% \end{equation*}
 
-Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
+% If we solve the above system, we arrive at the fact that $\alpha_{0,0}=1$ and all other $\alpha_{i,j}=0$ --- at least if all columns within the huge matrix are linearly independent (which is the case if all support points are pairwise different).
+
+% Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
 \section{Discontinuous Galerkin}
 \label{sec:discontinuous-galerkin}
