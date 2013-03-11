@@ -946,6 +946,19 @@ We consider three possibilities for computing the error:
 
 \todo{Ich wuerde bei jedem bullet-point noch fett ein schlagwort davor schreiben}
 \begin{enumerate}
+\item Another approach was to use Maple's numerical integration facilities. If we tell Maple to
+  \begin{center}
+    \texttt{evalf(Int(abs(N(x)-N(x)),x=0..1))},
+  \end{center}
+  we get a good result. 
+
+  %We experimented with random polynomials and tried a few of them out, comparing the \texttt{evalf}-result to the exact integration. We experienced that the \texttt{evalf}-result was always equal to the actual result within an error of 0.001.
+
+  % \todo{Kleine Studien, noch dazu mit Zufallswerten sind gut um die eigene Erkenntnis zu foerdern, ich wuerde diese aber in keine Ausarbeitung schreiben. Gleiches gilt fuer folgenden Absatz.}
+  
+  % However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
+
+  The downside of this method is that is computationally infeasible for a detailed analysis of higher order due to the increasingly complex formulae.
 \item $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
   \begin{equation*}
     N\left(x_i^F\right) = N^\prime\left(x_i^F\right), \forall i \in \{1 \dots n\}.
@@ -960,17 +973,6 @@ We consider three possibilities for computing the error:
   If we moreover divide each interval $[x_i,x_{i+1}]$ into several smaller sub-intervals, and simply integrate over them, we can reduce the error ad libitum.
 
   While we can tweak this method by simply evaluating more and more sub-intervals, this comes at the price of more computations.
-\item Another approach was to use Maple's numerical integration facilities. If we tell Maple to
-  \begin{center}
-    \texttt{evalf(Int(abs(N(x)-N(x)),x=0..1))},
-  \end{center}
-  we get a good result. The downside of this method is that is computationally infeasible for a detailed analysis of higher order.
-  \todo{Ich wuerden das ganz nach vorne ziehen. Erst habt ihr es naemlich mit Maple versucht. Das hat zu lange gedauert. Dann ging's weiter zur zweiten methode}
-
-  We experimented with random polynomials and tried a few of them out, comparing the \texttt{evalf}-result to the exact integration. We experienced that the \texttt{evalf}-result was always equal to the actual result within an error of 0.001.
-  \todo{Kleine Studien, noch dazu mit Zufallswerten sind gut um die eigene Erkenntnis zu foerdern, ich wuerde diese aber in keine Ausarbeitung schreiben. Gleiches gilt fuer folgenden Absatz.}
-
-  However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
 \item The last approach we tried was to divide the area under the function
   \begin{equation*}
     \left| N\left(x\right)-N^\prime\left(x\right) \right|
