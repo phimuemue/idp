@@ -937,11 +937,15 @@ i.e.\,we introduce a superscript indicating whether we are dealing with points w
 As we can see, each point consists of two components, first a position on the edge ($x_i, i \in \{1 \dots n\}$) and second a vector with the corresponding height and momentum, ($h_i^R$ and $u_i^R$ for the left triangle and $h_i^L$ and $u_i^L$ for the right, with $i \in \{1 \dots n\}$).
 
 Intuitively one would think the support points should be equidistant to each other, but other distributions yield better results.
-Eventually we will need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we will employ the Gaussian quadrature.
+Eventually we will need to integrate over the resulting function, which is numerically expensive. To compute it efficiently, we will employ the Gaussian quadrature for polynomials. This is common practice according to \cite{schwaiger08adaptive,castro07high-order-ader-fv-dg-numerical-methods,boeck08discontinuous-galerkin-verfahren}.
 
-\todo{Es gibt mehrer Versionen der Gauss quadratur. z. B. auch fuer $e^x$. Wir verwenden die Gauss Quadratur fuer Polynome und analysieren diese, da diese auch von anderen verwendet wird. Referenz nicht vergessen!} This method requires its own support points \todo{Satz versteh ich nicht. Einfach schreiben, dass man die Gauss Quadratur verwendet sollte ausreichen.}to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}\todo{Ist die Wahl der Stuetzpunkte wirklich ein Resultat?}.
+We examine two settings for our support points that are used to construct the polynomials:
 
-However, we also investigated the situation for an equidistant distribution of support points. We show the corresponding results, as well as a short explanation of why this setting may be useful, in section \ref{sec:equidistant-distribution-of-support-points}.
+\begin{description}
+\item[Support points according to Gaussian quadrature] \todo{Es gibt mehrer Versionen der Gauss quadratur. z. B. auch fuer $e^x$. Wir verwenden die Gauss Quadratur fuer Polynome und analysieren diese, da diese auch von anderen verwendet wird. Referenz nicht vergessen!} Since we eventually need to integrate over the edge (using Gaussian quadrature), it is convenient to choose the same support points to construct the polynomials.
+to be applied, so we will choose our support points to coincide with them for easier computation. The corresponding results are summed up in section \ref{sec:results}.
+\item[Equidistant support points] However, we also investigated the situation for an equidistant distribution of support points. We show the corresponding results, as well as a short explanation of why this setting may be useful, in section \ref{sec:equidistant-distribution-of-support-points}.
+\end{description}
 
 To construct the polynomials assume we have a method $interpolate\left(\{\left(x_i,y_i\right) \mid i \in \{1 \dots n\}\}\right)$.
 This method takes a set of points $\left(x_1,y_1\right),\dots,\left(x_n,y_n\right)$ and returns the polynomial of degree $n-1$ that goes through all the points within the set.
@@ -1309,7 +1313,7 @@ To plot $u$ and $h$ we need to know their respective ranges as well. This is not
 
 % Looking back at the caption of the subfigure, which had ``1/0.04'' in the latter part (subfigure \ref{subfig:fixing-p2-in-first-example}). This tells us the range of the values of $I$ (i.e.\,the ``$z$ axis''). To be precise, the firs part tells us that the maximal plotted value for the h component is 1, while the maximal $u$ component value is 0.04. A single number indicates a range between 0 and that number, while an explicit range indicates the given range (for an example, see \ref{subfig:example-with-range}, where the $h$ component plot range goes from 0.25 to 0.55, and the $u$ component from 0 to 0.03).
 
-\section{Results: Distribution of support points according to Gaussian quadrature}
+\section{Distribution of support points according to Gaussian quadrature}
 \label{sec:results}
 
 \done{Auf Anraten vom Martin hab ich das Zeug mit den Gauss-Stützpunkten zur Herleitung der Kantenmatrizen gesteckt.}
