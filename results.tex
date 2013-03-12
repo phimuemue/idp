@@ -824,13 +824,21 @@ We have to keep in mind that equation (\ref{eq:swe-euler-step-solution}) is actu
 \section{Setting}
 \label{sec:setting}
 
-When analyzing wave propagation along a grid of triangles, it is essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
+%When analyzing wave propagation along a grid of triangles, it is essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
 
-This may sometimes be acquired by exact means, however those computations are long and complex and can result in prohibitively high computation times. On the other hand, approximations through various numerical methods can speed this process up significantly. We have analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.\todo[Philipp]{Dann brauchen wir noch eine Antwort in der Conclusion, ob's wirklich suitable ist, was meinst Du?}
+We will examine an aspect of wave propagation between two triangles, namely the quality of the approximation of the Lax-Friedrich-Flux. 
 
-We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$.
-Each triangle has its own polynomial for every component ($h$ and $u$), evaluated over coordinates on the triangle. After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and triangle, resulting in four polynomials.
-What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places.\todo{Wieso, warum?}
+While we \emph{might} be able to evaluate the Lax-Friedrich-Flux exactly, the involved computations are long and complex and can result in prohibitively high computation times. 
+
+On the other hand, approximations through various numerical methods can speed this process up significantly. We have analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation. \remark[Philipp]{Dann brauchen wir noch eine Antwort in der Conclusion, ob's wirklich suitable ist, was meinst Du?}
+
+We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own polynomial for every component (height $h$ and impulse $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates. 
+
+After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four polynomials (see section \ref{sec:original-situation-2d-problem} for more detailed information regarding the parametrization).
+
+What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places. We do so since e.g. the Sierpinski framework does exactly this: It uses a Gaussian quadrature (which is common practice in this area \cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}), i.e. it samples the function at certain points and numerically computes an integral. However, remember that we actually have a rational function and can not be sure that Gaussian quadrature is one hundret percent accurate. 
+
+That means, we compare the actual integrand to the integrand as used for the Gaussian quadrature.\remark{Versteht man das?}
 
 \subsection{Flux function}
 \label{sec:flux-function-intro}
