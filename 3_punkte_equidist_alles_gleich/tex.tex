@@ -2,13 +2,21 @@
 % u_1 = 0.0, h_1 = 10.0, U_1 = 0.0, H_1 = 10.0, u_2 = 0.0, h_2 = 10.0, U_2 = 0.0, H_2 = 10.0, u_3 = 0.0, h_3 = 10.0, U_3 = 0.0, H_3 = 10.0
 \begin{figure}[h!t]
 \centering
-  \subfigure[Height and impulse of $p_1^L$, $p_1^R$, $p_3^L$ resp. $p_3^R$.] {
+  \subfigure[Impulse of $p_1^L$, $p_1^R$, $p_3^L$ resp. $p_3^R$.] {
     %\includegraphics[scale=\zoomfactor]{{{3_punkte_equidist_alles_gleich/x_y_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0f0}}}  
-    \includegraphics[scale=\zoomfactor]{{{3_punkte_equidist_alles_gleich/x_y_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0f1}}}  
+    \begin{tikzpicture}
+      \node at (0,0) {\includegraphics[scale=\zoomfactor]{{{3_punkte_equidist_alles_gleich/x_y_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0f1}}}  };
+      \fill[white] (.8,1.2) rectangle (1.75,1.5);
+      \node[align=right, text width=3cm] at (.2,1.33) {\textsf{\tiny{Impulse error}}};
+    \end{tikzpicture}
   }
-  \subfigure[Height and impulse of $p_2^L$ resp. $p_2^R$.] {
+  \subfigure[Impulse of $p_2^L$ resp. $p_2^R$.] {
     %\includegraphics[scale=\zoomfactor]{{{3_punkte_equidist_alles_gleich/0.0_10.0_0.0_10.0_x_y_0.0_10.0_0.0_10.0_0.0_10.0f0}}}  
-    \includegraphics[scale=\zoomfactor]{{{3_punkte_equidist_alles_gleich/0.0_10.0_0.0_10.0_x_y_0.0_10.0_0.0_10.0_0.0_10.0f1}}}  
+    \begin{tikzpicture}
+      \node at (0,0) {\includegraphics[scale=\zoomfactor]{{{3_punkte_equidist_alles_gleich/0.0_10.0_0.0_10.0_x_y_0.0_10.0_0.0_10.0_0.0_10.0f1}}}  };
+      \fill[white] (.8,1.2) rectangle (1.75,1.5);
+      \node[align=right, text width=3cm] at (.2,1.33) {\textsf{\tiny{Impulse error}}};
+    \end{tikzpicture}
   }
   % \subfigure[Height and impulse of $p_3^L$ resp. $p_3^R$.] {
   %   %\includegraphics[scale=\zoomfactor]{{{3_punkte_equidist_alles_gleich/0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_x_y_0.0_10.0f0}}}  
