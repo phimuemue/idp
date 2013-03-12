@@ -871,11 +871,10 @@ In (\ref{eq:lax-friedrich-definition}), $p^R$ and $p^L$ stand for the height and
 
 The factor $\alpha$ is used to regulate the quality of the resulting term.
 Lower values result in increased accuracy but reduces the stability of the algorithm.
-Depending on simulation circumstances, $\alpha$ is set globally and treated the same for all triangles or is determined based on the quantities stored for certain triangles at run time, which obviously results in higher computation time with respect to one single time-step.\todo{Nein: Adaptive $\alpha$ bestimmung ermoeglichst genauere und voraussichtlich groessere Zeitschrittweiten und damit voraussichtlich kuerzere Simulationen} \done[Philipp]{abgeändert auf ``one single time-step''. Passt das dann?}. The various methods and their properties are discussed in \cite{leveque2002finite}.
+Depending on simulation circumstances, $\alpha$ is set globally and treated the same for all triangles or is determined based on the quantities stored for certain triangles at run time, which obviously results in higher computation time with respect to one single time-step.\remark[Philipp]{abgeändert auf ``one single time-step''. Passt das dann?}. The various methods and their properties are discussed in \cite{leveque2002finite}.
 For our purposes, we will leave it invariant in time and space across the whole domain.
 We refer to \cite{cockburn1999discontinuous,leveque2002finite} for readers interested in this issue and other choices of flux functions.
 
-\todo{Efficiency-Bemerkung umformulieren}
 Depending on how $\alpha$ is handled, it results in different methods. Sometimes it is set globally and treated the same for all triangles, other times it is determined based on the qualities of certain triangles at run time, which obviously results in higher computation time. The various methods and their properties are discussed in \cite{leveque2002finite}. For our purposes, we will leave it invariant in time and space across the whole domain.
 
 \subsection{Original situation: A 2D problem}
