@@ -914,7 +914,10 @@ In the case shown we would use six support points, resulting in a two-variable p
 \end{figure}
 
 Since we are interested in the situation along the adjacent edges, which is a linear curve, we can remodel the problem to one dimension, which will reduce the computational complexity. This means that we do not actually construct two-variable polynomials for the whole triangles, but instead consider just polynomials that depend on one variable $\lambda \in [0,1]$. The variable $\lambda$ simultaneously traverses both adjacent edges (see figure \ref{fig:two-triangles-and-some-support-points}).
-\todo{Beruft euch z. B. darauf, dass die Berechnung im Kanten Referenzraum identisch ist. Vorausgesetzt, das wurde vorher erklaert :-).}
+
+We can do so, since an integration along an edge can be considered as a one-dimensional integration without changing the result.\remark{Der Martin meinte irgendwas von ``Berechnung im Kanten Referenzraum'' --- keine Ahnung, ob's das wirklich braucht.} Since the original polynomials (w.r.t. $x$ and $y$) are of a certain degree, we will -- after the parametrization -- obtain polynomials of the same degree w.r.t. $\lambda$, since the mapping from $\lambda$ onto $x$ and $y$ is linear.
+
+%\todo{Beruft euch z. B. darauf, dass die Berechnung im Kanten Referenzraum identisch ist. Vorausgesetzt, das wurde vorher erklaert :-).}
 
 \subsection{Constructing the polynomials}
 \label{sec:constructing-polynomials}
