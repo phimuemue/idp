@@ -1405,6 +1405,8 @@ The same calculations for three random points is shown in figure \ref{fig:three-
 \section{Equidistant distribution of support points}
 \label{sec:equidistant-distribution-of-support-points}
 
+\todo{Explain why we do it with equidistant support points}
+
 When one considers the figures depicted in section \ref{sec:results}, it seems intuitive to assume that the error grows if the values for $h$ and $u$ diverge further from the average.
 
 One suspicion that could explain that intuition is due to polynomials $N\left(x\right)$ and $N^\prime\left(x\right)$ generally diverging towards the borders of $[0,1]$.
@@ -1412,6 +1414,11 @@ One suspicion that could explain that intuition is due to polynomials $N\left(x\
 So we chose the support points equidistant \todo{Bei aequidistanten Stuetzstellen wird das Ausbrechen der Polynome bei Extrapolation noch Schlimmer...} over the interval $[0,1]$ and conducted some experiments. When we choose the support points equidistant over this interval, 0 and 1 are support points and we can be sure that $N\left(x\right)$ and $N^\prime\left(x\right)$ coincide at the values 0 and 1 (i.e.\,$N\left(0\right)=N^\prime\left(0\right)$ and $N\left(1\right)=N^\prime\left(1\right)$).
 
 In this section, we show some results that were obtained by choosing the support points equidistant along the edge.
+
+\subsection{Two fixed support points}
+\label{sec:equidist-two-fixed}
+
+\input{equidist_2_default/tex}
 
 \subsection{Three fixed support points}
 \label{sec:equidistant-three-fixed}
@@ -1424,6 +1431,19 @@ We started as in section \ref{sec:setting-all-support-points-to-the-same-value} 
 \input{3_punkte_equidist_alles_gleich/tex.tex}
 
 \todo{Wenn es lediglich diese eine Subsection gibt, sollte der Punkt herausgenommen werden oder ihr macht noch einen zweiten Vergleich. Eine einzige Studie ist mMn zu wenig um etwas aussagekraeftiges gewinnen zu koennen.}
+
+\subsection{Thre points -- one point variation}
+\label{sec:equidist-3-one-point-variation}
+
+\subsubsection{Decreasing the height of $p_1^L$}
+\label{sec:equidist-3-on-point-var-decr-height-p1}
+
+\input{equidist_3_alles_default_ausser_p1_9_0/tex}
+
+\subsubsection{Decreasing the momentum of $p_1^L$}
+\label{sec:equidist-3-on-point-var-decr-momentum-p1}
+
+\input{equidist_3_alles_default_ausser_p1_10_-1/tex}
 
 \clearpage{}
 
