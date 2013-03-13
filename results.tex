@@ -308,7 +308,7 @@ This also implies three normal vectors $\mathbf{n}_e$, one for each edge.
   \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds = \sum_{e \in E} \int_{e} F(\mathbf{q}) \cdot \mathbf{n}_e \, \phi \, ds = \sum_{e \in E} \int_{e} F^e \phi \, ds =: \text{Boundary integral}
 \end{equation}
 
-We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a reference space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:triangles}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
+We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a reference space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:reference-space}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
 
 \begin{equation}
   \label{eq:shallow-water-weak-form-div-applied-approximation}
