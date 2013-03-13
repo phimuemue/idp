@@ -108,7 +108,7 @@ Especially in tsunami-related environments even non-local factors like bathymetr
 
 In this work we focus on computations based on the shallow water equations with the discontinuous Galerkin method, both of which will be described below.
 Along with that, we will provide an analysis of the discretization problem, as well as explore some numerical solutions for it.
-We will not discretize the domain ourselves, but instead work with a frameworke developed at the TUM, Sierpinski.
+We will not discretize the domain ourselves, but instead work with a framework developed at the TUM, Sierpinski.
 This framework uses an adaptive triangle grid to discretize the domain.
 However, adaptivity will not be relevant to us, as we will only examine communication between at most two neighboring triangles which share the same edge.
 As such, our results can be applied for non-adaptive grids as well.
@@ -790,17 +790,17 @@ From this -- and using the fundamental theorem of algebra -- we can conclude tha
 % Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
 \newpage
-\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrich-Flux}
+\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrichs-Flux}
 \label{part:polynomial-comparison}
 
-\section{Setting}
-\label{sec:setting}
+% \section{Setting}
+%\label{sec:setting}
 
 %When analyzing wave propagation along a grid of triangles, it is essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
 
-We will examine an aspect of wave propagation between two triangles, namely the quality of the approximation of the Lax-Friedrich-Flux.
+We will examine an aspect of wave propagation between two triangles, namely the quality of the approximation of the Lax-Friedrichs-Flux.
 
-While we \emph{might} be able to evaluate the Lax-Friedrich-Flux exactly, the involved computations are long and complex and can result in prohibitively high computation times.
+While we \emph{might} be able to evaluate the Lax-Friedrichs-Flux exactly, the involved computations are long and complex and can result in prohibitively high computation times.
 
 On the other hand, approximations through various numerical methods can speed this process up significantly. We have analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation. \remark[Philipp]{Dann brauchen wir noch eine Antwort in der Conclusion, ob's wirklich suitable ist, was meinst Du?}
 
@@ -830,7 +830,7 @@ Since we are dealing with a one dimensional problem, we have to consider the flu
   \end{pmatrix}
 \end{equation}
 
-\subsection{Lax-Friedrich-Flux}
+\subsection{Lax-Friedrichs-Flux}
 \label{sec:lax-friedrich-definition}
 
 The Lax-Friedrichs flux is defined as follows \cite{leveque2002finite}:
@@ -963,9 +963,9 @@ As was mentioned in section \ref{sec:flux-function-intro} $p^L$ and $p^R$ are ac
 We first analyze the difference between the following two ways to compute the flux based updates:
 
 \begin{description}
-\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrich-Flux, and compute its exact value. The resulting values are again polynomials depending on $x$. We call these polynomials $N\left(x\right)$ (a vector which has a polynomial for the height as its first component, while the second component represents the momentum).
+\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrichs-Flux, and compute its exact value. The resulting values are again polynomials depending on $x$. We call these polynomials $N\left(x\right)$ (a vector which has a polynomial for the height as its first component, while the second component represents the momentum).
 
-\item[Approximate solution] We supply the support points into the Lax-Friedrich-Flux directly, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
+\item[Approximate solution] We supply the support points into the Lax-Friedrichs-Flux directly, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
   \begin{equation*}
     F_{LF}\left(
       \begin{pmatrix}
