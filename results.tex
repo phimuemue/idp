@@ -790,7 +790,9 @@ From this -- and using the fundamental theorem of algebra -- we can conclude tha
 % Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
 \newpage
-\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrichs-Flux}
+\part{Comparing the
+%polynomials arising from 
+exact and approximate solution of the Lax-\-Friedrichs-\-Flux}
 \label{part:polynomial-comparison}
 
 % \section{Setting}
@@ -802,7 +804,7 @@ We will examine an aspect of wave propagation between two triangles, namely the 
 
 While we \emph{might} be able to evaluate the Lax-Friedrichs-Flux exactly, the involved computations are long and complex and can result in prohibitively high computation times.
 
-On the other hand, approximations through various numerical methods can speed this process up significantly. We have analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation. \remark[Philipp]{Dann brauchen wir noch eine Antwort in der Conclusion, ob's wirklich suitable ist, was meinst Du?}
+On the other hand, approximations through various numerical methods can speed this process up significantly. We analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.
 
 We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own polynomial for every component (height $h$ and impulse $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates.
 
@@ -812,10 +814,15 @@ What we want to do now is take a number of sample points along the edge and eval
 
 That means, we compare the actual integrand to the integrand as used for the Gaussian quadrature.\remark{Versteht man das?}
 
+\section{Numerical flux}
+\label{sec:numerical-flux}
+
+The exchange of inforamtion between adjacent triangles is called the flux. We compute the numerical flux by sampling the edge at certain points. There are several possibilities to compute the numerical flux, and we focus on one of them: The Lax-Friedrichs-Flux.
+
 \subsection{Flux function}
 \label{sec:flux-function-intro}
 
-Since we are dealing with a one dimensional problem, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function, which is the same problem as started in section \ref{sec:shallow-water-equations} of the introduction, only mapped to one dimension \cite{george2004numerical}\remark{Reicht die Referenz?}:
+We will see in section \ref{sec:original-situation-2d-problem} that -- even if we have originally a 2d problem -- we can parametrize it in a way such that we can consider a 1d problem. If we do so, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function, which is the same problem as started in section \ref{sec:shallow-water-equations} of the introduction, only mapped to one dimension \cite{george2004numerical}:
 
 \begin{equation}
   \label{eq:flux-function-definition}
@@ -825,7 +832,7 @@ Since we are dealing with a one dimensional problem, we have to consider the flu
     \end{pmatrix}
   \right) =
   \begin{pmatrix}
-    u \cdot h \\
+    u \\
     \frac{u^2}{h} + \frac{1}{2} g h^2
   \end{pmatrix}
 \end{equation}
@@ -848,6 +855,9 @@ For our purposes, we will leave it invariant in time and space across the whole 
 We refer to \cite{cockburn1999discontinuous,leveque2002finite} for readers interested in this issue and other choices of flux functions.
 
 Depending on how $\alpha$ is handled, it results in different methods. Sometimes it is set globally and treated the same for all triangles, other times it is determined based on the qualities of certain triangles at run time, which obviously results in higher computation time. The various methods and their properties are discussed in \cite{leveque2002finite}. For our purposes, we will leave it invariant in time and space across the whole domain.
+
+\section{Deriving the error term}
+\label{sec:deriving-error-term-i}
 
 \subsection{Original situation: A 2D problem}
 \label{sec:original-situation-2d-problem}
@@ -1297,7 +1307,7 @@ To plot $u$ and $h$ we need to know their respective ranges as well. This is not
 \section{Distribution of support points according to Gaussian quadrature}
 \label{sec:results}
 
-\done{Auf Anraten vom Martin hab ich das Zeug mit den Gauss-Stützpunkten zur Herleitung der Kantenmatrizen gesteckt.}
+The support points for this section can be extracted from table \ref{tab:x-coordinates-gauss-quadrature}.
 
 \subsection{Setting all support points to the same value}
 \label{sec:setting-all-support-points-to-the-same-value}
@@ -1415,14 +1425,14 @@ We started as in section \ref{sec:setting-all-support-points-to-the-same-value} 
 
 \todo{Wenn es lediglich diese eine Subsection gibt, sollte der Punkt herausgenommen werden oder ihr macht noch einen zweiten Vergleich. Eine einzige Studie ist mMn zu wenig um etwas aussagekraeftiges gewinnen zu koennen.}
 
-
+\clearpage{}
 
 \section{Conclusions}
 \label{sec:conslusions}
 
 We have seen in the plots that the errors in height and impulse show two very different behaviours. The impulse error highly depends upon the height values chosen, while the impulse values have a minor impact only. The height error, on the other hand, is largely depending on the chosen impulse values.
 
-Moreover, and as a rule of thumb, we observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets. This is good, since in practice it may be well the case that all support points have similar values and often do not show extreme deviations between each other.
+Moreover, and as a rule of thumb, we observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets. This is good, since in practice it may be well the case that all support points have similar values and often do not show extreme deviations between each other. In practice, one will choose the triangle small enough that the variations within a triangle are not too large. For these triangles, the approximation yields good results.
 
 However, trying to determine an exact formula for the deviation is impractical due to the amount of variables that all interact with each other, and may even be impossible.
 
@@ -1430,8 +1440,6 @@ Additionally, we saw that singularities do not play a significant role in our co
 
 \clearpage{}
 
-
-\newpage
 \part{Stiffness matrix accuracy analysis}
 \label{part:stiffness-matrix}
 
