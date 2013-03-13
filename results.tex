@@ -81,15 +81,14 @@
 
 \begin{abstract}
   The question how to simulate waves on a computer is subject to many difficulties. At several points in the process of transferring continous to discrete formulations, approximations have to be made.
-One of those points is the discretization of the continuous space into finite segments.%, usually triangles.
-%Another is the simulation of the domain of each segment by sampling specific points within that segment.
+One of those points is the discretization of the continuous space into finite segments.
 Yet another point is not as obvious, and occurs when trying to calculate an integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation-error is introduced.
 
 Despite all of this, the accuracy loss can normally be minized by sacrificing computing time.
 However, the specific approximation of an integrated fractional function using Gaussian quadrature has to be analyzed separately.
 It occurs when calculating how much of the relevant quantities are passed from one segment to another, which, due discontinuities along the separating lines, has to be handled in a way that preserves as much accuracy as possible.
 
-Based on the shallow water equations, this work aims to explain the derivation of the discretization, the necessary equations for calculating those quantities, and gives insight to the quadrature error by comparing the analytical solution to the approximate solution using Gaussian quadrature.
+Based on the shallow water equations, this work aims to explain the derivation of the discretization, the necessary equations for calculating those quantities, and gives insight to the quadrature error by comparing the analytical solution to the approximate solution using Gaussian quadrature employed at various points.
 \end{abstract}
 
 \newpage
@@ -97,31 +96,32 @@ Based on the shallow water equations, this work aims to explain the derivation o
 \tableofcontents{}
 
 \newpage
-\part{Basic discontinous Galerkin equations}
+\part{Theory of water simulation}
 \label{part:introduction}
 
-\section{Shallow water simulation}
-\label{sec:problem-statement}
-
-We want to simulate wave propagation in a certain simulation domain.
-There are several equations, suited for different situations, that deal with those kind of problems.
+When trying to simulate wave propagation over a certain domain, several limitations have to be considered.
+Over time, various equations that deal with problems of this kind have been derived, each set suited for different situations.
 The main problem for computer simulation is that computers cannot represent the full continuous domain perfectly, and so the entire domain has to be discretized.
 This discretization is commonly done with a set of cells that contain several fields of information (such as mass/height, velocity, etc.).
-Beside the domain discretization, also accurate simulation of the wave propagation itself is a challenging task, making the simulation even more computational complex and compute intensive.
+Beside the domain discretization, also accurate simulation of the wave propagation itself is a challenging task, making the simulation even more computationally complex and intensive.
 Especially in tsunami-related environments even non-local factors like bathymetry information, tidal forces and the coriolis effect have to be considered to get accurate results.
 
-In this work we focus mainly on computations based on the shallow water equations, serving as a starting point for computation of wave propagation, along with an analysis of the discretization problem, as well as numerical solutions for it. We will not discretize the domain ourselves, but instead work with a frameworked developed at the TUM, Sierpinski. This framework uses an adaptive triangle grid to discretize the domain. However, adaptivity will not be of interest to us, as we will only examine communication between at most two neighboring triangles which share the same edge.
+In this work we focus on computations based on the shallow water equations with the discontinuous Galerkin method, both of which will be described below.
+Along with that, we will provide an analysis of the discretization problem, as well as explore some numerical solutions for it.
+We will not discretize the domain ourselves, but instead work with a frameworke developed at the TUM, Sierpinski.
+This framework uses an adaptive triangle grid to discretize the domain.
+However, adaptivity will not be relevant to us, as we will only examine communication between at most two neighboring triangles which share the same edge.
+As such, our results can be applied for non-adaptive grids as well.
 
-\section{Reference space and Discontinous Galerkin}
-\label{sec:reference-space-dg}
+\section{Reference space}
+\label{sec:reference-space}
 
-Using a triangle grid, we can simplify a few steps in the calculation process.
+Using a triangle grid, as mentioned before, we can simplify a few steps in the calculation process.
 With a suitable library for coordinate projection, we can rotate triangles and edges into a space that is relevant for us.
-Instead of applying cell update rules for each individual triangle, we apply a transformation to the triangles enabling the application of the cell update rules in a single reference space only.
+Instead of applying different directional cell update rules for each individual triangle, we apply a transformation to the triangles, which allows us to apply one one set of update rules to all cells.
 
-In addition to rotating, we can also scale the edges of the triangles to always be in a certain shape.
-Our reference space assumes triangle legs of length 1 and the hypothenuse of length $\sqrt{2}$.
-%This will help with further calculations, because some of them will rely on the length of an edge, which can be conveniently omitted (or set to the constant $\sqrt{2}$ respectively).
+In addition to rotating, we can also scale the edges of the triangles to always be of a certain length.
+Our reference space assumes a cathetus of length 1 and consequently the hypothenuse of length $\sqrt{2}$.
 
 \begin{figure}[ht]
   \centering
@@ -139,7 +139,7 @@ Our reference space assumes triangle legs of length 1 and the hypothenuse of len
 
 The domain of the entire triangle is given by $T$ (the set of all points on the triangle), and the set of edges $E$, enumerated with $e_i$, $\forall i \in {1,2,3}$.
 Points on the triangle (both on the edge and inside) will be denoted by $p$.
-In the implementation we will be referring to the edges \texttt{left}, \texttt{hyp} and \texttt{right} by $e_1$, $e_2$ and $e_3$ respectively.
+%In the implementation we will be referring to the edges \texttt{left}, \texttt{hyp} and \texttt{right} by $e_1$, $e_2$ and $e_3$ respectively.
 
 \begin{figure}[ht]
   \centering
@@ -798,17 +798,17 @@ From this -- and using the fundamental theorem of algebra -- we can conclude tha
 
 %When analyzing wave propagation along a grid of triangles, it is essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
 
-We will examine an aspect of wave propagation between two triangles, namely the quality of the approximation of the Lax-Friedrich-Flux. 
+We will examine an aspect of wave propagation between two triangles, namely the quality of the approximation of the Lax-Friedrich-Flux.
 
-While we \emph{might} be able to evaluate the Lax-Friedrich-Flux exactly, the involved computations are long and complex and can result in prohibitively high computation times. 
+While we \emph{might} be able to evaluate the Lax-Friedrich-Flux exactly, the involved computations are long and complex and can result in prohibitively high computation times.
 
 On the other hand, approximations through various numerical methods can speed this process up significantly. We have analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation. \remark[Philipp]{Dann brauchen wir noch eine Antwort in der Conclusion, ob's wirklich suitable ist, was meinst Du?}
 
-We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own polynomial for every component (height $h$ and impulse $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates. 
+We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own polynomial for every component (height $h$ and impulse $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates.
 
 After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four polynomials (see section \ref{sec:original-situation-2d-problem} for more detailed information regarding the parametrization).
 
-What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places. We do so since e.g. the Sierpinski framework does exactly this: It uses a Gaussian quadrature (which is common practice in this area \cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}), i.e. it samples the function at certain points and numerically computes an integral. However, remember that we actually have a rational function and can not be sure that Gaussian quadrature is one hundret percent accurate. 
+What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places. We do so since e.g. the Sierpinski framework does exactly this: It uses a Gaussian quadrature (which is common practice in this area \cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}), i.e. it samples the function at certain points and numerically computes an integral. However, remember that we actually have a rational function and can not be sure that Gaussian quadrature is one hundret percent accurate.
 
 That means, we compare the actual integrand to the integrand as used for the Gaussian quadrature.\remark{Versteht man das?}
 
