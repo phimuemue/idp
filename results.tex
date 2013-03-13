@@ -897,7 +897,7 @@ Since we are interested in the situation along the adjacent edges, which is a li
 
 We can do so, since an integration along an edge can be considered as a one-dimensional integration without changing the result.\remark{Der Martin meinte irgendwas von ``Berechnung im Kanten Referenzraum'' --- keine Ahnung, ob's das wirklich braucht.} Since the original polynomials (w.r.t. $x$ and $y$) are of a certain degree, we will -- after the parametrization -- obtain polynomials of the same degree w.r.t. $\lambda$, since the mapping from $\lambda$ onto $x$ and $y$ is linear.
 
-%\todo{Beruft euch z. B. darauf, dass die Berechnung im Kanten Referenzraum identisch ist. Vorausgesetzt, das wurde vorher erklaert :-).}
+%\todo{Beruft euch z. B. darauf, dass die Berechnung im Kanten Referenzraum identisch ist. Vorausgesetzt, das wurde vorher erklaert.}
 
 \subsection{Constructing the polynomials}
 \label{sec:constructing-polynomials}
@@ -1425,30 +1425,34 @@ The same calculations for three random points is shown in figure \ref{fig:three-
 \section{Equidistant distribution of support points}
 \label{sec:equidistant-distribution-of-support-points}
 
-\todo{Explain why we do it with equidistant support points}
+\subsection{Background}
+\label{sec:equidistant-support-points-background}
 
 When one considers the figures depicted in section \ref{sec:results}, it seems intuitive to assume that the error grows if the values for $h$ and $u$ diverge further from the average.
 
-One suspicion that could explain that intuition is due to polynomials $N\left(x\right)$ and $N^\prime\left(x\right)$ generally diverging towards the borders of $[0,1]$.
+One suspicion that could explain that intuition is due to polynomials $N\left(x\right)$ and $N^\prime\left(x\right)$ often diverging towards the borders of $[0,1]$ (i.e. $N(x)-N^\prime(x)$ grows towards the borders of $[0,1]$). This was observed by examining several assignments for support points. Even if it is not generally the case, it was often observed.
 
-So we chose the support points equidistant \todo{Bei aequidistanten Stuetzstellen wird das Ausbrechen der Polynome bei Extrapolation noch Schlimmer...} over the interval $[0,1]$ and conducted some experiments. When we choose the support points equidistant over this interval, 0 and 1 are support points and we can be sure that $N\left(x\right)$ and $N^\prime\left(x\right)$ coincide at the values 0 and 1 (i.e.\,$N\left(0\right)=N^\prime\left(0\right)$ and $N\left(1\right)=N^\prime\left(1\right)$).
+One way to prevent this \emph{might} be the following: One chould choose the support points such that there are support points at 0 and 1 (the borders of $[0,1]$) and the remaining support points are equidistant within this interval. When we choose the support points according to this strategy, 0 and 1 are support points and we can be sure that $N\left(x\right)$ and $N^\prime\left(x\right)$ coincide at the values 0 and 1 (i.e.\,$N\left(0\right)=N^\prime\left(0\right)$ and $N\left(1\right)=N^\prime\left(1\right)$). This prevents $N(x)$ and $N^\prime(x)$ from diverging at the border of $[0,1]$ (possibly at the price of increasing the difference within this interval).
 
-In this section, we show some results that were obtained by choosing the support points equidistant along the edge.
+We now examine this setting and conduct some experiments. Along the way, note that if we use two or three support points, using equidistant support points (as explained in our strategy) corresponds to mapping the support points obtained by the gaussian quadrature onto the interval $[0,1]$ such that the leftmost resp. rightmost support point becomes 0 resp. 1.
 
 \subsection{Two fixed support points}
 \label{sec:equidist-two-fixed}
 
+We start by using two support points along each edge (i.e. we choose 0 and 1 as support points). We set both points to $(10,0)^T$ and obtain plots that look similar to the ones that we obtained using the support points of the Gaussian quadrature (i.e. $0.5\pm\frac{\sqrt 3}{6}$). Figure \ref{fig:equidist_2_default} compares both variants of support points.
+
 \input{equidist_2_default/tex}
+
+We observe that the error is smaller for equidistant support points than for ``Gaussian quadrature support points''. We will now examine if this behaviour still occurs if we have three support points.
 
 \subsection{Three fixed support points}
 \label{sec:equidistant-three-fixed}
 
-We started as in section \ref{sec:setting-all-support-points-to-the-same-value} and set all support points to $
-\begin{pmatrix}
-  10 \\ 0
-\end{pmatrix}$. We show the resulting plots in figure \ref{fig:three-equidistant-all-fixed}. And while the results do differ from the ones depicted in figure \ref{fig:three-points-equal}, where we examined the same situation for the Gaussian quadrature support points, the shape of the plots still looks very similar. The range of the error differs only slightly as well.
+We now consider the same values as in section \ref{sec:setting-all-support-points-to-the-same-value} and set all support points to $(10,0)^T$. We show the resulting plots in figure \ref{fig:three-equidistant-all-fixed}. While the results do differ from the ones depicted in figure \ref{fig:three-points-equal}, where we examined the same situation for the Gaussian quadrature support points, the shape of the plots still looks very similar. 
 
 \input{3_punkte_equidist_alles_gleich/tex.tex}
+
+
 
 \todo{Wenn es lediglich diese eine Subsection gibt, sollte der Punkt herausgenommen werden oder ihr macht noch einen zweiten Vergleich. Eine einzige Studie ist mMn zu wenig um etwas aussagekraeftiges gewinnen zu koennen.}
 
