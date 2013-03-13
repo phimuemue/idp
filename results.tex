@@ -1448,9 +1448,9 @@ We observe that the error is smaller for equidistant support points than for ``G
 \subsection{Three fixed support points}
 \label{sec:equidistant-three-fixed}
 
-We now consider the same values as in section \ref{sec:setting-all-support-points-to-the-same-value} and set all support points to $(10,0)^T$. We show the resulting plots and the plots for support points from Gaussian quadrature in figure \ref{fig:three-equidistant-all-fixed}. 
+We now consider the same values as in section \ref{sec:setting-all-support-points-to-the-same-value} and set all support points to $(10,0)^T$. We show the resulting plots and the plots for support points from Gaussian quadrature in figure \ref{fig:three-equidistant-all-fixed}.
 
-%While the results do differ from the ones depicted in figure \ref{fig:three-points-equal}, where we examined the same situation for the Gaussian quadrature support points, the shape of the plots still looks very similar. 
+%While the results do differ from the ones depicted in figure \ref{fig:three-points-equal}, where we examined the same situation for the Gaussian quadrature support points, the shape of the plots still looks very similar.
 
 \input{3_punkte_equidist_alles_gleich/tex.tex}
 
@@ -1471,18 +1471,30 @@ We can observe from figure \ref{fig:three-equidistant-all-fixed} that now the er
 
 \input{equidist_3_alles_default_ausser_p1_10_-1/tex}
 
+Similar to before, we can observe the accuracy of equidistant support points falling behind when compared to Gaussian quadrature points.
+The results presented in figure \ref{fig:equidist_3_alles_default_ausser_p1_10-1}.
+When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized as the same, but, as before, its scale is higher, signifying a larger error.
+
 \clearpage{}
 
 \section{Conclusions}
 \label{sec:conslusions}
 
-We have seen in the plots that the errors in height and impulse show two very different behaviours. This was expected, with the height being a polynomial, while the impulse being a rational function. The impulse can vary strongly, both in shape and in scale, when adjusting the height values, while the impulse values have a minor impact only.
+We have seen in the plots that the errors in height and impulse show two very different behaviours.
+This was expected, with the height being a polynomial, while the impulse being a rational function.
+The impulse can vary strongly, both in shape and in scale, when adjusting the height values, while the impulse values have a minor impact only.
 
-Moreover, we can clearly observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets. This is good for any practical application, since that is usually the case. The very idea is to make triangles small enough, to be restricted to a very specific region of the domain. The smaller the triangle, the more unlikely it is, that the height values differ strongly.
+Moreover, we can clearly observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets.
+This is good for any practical application, since that is usually the case.
+The very idea is to make triangles small enough, to be restricted to a very specific region of the domain.
+The smaller the triangle, the more unlikely it is, that the height values differ strongly.
 
 However, trying to determine an exact formula for the deviation is impractical due to the amount of variables that all interact with each other, and may even be impossible.
 
-Additionally, we saw that singularities do not play a significant role in our computations since they only occur for unrealistic scenarios. This is highly advantageous since we then can be sure that the integral exists and quadrature methods give meaningful results. However, the singularities do exist, even without using any quadrature, as variables appear in the denominator of the impulse flux term. This may be a problem to consider for extreme situations, such as shock waves, which could potentially result in significant height value differences within one triangle.
+Additionally, we saw that singularities do not play a significant role in our computations since they only occur for unrealistic scenarios.
+This is highly advantageous since we then can be sure that the integral exists and quadrature methods give meaningful results.
+However, the singularities do exist, even without using any quadrature, as variables appear in the denominator of the impulse flux term.
+This may be a problem to consider for extreme situations, such as shock waves, which could potentially result in significant height value differences within one triangle.
 
 \clearpage{}
 
