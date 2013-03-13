@@ -790,9 +790,7 @@ From this -- and using the fundamental theorem of algebra -- we can conclude tha
 % Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
 \newpage
-\part{Comparing the
-%polynomials arising from 
-exact and approximate solution of the Lax-\-Friedrichs-\-Flux}
+\part{Comparing the exact and approximate solution of the Lax-\-Friedrichs-\-Flux}
 \label{part:polynomial-comparison}
 
 % \section{Setting}
@@ -808,7 +806,7 @@ On the other hand, approximations through various numerical methods can speed th
 
 We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own polynomial for every component (height $h$ and impulse $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates.
 
-After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four polynomials (see section \ref{sec:original-situation-2d-problem} for more detailed information regarding the parametrization).
+After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four polynomials (see section \ref{sec:original-situation-2D problem} for more detailed information regarding the parametrization).
 
 What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places. We do so since e.g. the Sierpinski framework does exactly this: It uses a Gaussian quadrature (which is common practice in this area \cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}), i.e. it samples the function at certain points and numerically computes an integral. However, remember that we actually have a rational function and can not be sure that Gaussian quadrature is one hundret percent accurate.
 
@@ -822,7 +820,7 @@ The exchange of inforamtion between adjacent triangles is called the flux. We co
 \subsection{Flux function}
 \label{sec:flux-function-intro}
 
-We will see in section \ref{sec:original-situation-2d-problem} that -- even if we have originally a 2d problem -- we can parametrize it in a way such that we can consider a 1d problem. If we do so, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function, which is the same problem as started in section \ref{sec:shallow-water-equations} of the introduction, only mapped to one dimension \cite{george2004numerical}:
+We will see in section \ref{sec:original-situation-2D problem} that -- even if we have originally a 2d problem -- we can parametrize it in a way such that we can consider a 1d problem. If we do so, we have to consider the flux function in one dimension, as well. Hence, we take the following as flux function, which is the same problem as started in section \ref{sec:shallow-water-equations} of the introduction, only mapped to one dimension \cite{george2004numerical}:
 
 \begin{equation}
   \label{eq:flux-function-definition}
@@ -860,7 +858,7 @@ Depending on how $\alpha$ is handled, it results in different methods. Sometimes
 \label{sec:deriving-error-term-i}
 
 \subsection{Original situation: A 2D problem}
-\label{sec:original-situation-2d-problem}
+\label{sec:original-situation-2D problem}
 
 The original problem arises when two adjacent triangles share one edge.
 Each triangle has several support points which are interpolated to obtain a polynomial for the corresponding triangle.
@@ -940,8 +938,8 @@ We examine two settings for our support points that are used to construct the po
 
 To construct the polynomials assume we have a method $interpolate\left(\{\left(x_i,y_i\right) \mid i \in \{1 \dots n\}\}\right)$.
 This method takes a set of points $\left(x_1,y_1\right),\dots,\left(x_n,y_n\right)$ and returns the polynomial of degree $n-1$ that goes through all the points within the set.
-\footnote{In practice this can be e.g. a Lagrange-Interpolation-Routine, Maple has a function \texttt{CurveFitting[PolynomialInterpolation]} ready for it.}
-Here we introduce a notational shorthand for this cumbersome construct by simply writing $interpolate\left(x,y\right)$ for $interpolate\left(\{\left(x_i,y_i\right) \mid i \in \{1 \dots n\}\}\right)$.
+\footnote{In practice this can be e.g.\,a Lagrange interpolation routine. Maple provides the function \texttt{CurveFitting[PolynomialInterpolation]} for that purpose.}
+Here we introduce a notational shorthand for this construct by writing $interpolate\left(x,y\right)$ for $interpolate\left(\{\left(x_i,y_i\right) \mid i \in \{1 \dots n\}\}\right)$.
 
 We then generate four polynomials as follows:
 
@@ -973,7 +971,7 @@ As was mentioned in section \ref{sec:flux-function-intro} $p^L$ and $p^R$ are ac
 We first analyze the difference between the following two ways to compute the flux based updates:
 
 \begin{description}
-\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrichs-Flux, and compute its exact value. The resulting values are rational functions depending on $x$. We call these functions $N\left(x\right)$ (a vector which has a rational function for the height as its first component, while the second component represents the momentum).
+\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrichs-Flux, and compute its exact value. The resulting values are rational functions depending on $x$. We call these functions $N\left(x\right)$ (a vector which has a polynomial function for the height as its first component, while the second component is a rational function, representing the momentum).
 
 \item[Approximate solution] We supply the support points into the Lax-Friedrichs-Flux directly, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
   \begin{equation*}
@@ -1010,14 +1008,34 @@ Our goal will then be to compare $N\left(x\right)$ to $N^\prime\left(x\right)$ (
 \end{equation}
 where the integration is to be understood component-wise.
 
+\subsection{Height error analysis}
+\label{sec:height-error-p2}
+
+At this point, we can examine the height error and discover something important.
+If we recall the Lax-Friedrichs flux function and look at the height component, we see that the flux function at that point only contains $u$:
+
+\begin{equation}
+  \label{eq:lax-friedrich-definition}
+  F_{LF}(p^R,p^L) = \dfrac{1}{2}\cdot (F(p^R) + F(p^L)) - \alpha \cdot (p^R - p^L)
+\end{equation}
+
+This implies something important for the interpolation, namely that the resulting functions will be a polynomial.
+More precisely, it will result in a polynomial of degree $n+1$ (as polynomial interpolation for $d$ points always results in polynomials of degree $d+1$).
+Since the approximating function $N^\prime\left(x\right)$ is also a polynomial obtained by interpolation of the $n$ support points, it is a polynomial of degree $n+1$ as well.
+Both of these terms, however, are the same in exactly $n$ points.
+With the fundamental theorem of algebra, we can conclude that both polynomials are the same, which means the error will be exactly 0.
+
+This means we can ignore the resulting error for the height component, as it will be 0 regardless of how we choose the other variables.
+That is why, for the rest of this part, we will only display error plots for the impulse component of $I$ and omit the plots for the height error.
+
 \subsection{\texorpdfstring{How to evaluate $I$}{How to evaluate I}}
 \label{sec:how-to-eval-I}
 
 It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-norm-definition}). Even if we delegate most of the work to the symbolic math program \emph{Maple}, we experienced some pitfalls while evaluating the exact approach.
 
-The main challenge with exact integration is that Maple has to compute the zeroes of $N\left(x\right)-N^\prime\left(x\right)$, which is, depending on the degree of the polynomials, a time consuming task.
+The main challenge with exact integration is that Maple has to compute the zeroes of $N\left(x\right)-N^\prime\left(x\right)$, which can be a time consuming task, depending on the rational functions used.
 
-There are several possibilities to overcome this problem. The first that might come to one's mind is to use a Gaussian quadrature (or any equivalent quadrature scheme for rational functions). However, even after extensive research we could not find any suitable quadrature method for rational functions.\done[Philipp]{Passt das so?}
+There are several possibilities to overcome this problem. The first that may come to mind is to use a Gaussian quadrature (or any equivalent quadrature scheme for rational functions). However, even after extensive research we could not find any suitable quadrature method for rational functions.
 
 %However, using a Gaussian quadrature requires that the integrand at least ``looks somehow'' like a polynomial -- something we explicitly can \emph{not} be sure of.\todo{Da wird ein Mathematiker bei dem was ihr spaeter macht aber sofort gegenargumentieren, dass Gauss ja N-ter ordnung genau ist und ihr lediglich 0-ter Ordnung quadriert wenn mich nicht alles taeuscht. \remark{-- Aber warum sollte denn zweiter Ordnung besser sein als nullte Ordnung, \emph{wenn wir bereits wissen, dass wir es eh nicht mit Polynomen, sondern gebrochenrationalen Funktionen zu tun haben?}}}
 
@@ -1039,18 +1057,18 @@ This is why we consider three other possibilities for computing the error term:
   The downside of this method is that is computationally infeasible for a detailed analysis of higher order due to the increasingly complex formulae.
 \item[Exact integration betwee certain points] $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
   \begin{equation*}
-    N\left(x_i^F\right) = N^\prime\left(x_i^F\right) \text{ resp. } N\left( x_i^F \right) - n^\prime\left( x_i^F \right) = 0 \quad , \forall i \in \{1 \dots n\}.
+    N\left(x_i^F\right) = N^\prime\left(x_i^F\right) \text{ resp. } N\left( x_i^F \right) - N^\prime\left( x_i^F \right) = 0 \quad , \forall i \in \{1 \dots n\}.
   \end{equation*}
 
-  Knowing this, we can derive some zeroe crossings of the function $N(x)-N'(x)$ (but possibly not all). If we compute
+  Knowing this, we can derive some zeroes of the function $N(x)-N'(x)$ (but possibly not all). If we compute
   \begin{equation*}
     \sum\limits_{i=1}^{n-1} \left|\ \int\limits_{x=x_i}^{x_{i+1}} N\left(x\right) - N^\prime\left(x\right)\ dx \right|,
   \end{equation*}
   we get a more accurate result as an approximation for $I$ compared to simply computing the integral over $[0,1]$.
 
-  If we moreover divide each interval $[x_i,x_{i+1}]$ into several smaller sub-intervals, and simply integrate over them, we can reduce the error ad libitum.
+  If we now divide each interval $[x_i,x_{i+1}]$ into several smaller intervals, and simply integrate over them, we can reduce the error ad libitum.
 
-  While we can tweak this method by simply evaluating more and more sub-intervals, this comes at the price of more computations.
+  While we can tweak this method by simply evaluating more intervals, this comes at the price of larger computation time.
 \item[Numerical quadrature with rectangle method] The last approach we tried was to divide the area under the function
   \begin{equation*}
     \left| N\left(x\right)-N^\prime\left(x\right) \right|
@@ -1058,9 +1076,10 @@ This is why we consider three other possibilities for computing the error term:
   into several stripes, and compute the area of these stripes. The more stripes we have, the more accurate our result will be, at the expense of computation time.
 \end{description}
 
-It is just as well possible to use the first or second approach, although this requires to tell Maple that it should \emph{first} make all necessary substitutions, and \emph{second} plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore these options further. So we eventually went for the last of these approaches using the rectangle method for quadrature.
+It is just as well possible to use the first or second approach, although this requires to tell Maple that it should first make all necessary substitutions, and then plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore these options further. So we eventually went for the last of these approaches using the rectangle method for quadrature.
 
-We implemented this strategy in an own tool and present some more information about it in section \ref{sec:making-the-whole-thing-interactive}.
+We eventually implemented our own tool to accomplish that task.
+Some information about it will be provided in section \ref{sec:making-the-whole-thing-interactive}.
 
 \subsection{Singularities}
 \label{sec:singularities}
@@ -1115,8 +1134,9 @@ Analytically deriving a general formula for the occurance of such singularities 
 \section{\texorpdfstring{Visualizing the error term $I$}{Visualizing the error term I}}
 \label{sec:making-the-whole-thing-interactive}
 
-We are now going to plot (the two components of) the term $I$ as described in equation (\ref{eq:integral-norm-definition}). First, we have to elaborate on some necessary considerations when it comes plotting such a complicated term.
-Afterwards, we present our tool developed to simplify plotting as much as possible in order to offer more insight to the quadrature errors.
+We are now going to plot the impulse component of the term $I$ as described in equation (\ref{eq:integral-norm-definition}).
+First, we have to devise a strategy to compactly but efficiently visualize such a complicated term.
+Afterwards, we present our tool, developed to simplify plotting as much as possible in order to offer more insight to the quadrature errors.
 
 \subsection{A word on visualization}
 \label{sec:a-word-on-visualization}
@@ -1138,9 +1158,9 @@ This equation describes a line going through point $(0,1)$ with varying gradient
 
 \begin{itemize}
 \item Focus on specific values of $a$ and plot $y=a\cdot x + 1$ for these values of $a$.
-\item Generate a 3d-plot for varying values of $a$ and $x$. This plot has then two axes for $a$ and $x$ spanning two dimensions, the resulting value $y$ is then denoted by the last dimension.
+\item Generate a 3D plot for varying values of $a$ and $x$. This plot has then two axes for $a$ and $x$ spanning two dimensions, the resulting value $y$ is then denoted by the last dimension.
 
-  That is, each point contained in the graph of this 3d-plot has three coordinates $(x,a,y)$, and these three coordinates have to suffice the condition $y=a\cdot x + 1$.
+  That is, each point contained in the graph of this 3D plot has three coordinates $(x,a,y)$, and these three coordinates have to suffice the condition $y=a\cdot x + 1$.
 \end{itemize}
 
 We compare the two methods in figure \ref{fig:simple-parametric-functions}. Note that we can interpret the lines in the two dimensional plot as ``slices'' from the three dimensional plot.
@@ -1167,8 +1187,8 @@ As we can see, this function contains two parameters, namely $a$ and $b$. Again,
 
 \begin{itemize}
 \item Focus on specific values for $a$ and $b$ and generate a plot for the combinations of $a$ and $b$ under considerations.
-\item Focus on specific values for $a$, and draw a 3d-plot (for each value of $a$ under consideration) having two axes that then describe $x$ and $a$, while $y$ is then represented by the remaining dimension.
-\item Similar to the previous possibility, one could focus on $b$ (instead of $a$) and draw 3d-plots having two axes that then describe $x$ and $b$, while $y$ is then represented by the remaining dimension.
+\item Focus on specific values for $a$, and draw a 3D plot (for each value of $a$ under consideration) having two axes that then describe $x$ and $a$, while $y$ is then represented by the remaining dimension.
+\item Similar to the previous possibility, one could focus on $b$ (instead of $a$) and draw 3D plots having two axes that then describe $x$ and $b$, while $y$ is then represented by the remaining dimension.
 \end{itemize}
 
 Of course, as the number of parameters increases, the number of possibilities for plotting grows drastically. This is why we have to pick specific assignments for parameters and generate the corresponding plots.
@@ -1212,7 +1232,7 @@ We can now use a 3D plot with the $x$ axis representing $h_1^L$ and the $y$ axis
 
 To plot our results we considered several options. Maple supports dynamic plotting to a certain degree, and since we used it for some of our previous symbolic and numeric computation, we tried employing it to obtain the plots we need. Essentially, one can obtain a window with movable sliders that change a plot adjusting to it.
 
-However, we realized that this method had some downsides. We are always interested in plotting two (or more) graphs simultaneously (--- in this case one for the height error and one for the momentum error (both components of $I$)). Showing several plots simultaneously affected by the same sliders proved to be a challenge, and was not doable with the native plotting services within Maple due to limited customization.
+However, we realized that this method had some downsides. We are, in principle, interested in plotting several graphs simultaneously (this will be relevant to us in the next part). Showing several plots simultaneously affected by the same sliders proved to be a challenge, and was not doable with the native plotting services within Maple due to limited customization.
 
 % It may have been possible to write a custom Maplet (interactive Maple applet) which did what we wanted, but that turned out to be more complex than an implementaion from the ground up
 % cumbersome due to Maple's limited applet functionality.\todo{Ihr koenntet das "wissenschaftlicher" formulieren ala "Due to restrictions of Maples functionality regarding applet programming, our requirements were not satisfied". Oder so.}
@@ -1260,13 +1280,13 @@ The parameter ``stripes'' determines how many stripes are used to numerically ev
 \subsection{How to interpret the graphs}
 \label{sec:how-to-interpret-graphs}
 
-All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N^\prime\left(x\right)$. The tool generates two plots that are labeled ``0. Function'' and ``1. Function''. In our case ``0. Function'' represents the error in the $h$ component (height), while ``1. Function'' stands for the error in the $u$ component (momentum).
+All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N^\prime\left(x\right)$. The tool generates a plot representing the error in the $u$ component (impule).
 
-To understand how our plots work, we can take a look at figure \ref{fig:two-points-all-the-same}. In this example, we used 2 points on each triangle and edge. That is, we have four (relevant) points in total, \emph{two of which} we have plotted here. This is why figure \ref{fig:two-points-all-the-same} has \emph{two} sub-figures.
+To understand how our plots work, we can take a look at figure \ref{fig:two-points-all-the-same}. In this example, we used 2 points on each triangle and edge. That is, we have four (relevant) points in total, two of which we have plotted here. This is why figure \ref{fig:two-points-all-the-same} has two sub-figures.
 
 Looking at sub-figure \ref{subfig:two-points-p1-height-momentum}, its caption says that point $p_1^L$ is varying. To be precise, its height and momentum vary along the plot axes.
 
-The first part of this caption tells us that we are fixing \emph{all points except} $p_1^L$ to a specific value (in this case it was $
+The first part of this caption tells us that we are fixing all points except $p_1^L$ to a specific value (in this case it was $
 \begin{pmatrix}
   10 \\ 0
 \end{pmatrix}
@@ -1322,7 +1342,7 @@ The error in the $h$ component is always zero in the range depicted here (about 
 
 As the plot shows, the error for the $h$ component ranges up to 2.5.
 
-We did the same thing for three support points along each edge (and it can be done for an arbitrary number of support points). We can see the results in figure \ref{fig:three-points-equal}. In general it seems that the structure of the error plots is quite similar across different settings: the error in the height component is almost zero, while the error in the momentum component looks similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
+We did the same thing for three support points along each edge (and it can be done for an arbitrary number of support points). We can see the results in figure \ref{fig:three-points-equal}. In general it seems that the structure of the error plots is quite similar across different settings, the error being similar to the ones seen in figure \ref{fig:two-points-all-the-same}.
 
 \input{3_punkte_gleich/tex.tex}
 
@@ -1360,7 +1380,7 @@ $ (i.e.\,we decrease the height component of $p_1^L$).
 
 We see the results of this experiment in figure \ref{fig:three-points-h1-}.
 
-Comparing figure \ref{fig:three-points-equal} and \ref{fig:three-points-h1-} it is worth noting that especially the plots for $p_2^L$, $p_3^L$ and $p_3^R$ differ strongly. Additionally, it can be seen that the structure differs as well as the range of the error.
+Comparing figure \ref{fig:three-points-equal} and \ref{fig:three-points-h1-} it is worth noting that especially the plots for $p_2^L$, $p_3^L$ and $p_3^R$ differ strongly. Additionally, it can be seen that the structure differs, as well as the range of the error.
 
 \subsubsection{\texorpdfstring{Decreasing the momentum of $p_1^L$}{Decreasing the momentum of p1L}}
 \label{sec:decreasing-momentum-p1}
@@ -1391,7 +1411,7 @@ The cases we have examined so far were just sample cases to show a qualitative c
 \subsubsection{Two random points}
 \label{sec:two-random-points}
 
-We start out with two random points. The results of random assignment of values can be seen in figure \ref{fig:two-points-random}. There are heavy structural differences discernable compared to previous plots. The maximum height error is also a lot higher than it was previously, which is to be expected.
+We start out with two random points. The results of random assignment of values can be seen in figure \ref{fig:two-points-random}. There are heavy structural differences discernable compared to previous plots.
 
 \input{2_random_new/tex.tex}
 
@@ -1450,13 +1470,13 @@ We started as in section \ref{sec:setting-all-support-points-to-the-same-value} 
 \section{Conclusions}
 \label{sec:conslusions}
 
-We have seen in the plots that the errors in height and impulse show two very different behaviours. The impulse error highly depends upon the height values chosen, while the impulse values have a minor impact only. The height error, on the other hand, is largely depending on the chosen impulse values.
+We have seen in the plots that the errors in height and impulse show two very different behaviours. This was expected, with the height being a polynomial, while the impulse being a rational function. The impulse can vary strongly, both in shape and in scale, when adjusting the height values, while the impulse values have a minor impact only.
 
-Moreover, and as a rule of thumb, we observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets. This is good, since in practice it may be well the case that all support points have similar values and often do not show extreme deviations between each other. In practice, one will choose the triangle small enough that the variations within a triangle are not too large. For these triangles, the approximation yields good results.
+Moreover, we can clearly observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets. This is good for any practical application, since that is usually the case. The very idea is to make triangles small enough, to be restricted to a very specific region of the domain. The smaller the triangle, the more unlikely it is, that the height values differ strongly.
 
 However, trying to determine an exact formula for the deviation is impractical due to the amount of variables that all interact with each other, and may even be impossible.
 
-Additionally, we saw that singularities do not play a significant role in our computations since they only occur for unrealistic scenarios. This is highly advantageous since we then can be sure that the integral exists and quadrature methods give meaningful results.
+Additionally, we saw that singularities do not play a significant role in our computations since they only occur for unrealistic scenarios. This is highly advantageous since we then can be sure that the integral exists and quadrature methods give meaningful results. However, the singularities do exist, even without using any quadrature, as variables appear in the denominator of the impulse flux term. This may be a problem to consider for extreme situations, such as shock waves, which could potentially result in significant height value differences within one triangle.
 
 \clearpage{}
 
