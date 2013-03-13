@@ -242,7 +242,7 @@ Here $h$ is the height of the water at that point, which is proportional to the 
   \end{pmatrix}
 \end{eqnarray*}
 
-This takes into account gravitic effects for the respective $x$ and $y$ components. This is accomplished by $e_x$ and $e_y$, which are $\begin{pmatrix} 1 \\ 0 \end{pmatrix}$ and $\begin{pmatrix} 0 \\ 1 \end{pmatrix}$ respectively, thus only adding the gravitational terms where necessary.
+This takes into account gravitic effects for the respective $x$ and $y$ components. This is accomplished by $e_x$ and $e_y$, which are $\left(1, 0\right)^T$ and $\left(0, 1\right)^T$ respectively, thus only adding the gravitational terms where necessary.
 
 As was mentioned before, the source term will be set to zero throughout this project, which represents constant bathymetry, hence $r=\mathbf{0}$.
 
@@ -295,7 +295,10 @@ The operator $\nabla \cdot$ is the divergence operator, computing the sum of the
   \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0.
 \end{equation}
 
-Note at this point, that these are actually three equations\done{Genauer ausführen?}, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates. The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result. The last integral contains the symbol $\nabla$. This operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
+Note at this point, that these are actually three equations, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates.
+The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result.
+The last integral contains the symbol $\nabla$.
+his operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
 
 The second integral in that equation is an integral on the boundary of our triangle.
 The $\mathbf{n}$ in there denotes the outward facing normal at that point.
@@ -586,7 +589,7 @@ Here $\tilde{F^e}$ means a vector of all calculated $F_k^e$, similarly to $\tild
 \section{Time stepping}
 \label{sec:computing-integrals}
 
-For time stepping, we use the classical Euler method. It is a well-known fact that there are other techniques such as Runge-Kutta, but since this subproblem does not affect our analysis, we use it to demonstrate the technique of time stepping (see \cite{hans2009schwarz} for more information).
+For time stepping, we use the classical Euler method. While there are other techniques such as Runge-Kutta, we still use it to demonstrate the technique of time stepping, since this problem does not affect our analysis (see \cite{hans2009schwarz} for more information).
 
 \subsection{Explicit Euler}
 \label{subsec:explicit-euler}
@@ -624,9 +627,6 @@ We can apply this method to our modified equation (\ref{eq:swe-matrix-form}) onc
 
 This can only be done if $M$ is actually invertible, which is something we can not be sure of in general, but holds true for the polynomials we choose.
 The matrix $M$ depends on the chosen basis functions $\phi_1,\dots,\phi_n$.
-%A diagonal matrix can be derived by using \emph{orthogonal} polynomials, for example the Jacobi polynomials (see \cite{abramowitzstegun1964handbook}).
-%For polynomial degree 1, it is no problem to obtain orthogonal polynomials using the technique described in section \ref{sec:basis-functions-choice}\todo{Satz hat wenig Aussage.}. %entfernt, da ich nicht wusste, was ich da besseres schreiben könnte
-%\todo[Stjepan]{Die letzten zwei Saetze koennen wir uns komplett sparen, orthogonale Polynome oder deren Eigenschaften werden nie wieder erwaehnt.}
 
 This now has the form we need to apply the Euler step, resulting in this:
 
@@ -665,9 +665,9 @@ A relatively simple way of constructing basis functions is to use Lagrange inter
 
 The (minimum) number of basis functions $n$ is not arbitrary, but it depends on the degree of the polynomials. If we only employ polynomials of degree 0 (i.e.\,constants), we only need one basis function. Increasing the degree by 1 involves introducing variables $x$ and $y$. Thus, we need three polynomials to construct every polynomial of degree 1, one to create polynomials containing $x$, one to create polynomials containing $y$ and one to create other constant polynomials.
 
-Generalizing this scheme we observe the following: if we want to use polynomials of degree $d$, a polynomial can contain terms $x^a y^b$ with $a+b \leq d$. That is, we have combinations $x^a y^b=\tilde{d}$ for $\tilde{d} \in \left\{ 0,1,2,\dots,d \right\}$. If we fix $\tilde d$, we see that we can construct exactly $\tilde d + 1$ combinations, namely $x^{\tilde{d}} y^0, x^{\tilde d -1} y^1,x^{\tilde d -2} y^2, \dots, x^0 y^{\tilde d}$.
-Since $\tilde d \in \left\{ 0,1,2,\dots,d \right\}$, we have $\sum_{\tilde d = 0}^d \tilde d = {(d+2) \cdot (d+1)}/{2}$ combinations in total.
-This means that we need ${(d+2) \cdot (d+1)}/{2}$ basis functions to span the function space containing all the polynomials up to degree $d$ \done{Passt das so?}.
+Generalizing this scheme we observe the following: if we want to use polynomials of degree $d$, a polynomial can contain terms $x^a y^b$ with $0 \leq a+b = k \leq d$.
+Since $k$ can range from 0 to $d$, and for every k, there's $k+1$ possibilities for $a$ and $b$, we can derive all possible combinations with a simple sum: $\sum_{k = 0}^d k+1 = \frac{1}{2} \cdot (d+2) \cdot (d+1)$ combinations in total.
+This means that we need $\frac{1}{2} \cdot (d+2) \cdot (d+1)$ basis functions to span the function space containing all the polynomials up to degree $d$.
 
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
@@ -794,29 +794,24 @@ From this -- and using the fundamental theorem of algebra -- we can conclude tha
 \part{Comparing the exact and approximate solution of the Lax-\-Friedrichs-\-Flux}
 \label{part:polynomial-comparison}
 
-% \section{Setting}
-%\label{sec:setting}
+In the next sections, we will examine an aspect of wave propagation between two triangles, namely the quality of the approximation employed by the Lax-Friedrichs flux.
 
-%When analyzing wave propagation along a grid of triangles, it is essential to know how much of each quantity is passed from one triangle to another. This value is called the flux and it is determined by the so-called flux function. The quantities that interest us are the height ($h$, proportional to the volume and hence mass), and momentum ($u$, proportional to velocity $q$), where the momentum is a vector for every spatial dimension\todo{Ihr beschreibt hier altbekanntes wieder. Evtl. weglassen?}. The latter, however, can be remodeled using a one-dimensional approach by parametrizing the relevant coordinates.
-
-We will examine an aspect of wave propagation between two triangles, namely the quality of the approximation of the Lax-Friedrichs-Flux.
-
-While we \emph{might} be able to evaluate the Lax-Friedrichs-Flux exactly, the involved computations are long and complex and can result in prohibitively high computation times.
+While we might be able to evaluate the Lax-Friedrichs flux exactly, the involved computations are long and complex and can result in infeasibly long computation times.
 
 On the other hand, approximations through various numerical methods can speed this process up significantly. We analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.
 
-We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own polynomial for every component (height $h$ and impulse $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates.
+We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own flux function for every component (height $h$ and impulse $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates.
 
-After parametrization along the edge $E$, this results in a polynomial $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four polynomials (see section \ref{sec:original-situation-2D problem} for more detailed information regarding the parametrization).
+After parametrization along the edge $E$, this results in a function $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four functions (see section \ref{sec:original-situation-2D problem} for more detailed information regarding the parametrization).
 
-What we want to do now is take a number of sample points along the edge and evaluate the polynomials at those places. We do so since e.g. the Sierpinski framework does exactly this: It uses a Gaussian quadrature (which is common practice in this area \cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}), i.e. it samples the function at certain points and numerically computes an integral. However, remember that we actually have a rational function and can not be sure that Gaussian quadrature is one hundret percent accurate.
+To approximate the result numerically, we will take a number of sample points along the edge and evaluate the flux functions at those places. This is the prevalent method employed in this field (\cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}) and is also used by the Sierpinski framework. Recall from section \ref{} that it uses a Gaussian quadrature to calculate this integral. This introduces an error, since we have a rational function, for which polynomial Gaussian quadrature may not produce exact results anymore.
 
-That means, we compare the actual integrand to the integrand as used for the Gaussian quadrature.\remark{Versteht man das?}
+To analyze the severity of the error, we will compare the two resulting terms in the form of the $L^1$-norm.
 
 \section{Numerical flux}
 \label{sec:numerical-flux}
 
-The exchange of inforamtion between adjacent triangles is called the flux. We compute the numerical flux by sampling the edge at certain points. There are several possibilities to compute the numerical flux, and we focus on one of them: The Lax-Friedrichs-Flux.
+The exchange of inforamtion between adjacent triangles is called the flux. We compute the numerical flux by sampling the edge at certain points. There are several possibilities to compute the numerical flux, and we focus on one of them: The Lax-Friedrichs flux.
 
 \subsection{Flux function}
 \label{sec:flux-function-intro}
@@ -836,7 +831,7 @@ We will see in section \ref{sec:original-situation-2D problem} that -- even if w
   \end{pmatrix}
 \end{equation}
 
-\subsection{Lax-Friedrichs-Flux}
+\subsection{Lax-Friedrichs flux}
 \label{sec:lax-friedrich-definition}
 
 The Lax-Friedrichs flux is defined as follows \cite{leveque2002finite}:
@@ -849,7 +844,8 @@ In (\ref{eq:lax-friedrich-definition}), $p^R$ and $p^L$ stand for the height and
 
 The factor $\alpha$ is used to regulate the quality of the resulting term.
 Lower values result in increased accuracy but reduces the stability of the algorithm.
-Depending on simulation circumstances, $\alpha$ is set globally and treated the same for all triangles or is determined based on the quantities stored for certain triangles at run time, which obviously results in higher computation time with respect to one single time-step.\remark[Philipp]{abgeändert auf ``one single time-step''. Passt das dann?}. The various methods and their properties are discussed in \cite{leveque2002finite}.
+Depending on simulation circumstances, $\alpha$ is either set globally and treated the same for all triangles at a low enough value to guarantee stable computation, or is determined based on the quantities stored for certain triangles at run time.
+The various methods and their properties are discussed in \cite{leveque2002finite}.
 For our purposes, we will leave it invariant in time and space across the whole domain.
 We refer to \cite{cockburn1999discontinuous,leveque2002finite} for readers interested in this issue and other choices of flux functions.
 
@@ -858,7 +854,7 @@ Depending on how $\alpha$ is handled, it results in different methods. Sometimes
 \section{Deriving the error term}
 \label{sec:deriving-error-term-i}
 
-\subsection{Original situation: A 2D problem}
+\subsection{Parametrizing a 2D problem}
 \label{sec:original-situation-2D problem}
 
 The original problem arises when two adjacent triangles share one edge.
@@ -894,18 +890,15 @@ In the case shown we would use six support points, resulting in a two-variable p
   \label{fig:two-triangles-and-some-support-points}
 \end{figure}
 
-Since we are interested in the situation along the adjacent edges, which is a linear curve, we can remodel the problem to one dimension, which will reduce the computational complexity. This means that we do not actually construct two-variable polynomials for the whole triangles, but instead consider just polynomials that depend on one variable $\lambda \in [0,1]$. The variable $\lambda$ simultaneously traverses both adjacent edges (see figure \ref{fig:two-triangles-and-some-support-points}).
-
-We can do so, since an integration along an edge can be considered as a one-dimensional integration without changing the result.\remark{Der Martin meinte irgendwas von ``Berechnung im Kanten Referenzraum'' --- keine Ahnung, ob's das wirklich braucht.} Since the original polynomials (w.r.t. $x$ and $y$) are of a certain degree, we will -- after the parametrization -- obtain polynomials of the same degree w.r.t. $\lambda$, since the mapping from $\lambda$ onto $x$ and $y$ is linear.
-
-%\todo{Beruft euch z. B. darauf, dass die Berechnung im Kanten Referenzraum identisch ist. Vorausgesetzt, das wurde vorher erklaert.}
+Since we are interested in the situation along the adjacent edges, which is a linear curve, we can remodel the problem to one dimension, which will reduce the computational complexity while maintaining the same accuracy. This means that we do not actually construct two-variable functions for the whole triangle, but instead parametrize it with one variable $\lambda \in [0,1]$. The variable $\lambda$ can be thought of simultaneously traversing both adjacent edges (see figure \ref{fig:two-triangles-and-some-support-points}).
 
 \subsection{Constructing the polynomials}
 \label{sec:constructing-polynomials}
 
-As stated in the introduction, we have to construct $p^L$ and $p^R$, the polynomials describing the height and momentum of the right and left triangle respectively. We construct these polynomials by interpolating certain points.
+As stated in the introduction, we have to construct $p^L$ and $p^R$, the polynomials describing the height and momentum of the right and left triangle. We construct these polynomials by interpolating certain points.
 
-We do so for the left and the right triangle, and for the height and the momentum. We call the points we have chosen the \emph{support points} for the left and right triangle. For convenience, we have decided to use a naming convention for these points.
+We do so for the left and the right triangle, and for the height and the momentum. We call the points we have chosen the \emph{support points} for the left and right triangle.
+For convenience, we have decided to use a naming convention for these points.
 Assume that we have $n$ points for each triangle.
 We denote the components of the points of the left triangle
 \begin{equation*}
@@ -972,9 +965,9 @@ As was mentioned in section \ref{sec:flux-function-intro} $p^L$ and $p^R$ are ac
 We first analyze the difference between the following two ways to compute the flux based updates:
 
 \begin{description}
-\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrichs-Flux, and compute its exact value. The resulting values are rational functions depending on $x$. We call these functions $N\left(x\right)$ (a vector which has a polynomial function for the height as its first component, while the second component is a rational function, representing the momentum).
+\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrichs flux, and compute its exact value. The resulting values are rational functions depending on $x$. We call these functions $N\left(x\right)$ (a vector which has a polynomial function for the height as its first component, while the second component is a rational function, representing the momentum).
 
-\item[Approximate solution] We supply the support points into the Lax-Friedrichs-Flux directly, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
+\item[Approximate solution] We supply the support points into the Lax-Friedrichs flux directly, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
   \begin{equation*}
     F_{LF}\left(
       \begin{pmatrix}
@@ -1032,13 +1025,12 @@ That is why, for the rest of this part, we will only display error plots for the
 \subsection{\texorpdfstring{How to evaluate $I$}{How to evaluate I}}
 \label{sec:how-to-eval-I}
 
-It is a nontrivial task to evaluate the integral in equation (\ref{eq:integral-norm-definition}). Even if we delegate most of the work to the symbolic math program \emph{Maple}, we experienced some pitfalls while evaluating the exact approach.
+Evaluating the integral in equation (\ref{eq:integral-norm-definition}) is not a trivial task.
+Even if delegating most of the work to the symbolic math program Maple, we experienced some pitfalls while evaluating the exact approach.
 
-The main challenge with exact integration is that Maple has to compute the zeroes of $N\left(x\right)-N^\prime\left(x\right)$, which can be a time consuming task, depending on the rational functions used.
+The main challenge with exact integration is that Maple has to compute the zeroes of $\left|N\left(x\right)-N^\prime\left(x\right)\right|$, which can be a time consuming task, depending on the functions used.
 
-There are several possibilities to overcome this problem. The first that may come to mind is to use a Gaussian quadrature (or any equivalent quadrature scheme for rational functions). However, even after extensive research we could not find any suitable quadrature method for rational functions.
-
-%However, using a Gaussian quadrature requires that the integrand at least ``looks somehow'' like a polynomial -- something we explicitly can \emph{not} be sure of.\todo{Da wird ein Mathematiker bei dem was ihr spaeter macht aber sofort gegenargumentieren, dass Gauss ja N-ter ordnung genau ist und ihr lediglich 0-ter Ordnung quadriert wenn mich nicht alles taeuscht. \remark{-- Aber warum sollte denn zweiter Ordnung besser sein als nullte Ordnung, \emph{wenn wir bereits wissen, dass wir es eh nicht mit Polynomen, sondern gebrochenrationalen Funktionen zu tun haben?}}}
+There are several possibilities to overcome this problem. The first that may come to mind is to use a Gaussian quadrature (or any equivalent quadrature scheme for rational functions). However, even after extensive research we could not find any suitable quadrature methods for rational functions.
 
 This is why we consider three other possibilities for computing the error term:
 
@@ -1139,32 +1131,27 @@ We are now going to plot the impulse component of the term $I$ as described in e
 First, we have to devise a strategy to compactly but efficiently visualize such a complicated term.
 Afterwards, we present our tool, developed to simplify plotting as much as possible in order to offer more insight to the quadrature errors.
 
-\subsection{A word on visualization}
+\subsection{Visualization introduction}
 \label{sec:a-word-on-visualization}
-
-Before we actually go into visualizing the error term, let us introduce some concepts that will be useful later when it comes to plotting.
-
-Consider some well-known plots known from school, e.g. the graphs for the functions $y=2\cdot x+3$ or $y=x^2$.
-%These plots are probably well-known to every reader of this paper -- simply a horizontal $x$-axis, and a vertical $y$-axis.
 
 \subsubsection{Functions with parameters}
 
 Let us now consider a generalized function of same order, namely
 
 \begin{equation*}
-  y = a\cdot x+1.
+  y = a \cdot x + 1.
 \end{equation*}
 
-This equation describes a line going through point $(0,1)$ with varying gradient, namely $a$. That is, we actually have a whole collection of lines given by this equation. If one wants to plot ``the function'' $y=a\cdot x + 1$, one has in principle two possibilities:
+This equation describes a line going through point $(0,1)$ with varying gradient, namely $a$. That means we actually have a whole collection of lines given by this equation. If one wants to plot the function $y = a \cdot x + 1$, there are essentially two possibilities:
 
 \begin{itemize}
-\item Focus on specific values of $a$ and plot $y=a\cdot x + 1$ for these values of $a$.
+\item Focus on specific values of $a$ and plot $y = a \cdot x + 1$ for these values.
 \item Generate a 3D plot for varying values of $a$ and $x$. This plot has then two axes for $a$ and $x$ spanning two dimensions, the resulting value $y$ is then denoted by the last dimension.
 
-  That is, each point contained in the graph of this 3D plot has three coordinates $(x,a,y)$, and these three coordinates have to suffice the condition $y=a\cdot x + 1$.
+  Each point contained in the graph of this 3D plot has three coordinates $(x,a,y)$, and these three coordinates have to satisfy the condition $y = a \cdot x + 1$.
 \end{itemize}
 
-We compare the two methods in figure \ref{fig:simple-parametric-functions}. Note that we can interpret the lines in the two dimensional plot as ``slices'' from the three dimensional plot.
+We compare the two methods in figure \ref{fig:simple-parametric-functions}. Note that we can interpret the lines in the two dimensional plot as slices from the three dimensional plot.
 
 \begin{figure}[ht]
   \centering
@@ -1174,25 +1161,22 @@ We compare the two methods in figure \ref{fig:simple-parametric-functions}. Note
   \subfigure[A three dimensional plot]{
     \includegraphics[scale=0.5]{simple_parametric_3d.pdf}
   }
-  \caption{Plotting simple parametric functions using different approaches}
+  \caption{Plotting simple parametric functions using different approaches.}
   \label{fig:simple-parametric-functions}
 \end{figure}
 
-Now, let us extend the above function by another variable and consider the function
-
-\begin{equation*}
-  y = a\cdot x+b.
-\end{equation*}
-
-As we can see, this function contains two parameters, namely $a$ and $b$. Again, if we want to plot this (collection of) line(s), we have several possibilities:
+Now, let us extend the above function by another variable, obtaining $y = a \cdot x + b$.
+If we want to plot this collection of lines, our options are similar to above.
+The problem now is that we cannot plot all our variables at once, essentially giving us these choices:
 
 \begin{itemize}
-\item Focus on specific values for $a$ and $b$ and generate a plot for the combinations of $a$ and $b$ under considerations.
-\item Focus on specific values for $a$, and draw a 3D plot (for each value of $a$ under consideration) having two axes that then describe $x$ and $a$, while $y$ is then represented by the remaining dimension.
-\item Similar to the previous possibility, one could focus on $b$ (instead of $a$) and draw 3D plots having two axes that then describe $x$ and $b$, while $y$ is then represented by the remaining dimension.
+\item Focus on specific values for $a$ and $b$ and generate several line plots for those values with the variable $x$.
+\item Focus on specific values for $a$, and generate several 3D plots for those values with the variables $x$ and $b$.
+\item Similar to the previous possibility, focus on specific values for $b$ (instead of $a$) and generate several 3D plots for those values with the variables $x$ and $a$.
 \end{itemize}
 
-Of course, as the number of parameters increases, the number of possibilities for plotting grows drastically. This is why we have to pick specific assignments for parameters and generate the corresponding plots.
+As the number of parameters increases, the number of possibilities for plotting grows with it.
+Since we can have a large number of variables, this is what we will do as well, leave one or two variables variable, while fixing the remaining variables and plotting the one-dimensional or two-dimenional result respectively.
 
 \subsection{\texorpdfstring{Interpreting $I$ as a function of support points}{Interpreting I as a function of support points}}
 \label{sec:some-considerations}
@@ -1287,26 +1271,9 @@ To understand how our plots work, we can take a look at figure \ref{fig:two-poin
 
 Looking at sub-figure \ref{subfig:two-points-p1-height-momentum}, its caption says that point $p_1^L$ is varying. To be precise, its height and momentum vary along the plot axes.
 
-The first part of this caption tells us that we are fixing all points except $p_1^L$ to a specific value (in this case it was $
-\begin{pmatrix}
-  10 \\ 0
-\end{pmatrix}
-$), i.e.\,we are considering the term $I\left(
-  \begin{pmatrix}
-    10 \\ 0
-  \end{pmatrix},
-  \begin{pmatrix}
-    h_2^R \\ u_2^R
-  \end{pmatrix},
-  \begin{pmatrix}
-    10 \\ 0
-  \end{pmatrix},
-  \begin{pmatrix}
-    10 \\ 0
-  \end{pmatrix}
-\right)$.
+The first part of this caption tells us that we are fixing all points except $p_1^L$ to a specific value (in this case it was $\left(10, 0\right)^T$, so we are considering the term $I\left(\left(10, 0\right)^T, \left(h_2^R, u_2^R\right)^T, \left(10, 0\right)^T, \left(10, 0\right)^T\right)$.
 
-% In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3D plot showing this function. Please remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
+% In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3D plot showing this function. Remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
 
 The orientation of the axes is displayed in figure \ref{fig:orientation-of-axes}.
 
@@ -1368,14 +1335,7 @@ So far we saw what the plots look like if all points have the same value. We are
 
 Now we alter the previously described experiment in one detail. We fix all points as before, but we alter one single point slightly. We do this in order to find out if specific points might have more impact than others.
 
-We start off by using three points per edge, setting each point to $
-\begin{pmatrix}
-  10 \\ 0
-\end{pmatrix}$ except $p_1^L$ which is set to $
-\begin{pmatrix}
-  9 \\ 0
-\end{pmatrix}
-$ (i.e.\,we decrease the height component of $p_1^L$).
+We start off by using three points per edge, setting each point to $\left(10, 0\right)$ except $p_1^L$ which is set to $\left(9, 0\right)$ (i.e.\,we decrease the height component of $p_1^L$).
 
 \input{3_punkte_1_geschwindigkeit_verringert/tex.tex}
 
@@ -1431,45 +1391,41 @@ The same calculations for three random points is shown in figure \ref{fig:three-
 
 When one considers the figures depicted in section \ref{sec:results}, it seems intuitive to assume that the error grows if the values for $h$ and $u$ diverge further from the average.
 
-One suspicion that could explain that intuition is due to polynomials $N\left(x\right)$ and $N^\prime\left(x\right)$ often diverging towards the borders of $[0,1]$ (i.e. $N(x)-N^\prime(x)$ grows towards the borders of $[0,1]$). This was observed by examining several assignments for support points. Even if it is not generally the case, it was often observed.
+One suspicion that could explain that intuition is due to the functions $N\left(x\right)$ and $N^\prime\left(x\right)$ often diverging towards the borders of $[0,1]$ (i.e. $N(x)-N^\prime(x)$ grows towards the borders of $[0,1]$). This was observed by examining several assignments for support points. Even if it is not generally the case, it was often observed.
 
-One way to prevent this \emph{might} be the following: One chould choose the support points such that there are support points at 0 and 1 (the borders of $[0,1]$) and the remaining support points are equidistant within this interval. When we choose the support points according to this strategy, 0 and 1 are support points and we can be sure that $N\left(x\right)$ and $N^\prime\left(x\right)$ coincide at the values 0 and 1 (i.e.\,$N\left(0\right)=N^\prime\left(0\right)$ and $N\left(1\right)=N^\prime\left(1\right)$). This prevents $N(x)$ and $N^\prime(x)$ from diverging at the border of $[0,1]$ (possibly at the price of increasing the difference within this interval).
+One way to prevent this is would be to choose the support points such that there are points at 0 and 1 (the borders of $[0,1]$) and the remaining support points are equidistant within this interval. When we choose the points according to this strategy, 0 and 1 are support points and we can be sure that $N\left(x\right)$ and $N^\prime\left(x\right)$ coincide at the values 0 and 1 (i.e.\,$N\left(0\right)=N^\prime\left(0\right)$ and $N\left(1\right)=N^\prime\left(1\right)$). This prevents $N(x)$ and $N^\prime(x)$ from diverging at the border of $[0,1]$ (possibly at the price of increasing the difference within this interval).
 
-We now examine this setting and conduct some experiments. Along the way, note that if we use two or three support points, using equidistant support points (as explained in our strategy) corresponds to mapping the support points obtained by the gaussian quadrature onto the interval $[0,1]$ such that the leftmost resp. rightmost support point becomes 0 resp. 1.
+We now examine this setting and conduct some experiments. Along the way, note that if we use two or three support points, using equidistant support points corresponds to mapping the support points obtained by the gaussian quadrature onto the interval $[0,1]$ such that the leftmost resp. rightmost support point becomes 0 resp. 1.
 
 \subsection{Two fixed support points}
 \label{sec:equidist-two-fixed}
 
-We start by using two support points along each edge (i.e. we choose 0 and 1 as support points). We set both points to $(10,0)^T$ and obtain plots that look similar to the ones that we obtained using the support points of the Gaussian quadrature (i.e. $0.5\pm\frac{\sqrt 3}{6}$). Figure \ref{fig:equidist_2_default} compares both variants of support points.
+We start by using two support points along each edge (i.e.\,we choose 0 and 1 as support points). We set both points to $(10,0)^T$ and obtain plots that look similar to the ones that we obtained using the support points of the Gaussian quadrature (i.e.\,$0.5\pm\frac{\sqrt 3}{6}$). Figure \ref{fig:equidist_2_default} compares both variants of support points.
 
 \input{equidist_2_default/tex}
 
-We observe that the error is smaller for equidistant support points than for ``Gaussian quadrature support points''. We will now examine if this behaviour still occurs if we have three support points.
+We observe that the error is smaller for equidistant support points than for Gaussian quadrature points. We will now examine if this behavior still occurs if we have three support points.
 
 \subsection{Three fixed support points}
 \label{sec:equidistant-three-fixed}
 
 We now consider the same values as in section \ref{sec:setting-all-support-points-to-the-same-value} and set all support points to $(10,0)^T$. We show the resulting plots and the plots for support points from Gaussian quadrature in figure \ref{fig:three-equidistant-all-fixed}.
 
-%While the results do differ from the ones depicted in figure \ref{fig:three-points-equal}, where we examined the same situation for the Gaussian quadrature support points, the shape of the plots still looks very similar.
-
 \input{3_punkte_equidist_alles_gleich/tex.tex}
 
 We can observe from figure \ref{fig:three-equidistant-all-fixed} that now the error is larger for equidistant support points. Still, the shapes are very similar.
 
-%\todo{Wenn es lediglich diese eine Subsection gibt, sollte der Punkt herausgenommen werden oder ihr macht noch einen zweiten Vergleich. Eine einzige Studie ist mMn zu wenig um etwas aussagekraeftiges gewinnen zu koennen.}
-
-\subsection{Three points -- one point variation}
+\subsection{Three points, variation in one}
 \label{sec:equidist-3-one-point-variation}
 
 \subsubsection{Decreasing the height of $p_1^L$}
 \label{sec:equidist-3-on-point-var-decr-height-p1}
 
-Now we examine the situation with three support points (at 0, 0.5 and 1), where $p_1^L=(9,0)^T$ and all support points are set to $(10,0)^T$. We show the corresponding plots in figure \ref{fig:equidist_3_alles_default_ausser_p1_9_0}. We restrict ourselves to the errors for $p_2^L$ and $p_3^L$ since the errors for all other points look similar to the error for $p_3^L$ and would not yield that much insight.
+Now we examine the situation with three support points (at 0, 0.5 and 1), where $p_1^L=(9,0)^T$ and all support points are set to $(10,0)^T$. We show the corresponding plots in figure \ref{fig:equidist_3_alles_default_ausser_p1_9_0}. We restrict ourselves to the errors for $p_2^L$ and $p_3^L$ since the errors for all other points look similar to the error for $p_3^L$.
 
 \input{equidist_3_alles_default_ausser_p1_9_0/tex}
 
-We observe that the shapes of the plots look very similar to the ones obtained from Gaussian support points (see figure \ref{fig:three-points-h1-}). However, the error is quite a bit larger compared to the situation with Gaussian support points.
+We observe that the shapes of the plots look very similar to the ones obtained from Gaussian support points (see figure \ref{fig:three-points-h1-}). However, the error is significantly larger compared to the error observed with Gaussian support points.
 
 \subsubsection{Decreasing the momentum of $p_1^L$}
 \label{sec:equidist-3-on-point-var-decr-momentum-p1}
@@ -1478,7 +1434,7 @@ We observe that the shapes of the plots look very similar to the ones obtained f
 
 Similar to before, we can observe the accuracy of equidistant support points falling behind when compared to Gaussian quadrature points.
 The results presented in figure \ref{fig:equidist_3_alles_default_ausser_p1_10_-1}.
-When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized as the same, but, as before, its scale is higher, signifying a larger error.
+When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized as the same, but its scale is higher, signifying a larger error.
 
 \clearpage{}
 
@@ -1651,10 +1607,7 @@ We have now derived an exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \
 
 These terms could be simplified a bit further (for example by factoring out $\nabla \phi$), but since the terms are rather complicated anyway, we omit such manual simplifications and delegate tasks of this kind to Maple (or any equivalent computer algebra system).
 
-As we can see, computing these terms involves the terms $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That means we get these two error terms ($SE_x$, $SE_y$) for \emph{each} basis function. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i=
-\begin{pmatrix}
-  SE_x^i \\ SE_y^i
-\end{pmatrix}$ is the error term for basis function $\phi_i$.
+As we can see, computing these terms involves the terms $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That means we get these two error terms ($SE_x$, $SE_y$) for \emph{each} basis function. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i= \left(SE_x^i, SE_y^i\right)^T$ is the error term for basis function $\phi_i$.
 
 \subsection{\texorpdfstring{What does $SE$ mean?}{What does SE mean?}}
 \label{sec:stiffness-analysis-what-does-se-mean}
@@ -1905,16 +1858,13 @@ If we have two symmetric basis funcions $\phi_i$ and $\phi_j$ and consider $SE^i
   SE^i(h, u_x, u_y) = SE^j(h, u_y, u_x)
 \end{equation*}
 
-To examine this, please look at equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others (in fact they might even be equal). This will later enable us to use some plots for multiple situations.
+To examine this, look at equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others (in fact they might even be equal). This will later enable us to use some plots for multiple situations.
 
 %This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$ momentum since these plots can be constructed from their counterpart (i.e. the error in $x$ momentum for basis function $\phi_i$ is the same as the error in $y$ momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
 
-Following are reports of various scenarios we have tested, trying to find out any common behavior between the values. All the following graphs will show the calculated error in the stiffness terms for both components, i.e. $SE^i =
-\begin{pmatrix}
-  SE_x^i \\ SE_y^i
-\end{pmatrix}$ for $i=1,\dots, n$.
+Following are reports of various scenarios we have tested, trying to find out any common behavior between the values. All the following graphs will show the calculated error in the stiffness terms for both components, i.e. $SE^i = \left(SE_x^i, SE_y^i\right)$ for $i=1,\dots, n$.
 
-\subsection{Order 1 -- standard values}
+\subsection{Order 1, standard values}
 \label{sec:stiffness-analysis-order-1-standard}
 
 \subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
@@ -2209,7 +2159,7 @@ This is traceable, since we use second order approximations for $h, u_x$ and $u_
 
 While in the first order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), this does not hold true anymore. Trying to derive the local minima analytically is made too difficult because of the absolute value used in the integrand.
 
-As expected from our calculations in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and \ref{sec:basis-functions-other-properties}, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0. For a detailed calculation, please refer to section \ref{sec:stiffness-analysis-ord2-default-var-ux1}.
+As expected from our calculations in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and \ref{sec:basis-functions-other-properties}, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0. For a detailed calculation, refer to section \ref{sec:stiffness-analysis-ord2-default-var-ux1}.
 
 \paragraph{\texorpdfstring{Altering $h_3$}{Altering h3}}
 
@@ -2394,7 +2344,7 @@ We will now come back to only modifying the $x$ momentums. We will set them all 
 \subsection{Minimizing the error}
 \label{sec:stiffness-analysis-concl-error-0}
 
-If we have a situation, where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components. For the respective calculations, please refer to the previous sections.
+If we have a situation, where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components. For the respective calculations, refer to the previous sections.
 
 The error can become 0 even for other combinations, but it is very difficult to derive a simple pattern that must be fulfilled by the parameters. Moreover, as we saw, it can become zero if certain basis functions have a derivative that is 0 (as seen e.g. in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
 
@@ -2408,6 +2358,8 @@ It is hard to make accurate claims because the $L_1$ norm absorbs some informati
 \label{sec:stiffness-analysis-conclusion-higher-order}
 
 We also examined the situation for order 3. While the plots look similar in shape to the plots we have seen so far, the error value is larger. The explanations for these plots are analogous to the ones we have given for order 1 and order 2, even if the computations are more expensive and lengthy.
+
+\clearpage
 
 \bibliographystyle{alpha}
 \bibliography{bibliography}
