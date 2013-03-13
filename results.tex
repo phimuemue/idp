@@ -1020,8 +1020,8 @@ If we recall the Lax-Friedrichs flux function and look at the height component, 
 \end{equation}
 
 This implies something important for the interpolation, namely that the resulting functions will be a polynomial.
-More precisely, it will result in a polynomial of degree $n+1$ (as polynomial interpolation for $d$ points always results in polynomials of degree $d+1$).
-Since the approximating function $N^\prime\left(x\right)$ is also a polynomial obtained by interpolation of the $n$ support points, it is a polynomial of degree $n+1$ as well.
+More precisely, it will result in a polynomial of degree $n-1$ (as polynomial interpolation for $n$ points always results in polynomials of degree $n-1$).
+Since the approximating function $N^\prime\left(x\right)$ is also a polynomial obtained by interpolation of the $n$ support points, it is a polynomial of degree $n-1$ as well.
 Both of these terms, however, are the same in exactly $n$ points.
 With the fundamental theorem of algebra, we can conclude that both polynomials are the same, which means the error will be exactly 0.
 
