@@ -308,7 +308,7 @@ This also implies three normal vectors $\mathbf{n}_e$, one for each edge.
   \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds = \sum_{e \in E} \int_{e} F(\mathbf{q}) \cdot \mathbf{n}_e \, \phi \, ds = \sum_{e \in E} \int_{e} F^e \phi \, ds =: \text{Boundary integral}
 \end{equation}
 
-We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a reference space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:triangles}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
+We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a reference space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:reference-space}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
 
 \begin{equation}
   \label{eq:shallow-water-weak-form-div-applied-approximation}
@@ -1020,8 +1020,8 @@ If we recall the Lax-Friedrichs flux function and look at the height component, 
 \end{equation}
 
 This implies something important for the interpolation, namely that the resulting functions will be a polynomial.
-More precisely, it will result in a polynomial of degree $n+1$ (as polynomial interpolation for $d$ points always results in polynomials of degree $d+1$).
-Since the approximating function $N^\prime\left(x\right)$ is also a polynomial obtained by interpolation of the $n$ support points, it is a polynomial of degree $n+1$ as well.
+More precisely, it will result in a polynomial of degree $n-1$ (as polynomial interpolation for $n$ points always results in polynomials of degree $n-1$).
+Since the approximating function $N^\prime\left(x\right)$ is also a polynomial obtained by interpolation of the $n$ support points, it is a polynomial of degree $n-1$ as well.
 Both of these terms, however, are the same in exactly $n$ points.
 With the fundamental theorem of algebra, we can conclude that both polynomials are the same, which means the error will be exactly 0.
 
@@ -1464,7 +1464,11 @@ We can observe from figure \ref{fig:three-equidistant-all-fixed} that now the er
 \subsubsection{Decreasing the height of $p_1^L$}
 \label{sec:equidist-3-on-point-var-decr-height-p1}
 
+Now we examine the situation with three support points (at 0, 0.5 and 1), where $p_1^L=(9,0)^T$ and all support points are set to $(10,0)^T$. We show the corresponding plots in figure \ref{fig:equidist_3_alles_default_ausser_p1_9_0}. We restrict ourselves to the errors for $p_2^L$ and $p_3^L$ since the errors for all other points look similar to the error for $p_3^L$ and would not yield that much insight.
+
 \input{equidist_3_alles_default_ausser_p1_9_0/tex}
+
+We observe that the shapes of the plots look very similar to the ones obtained from Gaussian support points (see figure \ref{fig:three-points-h1-}). However, the error is quite a bit larger compared to the situation with Gaussian support points.
 
 \subsubsection{Decreasing the momentum of $p_1^L$}
 \label{sec:equidist-3-on-point-var-decr-momentum-p1}
