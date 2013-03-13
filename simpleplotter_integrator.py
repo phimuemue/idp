@@ -159,7 +159,7 @@ class SimplePlotter:
             print self.xyfunc[i]
             print "\n"
             gp("set style line 1 linecolor rgb \"black\"")
-            gp('%s %s ls 1 title "%s"' % (self.plotcommand, self.xyfunc[i], self.funcnames[i]))
+            gp('%s %s ls 1 title "%s"' % (self.plotcommand, self.xyfunc[i], 0*self.funcnames[i]))
 
     def adjustment_from_range(self,r):
         """Returns a gtk.Adjustment from a "gnuplot"-range.

@@ -973,7 +973,7 @@ As was mentioned in section \ref{sec:flux-function-intro} $p^L$ and $p^R$ are ac
 We first analyze the difference between the following two ways to compute the flux based updates:
 
 \begin{description}
-\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrichs-Flux, and compute its exact value. The resulting values are again polynomials depending on $x$. We call these polynomials $N\left(x\right)$ (a vector which has a polynomial for the height as its first component, while the second component represents the momentum).
+\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrichs-Flux, and compute its exact value. The resulting values are rational functions depending on $x$. We call these functions $N\left(x\right)$ (a vector which has a rational function for the height as its first component, while the second component represents the momentum).
 
 \item[Approximate solution] We supply the support points into the Lax-Friedrichs-Flux directly, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
   \begin{equation*}
