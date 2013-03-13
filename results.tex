@@ -653,10 +653,11 @@ So far we have explained what the discontinuous Galerkin method is and how it is
 
 For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$. The variables $x$ and $y$ represent coordinates within our triangle.
 
-Those functions are supposed to be bases for a polynomial space, so that we can construct any polynomial of degree $d$ as a linear combination of these basis functions.
+Those functions are supposed to form a basis for a polynomial space, so that we can construct any polynomial of degree $d$ as a linear combination of these basis functions. We use nodal basis functions, i.e. the coefficients of the linear combination coincide with the value at one support point \cite{boeck08discontinuous-galerkin-verfahren}.
 
-A relatively simple way of constructing basis functions is to use Lagrange interpolation:
-%\footnote{For another method involving Jacobi polynomials, see \cite{castro07high-order-ader-fv-dg-numerical-methods, hesthaven2007nodal}}
+A relatively simple way of constructing basis functions is to use Lagrange interpolation
+\footnote{For another method involving Jacobi polynomials, see \cite{castro07high-order-ader-fv-dg-numerical-methods, hesthaven2007nodal}}:
+
 \begin{itemize}
 \item Choose a certain set of $n$ points $p_1=\left( x_1,y_1 \right)^T$ through $p_n=\left( x_n,y_n \right)^T$ (see \ref{sec:choice-support-points}).
 \item Construct function $\phi_i$ such that $\phi_i(p_j) = \delta_{ij} \  \forall i,j \in \{1 \dots n\}$ using Lagrange polynomials (with $\delta_{ij}$ being the Kronecker delta function).
