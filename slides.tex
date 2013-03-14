@@ -202,7 +202,9 @@
   \frametitle{Introduction}
   \begin{itemize}
   \item Hyperbolic wave simulation
-  \item (Adaptive) triangulation of the whole area
+  \item 
+    %(Adaptive) 
+    Triangulation of the whole area
   \item How can we calculate the flux between triangles?
   \item Model continuous equations within these triangles
   \item Problem: Discontinuous due to spatial discretization
@@ -239,19 +241,19 @@
     \mathbf{q} =
     \begin{pmatrix}
       h \\ u_x \\ u_y
-    \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
+    \end{pmatrix}, \quad F(\mathbf{q}) =
     {
       \renewcommand{\arraystretch}{1.2}
       \begin{pmatrix}
         \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
         \frac{1}{2} g h^2 e_y
-      \end{pmatrix},
+      \end{pmatrix},\quad \text{ where } 
+      \mathbf{u}=
+      \begin{pmatrix}
+        u_x \\ u_y
+      \end{pmatrix}
     }
   \end{eqnarray*}
-  where $\mathbf{u}=
-  \begin{pmatrix}
-    u_x \\ u_y
-  \end{pmatrix}$
   % ,
   % $\mathbf{v} =
   % \begin{pmatrix}
@@ -295,18 +297,22 @@
 
 \begin{frame}
   \frametitle{Discontinuous Galerkin -- Remarks}
-  \begin{itemize}
-  \item Analytical solution for realistic scenarios still not found
+  % \begin{itemize}
+  % \item Analytical solution for realistic scenarios still not found
 
-    $\rightarrow$ numerical approximation
-  \end{itemize}
-  We use nodal basis functions:
+  %   $\rightarrow$ numerical approximation
+  % \end{itemize}
+  Nodal basis functions:
   \begin{itemize}
   \item Sample values at $n$ support points
   \item A basis function $\phi_i$ for each support point $\rightarrow$ nodal basis
   \item Approximate
-    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$ $\rightarrow$ Error since flux function not linear \todo{Correct?}
-  \item Result: $\mathbf{q}_i$ does not depend on $x$ and $y$ anymore
+    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$
+    \begin{itemize}
+    \item Introduces error since flux function not linear 
+    \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
+    \item $\mathbf{q}_i$ independ of $x$ and $y$ $\rightarrow$ allows matrix formulations
+    \end{itemize}
   \end{itemize}
 
   \begin{equation}
@@ -317,29 +323,29 @@
   \end{equation}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Numerical approximation for $\mathbf{q}$}
-  \begin{equation*}
-    \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)
-    \quad \text{ resp. } \quad
-    \begin{pmatrix}
-      h \\ u_x \\ u_y
-    \end{pmatrix} \approx
-    \sum_{i=1}^n
-    \begin{pmatrix}
-      h_i \\ u_{x,i} \\ u_{y,i}
-    \end{pmatrix}
-    \phi_i(x,y)
-  \end{equation*}
-  \begin{itemize}
-  \item Our basis functions: polynomials of a certain degree
-    \begin{itemize}
-    \item $\frac{(d+1)(d+2)}{2}$ support points needed for polynomials of degree $d$
-    \item $\phi_i (x_j,y_j) = \delta_{i,j}$ ($(x_j,y_j)$ coordinates of $i$-th support point)
-    \end{itemize}
-  \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
-  \end{itemize}
-\end{frame}
+% \begin{frame}
+%   \frametitle{Numerical approximation for $\mathbf{q}$}
+%   \begin{equation*}
+%     \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)
+%     \quad \text{ resp. } \quad
+%     \begin{pmatrix}
+%       h \\ u_x \\ u_y
+%     \end{pmatrix} \approx
+%     \sum_{i=1}^n
+%     \begin{pmatrix}
+%       h_i \\ u_{x,i} \\ u_{y,i}
+%     \end{pmatrix}
+%     \phi_i(x,y)
+%   \end{equation*}
+%   \begin{itemize}
+%   \item Our basis functions: polynomials of a certain degree
+%     \begin{itemize}
+%     \item $\frac{(d+1)(d+2)}{2}$ support points needed for polynomials of degree $d$
+%     \item $\phi_i (x_j,y_j) = \delta_{i,j}$ ($(x_j,y_j)$ coordinates of $i$-th support point)
+%     \end{itemize}
+%   \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
+%   \end{itemize}
+% \end{frame}
 
 \section{Matrices}
 
@@ -379,7 +385,7 @@
         \label{eq:mass-matrix-overview}
         M = \int_T \phi_i \phi_j \ dT
       \end{equation}
-    \item[Edge matrices] (one for each edge $e$) %$\forall e \in E$:
+    \item[Flux matrices] (one for each edge $e$) %$\forall e \in E$:
       \begin{equation}
         \label{eq:edge-matrices}
         W^e = \phi_i\left(p_k^e\right) \cdot w_k
