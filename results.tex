@@ -804,7 +804,7 @@ We have two adjacent triangles called $R$ and $L$ respectively, sharing a common
 
 After parametrization along the edge $E$, this results in a function $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four functions (see section \ref{sec:original-situation-2D problem} for more detailed information regarding the parametrization).
 
-To approximate the result numerically, we will take a number of sample points along the edge and evaluate the flux functions at those places. This is the prevalent method employed in this field (\cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}) and is also used by the Sierpinski framework. Recall from section \ref{} that it uses a Gaussian quadrature to calculate this integral. This introduces an error, since we have a rational function, for which polynomial Gaussian quadrature may not produce exact results anymore.
+To approximate the result numerically, we will take a number of sample points along the edge and evaluate the flux functions at those places. This is the prevalent method employed in this field (\cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}) and is also used by the Sierpinski framework. Recall from section \ref{sec:matrix-extraction} that it uses a Gaussian quadrature to calculate this integral. This introduces an error, since we have a rational function, for which polynomial Gaussian quadrature may not produce exact results anymore.
 
 To analyze the severity of the error, we will compare the two resulting terms in the form of the $L^1$-norm.
 
@@ -994,7 +994,7 @@ We first analyze the difference between the following two ways to compute the fl
 
 \end{description}
 
-Our goal will then be to compare $N\left(x\right)$ to $N^\prime\left(x\right)$ (component-wise, of course). We compare the quality of an approximation by considering the $L_1$ norm:
+Our goal will then be to compare $N\left(x\right)$ to $N^\prime\left(x\right)$ (component-wise, of course). We compare the quality of an approximation by considering the $L^1$ norm:
 
 \begin{equation}
   \label{eq:integral-norm-definition}
@@ -1598,7 +1598,7 @@ Analogously, we define this for the second component:
 
 \subsection{Comparison of exact and approximative solution}
 
-We have now derived an exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L_1$ norm, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
+We have now derived an exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L^1$ norm, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
 
 \begin{eqnarray*}
   SE_x := \int_T \left| \overline{F}_2(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi \right| \, dT\\
@@ -2352,7 +2352,7 @@ As a rule of thumb, one can deduce the following from the plot: The lower the de
 
 That means, that even if we produce an error, it will probably be so small that it has no influence on the realism of the simulation.
 
-It is hard to make accurate claims because the $L_1$ norm absorbs some information that might be useful. However, since the approximations shown in this paper are actually used in software (and the software looks good), the error seems small enough to be negligible.
+It is hard to make accurate claims because the $L^1$ norm absorbs some information that might be useful. However, since the approximations shown in this paper are actually used in software (and the software looks good), the error seems small enough to be negligible.
 
 \subsection{Higher orders}
 \label{sec:stiffness-analysis-conclusion-higher-order}
