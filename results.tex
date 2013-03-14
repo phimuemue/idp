@@ -564,8 +564,8 @@ The matrices we obtained from section \ref{sec:matrix-extraction} are the follow
 \item[Stiffness matrices]
   \begin{equation}
     \label{eq:stiffness-matrix}
-    S^x = [s_{ij}^x]_{n \times n} = \int_T \phi_j \pd{\phi_i}{x} \quad
-    S^y = [s_{ij}^y]_{n \times n} = \int_T \phi_j \pd{\phi_i}{y}
+    S^x = [s_{ij}^x]_{n \times n} = \int_T \phi_j \pd{\phi_i}{x}\, dT\quad
+    S^y = [s_{ij}^y]_{n \times n} = \int_T \phi_j \pd{\phi_i}{y}\, dT
   \end{equation}
 \item[Flux matrices]
   \begin{equation}
@@ -672,7 +672,7 @@ This means that we need $\frac{1}{2} \cdot (d+2) \cdot (d+1)$ basis functions to
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
 
-As mentioned before, we construct the basis functions with the help of some support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing certain sets of points will lead to a malconditioned matrix, which provides a malconditioned inverted matrix (if an inversion is even possible in that case), resulting in inaccurate basis functions\todo[Stjepan]{Wie referenzieren wir am besten den Martin an dieser Stelle? Das wird glaub ich auch im Cockburn erwaehnt, aber konnte auf die Schnelle nichts finden...}. Since we will use Gaussian quadrature over these points, we will want support points that provide the best results for those.
+As mentioned before, we construct the basis functions with the help of some support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing certain sets of points will lead to a malconditioned matrix, which provides a malconditioned inverted matrix (if an inversion is even possible in that case), resulting in inaccurate basis functions\todo[Stjepan]{Diese Info haben wir vom Martin. Wie am besten referenzieren?}. Since we will use Gaussian quadrature over these points, we will want support points that provide the best results for those.
 
 For low degree polynomials, we choose specific distribution of the support points within the triangle:
 \begin{description}
@@ -1026,7 +1026,7 @@ That is why, for the rest of this part, we will only display error plots for the
 \label{sec:how-to-eval-I}
 
 Evaluating the integral in equation (\ref{eq:integral-norm-definition}) is not a trivial task.
-Even if delegating most of the work to the symbolic math program Maple, we experienced some pitfalls while evaluating the exact approach.
+Even if delegating most of the work to the symbolic math program Maple, we experienced some pitfalls while evaluating the term.
 
 The main challenge with exact integration is that Maple has to compute the zeroes of $\left|N\left(x\right)-N^\prime\left(x\right)\right|$, which can be a time consuming task, depending on the functions used.
 
@@ -1069,7 +1069,7 @@ This is why we consider three other possibilities for computing the error term:
   into several stripes, and compute the area of these stripes. The more stripes we have, the more accurate our result will be, at the expense of computation time.
 \end{description}
 
-It is just as well possible to use the first or second approach, although this requires to tell Maple that it should first make all necessary substitutions, and then plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore these options further. So we eventually went for the last of these approaches using the rectangle method for quadrature.
+It is just as well possible to use the first or second approach, although this requires to tell Maple that it should first make all necessary substitutions, and then plot the resulting graphs. This is not only harder to accomplish but also results in a mess of code, but would not produce more accurate results, which is why we did not explore these options further. So we eventually went for the last of these approaches using the rectangle method for quadrature. We experienced quite good results using this method.
 
 We eventually implemented our own tool to accomplish that task.
 Some information about it will be provided in section \ref{sec:making-the-whole-thing-interactive}.
