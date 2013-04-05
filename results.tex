@@ -79,8 +79,6 @@
 
 \todo{Es sieht wirklich immer besser aus, wenn ihr ein Titelblatt verwendet mit IDP, Prof. \& Betreuer}
 
-\todo{Alle ``let us'' raus.}
-
 \todo{Alle ``undefined references'' raus.}
 
 \maketitle{}
@@ -1142,7 +1140,7 @@ Afterwards, we present our tool, developed to simplify plotting as much as possi
 
 \subsubsection{Functions with parameters}
 
-Let us now consider a generalized function of same order, namely
+We now consider a generalized function of same order, namely
 
 \begin{equation*}
   y = a \cdot x + 1.
@@ -1171,7 +1169,7 @@ We compare the two methods in figure \ref{fig:simple-parametric-functions}. Note
   \label{fig:simple-parametric-functions}
 \end{figure}
 
-Now, let us extend the above function by another variable, obtaining $y = a \cdot x + b$.
+Now, we extend the above function by another variable, obtaining $y = a \cdot x + b$.
 If we want to plot this collection of lines, our options are similar to above.
 The problem now is that we cannot plot all our variables at once, essentially giving us these choices:
 
@@ -1750,7 +1748,7 @@ We can now sample the height at the centers and compute the appropriate volume o
   \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2L^2}
 \end{equation}
 
-To clarify this, let us consider some examples:
+To clarify this, we consider some examples:
 
 If we use just one triangle (i.e. $L=1$), then this triangle coincides with the original triangle, and its center is located at $(\frac{1}{3}, \frac{1}{3})$. If we use this approximation, we obtain the following:
 
@@ -1778,7 +1776,7 @@ We noticed that $L=5$ (i.e. using 25 triangles) suffices most of the time. Highe
 \subsection{\texorpdfstring{Singularities in $SE$}{Singularities in SE}}
 \label{sec:stiffness-analysis-singularities}
 
-Before we actually generate plots and interpret them, let us for a moment consider the term $SE_x$ (we could also do so for $SE_y$ --- it is just for illustrative purpose).
+Before we actually generate plots and interpret them, we consider consider the term $SE_x$ for a moment (we could also do so for $SE_y$ --- it is just for illustrative purpose).
 
 This term ($SE_x$) depends on $\widehat{F_2}(\mathbf{q})$ and $\overline{F_2}(\mathbf{q})$. Moreover, as we remember, $\widehat{F_2}(\mathbf{q})$ is defined as follows:
 
@@ -1851,7 +1849,7 @@ for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-
 
 As we can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only red and green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1} --- no yellow at all). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
 
-The white area is -- as said -- undefined or out of the triangle. Let us for a moment focus on the ``undefined'' ones: If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative --- wich again is not a reasonable value for $h_1$ if all other heights are 10.
+The white area is -- as said -- undefined or out of the triangle. We will now focus on the ``undefined'' ones: If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative --- wich again is not a reasonable value for $h_1$ if all other heights are 10.
 
 We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behaviour.
 
@@ -1970,7 +1968,7 @@ Moreover, it is again noteworthy that the minimum error occurs for $u_{x,1}=0$ s
 
 \subsubsection{\texorpdfstring{Varying $u_{y,1}$}{Varying uy1}}
 
-In the last section, the $x$ momentum of the second and third basis function were the most interesting terms to look at. Let us now see, what happens if we choose $u_{y,1}$ as varying comopnent.
+In the last section, the $x$ momentum of the second and third basis function were the most interesting terms to look at. We now focus on what happens if we choose $u_{y,1}$ as varying comopnent.
 
 \input{standardwerte_nach_uy_ord1/tex.tex}
 
@@ -2004,7 +2002,7 @@ Up until now we have only considered scenarios in which all fixed heights and mo
 \subsubsection{Different heights}
 \label{sec:stiffness-analysis-ord1-differing-h2-10-h3-11}
 
-Let us begin with a setting that employs different heights, and assigns all momentums to 0. We want to investigate the plots for varying $h_1$.
+We begin with a setting that employs different heights, and assigns all momentums to 0. We want to investigate the plots for varying $h_1$.
 
 \input{ord1_differing_h2_h3_10_11/tex}
 
@@ -2012,7 +2010,7 @@ We can see the resulting plots in figure \ref{fig:stiffneses-analysis-ord1-h2-10
 
 What is remarkable about these plots is the fact that the error is now minimal for a value of $h_1\approx 10.5$ -- which corresponds to the average value of $h_2$ and $h_3$. However, note that now the minimal error is roughly 1, while in the previous setting ($h_2=h_3=10$) the minimal error was 0.
 
-Let us investigate, if we can find a minimal at $h_1=11$ error if we do the same experiment for $h_2=10$ and $h_3=12$.
+We investigate if we can find a minimal at $h_1=11$ error if we do the same experiment for $h_2=10$ and $h_3=12$.
 
 \input{ord1_differing_h2_h3_10_12/tex}
 
@@ -2024,7 +2022,7 @@ We will now inspect what it looks like if we set $h_2=12$ and $h_1=10$.
 
 The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10}. The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two. This makes sense when examining the equations, which we will cover later\todo{Wg. der symmetrie? Dann solltet ihr das als Voraus-Haeppchen fuer den Leser hier nennen\done{Ist aber nicht wg. Symm. glaube ich.}}.
 
-Let us now inspect the following scenario: We set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$.
+We now inspect the following scenario: We set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$.
 
 \input{ord1_differing_h2_h3_12_8/tex.tex}
 
@@ -2040,7 +2038,7 @@ Of course, it is an interesting question if this can be proven (or even disprove
 
 However, this does not hold true.
 %Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values\todo{Ist das nicht ein Gegenbeweis?}. 
-To illustrate this, let us consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
+To illustrate this, we consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
 
 \input{ord1_differing_h2_h3_164/tex.tex}
 
@@ -2073,7 +2071,7 @@ To visualize these settings, we will revisit three-dimensional plots that have t
 
 Remember that if we only changed either the $x$ or the $y$ impulse values, the error (depending on the only non-fixed $x$ or $y$ momentum) reached its minimum roughly at the average of the other two $x$ or $y$ momentums respectively, as long as they did not differ too strongly.
 
-Let us start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
+We start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
 
 Considering the plot for $SE_x^1$, it is easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, we can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term now reaches the 0.5 mark, while previously only came up to about 0.4.
 
@@ -2081,7 +2079,7 @@ In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_d
 
 However, with $u_{x,2}=u_{y,2}=1$ one can still see the strong connection to the original plots.
 
-Let us now choose some more extreme values: $u_{x,2}=3$ and $u_{y,2}=3$. The corresponding plots can be found in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_3_3}.
+We now choose some more extreme values: $u_{x,2}=3$ and $u_{y,2}=3$. The corresponding plots can be found in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_3_3}.
 
 \input{ord1_varying_ux1_uy1_differing_ux2_uy2_3_3/tex.tex}
 
@@ -2089,7 +2087,7 @@ Now, the deformations in the plots are stronger. While the overall error grew by
 
 What we can assume from the plots we have seen so far is that the more the momentums differ, the worse our approximation (i.e. the bigger the error) will get. We made the same observation about the height values before.
 
-To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=1$ assuming that this should roughly look like the original situation where all moments were set to 0, except that we suspect the error to be minimal at $u_{x,1}=1$ and $u_{y,1}=1$.
+To examine this suspicion a bit, we now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=1$ assuming that this should roughly look like the original situation where all moments were set to 0, except that we suspect the error to be minimal at $u_{x,1}=1$ and $u_{y,1}=1$.
 
 \input{ord1_varying_ux1_uy1_differing_ux2_uy2_ux3_uy3_1_1_1_1/tex.tex}
 
@@ -2137,7 +2135,7 @@ The fact that all $y$ momentum errors are zero deserves a special attention. How
 %   \pd{\phi_Y}{y} &= 0
 % \end{align*}
 
-Let us start out by examining the error of the $y$ momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right)$. That makes $\mathtt{DIFFY}$ a two-component vector containing an $x$ and an $y$ coordinate.
+We start out by examining the error of the $y$ momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right)$. That makes $\mathtt{DIFFY}$ a two-component vector containing an $x$ and an $y$ coordinate.
 
 \begin{align*}
   SE_y^X &= \int_T \left| \left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right) \cdot \nabla \phi_X \right| \, dT = \\
@@ -2257,7 +2255,7 @@ The errors for the $x$ momentums are shown in figure \ref{fig:ord2_varying_ux1_u
 
 \subparagraph{\texorpdfstring{Errors in $x$ momentums}{Errors in x momentums}}
 
-Let us first concentrate on the errors of the $x$ momentums shown in figure \ref{fig:ord2_varying_ux1_uy2_1}.
+We first concentrate on the errors of the $x$ momentums shown in figure \ref{fig:ord2_varying_ux1_uy2_1}.
 
 \input{ord2_varying_ux1_uy2_1/tex.tex}
 
@@ -2273,7 +2271,7 @@ Note that \emph{all} errors (for $x$ momentum) reach zero for $u_{x,1} = 0$. We 
 
 Note that the plots show a special case of these three conditions.
 
-Let us start analyzing by considering (once again) $SE_x^i$:
+We start analyzing by considering (once again) $SE_x^i$:
 
 \begin{align*}
   SE_x^i = \int_T \left| \left(\overline{F_2}(\mathbf{q}) - \widehat{F_2}(\mathbf{q})\right) \cdot \nabla \phi_i \right|\, dT
