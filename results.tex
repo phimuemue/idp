@@ -2055,6 +2055,76 @@ We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting 
 
 \input{ord1_ux1_differing_ux2_ux3/tex.tex}
 
+We see, that the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$. However, further investigating this direction is not necessary, since altering $u_{x,2}$ and $u_{x,3}$ (while leaving $u_{x,1}$ variable) affects the plots in the same way as changing $h_2$ and $h_3$ (with $h_1$ variable).
+
+\subsubsection{\texorpdfstring{Different $y$ momentums}{Different y momentums}}
+\label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
+
+To complete the current line of experiments, we could examine different $y$ momentums analogously to before, but it is obvious from the equations that this will present the same results, only with a different zero-error functions. In that case, the $y$ momentums of the first and the second basis function are the interesting plots, while all others are 0.
+
+\subsubsection{\texorpdfstring{Different $x$ and $y$ momentums}{Different x and y momentums}}
+\label{sec:stiffness-analysis-different-ux-uy-momentums}
+
+We now generalize the previous experiments by altering both $x$ momentums and $y$ momentums.
+
+\input{ord1_varying_ux1_uy1_differing_ux2_uy2_1_1/tex.tex}
+
+To visualize these settings, we will revisit three-dimensional plots that have two axis variables. Refer to figure \ref{fig:standardwerte_nach_ux1_ux2_ord1} for the original situation (i.e. heights are 10, momentums are 0), where we always had a minimal error at $u_{x,1}=u_{y,1}=0$. From now on, since the plots tend to be highly symmetric, we will omit some of them, stating which plots we omitted and why.
+
+Remember that if we only changed either the $x$ or the $y$ impulse values, the error (depending on the only non-fixed $x$ or $y$ momentum) reached its minimum roughly at the average of the other two $x$ or $y$ momentums respectively, as long as they did not differ too strongly.
+
+Let us start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
+
+Considering the plot for $SE_x^1$, it is easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, we can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term now reaches the 0.5 mark, while previously only came up to about 0.4.
+
+In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), we can observe a slight translation of all the plots. It is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$ and $y$ momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
+
+However, with $u_{x,2}=u_{y,2}=1$ one can still see the strong connection to the original plots.
+
+Let us now choose some more extreme values: $u_{x,2}=3$ and $u_{y,2}=3$. The corresponding plots can be found in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_3_3}.
+
+\input{ord1_varying_ux1_uy1_differing_ux2_uy2_3_3/tex.tex}
+
+Now, the deformations in the plots are stronger. While the overall error grew by a significant amount, we can still say that it is minimal roughly at $u_{x,1}=\frac{u_{x,2}+u_{x,3}}{2}$ and $u_{y,1}=\frac{u_{y,2}+u_{y,3}}{2}$.
+
+What we can assume from the plots we have seen so far is that the more the momentums differ, the worse our approximation (i.e. the bigger the error) will get. We made the same observation about the height values before.
+
+To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=1$ assuming that this should roughly look like the original situation where all moments were set to 0, except that we suspect the error to be minimal at $u_{x,1}=1$ and $u_{y,1}=1$.
+
+\input{ord1_varying_ux1_uy1_differing_ux2_uy2_ux3_uy3_1_1_1_1/tex.tex}
+
+The plots confirm our suspiction: the error is indeed minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ -- it is even 0.
+
+\clearpage{}
+
+\section{Error terms for order 2}
+\label{sec:stiffness-analyis-ord-2}
+
+We will now examine the error plots for order 2. Remember from table \ref{tab:basis-functions-for-low-degrees} that we now have 6 basis functions $\phi_1,\dots,\phi_6$. Besides making the approximation more complicated, this gives rise to 12 plots (we have the errors in $x$ momentum and in $y$ momentum for each of the basis functions).
+
+Similar to before, we will use only one plot for several error plots if they all look the same.
+
+\subsection{Standard values}
+\label{sec:stiffness-analyiss-ord2-default}
+
+\subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
+\label{sec:stiffness-analysis-ord2-default-var-h1}
+
+Again, we start out by using the default values, setting all heights to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. We can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}.
+
+\input{ord2_varying_h1_default/tex.tex}
+
+As one can see, we always have a parabola-like shape (except for the $x$ momentum of the 5th and the $y$ momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (for $SE_x^2$). We observe that the error is always minimal (in fact even 0) for $h_1=10$. The results of $SE_x^5$ and $SE_y^3$ are a natural consequence of $\pd{\phi_5}{x}=\pd{\phi_3}{y}=0$, analogous to the order 1 case.
+
+\subsubsection{\texorpdfstring{Varying $u_{x,1}$}{Varying ux1}}
+\label{sec:stiffness-analysis-ord2-default-var-ux1}
+
+Next we choose $u_{x,1}$ to be the axis variable. We set all other momentums to 0 and all height values to 10. If we do so, we obtain the plots shown in figure \ref{fig:ord2_varying_ux_1}.
+
+\input{ord2_varying_ux_1/tex.tex}
+
+One can see there\todo{Kein 'one'} that the error for all $y$ momentums is zero. Moreover, the error is zero for the $x$ momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums. 
+
 We can see there that the error for all $y$ momentums is zero. Moreover, the error is zero for the $x$ momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
 
 For the most part, the plots all look parabola-like which is traceable since the error term contains $\widehat{u}_x^2$, which itself contains $u_{x,1}^2$. Thus, we can explain the parabola-like shape.
