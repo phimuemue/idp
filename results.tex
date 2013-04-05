@@ -1613,12 +1613,24 @@ These terms could be simplified a bit further (for example by factoring out $\na
 
 As we can see, computing these terms involves the terms $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That means we get these two error terms ($SE_x$, $SE_y$) for \emph{each} basis function. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i= \left(SE_x^i, SE_y^i\right)^T$ is the error term for basis function $\phi_i$.
 
-\subsection{\texorpdfstring{What does $SE$ mean?}{What does SE mean?}}
+\subsection{\texorpdfstring{Meaning of $SE$}{Meaning of SE}}
 \label{sec:stiffness-analysis-what-does-se-mean}
-\todo{Als Ueberschrift vllt. einfach "Meaning of $SE$ schreiben um keine Fragezeichen in Ueberschriften zu verwenden.}
+
 Each component of $SE$ describes the deviation between two functions (namely the exact solution and the point-wise approximation). Due to comparing norms for our desired terms, the only thing one can say for sure is that if $SE$ is zero in either component, then the compared functions in that component are equal, i.e. then we have no error at all.
 
 On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where} these functions deviate by just looking at $SE$\todo{Hier wuerde ich ein kurzes Beispiel erwarten}.
+
+To illustrate this, remember that $SE$ actually resembles a $L^1$ norm in two dimensions. More precisely, if we want to compute the norm of a function, we take the absolute value of it and integrate over the triangle $T$.
+
+If we now want to compare two functions $f(x,y)$ and $g(x,y)$, we construct their difference $f(x,y)-g(x,y)$, and compute the norm of it:
+
+\begin{equation*}
+  \int_T \left| f - g \right| \, dT
+\end{equation*}
+
+It is clear that if $f = g$ (i.e. if the functions are identic), we obtain that $\left| f - g \right| = 0$, meaning that the integral gets 0, too.
+
+On the other hand, if we know that $\int_T \left| f-g \right|\, dT = 0$, we know that $f=g$, because -- since we take the absolute value -- we integrate only over non-negative values. If we only integrate over non-negative values and the result is 0, all values must have been 0, meaning that $f=g$.\done{Reicht das als Beispiel?}
 
 \subsection{\texorpdfstring{How to evaluate $SE$}{How to evaluate SE}}
 \label{sec:how-to-evaluate-e}
