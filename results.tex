@@ -1501,12 +1501,12 @@ This may be a problem to consider for extreme situations, such as shock waves, w
 \part{Stiffness matrix accuracy analysis for SWE}
 \label{part:stiffness-matrix}
 
-\emph{Remark:} To give a better overview of the following mathematical symbols, we refer readers to appendix \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.\done{Satz vom Martin. Passt das?}
+\emph{Remark:} To give a short overview of the following mathematical symbols, we refer readers to appendix \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.\done{Satz vom Martin. Passt das?}
 
 \section{Sum approximation vs. exact solution}
 \label{sec:point-wise-appr-vs-exact-solution-intro}
 
-While deriving the equations necessary for our computations\todo{computations. Bitte auch ueberall computation mit computation austauschen.}\done{Sollte erledigt sein.}, we introduced several approximations. One of them was the approximation of the combination of various sums, as presented in the computation of the stiffness matrix in section \ref{sec:stiffness-second-line}, in particular in the equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}). For the second line (i.e. for the $u_x$ component), we had:
+While deriving the equations necessary for our computations, we introduced several approximations. One of them was the approximation of the combination of various sums, as presented in the computation of the stiffness matrix in section \ref{sec:stiffness-second-line}, in particular in the equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}). For the second line (i.e. for the $u_x$ component), we had:
 
 \begin{eqnarray}
   \label{eq:third-integral-second-line-1-analysis-part}
@@ -1655,19 +1655,26 @@ As we can see, computing these terms involves the terms $\phi$ that acts as a re
 
 Each component of $SE$ describes the deviation between two functions (namely the exact solution and the point-wise approximation). Due to comparing norms for our desired terms, the only thing one can say for sure is that if $SE$ is zero in either component, then the compared functions in that component are equal, i.e. then we have no error at all.
 
-On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where} these functions deviate by just looking at $SE$\todo{Hier wuerde ich ein kurzes Beispiel erwarten}.
+On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where} these functions deviate by just looking at $SE$.
 
 To illustrate this, remember that $SE$ actually resembles a $L^1$ norm in two dimensions. More precisely, if we want to compute the norm of a function, we take the absolute value of it and integrate over the triangle $T$.
 
-If we now want to compare two functions $f(x,y)$ and $g(x,y)$, we construct their difference $f(x,y)-g(x,y)$, and compute the norm of it:
+Consider the two functions $f_1(x,y)=(x-1)^2$ and $f_2(x,y)=(y-1)^2$. We want to compare both of them to $g(x,y)=0$. So we construct their difference $f_i(x,y)-g(x,y)$ for $i\in\{1,2\}$, and compute the norm of it:
 
 \begin{equation*}
-  \int_T \left| f - g \right| \, dT
+  \int_T \left| f_i - g \right| \, dT, \quad i \in \{1,2 \}
 \end{equation*}
 
-It is clear that if $f = g$ (i.e. if the functions are identic), we obtain that $\left| f - g \right| = 0$, meaning that the integral gets 0, too.
+We can compute that 
+\begin{equation*}
+  \int_T \left| f_1 - g \right| \, dT = \int_T \left| f_2 - g \right| \, dT = \frac{1}{4}.
+\end{equation*}
 
-On the other hand, if we know that $\int_T \left| f-g \right|\, dT = 0$, we know that $f=g$, because -- since we take the absolute value -- we integrate only over non-negative values. If we only integrate over non-negative values and the result is 0, all values must have been 0, meaning that $f=g$.\done{Reicht das als Beispiel?}
+Of course, $f_1 \neq f_2$, but their $L^1$norm of both functions $\frac{1}{4}$. That is we can not tell \emph{where} the functions deviate from only looking at the $L^1$ norm.
+
+% It is clear that if $f = g$ (i.e. if the functions are identic), we obtain that $\left| f - g \right| = 0$, meaning that the integral gets 0, too.
+
+% On the other hand, if we know that $\int_T \left| f-g \right|\, dT = 0$, we know that $f=g$, because -- since we take the absolute value -- we integrate only over non-negative values. If we only integrate over non-negative values and the result is 0, all values must have been 0, meaning that $f=g$.\done{Reicht das als Beispiel?}
 
 \subsection{\texorpdfstring{How to evaluate $SE$}{How to evaluate SE}}
 \label{sec:how-to-evaluate-e}
@@ -1806,7 +1813,9 @@ Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one singl
 Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
 We noticed that $L=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that is the case it is never enough to make an impact on the eventual interpretation of the results.
-\todo{Ich halte es hier fuer unbedingt erforderlich, hervorzuheben, warum ihr keine fertigen Integrationsmoelichkeiten von Maple/python verwendet habt.}
+\todo{Ich halte es hier fuer unbedingt erforderlich, hervorzuheben, warum ihr keine fertigen Integrationsmoelichkeiten von Maple/python verwendet habt.}\done{Reicht das was jetzt kommt?}
+
+Similar to the situation from section \ref{sec:how-to-eval-I}, we considered several options to compute $SE$. However, we experienced similar problems evaluating the integrals exactly, which is why we chose a numerical integration. Unfortunately, we could not find any suitable Gaussian quadrature (or any equivalent numerical integration scheme) for this kind of functions, so we chose the technique described above.
 
 \subsection{\texorpdfstring{Singularities in $SE$}{Singularities in SE}}
 \label{sec:stiffness-analysis-singularities}
