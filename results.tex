@@ -59,7 +59,7 @@
 
 \title{Discontinous Galerkin Methods for Shallow Water Equations\\
   \vspace{.2cm}
-\small{Empirical studies on accuracy of quadrature rules for shallow water equations with the discontinous Galerkin method}
+\large{Empirical studies on accuracy of quadrature rules for shallow water equations with the discontinous Galerkin method}
 }
 \author{Stjepan Bakrac \and Philipp M\"uller}
 \date{}
@@ -77,11 +77,46 @@
 
 \begin{document}
 
-\todo{Es sieht wirklich immer besser aus, wenn ihr ein Titelblatt verwendet mit IDP, Prof. \& Betreuer}
+\thispagestyle{empty}
+% Titelblatt: Gestaltung von der TUM-Informatik-Homepage genommen.
+\makeatletter
+\begin{titlepage}
+\begin{center}
+  \includegraphics[scale=0.75]{TUM.pdf}
+  
+  \vspace{.5cm}
+  \textsc{ \Large Fakultät für Informatik\\\vspace{.2cm}
+    \large der Technischen Universität München}
 
-\todo{Alle ``undefined references'' raus.}
+  \vspace{1cm}
 
-\maketitle{}
+  \large Interdisciplinary Project in Mathematics and Computer Science
+
+  \vspace{.4cm}
+
+  \LARGE
+  \@title
+
+  \vspace{1cm}
+  \vfill{}
+  \begin{tabular}{ll}
+    Authors: & Stjepan Bakrac, Philipp Müller \\
+    Professor: & Univ.-Prof. Dr. Michael Bader \\
+    Advisor: & Dipl.-Inf. Martin Schreiber \\
+    Submission date: & \today
+  \end{tabular}
+  
+  \vspace{1cm}
+
+  \begin{tikzpicture}
+    \draw[black](95:1) arc (95:445:1);
+    \draw[black](0,-.8) -- (0,1.2);
+  \end{tikzpicture}
+\end{center}
+\end{titlepage}
+\makeatother
+
+\clearpage
 
 \begin{abstract}
   The question how to simulate waves on a computer is subject to many difficulties. At several points in the process of transferring continous to discrete formulations, approximations have to be made.
