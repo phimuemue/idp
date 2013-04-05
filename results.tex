@@ -77,6 +77,8 @@
 
 \begin{document}
 
+\todo{Es sieht wirklich immer besser aus, wenn ihr ein Titelblatt verwendet mit IDP, Prof. \& Betreuer}
+
 \maketitle{}
 
 \begin{abstract}
@@ -672,7 +674,7 @@ This means that we need $\frac{1}{2} \cdot (d+2) \cdot (d+1)$ basis functions to
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
 
-As mentioned before, we construct the basis functions with the help of some support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing certain sets of points will lead to a malconditioned matrix, which provides a malconditioned inverted matrix (if an inversion is even possible in that case), resulting in inaccurate basis functions\todo{Diese Info haben wir vom Martin. Wie am besten referenzieren?}. Since we will use Gaussian quadrature over these points, we will want support points that provide the best results for those.
+As mentioned before, we construct the basis functions with the help of some support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing certain sets of points will lead to a malconditioned matrix, which provides a malconditioned inverted matrix (if an inversion is even possible in that case), resulting in inaccurate basis functions\todo{Diese Info haben wir vom Martin. Wie am besten referenzieren? Martin an alle: Ihr koennt z. B. schreiben, dass unterschiedliche Stuetzstellen existieren (Verweis auf Nodal DG methods). Diesbezueglich wurden die Gauss Integrationsstuetzstellen verwendet da aehnliche Vor- und Nachteile unter dem Aspekt der exakten Integration angenommen wurden.}. Since we will use Gaussian quadrature over these points, we will want support points that provide the best results for those.
 
 For low degree polynomials, we choose specific distribution of the support points within the triangle:
 \begin{description}
@@ -1461,13 +1463,14 @@ This may be a problem to consider for extreme situations, such as shock waves, w
 
 \part{Stiffness matrix accuracy analysis}
 \label{part:stiffness-matrix}
-
+\todo{Bei der Ueberschrift wuerde ich noch 'for SWE' anhaengen. Damit ist es aus meiner Sicht auch verstaendlicher, dass ihr die SWE spezifischen Formeln darstellt.}
 \emph{Remark:} Since the following part contains a myriad of mathematical symbols, we encourage you to have a copy of the cheat sheet from section \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.
+\todo{encourage klingt so, wie wenn der Leser das noetig hat. Ausserdem sollten alle Symbole in didaktisch verstaendlicher Form bei der Einfuehrung beschrieben werden. 'cheat sheet' hat in einer wiss. Ausarbeitung auch nix verloren :-). Wie waere es mit "To give a better overview of the following mathematical symbols, we refer readers to appendix A"}
 
 \section{Sum approximation vs. exact solution}
 \label{sec:point-wise-appr-vs-exact-solution-intro}
 
-While deriving the equations necessary for our calculations, we introduced several approximations. One of them was the approximation of the combination of various sums, as presented in the calculation of the stiffness matrix in section \ref{sec:stiffness-second-line}, in particular in the equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}). For the second line (i.e. for the $u_x$ component), we had:
+While deriving the equations necessary for our calculations\todo{computations. Bitte auch ueberall calculation mit computation austauschen.}, we introduced several approximations. One of them was the approximation of the combination of various sums, as presented in the calculation of the stiffness matrix in section \ref{sec:stiffness-second-line}, in particular in the equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}). For the second line (i.e. for the $u_x$ component), we had:
 
 \begin{eqnarray}
   \label{eq:third-integral-second-line-1-analysis-part}
@@ -1493,6 +1496,7 @@ While deriving the equations necessary for our calculations, we introduced sever
   & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray}
 
+\todo{Hier wuerde ich noch kurz die Approximation beschreiben. Was passiert hier genau?}
 The equation for the $u_y$ component was analogous:
 
 \begin{eqnarray*}
@@ -1516,7 +1520,7 @@ The equation for the $u_y$ component was analogous:
   & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
-We will introduce this notation to refer to the approximated integrand:
+We will introduce this notation to refer to the approximated integrand\todo{Hier wuerde ich das nabla phi und auf de rrechten Seite die rechten Terme in den Klammern weglassen}:
 
 \begin{equation}
   \label{eq:point-wise-approx-result-second-line}
@@ -1546,9 +1550,9 @@ We will introduce this notation to refer to the approximated integrand:
   \end{pmatrix}
 \end{equation}
 
-As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and try to analyze its validity.
+As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and try to\todo{focus on analyzing} analyze its validity.
 
-We do so by exemplarily examining the third component and try to calculate its exact value:
+We do so by exemplary examining the third component and try to\todo{Auch hier das 'try' durch etwas ersetzen, was nicht nach einem Versuch klingt sondern nach harten Fakten} calculate its exact value:
 
 \begin{eqnarray*}
   \int_T F_2\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
@@ -1567,9 +1571,9 @@ We do so by exemplarily examining the third component and try to calculate its e
   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
 \end{eqnarray*}
 
-While we approximate here as well, it is the point-wise sampling approximation and is used in both cases, as it is impossible to determine the exact value for a continuous area.
+While we approximate here as well, it is the point-wise sampling approximation and is used in both cases, as it is impossible \todo{Besser evtl.: computational intensive for numerical simulations} to determine the exact value for a continuous area.
 
-These terms are become huge and difficult to handle manually (as well as expensive to compute automatically). We will introduce three shorthand notations for the three components of $\mathbf{q}$:
+These terms become huge and difficult to handle manually, as well as expensive to compute automatically. We will introduce three shorthand notations for the three components of $\mathbf{q}$:
 
 \begin{equation}
   \label{eq:substitutions-for-all-components-with-hat}
@@ -1578,7 +1582,7 @@ These terms are become huge and difficult to handle manually (as well as expensi
   \widehat{u}_x := \sum_{j=1}^n \phi_j u_{x,j}
 \end{equation}
 
-Similarily to before, we can introduce a hat notation to signal the summation of the individual components, only this time we define it for the entire integrand. Doing that, we can simply the above term:
+Similarily to before\todo{the previous steps}, we can introduce a hat notation to signal the summation of the individual components, only this time we define it for the entire integrand. Doing that, we can simply the above term\todo{In this way, we can simplify the...}:
 
 \begin{equation}
   \label{eq:stiffness-analysis-third-line-exact-approx-simple}
@@ -1598,36 +1602,37 @@ Analogously, we define this for the second component:
 
 \subsection{Comparison of exact and approximative solution}
 
-We have now derived an exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L^1$ norm, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
+We have now derived an exact solution\todo{Vorsicht!!! Ist das eine exakte Loesung? Was ist mit den Ableitungen? Wenn ihr diese mit Maple auswertet, solltet ihr das Beschreiben.} ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L^1$ norm\todo{Warum nur L1? z. B. weil diese auch "andere" zum Vergleich nutzen}, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
 
 \begin{eqnarray*}
   SE_x := \int_T \left| \overline{F}_2(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi \right| \, dT\\
   SE_y := \int_T \left| \overline{F}_3(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi \right| \, dT
 \end{eqnarray*}
 
-These terms could be simplified a bit further (for example by factoring out $\nabla \phi$), but since the terms are rather complicated anyway, we omit such manual simplifications and delegate tasks of this kind to Maple (or any equivalent computer algebra system).
+These terms could be simplified a bit further (for example by factoring out $\nabla \phi$), but since the terms are rather complicated anyway, we omit such manual simplifications and delegate tasks of this kind to Maple (or any equivalent computer algebra system)\todo{Bitte bei dem bleiben, was ihr wirklich gemacht habt oder allgemein schreiben: "We delegated this to a computer algebra system, in our case Maple". Das haette ich bei der genauen Integration schon vorher erwartet}.
 
 As we can see, computing these terms involves the terms $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That means we get these two error terms ($SE_x$, $SE_y$) for \emph{each} basis function. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i= \left(SE_x^i, SE_y^i\right)^T$ is the error term for basis function $\phi_i$.
 
 \subsection{\texorpdfstring{What does $SE$ mean?}{What does SE mean?}}
 \label{sec:stiffness-analysis-what-does-se-mean}
-
+\todo{Als Ueberschrift vllt. einfach "Meaning of $SE$ schreiben um keine Fragezeichen in Ueberschriften zu verwenden.}
 Each component of $SE$ describes the deviation between two functions (namely the exact solution and the point-wise approximation). Due to comparing norms for our desired terms, the only thing one can say for sure is that if $SE$ is zero in either component, then the compared functions in that component are equal, i.e. then we have no error at all.
 
-On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where} these functions deviate by just looking at $SE$.
+On the other hand, the greater $SE$ grows, the more the two compared functions deviate. However, it is unfortunately not possible to tell \emph{where} these functions deviate by just looking at $SE$\todo{Hier wuerde ich ein kurzes Beispiel erwarten}.
 
 \subsection{\texorpdfstring{How to evaluate $SE$}{How to evaluate SE}}
 \label{sec:how-to-evaluate-e}
 
-If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely quite hard to compute exactly, maybe even impossible.
+If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely quite hard \todo{computational intensive} to compute exactly, maybe even impossible.
+\todo{It was infeasible to compute those integrals using analytical software such as maple.}
 
-While integrating in the one-dimensional case can be easily approximated by the rectangle method (which can be made arbitrarily precise by a varying number of rectangles), the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a slightly more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
+While integrating in the one-dimensional case can be easily\todo{Kein easily, da das die vorherige Arbeit schlechtredet!} approximated by the rectangle method (which can be made arbitrarily precise by a varying number of rectangles\todo{Das wuerde ich entfernen, da es nicht allgemeingueltig ist}), the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a slightly more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
 
 However, it is not difficult to extend the rectangle method to the two-dimensional case. Since we are interested in an integral over a triangle $T$, and $T$ is a right triangle with cathetus length 1, we divide the triangle into smaller right triangles such that all triangles together cover the original triangle $T$.
 
-Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can try to approximate this volume by comprising it out of smaller parts. We decided to use prisms to approximate that volume.
+Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can try\todo{Kein try} to approximate this volume by comprising it out of smaller parts. We decided to use prisms \todo{Bezieht euch hierbei auf bereits angewandte Verfeinerungen in diesem Bereich. Eine fuer mich coole Sache ist z. B. die Triangulierung des DWD: www.dwd.de Diese verwenden fuer ihre Triangulierung auch die Verfeinerung wie ihr diese beschrieben habt.} to approximate that volume.
 
-In principle, we devide the triangle in a way such that we cut the cathetuses (of length 1) into smaller pieces of length $\frac{1}{L}$ (the integer $L$ denotes the parameter for our integral approximation). Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
+In principle, we devide the triangle in a way such that we cut the cathetuses\todo{cathetii wenn ich mich recht erinnere oder triangle legs} (of length 1) into smaller pieces of length $\frac{1}{L}$ (the integer $L$ denotes the parameter for our integral approximation\todo{Auf Klammern verzichten, am besten als Satz ausschreiben}). Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
 
 \begin{equation*}
   \mathtt{POSSIBLE\_CENTERS} = \left\{
@@ -1722,7 +1727,7 @@ If we use this definition, we obtain $L^2$ triangles of equal size.
 
 We show how the division of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-triangles}.
 
-We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 L^2}$. This results then in the following equation:
+We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 L^2}$. This results then in the following equation\todo{, resulting in the following equation}:
 
 \begin{equation}
   \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2L^2}
@@ -1736,7 +1741,7 @@ If we use just one triangle (i.e. $L=1$), then this triangle coincides with the 
   \int_T f(x,y)\, dT \approx \frac{1}{2} \cdot f(\frac{1}{3},\frac{1}{3})
 \end{equation*}
 
-The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism, which has the same base area as our triangle $T$ ($\frac{1}{2}$).
+The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism\todo{with the same base area as our .... "Im Deutschen wird oft 'dass' verwendet. Im Englischen von dem her, was ich von bisherigen Papern gelesen habe, sehr selten"}, which has the same base area as our triangle $T$ ($\frac{1}{2}$).
 
 Naturally we need more triangles for an actual approximation. If we use four triangles (i.e. $L=2$), we get the following centers: $\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}$.
 
@@ -1751,6 +1756,7 @@ Here, the factor $\frac{1}{2\cdot 4}= \frac{1}{8}$ denotes the area of one singl
 Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
 We noticed that $L=5$ (i.e. using 25 triangles) suffices most of the time. Higher values for $r$ rarely result in changes to the plots and if that is the case it is never enough to make an impact on the eventual interpretation of the results.
+\todo{Ich halte es hier fuer unbedingt erforderlich, hervorzuheben, warum ihr keine fertigen Integrationsmoelichkeiten von Maple/python verwendet habt.}
 
 \subsection{\texorpdfstring{Singularities in $SE$}{Singularities in SE}}
 \label{sec:stiffness-analysis-singularities}
@@ -1792,7 +1798,7 @@ We will do so for illustrating some simple cases.
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o1.pdf}
   }
   \hspace{.5cm}
-  \subfigure[Heatmap for second order singularities. Plot shows $\log_{10} h_1 = \log_{10} \frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
+  \subfigure[\todo{Plot erlaeuterungen sollten selbsterklaerend sein. Wenn ich nun nur auf diesen Plot sehe, koennte ich nicht ablesen, was dort abgebildet ist.} Heatmap for second order singularities. Plot shows $\log_{10} h_1 = \log_{10} \frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
         \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-2}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o2.pdf}
@@ -1803,20 +1809,20 @@ We will do so for illustrating some simple cases.
 \subsubsection{Order 1}
 \label{sec:stiffness-analysis-singluarities-ord-1}
 
-Let us start out ba trying order 1, and setting $h_2=h_3=10$. We then obtain the following (by substituting $\phi_1$ to $\phi_3$ as defined in table \ref{tab:basis-functions-for-low-degrees}):
+Let us\todo{Let's fetz sollte in Ausarbeitungen vermieden werden. Besser waere: Next, we consider order 1 by setting..., oder so aehnlich.} start out ba trying order 1, and setting $h_2=h_3=10$. We then obtain the following (by substituting $\phi_1$ to $\phi_3$ as defined in table \ref{tab:basis-functions-for-low-degrees}):
 
 \begin{equation*}
   h_1 = \frac{20y}{-1+2y}
 \end{equation*}
 
-We can now -- for example -- ``try'' $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot
+We can now -- for example -- ``try''\todo{kein try :-)} $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means:\todo{E.g. this leads to...} For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot\todo{Log scaling wird normalerweise nur kurz in der Beschreibung des Plots gegeben}
 \begin{equation*}
 \log_{10}\frac{20y}{-1+2y}.
 \end{equation*}
 
 We then examine the results of this term.
 
-We can see the ``graph'' (more precisely a heatmap) for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows: Everything that is red resp. green denotes values above 1.2 resp. below 0.7. Yellow denotes values between 0.7 and 1.2. White area is either undefined or out of the triangle.
+We can see the ``graph'' (more precisely a heatmap\todo{auch das wird normalerweise in der plot beschreibung erwaehnt}) for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows: Everything that is red resp. green denotes values above 1.2 resp. below 0.7. Yellow denotes values between 0.7 and 1.2\todo{Das entspricht nicht der Legende}. White area is either undefined or out of the triangle.
 
 As we can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only red and green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1} --- no yellow at all). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
 
@@ -1843,12 +1849,12 @@ We now examine the same thing for order 2. Again, we solve equation (\ref{eq:sti
 
 Again, we could test specific values for $(x,y)$, such as e.g. $(0.5, 0.25)$. If we did so, we would obtain $h_1=-90$ --- a very unlikely setting for $h_1$ if all other heights are 10.
 
-Have a look at figure \ref{fig:stiffness-analysis-log-singularities-ord-2} and observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle --- very unlikely.
+Have\todo{Keine Aufforderung an den Leser} a look at figure \ref{fig:stiffness-analysis-log-singularities-ord-2} and observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle --- very unlikely\todo{very unlikely oder muesste das auch beruecksichtigt werden? :-)}.
 
 \section{Error terms for order 1}
 \label{sec:stiffness-analysis-first-touch}
 
-We begin our analysis by investigating the case for basis functions of order 1 (i.e. we have three basis functions $\phi_1,\dots,\phi_3$). Looking back at table \ref{tab:basis-functions-for-low-degrees} we derived some symmetries between the basis functions. We found out that $\phi_1(x,y)=\phi_3(y,x)$ and $\phi_2(x,y)=\phi_2(y,x)$. We will now exploit these facts.
+We begin our analysis\todo{Wurde vorher nichts analysiert?} by investigating the case for basis functions of order 1 (i.e.\todo{Ordnung 1 fuehrt bei nodaler basis aus meiner Kenntnis immer zu 3 basisfunktionen, deshalb kein i.e. sonder lieber "For nodal DG, ..."}we have three basis functions $\phi_1,\dots,\phi_3$). Looking back at table \ref{tab:basis-functions-for-low-degrees} we derived some symmetries between the basis functions. We found out that $\phi_1(x,y)=\phi_3(y,x)$ and $\phi_2(x,y)=\phi_2(y,x)$. We will now exploit these facts.
 
 Consider e.g. the term $SE_x^i = \int_T \left| \left(\overline{F}_2(\mathbf{q})-\widehat{F}_2(\mathbf{q})\right) \cdot \nabla\phi_i(x,y) \right|$. The terms $\overline{F}_2(\mathbf{q})$ and $\widehat{F}_2(\mathbf{q})$ depend on the height and momentum values of the single support points (i.e. on the values $h_1,\dots,h_3$, $u_{x,1},\dots,u_{x,3}$ and $u_{y,1},\dots,u_{y,3}$).
 
@@ -1858,7 +1864,7 @@ If we have two symmetric basis funcions $\phi_i$ and $\phi_j$ and consider $SE^i
   SE^i(h, u_x, u_y) = SE^j(h, u_y, u_x)
 \end{equation*}
 
-To examine this, look at equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others (in fact they might even be equal). This will later enable us to use some plots for multiple situations.
+To examine this, look\todo{Keine Aufforderung an den Leser} \todo{Ist das wirklich eine Gleichheit oder habt ihr das nur visuell feststellen koennen? Denkt an die Mathematiker die sich noch im Grabe umdrehen wuerden wenn ihr von visueller Aehnlichkeit schreibt.} at equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others (in fact they might even be equal). This will later enable us to use some plots for multiple situations.
 
 %This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$ momentum since these plots can be constructed from their counterpart (i.e. the error in $x$ momentum for basis function $\phi_i$ is the same as the error in $y$ momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
 
@@ -1870,7 +1876,7 @@ Following are reports of various scenarios we have tested, trying to find out an
 \subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
 \label{sec:stiffness-analysis-standard-values-var-h1}
 
-As was mentioned in section \ref{sec:basis-functions-choice}, choosing order 1 requires 3 basis functions $\phi_1,\dots,\phi_n$. These depend on the three components (height, $x$ momentum, $y$ momentum) of the three support points. First, we will look into the impact the value $h_1$ (i.e. the height of the first support point) has on the error terms. We fix the following values:
+\todo{Regarding to section...} As was mentioned in section \ref{sec:basis-functions-choice}, choosing order 1 requires 3 basis functions $\phi_1,\dots,\phi_n$. These depend on the three components (height, $x$ momentum, $y$ momentum) of the three support points. First, we will look into the impact the value $h_1$ (i.e. the height of the first support point) has on the error terms. We fix\todo{Ich wuerde "keep the following values constant" besser finden} the following values:
 
 \begin{eqnarray*}
   & h_2 = 10 & h_3 = 10 \\
@@ -1919,7 +1925,7 @@ Using the fact that $\pd{\phi_i}x = 0$, we can simplify the above to
 
 We now use the fact that $u_{x,i}=u_{y,i}=0$ for all support points and can confirm that the overall integrand becomes 0.
 
-While this is a good result for us, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. We can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). It looks like a parabola, which makes sense when we examine the equations for the first order.
+While this is a good result for us\todo{in this circumstance}, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. We can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). \todo{The shape is similar to a...} It looks like a parabola, which makes sense when we examine the equations for the first order.
 
 The fact that the error is minimal for $h_1=10$ is interesting for the following reason: $h_2$ as well as $h_3$ have the value 10, too, so it \emph{might} be advantageous if the third height (in this case $h_1$) has value 10, as well.
 
@@ -1931,9 +1937,9 @@ We leave all values as they were and additionally set $h_1=10$, but instead take
 
 \input{standardwerte_nach_ux_ord1/tex.tex}
 
-As we can see, we omitted all plots except those for the $x$ momentum for the second and third basis function. These two look like parabolas again, but note that theoccurring error lies somewhere between 0 and 0.5.
+As we can see, we omitted all plots except those for the $x$ momentum for the second and third basis function. These two look like parabolas again, but note that the occurring error lies somewhere between 0 and 0.5.
 
-Moreover, it is again noteworthy that the minimum error occurs for $u_{x,1}=0$ since that equals the values of $u_{x,2}$ and $u_{x,3}$.
+Moreover, it is again noteworthy that the minimum error occurs for $u_{x,1}=0$ since that\todo{Evtl. 'this', bin mir aber nicht sicher} equals the values of $u_{x,2}$ and $u_{x,3}$.
 
 \subsubsection{\texorpdfstring{Varying $u_{y,1}$}{Varying uy1}}
 
@@ -1941,7 +1947,7 @@ In the last section, the $x$ momentum of the second and third basis function wer
 
 \input{standardwerte_nach_uy_ord1/tex.tex}
 
-The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. As one could have suspected, the plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$ momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
+The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. As one could have suspected\todo{Keine Spekulationen/Verdaechtigungen, nur harte Fakten.}, the plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$ momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
 
 \subsubsection{\texorpdfstring{Varying $u_{x,1}$ and $u_{y,1}$}{Varying ux1 and uy1}}
 
@@ -1959,14 +1965,15 @@ The resulting plots are shown in figure \ref{fig:standardwerte_nach_ux1_ux2_ord1
 
 \input{standardwerte_nach_ux1_uy1_ord1/tex.tex}
 
-What is interesting here is that \emph{all} error plots have a characteristic shapes (i.e. none of them is 0, like in previous examples). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Once again one can see the similarities between some plots, especially with regard to mirroring/rotating. We will later omit plots that are the same or mirrored.
+\todo{We focus on relevant aspects, such as...}
+What is interesting here is that \emph{all} error plots have characteristic shapes (i.e. none of them is 0, like in previous examples). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Once again one can see the similarities between some plots, especially with regard to mirroring/rotating. We will later omit plots that are the same or mirrored.
 
 \clearpage{} % force output of *all* floats up to now, since LaTeX crahes otherwise
 
 \subsection{Order 1 -- non-standard values}
 \label{sec:stiffness-analysis-ord1-non-std-values}
 
-Up until now we have only considered scenarios in which all fixed heights and momentums were equal. We will now focus on what happens if we choose different fixed values, for example $h_2=10$ and $h_3=11$.
+Up until now we have only considered scenarios in which all fixed heights and momentums were equal. We will now focus on \todo{choosing different fixes values, ...} what happens if we choose different fixed values, for example $h_2=10$ and $h_3=11$.
 
 \subsubsection{Different heights}
 \label{sec:stiffness-analysis-ord1-differing-h2-10-h3-11}
@@ -1985,11 +1992,11 @@ Let us investigate, if we can find a minimal at $h_1=11$ error if we do the same
 
 We can see the resulting plots in figure \ref{fig:stiffneses-analysis-ord1-h2-10-h3-12}. And, indeed, the error is now minimal at $h_1\approx 11$ -- the average of $h_2=10$ and $h_3=12$. The minimal error grew up to 4.
 
-Let us see what it looks like if we now set $h_2=12$ and $h_1=10$.
+Let us\todo{Kein let's fetz} see what it looks like if we now set $h_2=12$ and $h_1=10$.
 
 \input{ord1_differing_h2_h3_12_10/tex}
 
-The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10} and they look as expected: The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two. This makes sense when examining the equations, which we will cover later.
+The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10} and they look as expected\todo{Wenn das so erwartet wurde, warum zeigt ihr diese dann?}: The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two. This makes sense when examining the equations, which we will cover later\todo{Wg. der symmetrie? Dann solltet ihr das als Voraus-Haeppchen fuer den Leser hier nennen}.
 
 Let us now inspect the following scenario: We set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$.
 
@@ -1999,11 +2006,11 @@ As we can see in figure \ref{fig:ord1_differing_h2_h3_12_8}, the error is still 
 
 \paragraph{Conclusion}
 
-What one can guess from the things seen so far is that -- if we leave all $u_{x,i}=u_{y,i}=0$ ($i=1\dots n$) and take $h_1$ as axis variable -- the error seems to be minimal if $h_1\approx \frac{h_2+h_3}{2}$.
+What one can guess\todo{anders, neutraler formulieren} from the things \todo{a thingy can also be a swimming pool} seen so far is that -- if we leave all $u_{x,i}=u_{y,i}=0$ ($i=1\dots n$) and take $h_1$ as axis variable -- the error seems to be minimal if $h_1\approx \frac{h_2+h_3}{2}$.
 
 Of course, it is an interesting question if this can be proven (or even disproven) analytically. To examine this, we take -- as an example -- the error in the $x$ momentum of the third basis function and set all $u_{x,i}=u_{y,i}=0$.
 
-Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values. To illustrate this, let us consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
+Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values\todo{Ist das nicht ein Gegenbeweis?}. To illustrate this, let us consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
 
 \input{ord1_differing_h2_h3_164/tex.tex}
 
@@ -2018,7 +2025,7 @@ We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting 
 
 \input{ord1_ux1_differing_ux2_ux3/tex.tex}
 
-As can be seen, the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$. However, further investigating this direction is not necessary, since altering $u_{x,2}$ and $u_{x,3}$ (while leaving $u_{x,1}$ variable) affects the plots in the same way as changing $h_2$ and $h_3$ (with $h_1$ variable).
+As can be seen\todo{Im Englischen kein Passiv verwenden. "We..." ist diesbezueglich besser.}, the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$. However, further investigating this direction is not necessary, since altering $u_{x,2}$ and $u_{x,3}$ (while leaving $u_{x,1}$ variable) affects the plots in the same way as changing $h_2$ and $h_3$ (with $h_1$ variable).
 
 \subsubsection{\texorpdfstring{Different $y$ momentums}{Different y momentums}}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
@@ -2086,7 +2093,7 @@ Next we choose $u_{x,1}$ to be the axis variable. We set all other momentums to 
 
 \input{ord2_varying_ux_1/tex.tex}
 
-One can see there that the error for all $y$ momentums is zero. Moreover, the error is zero for the $x$ momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
+One can see there\todo{Kein 'one'} that the error for all $y$ momentums is zero. Moreover, the error is zero for the $x$ momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
 
 For the most part, the plots all look parabola-like which is traceable since the error term contains $\widehat{u}_x^2$, which itself contains $u_{x,1}^2$. Thus, we can explain the parabola-like shape.
 
@@ -2142,7 +2149,7 @@ That means, we can simplify the above to 0, thereby explaining the result: If al
 \subsection{Non-standard values}
 \label{sec:stiffness-analysis-ord2-nondefault}
 
-We will now alter some values and see how this affects our error plots. We will do similar alterations to the ones used in section \ref{sec:stiffness-analysis-ord1-non-std-values} and see if we have a similar behavior to before.
+\todo{Was sind non-standard values?}We will now alter some values and see how this affects our error plots. We will do similar alterations to the ones used in section \ref{sec:stiffness-analysis-ord1-non-std-values} and see if we have a similar behavior to before.
 
 \subsubsection{Altering heights}
 \label{sec:stiffness-analysis-ord2-nondefault-altering-heights}
@@ -2159,7 +2166,7 @@ This is traceable, since we use second order approximations for $h, u_x$ and $u_
 
 While in the first order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), this does not hold true anymore. Trying to derive the local minima analytically is made too difficult because of the absolute value used in the integrand.
 
-As expected from our calculations in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and \ref{sec:basis-functions-other-properties}, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0. For a detailed calculation, refer to section \ref{sec:stiffness-analysis-ord2-default-var-ux1}.
+As expected from our calculations\todo{calculus?} in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and \ref{sec:basis-functions-other-properties}, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0. For a detailed calculation\todo{calculus?}, refer to section \ref{sec:stiffness-analysis-ord2-default-var-ux1}.
 
 \paragraph{\texorpdfstring{Altering $h_3$}{Altering h3}}
 
@@ -2175,7 +2182,7 @@ What we can see from these plots is that it has a significant influence which of
 
 \paragraph{Altering all height values}
 
-We now set all heights $h_2$ to $h_6$ to the value 11. We do so, because we hope to see that we now again obtain parabola-like shapes (as in the case where all heights were set to 10). The results are shown in figure \ref{fig:ord2_varying_h1_h2-h6_11} and confirm our expectations: We have parabola-like shapes, whose minima are without exception at $h_1=11$.
+We now set all heights $h_2$ to $h_6$ to the value 11. We do so, because we hope \todo{Hoffen kann man in der Kriche. Hier koennte man z. B. "to examine..." schreiben} to see that we now again obtain parabola-like shapes (as in the case where all heights were set to 10). The results are shown in figure \ref{fig:ord2_varying_h1_h2-h6_11} and confirm our expectations: We have parabola-like shapes, whose minima are without exception at $h_1=11$.
 
 \input{ord2_varying_h1_h2-h6_11/tex.tex}
 
@@ -2187,7 +2194,7 @@ Up to now we examined what happens if all heights are equal or at most one heigh
 
 \input{ord2_varying_h1_h2-h3_11_h4-h6_9/tex.tex}
 
-Now we have the first time where some plots look drastically different than before.
+Now we have the first time where some plots look drastically\todo{evtl. strongly} different than before.
 
 \clearpage{}
 
@@ -2212,9 +2219,9 @@ The plots look quite similar to the ones where we changed $u_{x,2}$, even if the
 
 \paragraph{\texorpdfstring{Altering $u_{y,2}$}{Altering uy2}}
 
-Let us now inspect what happens if we do not change the $x$ momentum but the $y$ momentum. As a showcase example, we will use $u_{y,2}=1$ and leave all other momentums at 0 (-- all heights are still 10).
+Let us now inspect what happens \todo{what happens kommt sehr oft vor. Besser verhindern und anders schreiben.} if we do not change the $x$ momentum but the $y$ momentum. As a showcase example, we will use $u_{y,2}=1$ and leave all other momentums at 0 (-- all heights are still 10).
 
-The plots are shown in figure \ref{fig:ord2_varying_ux1_uy2_1} and are likely to surprise us. Because these plots are likely to surprise us, we split them up into the errors for the $x$ momentums and the errors for the $y$ momentums.
+The plots are shown in figure \ref{fig:ord2_varying_ux1_uy2_1} and are likely to surprise \todo{Ueberaschungseier gibt es im Supermarkt :-). 'are likely to show important features' waere evtl. eine bessere Wahl} us. Because these plots are likely to surprise us, we split them up into the errors for the $x$ momentums and the errors for the $y$ momentums.
 
 The errors for the $x$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1}, the ones for the $y$ momentums in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent}.
 
@@ -2298,13 +2305,13 @@ This means, we can simplify as follows (for the current scenario):
 
 \subparagraph{\texorpdfstring{Errors in $y$ momentums}{Errors in y momentums}}
 
-The error plots for the $y$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and does not look as structured anymoore (compared to before where they were all 0).
+The error plots for the $y$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent} and does not look as structured anymore (compared to before where they were all 0).
 
 \input{ord2_varying_ux1_uy2_1/tex_y.tex}
 
 Suddenly, the errors in the $y$ momentums are not zero anymore, but look like piecewise linear functions (at least within the plotted range). Even if the error term did not grow that much, the shape differs strongly from what we have seen so far.
 
-Probably most interesting is $SE_y^5$, which is now constant and almost zero. This can be explained by $\pd{phi_5}{x}=0$, which leads to the following derivation:
+Probably most interesting is $SE_y^5$, which is now constant and almost zero. This can be explained by $\pd{\phi_5}{x}=0$, which leads to the following derivation:
 
 \begin{eqnarray*}
   SE_y^5 & := & \int_T \left| \left(\overline{F}_3\left(\mathbf{q}\right) - \widehat{F}_3\left(\mathbf{q}\right)\right) \cdot \begin{pmatrix}\pd{\phi_5}{x} \\ \pd{\phi_5}{y}\end{pmatrix}\right| \\
@@ -2332,7 +2339,7 @@ We saw that changing an $y$ momentum can result in drastically changed shapes of
 
 \paragraph{Setting all $x$ momentums to 1}
 
-We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect parabolae with minima at $u_{x,1}=1$ (since all other $x$ momentums are 1). We can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
+We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect \todo{Was ihr erwartet, spielt keine Rolle sondern nur harte Fakten. Wenn man Sachen erwartet stellt sich oft die Frage, warum man das ueberhaupt getestet hat wenn man das Ergebnis schon erwartet hat.} parabolae with minima at $u_{x,1}=1$ (since all other $x$ momentums are 1). We can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
 
 \input{ord2_varying_ux1_ux2-ux6_1/tex.tex}
 
@@ -2348,7 +2355,8 @@ If we have a situation, where all heights are the same, all $x$ momentums are th
 
 The error can become 0 even for other combinations, but it is very difficult to derive a simple pattern that must be fulfilled by the parameters. Moreover, as we saw, it can become zero if certain basis functions have a derivative that is 0 (as seen e.g. in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
 
-As a rule of thumb, one can deduce the following from the plot: The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error (roughly). This is advantageous since in practice it is very unlikely that the values will differ like we assumed in some extreme scenarios. The sierpi framework uses height values around 10 and momentums whose absolute value might grow up to 4. The difference in height is almost always very small (say less han 0.5), while the difference in momentums might grow up to 1 --- even if that is not too often the case.
+As a rule of thumb, one can deduce the following from the plot: The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error (roughly)\todo{Was ist roughly? In most circumstances?}. This is advantageous since in practice it is very unlikely that the values will differ like we assumed in some extreme scenarios\todo{Was ist mit Schockfronten?}.
+The sierpi framework uses height values around 10 and momentums whose absolute value might grow up to 4\todo{Aeh, nein. Auf freiem Meer sind es auch mal 5000 und mehr Meter :-). Ich wuerde auch den folgenden Satz einfach weglassen.}. The difference in height is almost always very small (say less han 0.5), while the difference in momentums might grow up to 1 --- even if that is not too often the case.
 
 That means, that even if we produce an error, it will probably be so small that it has no influence on the realism of the simulation.
 
