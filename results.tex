@@ -84,13 +84,13 @@
 \begin{abstract}
   The question how to simulate waves on a computer is subject to many difficulties. At several points in the process of transferring continous to discrete formulations, approximations have to be made.
 One of those points is the discretization of the continuous space into finite segments.
-Yet another point is not as obvious, and occurs when trying to calculate an integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation-error is introduced.
+Yet another point is not as obvious, and occurs when trying to compute an integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation-error is introduced.
 
 Despite all of this, the accuracy loss can normally be minized by sacrificing computing time.
 However, the specific approximation of an integrated fractional function using Gaussian quadrature has to be analyzed separately.
-It occurs when calculating how much of the relevant quantities are passed from one segment to another, which, due discontinuities along the separating lines, has to be handled in a way that preserves as much accuracy as possible.
+It occurs when computing how much of the relevant quantities are passed from one segment to another, which, due discontinuities along the separating lines, has to be handled in a way that preserves as much accuracy as possible.
 
-Based on the shallow water equations, this work aims to explain the derivation of the discretization, the necessary equations for calculating those quantities, and gives insight to the quadrature error by comparing the analytical solution to the approximate solution using Gaussian quadrature employed at various points.
+Based on the shallow water equations, this work aims to explain the derivation of the discretization, the necessary equations for computing those quantities, and gives insight to the quadrature error by comparing the analytical solution to the approximate solution using Gaussian quadrature employed at various points.
 \end{abstract}
 
 \newpage
@@ -118,7 +118,7 @@ As such, our results can be applied for non-adaptive grids as well.
 \section{Reference space}
 \label{sec:reference-space}
 
-Using a triangle grid, as mentioned before, we can simplify a few steps in the calculation process.
+Using a triangle grid, as mentioned before, we can simplify a few steps in the computation process.
 With a suitable library for coordinate projection, we can rotate triangles and edges into a space that is relevant for us.
 Instead of applying different directional cell update rules for each individual triangle, we apply a transformation to the triangles, which allows us to apply one one set of update rules to all cells.
 
@@ -189,9 +189,9 @@ Points on the triangle (both on the edge and inside) will be denoted by $p$.
   \label{fig:triangle-support-points-var-degrees}
 \end{figure}
 
-We will choose certain points to represent the domain of the triangle called \emph{support points}. The number of support points depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is uncommon to calculate the propagation exactly due to its computational complexity, we need to find a numerical approximation.
+We will choose certain points to represent the domain of the triangle called \emph{support points}. The number of support points depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is uncommon to compute the propagation exactly due to its computational complexity, we need to find a numerical approximation.
 
-This will be done with the Discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin} which requires a certain number of \emph{test functions} relating to points in the domain. However, for each test function used for the method we will need one point in the triangle to save the calculated information to. They can be regarded as sample points that are representative for the values within the triangle.
+This will be done with the Discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin} which requires a certain number of \emph{test functions} relating to points in the domain. However, for each test function used for the method we will need one point in the triangle to save the computed information to. They can be regarded as sample points that are representative for the values within the triangle.
 
 In our case, the test functions will be polynomials of a certain degree.
 
@@ -203,7 +203,7 @@ Accordingly, they will also be located on the respective edges. They will be exp
 \section{Discontinuous Galerkin}
 \label{sec:discontinuous-galerkin}
 
-The numerical method we are using to solve the shallow water equations on our grid is the discontinuous Galerkin method (DG). It combines ideas from the finite element method and the finite volume method. The first suggests computing solutions for each element locally, which is what the DG method also does. However, it lets adjacent elements communicate relevant information with each other by numerically calculating a flux function, which determines how much of each stored quantity is passed along between elements, which is a method borrowed from finite volume schemes. We can apply this to the general continuity equation, which looks like this in its differential form:
+The numerical method we are using to solve the shallow water equations on our grid is the discontinuous Galerkin method (DG). It combines ideas from the finite element method and the finite volume method. The first suggests computing solutions for each element locally, which is what the DG method also does. However, it lets adjacent elements communicate relevant information with each other by numerically computing a flux function, which determines how much of each stored quantity is passed along between elements, which is a method borrowed from finite volume schemes. We can apply this to the general continuity equation, which looks like this in its differential form:
 
 \begin{equation}
   \label{eq:general-continuity-equation}
@@ -213,7 +213,7 @@ The numerical method we are using to solve the shallow water equations on our gr
 \begin{itemize}
 \item[$\mathbf{q}$] The state vector, containing all relevant information for any given point in space.
 \item[$F$] The flux function, applied to $\mathbf{q}$ it results in a vector describing the spatial transport of the quantities stored in $\mathbf{q}$.
-\item[$S$] A source term, which is used to offset the calculated quantities. What this quantity means can differ depending on the situation. In the context of water simulation, it represents the bathymetry, which will be set to 0 for this project, meaning we only consider constant bathymetry.
+\item[$S$] A source term, which is used to offset the computed quantities. What this quantity means can differ depending on the situation. In the context of water simulation, it represents the bathymetry, which will be set to 0 for this project, meaning we only consider constant bathymetry.
 \end{itemize}
 
 Similar to the finite element method, we multiply the equation by a test function, then integrate over the entire domain. This can be done with more than one function as well, and we will later use several, depending on the degree of the functions we use. The functions we choose for that will be called \emph{basis functions}. Details of what they look like and how we will derive them are explained in section \ref{sec:basis-functions-choice}. What we obtain is the following (with $\phi_i$ being the $i$th basis function), called the weak form:
@@ -326,7 +326,7 @@ We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. T
 \section{Gaussian quadrature}
 \label{sec:matrix-extraction}
 
-To actually calculate equation \ref{eq:shallow-water-weak-form-div-applied-approximation}, we need to approximate the status vector $\mathbf{q}$, as it's impossible to derive an accurate representation for this value that changes continuously over the doman.
+To actually compute equation \ref{eq:shallow-water-weak-form-div-applied-approximation}, we need to approximate the status vector $\mathbf{q}$, as it's impossible to derive an accurate representation for this value that changes continuously over the doman.
 We do that by applying the Gaussian quadrature over the previously mentioned support points.
 We obtain the vector of the approximated status values over the support points, weighted by the basis functions:
 
@@ -335,7 +335,7 @@ We obtain the vector of the approximated status values over the support points, 
   \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i\left(x,y\right)
 \end{equation}
 
-The values $\mathbf{q}_i$ are the $\mathbf{q}$ values at the corresponding support points. This helps our computation significantly, since those values do not depend on the position within the domain. That allows us to move them out of the integrals, leaving integrals over various combinations of basis functions. Since these don't depend on $\mathbf{q}$, they can be precomputed and applied to all cells in the domain without a need for individual calculation.
+The values $\mathbf{q}_i$ are the $\mathbf{q}$ values at the corresponding support points. This helps our computation significantly, since those values do not depend on the position within the domain. That allows us to move them out of the integrals, leaving integrals over various combinations of basis functions. Since these don't depend on $\mathbf{q}$, they can be precomputed and applied to all cells in the domain without a need for individual computation.
 
 Recall that $\mathbf{q}$ (and all $\mathbf{q}_i$) contain three components, the height $h$, the momentum in the $x$ direction $u_x$ and the $y$ momentum $u_y$. This means, equation (\ref{eq:support-point-approximation}) yields three equations (one for each of the components).
 
@@ -586,7 +586,7 @@ Using the approximation $\mathbf{q} \approx \sum_{j=1}^n \mathbf{q}_i \phi_i\lef
     F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
 \end{equation}
 
-Here $\tilde{F^e}$ means a vector of all calculated $F_k^e$, similarly to $\tilde{\mathbf{q}}$. This now has the advantage of being easier to handle, both mathematically as well computationally.
+Here $\tilde{F^e}$ means a vector of all computed $F_k^e$, similarly to $\tilde{\mathbf{q}}$. This now has the advantage of being easier to handle, both mathematically as well computationally.
 
 \section{Time stepping}
 \label{sec:computing-integrals}
@@ -602,9 +602,9 @@ Given an equation of the form
   \pd{x(t)}{t} & = & f(t, x(t)), \\
   x(t_0) & = & x_0
 \end{eqnarray}
-we want to have a calculate $x(t)$ (as shown in \cite{schwaiger08adaptive}).
+we want to have a compute $x(t)$ (as shown in \cite{schwaiger08adaptive}).
 
-This is evaluated iteratively by considering a certain timestep size, $\tau$. The smaller the timestep size, the more accurately the resulting values will approximate the exact solution. However, the timestep is left variable because it can be adjusted to be lower when confronted with highly variable state vectors (for example large observed velocities on a small grid), whereas it can be left higher during phases with little variation or similar velocities to save computation time. The new time is calculated simply by adding the variable timestep on the current time: $t_{k+1} = t_k + \tau$.
+This is evaluated iteratively by considering a certain timestep size, $\tau$. The smaller the timestep size, the more accurately the resulting values will approximate the exact solution. However, the timestep is left variable because it can be adjusted to be lower when confronted with highly variable state vectors (for example large observed velocities on a small grid), whereas it can be left higher during phases with little variation or similar velocities to save computation time. The new time is computed simply by adding the variable timestep on the current time: $t_{k+1} = t_k + \tau$.
 
 The state vector for the next timestep is based on the same vector in the current timestep. It can be regarded as taking a small timestep in the direction of the development of the state vector, where the direction is given by $\pd{x(t)}{t}$. We obtain the final term for the new state variable $x$:
 
@@ -806,7 +806,7 @@ We have two adjacent triangles called $R$ and $L$ respectively, sharing a common
 
 After parametrization along the edge $E$, this results in a function $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four functions (see section \ref{sec:original-situation-2D problem} for more detailed information regarding the parametrization).
 
-To approximate the result numerically, we will take a number of sample points along the edge and evaluate the flux functions at those places. This is the prevalent method employed in this field (\cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}) and is also used by the Sierpinski framework. Recall from section \ref{sec:matrix-extraction} that it uses a Gaussian quadrature to calculate this integral. This introduces an error, since we have a rational function, for which polynomial Gaussian quadrature may not produce exact results anymore.
+To approximate the result numerically, we will take a number of sample points along the edge and evaluate the flux functions at those places. This is the prevalent method employed in this field (\cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}) and is also used by the Sierpinski framework. Recall from section \ref{sec:matrix-extraction} that it uses a Gaussian quadrature to compute this integral. This introduces an error, since we have a rational function, for which polynomial Gaussian quadrature may not produce exact results anymore.
 
 To analyze the severity of the error, we will compare the two resulting terms in the form of the $L^1$-norm.
 
@@ -1087,7 +1087,7 @@ If we use two support points for each edge (all points except $p_1^L$ are $(10,0
   \frac{1}{h_1\cdot(1.732 h_1 \cdot x - 17.320 x - 1.366 h_1 + 3.660)}
 \end{equation*}
 
-Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N\left(x\right)-N^\prime\left(x\right)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). We can calculate that we have a singularity at
+Remember from equation (\ref{eq:integral-norm-definition}) that the term $I$ integrates over $N\left(x\right)-N^\prime\left(x\right)$ from $x=0$ to $x=1$. Thus -- depending on the value of $h_1$ -- we run the risk that there is a singularity (w.r.t.\, the variable $x$). We can compute that we have a singularity at
 \begin{equation*}
   x_0=\frac{683\, h_1 - 1830}{866\, h_1 - 8600}.
 \end{equation*}
@@ -1096,10 +1096,10 @@ Since we take the integral between 0 and 1, it is of particular interest if the 
 
 We obtain that $x_0 \in \left[ 0,1 \right]$ only if $h_1 \leq 2.679$ or $h_1 \geq 37.322$. So we see that for this particular case we have singularities only for values of $h_1$ that differ greatly from all other values for the height (that are in this case set to 10).
 
-We tried these calculations for other scenarios, including a variation in support points leading to similar results.
+We tried these computations for other scenarios, including a variation in support points leading to similar results.
 %The results were always the same, that the height would have to differ in absurd levels to even approach the required region of the singularity. %gestrichen auf Martins Vorschlag
 
-However, it is still important to note that these singularities do in fact occur. While they did not interfere with our calculations, similar application with largely differing sample values may encounter a challenge at this point.
+However, it is still important to note that these singularities do in fact occur. While they did not interfere with our computations, similar application with largely differing sample values may encounter a challenge at this point.
 
 Analytically deriving a general formula for the occurance of such singularities is a difficult task due to the large number of variables. This is further complicated by the fact that the number of variables itself is not static but depends on the number of support points. We even encountered problems computing the exact $x$ values for the singularities for four support points, due to the complexity of the term, although they could still be found visually once the function was evaluated and plotted, coinciding with our previously computed results.
 
@@ -1381,7 +1381,7 @@ We start out with two random points. The results of random assignment of values 
 \subsubsection{Three random points}
 \label{sec:three-random-points}
 
-The same calculations for three random points is shown in figure \ref{fig:three-points-random}. Again, it differs strongly from figure \ref{fig:three-points-equal}, where we set all points to the same value.
+The same computations for three random points is shown in figure \ref{fig:three-points-random}. Again, it differs strongly from figure \ref{fig:three-points-equal}, where we set all points to the same value.
 
 \input{3_random_new/tex.tex}
 
@@ -1461,16 +1461,15 @@ This may be a problem to consider for extreme situations, such as shock waves, w
 
 \clearpage{}
 
-\part{Stiffness matrix accuracy analysis}
+\part{Stiffness matrix accuracy analysis for SWE}
 \label{part:stiffness-matrix}
-\todo{Bei der Ueberschrift wuerde ich noch 'for SWE' anhaengen. Damit ist es aus meiner Sicht auch verstaendlicher, dass ihr die SWE spezifischen Formeln darstellt.}
-\emph{Remark:} Since the following part contains a myriad of mathematical symbols, we encourage you to have a copy of the cheat sheet from section \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.
-\todo{encourage klingt so, wie wenn der Leser das noetig hat. Ausserdem sollten alle Symbole in didaktisch verstaendlicher Form bei der Einfuehrung beschrieben werden. 'cheat sheet' hat in einer wiss. Ausarbeitung auch nix verloren :-). Wie waere es mit "To give a better overview of the following mathematical symbols, we refer readers to appendix A"}
+
+\emph{Remark:} To give a better overview of the following mathematical symbols, we refer readers to appendix \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.\done{Satz vom Martin. Passt das?}
 
 \section{Sum approximation vs. exact solution}
 \label{sec:point-wise-appr-vs-exact-solution-intro}
 
-While deriving the equations necessary for our calculations\todo{computations. Bitte auch ueberall calculation mit computation austauschen.}, we introduced several approximations. One of them was the approximation of the combination of various sums, as presented in the calculation of the stiffness matrix in section \ref{sec:stiffness-second-line}, in particular in the equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}). For the second line (i.e. for the $u_x$ component), we had:
+While deriving the equations necessary for our computations\todo{computations. Bitte auch ueberall computation mit computation austauschen.}\done{Sollte erledigt sein.}, we introduced several approximations. One of them was the approximation of the combination of various sums, as presented in the computation of the stiffness matrix in section \ref{sec:stiffness-second-line}, in particular in the equations (\ref{eq:third-integral-second-line-1}) and (\ref{eq:third-integral-second-line-2}). For the second line (i.e. for the $u_x$ component), we had:
 
 \begin{eqnarray}
   \label{eq:third-integral-second-line-1-analysis-part}
@@ -1520,20 +1519,21 @@ The equation for the $u_y$ component was analogous:
   & {} & + \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
-We will introduce this notation to refer to the approximated integrand\todo{Hier wuerde ich das nabla phi und auf de rrechten Seite die rechten Terme in den Klammern weglassen}:
+We will introduce this notation to refer to the approximated integrand:
 
 \begin{equation}
   \label{eq:point-wise-approx-result-second-line}
-  \overline{F}_2(\mathbf{q}) \cdot \nabla \phi =
+  \overline{F}_2(\mathbf{q}) % \cdot \nabla \phi 
+  =
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
-    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j 
   \end{pmatrix}
-  \cdot
-  \begin{pmatrix}
-    \pd{\phi_i}{x} \\
-    \pd{\phi_i}{y}
-  \end{pmatrix}
+  % \cdot
+  % \begin{pmatrix}
+  %   \pd{\phi_i}{x} \\
+  %   \pd{\phi_i}{y}
+  % \end{pmatrix}
 \end{equation}
 
 \begin{equation}
@@ -1550,9 +1550,9 @@ We will introduce this notation to refer to the approximated integrand\todo{Hier
   \end{pmatrix}
 \end{equation}
 
-As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and try to\todo{focus on analyzing} analyze its validity.
+As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and focus on analyzing its validity.
 
-We do so by exemplary examining the third component and try to\todo{Auch hier das 'try' durch etwas ersetzen, was nicht nach einem Versuch klingt sondern nach harten Fakten} calculate its exact value:
+We do so by exemplary examining the third component and compute its exact value:
 
 \begin{eqnarray*}
   \int_T F_2\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
@@ -1571,7 +1571,7 @@ We do so by exemplary examining the third component and try to\todo{Auch hier da
   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
 \end{eqnarray*}
 
-While we approximate here as well, it is the point-wise sampling approximation and is used in both cases, as it is impossible \todo{Besser evtl.: computational intensive for numerical simulations} to determine the exact value for a continuous area.
+While we approximate here as well, it is the point-wise sampling approximation and is used in both cases, as it is computationally intensive for numerical simulations to determine the exact value for a continuous area.
 
 These terms become huge and difficult to handle manually, as well as expensive to compute automatically. We will introduce three shorthand notations for the three components of $\mathbf{q}$:
 
@@ -1582,7 +1582,7 @@ These terms become huge and difficult to handle manually, as well as expensive t
   \widehat{u}_x := \sum_{j=1}^n \phi_j u_{x,j}
 \end{equation}
 
-Similarily to before\todo{the previous steps}, we can introduce a hat notation to signal the summation of the individual components, only this time we define it for the entire integrand. Doing that, we can simply the above term\todo{In this way, we can simplify the...}:
+Similarily to the previous steps, we can introduce a hat notation to signal the summation of the individual components, only this time we define it for the entire integrand. In this way, we can simplify the above term:
 
 \begin{equation}
   \label{eq:stiffness-analysis-third-line-exact-approx-simple}
@@ -1868,7 +1868,7 @@ To examine this, look\todo{Keine Aufforderung an den Leser} \todo{Ist das wirkli
 
 %This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$ momentum since these plots can be constructed from their counterpart (i.e. the error in $x$ momentum for basis function $\phi_i$ is the same as the error in $y$ momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
 
-Following are reports of various scenarios we have tested, trying to find out any common behavior between the values. All the following graphs will show the calculated error in the stiffness terms for both components, i.e. $SE^i = \left(SE_x^i, SE_y^i\right)$ for $i=1,\dots, n$.
+Following are reports of various scenarios we have tested, trying to find out any common behavior between the values. All the following graphs will show the computed error in the stiffness terms for both components, i.e. $SE^i = \left(SE_x^i, SE_y^i\right)$ for $i=1,\dots, n$.
 
 \subsection{Order 1, standard values}
 \label{sec:stiffness-analysis-order-1-standard}
@@ -2133,7 +2133,7 @@ If we choose all momentums to be 0 (which is what we are doing in this scenario)
 
 %For second order, we have $n=6$.
 
-We have $\sum_{i=1}^n \phi(x,y)=1$ and  $(\sum_{i=1}^n a \phi(x,y))^2 = a^2$ as calculated in section \ref{sec:basis-functions-other-properties}.
+We have $\sum_{i=1}^n \phi(x,y)=1$ and  $(\sum_{i=1}^n a \phi(x,y))^2 = a^2$ as computed in section \ref{sec:basis-functions-other-properties}.
 
 With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$, we can set $h_1=h_2=h_3=\dots=h_n$ (remember: we fixed all height values at 10) and simplify as follows:
 
@@ -2166,7 +2166,7 @@ This is traceable, since we use second order approximations for $h, u_x$ and $u_
 
 While in the first order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), this does not hold true anymore. Trying to derive the local minima analytically is made too difficult because of the absolute value used in the integrand.
 
-As expected from our calculations\todo{calculus?} in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and \ref{sec:basis-functions-other-properties}, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0. For a detailed calculation\todo{calculus?}, refer to section \ref{sec:stiffness-analysis-ord2-default-var-ux1}.
+As expected from our computations\todo{calculus?} in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and \ref{sec:basis-functions-other-properties}, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0. For a detailed computation\todo{calculus?}, refer to section \ref{sec:stiffness-analysis-ord2-default-var-ux1}.
 
 \paragraph{\texorpdfstring{Altering $h_3$}{Altering h3}}
 
@@ -2351,7 +2351,7 @@ We will now come back to only modifying the $x$ momentums. We will set them all 
 \subsection{Minimizing the error}
 \label{sec:stiffness-analysis-concl-error-0}
 
-If we have a situation, where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components. For the respective calculations, refer to the previous sections.
+If we have a situation, where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components. For the respective computations, refer to the previous sections.
 
 The error can become 0 even for other combinations, but it is very difficult to derive a simple pattern that must be fulfilled by the parameters. Moreover, as we saw, it can become zero if certain basis functions have a derivative that is 0 (as seen e.g. in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
 
