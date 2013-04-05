@@ -1635,16 +1635,17 @@ On the other hand, if we know that $\int_T \left| f-g \right|\, dT = 0$, we know
 \subsection{\texorpdfstring{How to evaluate $SE$}{How to evaluate SE}}
 \label{sec:how-to-evaluate-e}
 
-If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely quite hard \todo{computational intensive} to compute exactly, maybe even impossible.
-\todo{It was infeasible to compute those integrals using analytical software such as maple.}
+If one considers the terms $SE_x$ and $SE_y$, it is clear that these terms -- similar to the term $I$ obtained in section \ref{sec:how-to-eval-I} -- contain rational fractional functions and are likely computationally intensive to compute exactly.
+%, maybe even impossible.
+It was infeasible to compute those integrals using analytical software such as Maple.
 
-While integrating in the one-dimensional case can be easily\todo{Kein easily, da das die vorherige Arbeit schlechtredet!} approximated by the rectangle method (which can be made arbitrarily precise by a varying number of rectangles\todo{Das wuerde ich entfernen, da es nicht allgemeingueltig ist}), the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a slightly more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
+While integrating in the one-dimensional case can approximated by the rectangle method, the two-dimensional case (i.e. integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
 
 However, it is not difficult to extend the rectangle method to the two-dimensional case. Since we are interested in an integral over a triangle $T$, and $T$ is a right triangle with cathetus length 1, we divide the triangle into smaller right triangles such that all triangles together cover the original triangle $T$.
 
-Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can try\todo{Kein try} to approximate this volume by comprising it out of smaller parts. We decided to use prisms \todo{Bezieht euch hierbei auf bereits angewandte Verfeinerungen in diesem Bereich. Eine fuer mich coole Sache ist z. B. die Triangulierung des DWD: www.dwd.de Diese verwenden fuer ihre Triangulierung auch die Verfeinerung wie ihr diese beschrieben habt.} to approximate that volume.
+Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can approximate this volume by comprising it out of smaller parts. We decided to use prisms \todo{Bezieht euch hierbei auf bereits angewandte Verfeinerungen in diesem Bereich. Eine fuer mich coole Sache ist z. B. die Triangulierung des DWD: www.dwd.de Diese verwenden fuer ihre Triangulierung auch die Verfeinerung wie ihr diese beschrieben habt.}\done{Sorry, keine Ahnung, was hier gemeint ist.} to approximate that volume.
 
-In principle, we devide the triangle in a way such that we cut the cathetuses\todo{cathetii wenn ich mich recht erinnere oder triangle legs} (of length 1) into smaller pieces of length $\frac{1}{L}$ (the integer $L$ denotes the parameter for our integral approximation\todo{Auf Klammern verzichten, am besten als Satz ausschreiben}). Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
+In principle, we devide the triangle in a way such that we cut the catheti (of length 1) into smaller pieces of length $\frac{1}{L}$. The integer $L$ denotes the parameter for our integral approximation. Then, we can generate the centers of the resulting triangles as follows. First, we consider a set of \emph{all possible} centers:
 
 \begin{equation*}
   \mathtt{POSSIBLE\_CENTERS} = \left\{
@@ -1739,7 +1740,7 @@ If we use this definition, we obtain $L^2$ triangles of equal size.
 
 We show how the division of the triangles works in figure \ref{fig:splitting-triangle-into-smaller-triangles}.
 
-We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 L^2}$. This results then in the following equation\todo{, resulting in the following equation}:
+We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 L^2}$, resulting in the following equation.
 
 \begin{equation}
   \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2L^2}
@@ -1753,7 +1754,7 @@ If we use just one triangle (i.e. $L=1$), then this triangle coincides with the 
   \int_T f(x,y)\, dT \approx \frac{1}{2} \cdot f(\frac{1}{3},\frac{1}{3})
 \end{equation*}
 
-The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism\todo{with the same base area as our .... "Im Deutschen wird oft 'dass' verwendet. Im Englischen von dem her, was ich von bisherigen Papern gelesen habe, sehr selten"}, which has the same base area as our triangle $T$ ($\frac{1}{2}$).
+The factor $\frac{1}{2}$ is needed since we actually approximate the volume denoted by the integral by the volume of a prism with the same base area as our triangle $T$ (namely $\frac{1}{2}$).
 
 Naturally we need more triangles for an actual approximation. If we use four triangles (i.e. $L=2$), we get the following centers: $\mathtt{CENTERS} = \left\{ (\frac{1}{6}, \frac{1}{6}), (\frac{1}{6}, \frac{1}{6}), (\frac{1}{3}, \frac{1}{6}), (\frac{1}{6},\frac{1}{3}) \right\}$.
 
