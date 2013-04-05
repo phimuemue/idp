@@ -1899,7 +1899,7 @@ Following are reports of various scenarios we have tested, trying to find out an
 \subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
 \label{sec:stiffness-analysis-standard-values-var-h1}
 
-\todo{Regarding to section...} As was mentioned in section \ref{sec:basis-functions-choice}, choosing order 1 requires 3 basis functions $\phi_1,\dots,\phi_n$. These depend on the three components (height, $x$ momentum, $y$ momentum) of the three support points. First, we will look into the impact the value $h_1$ (i.e. the height of the first support point) has on the error terms. We fix\todo{Ich wuerde "keep the following values constant" besser finden} the following values:
+According to section \ref{sec:basis-functions-choice}, choosing order 1 requires 3 basis functions $\phi_1,\dots,\phi_n$. These depend on the three components (height, $x$ momentum, $y$ momentum) of the three support points. First, we will look into the impact the value $h_1$ (i.e. the height of the first support point) has on the error terms. We keep the following values constant:
 
 \begin{eqnarray*}
   & h_2 = 10 & h_3 = 10 \\
@@ -1948,7 +1948,7 @@ Using the fact that $\pd{\phi_i}x = 0$, we can simplify the above to
 
 We now use the fact that $u_{x,i}=u_{y,i}=0$ for all support points and can confirm that the overall integrand becomes 0.
 
-While this is a good result for us\todo{in this circumstance}, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. We can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). \todo{The shape is similar to a...} It looks like a parabola, which makes sense when we examine the equations for the first order.
+While this is a good result in this circumstance, the more interesting plots in figure \ref{fig:stiffness-analysis-order-1-standard-values-h1} are the remaining ones, which all seem to be the same. We can see that the error is minimal for $h_1=10$ and grows as $h_1$ deviates from this value (apparently the same in both directions). The shape is similar to a parabola, which makes sense when we examine the equations for the first order.
 
 The fact that the error is minimal for $h_1=10$ is interesting for the following reason: $h_2$ as well as $h_3$ have the value 10, too, so it \emph{might} be advantageous if the third height (in this case $h_1$) has value 10, as well.
 
@@ -1962,7 +1962,7 @@ We leave all values as they were and additionally set $h_1=10$, but instead take
 
 As we can see, we omitted all plots except those for the $x$ momentum for the second and third basis function. These two look like parabolas again, but note that the occurring error lies somewhere between 0 and 0.5.
 
-Moreover, it is again noteworthy that the minimum error occurs for $u_{x,1}=0$ since that\todo{Evtl. 'this', bin mir aber nicht sicher} equals the values of $u_{x,2}$ and $u_{x,3}$.
+Moreover, it is again noteworthy that the minimum error occurs for $u_{x,1}=0$ since this equals the values of $u_{x,2}$ and $u_{x,3}$.
 
 \subsubsection{\texorpdfstring{Varying $u_{y,1}$}{Varying uy1}}
 
@@ -1970,7 +1970,7 @@ In the last section, the $x$ momentum of the second and third basis function wer
 
 \input{standardwerte_nach_uy_ord1/tex.tex}
 
-The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. As one could have suspected\todo{Keine Spekulationen/Verdaechtigungen, nur harte Fakten.}, the plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$ momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
+The results can be seen in figure \ref{fig:stiffness-analysis-order-1-standard-values-uy1}. The plots for varying $u_{y,1}$ look like these for $u_{x,1}$, except that when varying $u_{y,1}$, the errors in the $y$ momentum of basis function 1 and 2 have the parabola-like shape. Similar to the situation before, the error is minimal for $u_{y,1}=0$.
 
 \subsubsection{\texorpdfstring{Varying $u_{x,1}$ and $u_{y,1}$}{Varying ux1 and uy1}}
 
@@ -1988,8 +1988,7 @@ The resulting plots are shown in figure \ref{fig:standardwerte_nach_ux1_ux2_ord1
 
 \input{standardwerte_nach_ux1_uy1_ord1/tex.tex}
 
-\todo{We focus on relevant aspects, such as...}
-What is interesting here is that \emph{all} error plots have characteristic shapes (i.e. none of them is 0, like in previous examples). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Once again one can see the similarities between some plots, especially with regard to mirroring/rotating. We will later omit plots that are the same or mirrored.
+We focus on relevant aspects, such as that \emph{all} error plots have characteristic shapes (i.e. none of them is 0, like in previous examples). Moreover, it seems that the error is minimal if $u_{x,1}=u_{y,1}=0$. Once again one can see the similarities between some plots, especially with regard to mirroring/rotating. We will later omit plots that are the same or mirrored.
 
 \clearpage{} % force output of *all* floats up to now, since LaTeX crahes otherwise
 
