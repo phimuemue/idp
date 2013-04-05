@@ -79,6 +79,8 @@
 
 \todo{Es sieht wirklich immer besser aus, wenn ihr ein Titelblatt verwendet mit IDP, Prof. \& Betreuer}
 
+\todo{Alle ``let us'' raus.}
+
 \maketitle{}
 
 \begin{abstract}
@@ -1995,7 +1997,7 @@ We focus on relevant aspects, such as that \emph{all} error plots have character
 \subsection{Order 1 -- non-standard values}
 \label{sec:stiffness-analysis-ord1-non-std-values}
 
-Up until now we have only considered scenarios in which all fixed heights and momentums were equal. We will now focus on \todo{choosing different fixes values, ...} what happens if we choose different fixed values, for example $h_2=10$ and $h_3=11$.
+Up until now we have only considered scenarios in which all fixed heights and momentums were equal. We will now focus on choosing different fixed values, for example $h_2=10$ and $h_3=11$.
 
 \subsubsection{Different heights}
 \label{sec:stiffness-analysis-ord1-differing-h2-10-h3-11}
@@ -2014,11 +2016,11 @@ Let us investigate, if we can find a minimal at $h_1=11$ error if we do the same
 
 We can see the resulting plots in figure \ref{fig:stiffneses-analysis-ord1-h2-10-h3-12}. And, indeed, the error is now minimal at $h_1\approx 11$ -- the average of $h_2=10$ and $h_3=12$. The minimal error grew up to 4.
 
-Let us\todo{Kein let's fetz} see what it looks like if we now set $h_2=12$ and $h_1=10$.
+We will now inspect what it looks like if we set $h_2=12$ and $h_1=10$.
 
 \input{ord1_differing_h2_h3_12_10/tex}
 
-The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10} and they look as expected\todo{Wenn das so erwartet wurde, warum zeigt ihr diese dann?}: The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two. This makes sense when examining the equations, which we will cover later\todo{Wg. der symmetrie? Dann solltet ihr das als Voraus-Haeppchen fuer den Leser hier nennen}.
+The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10}. The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two. This makes sense when examining the equations, which we will cover later\todo{Wg. der symmetrie? Dann solltet ihr das als Voraus-Haeppchen fuer den Leser hier nennen\done{Ist aber nicht wg. Symm. glaube ich.}}.
 
 Let us now inspect the following scenario: We set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$.
 
@@ -2028,11 +2030,15 @@ As we can see in figure \ref{fig:ord1_differing_h2_h3_12_8}, the error is still 
 
 \paragraph{Conclusion}
 
-What one can guess\todo{anders, neutraler formulieren} from the things \todo{a thingy can also be a swimming pool} seen so far is that -- if we leave all $u_{x,i}=u_{y,i}=0$ ($i=1\dots n$) and take $h_1$ as axis variable -- the error seems to be minimal if $h_1\approx \frac{h_2+h_3}{2}$.
+%What one can guess\todo{anders, neutraler formulieren} from the things \todo{a thingy can also be a swimming pool} seen so far is that 
+
+What we can conclude from the plots seen so far is that -- if we leave all $u_{x,i}=u_{y,i}=0$ ($i=1\dots n$) and take $h_1$ as axis variable -- the error seems to be minimal if $h_1\approx \frac{h_2+h_3}{2}$.
 
 Of course, it is an interesting question if this can be proven (or even disproven) analytically. To examine this, we take -- as an example -- the error in the $x$ momentum of the third basis function and set all $u_{x,i}=u_{y,i}=0$.
 
-Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values\todo{Ist das nicht ein Gegenbeweis?}. To illustrate this, let us consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
+However, this does not hold true.
+%Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values\todo{Ist das nicht ein Gegenbeweis?}. 
+To illustrate this, let us consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
 
 \input{ord1_differing_h2_h3_164/tex.tex}
 
@@ -2047,7 +2053,7 @@ We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting 
 
 \input{ord1_ux1_differing_ux2_ux3/tex.tex}
 
-As can be seen\todo{Im Englischen kein Passiv verwenden. "We..." ist diesbezueglich besser.}, the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$. However, further investigating this direction is not necessary, since altering $u_{x,2}$ and $u_{x,3}$ (while leaving $u_{x,1}$ variable) affects the plots in the same way as changing $h_2$ and $h_3$ (with $h_1$ variable).
+We see, that the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$. However, further investigating this direction is not necessary, since altering $u_{x,2}$ and $u_{x,3}$ (while leaving $u_{x,1}$ variable) affects the plots in the same way as changing $h_2$ and $h_3$ (with $h_1$ variable).
 
 \subsubsection{\texorpdfstring{Different $y$ momentums}{Different y momentums}}
 \label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
