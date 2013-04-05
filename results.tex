@@ -1994,7 +1994,7 @@ We focus on relevant aspects, such as that \emph{all} error plots have character
 
 \clearpage{} % force output of *all* floats up to now, since LaTeX crahes otherwise
 
-\subsection{Order 1 -- non-standard values}
+\subsection{Order 1 --- non-standard values}
 \label{sec:stiffness-analysis-ord1-non-std-values}
 
 Up until now we have only considered scenarios in which all fixed heights and momentums were equal. We will now focus on choosing different fixed values, for example $h_2=10$ and $h_3=11$.
@@ -2053,75 +2053,7 @@ We start out by setting $u_{x,2}=0$ and $u_{x,3}=2$. The plots for this setting 
 
 \input{ord1_ux1_differing_ux2_ux3/tex.tex}
 
-We see, that the error describes a parabola-like shape, its minimum value being at $u_{x,y}\approx 1$, which -- similar to before -- resembles the average of $u_{x,2}$ and $u_{x,3}$. However, further investigating this direction is not necessary, since altering $u_{x,2}$ and $u_{x,3}$ (while leaving $u_{x,1}$ variable) affects the plots in the same way as changing $h_2$ and $h_3$ (with $h_1$ variable).
-
-\subsubsection{\texorpdfstring{Different $y$ momentums}{Different y momentums}}
-\label{sec:stiffness-analysis-ord1-nonstandard-diff-uy}
-
-To complete the current line of experiments, we could examine different $y$ momentums analogously to before, but it is obvious from the equations that this will present the same results, only with a different zero-error functions. In that case, the $y$ momentums of the first and the second basis function are the interesting plots, while all others are 0.
-
-\subsubsection{\texorpdfstring{Different $x$ and $y$ momentums}{Different x and y momentums}}
-\label{sec:stiffness-analysis-different-ux-uy-momentums}
-
-We now generalize the previous experiments by altering both $x$ momentums and $y$ momentums.
-
-\input{ord1_varying_ux1_uy1_differing_ux2_uy2_1_1/tex.tex}
-
-To visualize these settings, we will revisit three-dimensional plots that have two axis variables. Refer to figure \ref{fig:standardwerte_nach_ux1_ux2_ord1} for the original situation (i.e. heights are 10, momentums are 0), where we always had a minimal error at $u_{x,1}=u_{y,1}=0$. From now on, since the plots tend to be highly symmetric, we will omit some of them, stating which plots we omitted and why.
-
-Remember that if we only changed either the $x$ or the $y$ impulse values, the error (depending on the only non-fixed $x$ or $y$ momentum) reached its minimum roughly at the average of the other two $x$ or $y$ momentums respectively, as long as they did not differ too strongly.
-
-Let us start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
-
-Considering the plot for $SE_x^1$, it is easy to distinguish the two bent shapes (one for $u_{x,1}\approx 0.5$, the other one for $u_{y,1}\approx 0.5$ -- again roughly the average values of the corresponding $x$ and $y$ momentums). Comparing this plot to the one of figure \ref{fig:standardwerte_nach_ux1_ux2_ord1}, we can see that there the bends were sharper, while now they have been smoothed. Moreover, the error term now reaches the 0.5 mark, while previously only came up to about 0.4.
-
-In general (i.e. considering all plots of figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}), we can observe a slight translation of all the plots. It is roughly 0.5 in the directions of $u_x$ and $u_y$, since we altered some $x$ and $y$ momentums. Moreover the error term grew (compared to the one where all fixed momentums were set to 0).
-
-However, with $u_{x,2}=u_{y,2}=1$ one can still see the strong connection to the original plots.
-
-Let us now choose some more extreme values: $u_{x,2}=3$ and $u_{y,2}=3$. The corresponding plots can be found in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_3_3}.
-
-\input{ord1_varying_ux1_uy1_differing_ux2_uy2_3_3/tex.tex}
-
-Now, the deformations in the plots are stronger. While the overall error grew by a significant amount, we can still say that it is minimal roughly at $u_{x,1}=\frac{u_{x,2}+u_{x,3}}{2}$ and $u_{y,1}=\frac{u_{y,2}+u_{y,3}}{2}$.
-
-What we can assume from the plots we have seen so far is that the more the momentums differ, the worse our approximation (i.e. the bigger the error) will get. We made the same observation about the height values before.
-
-To examine this suspicion a bit, let us now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=1$ assuming that this should roughly look like the original situation where all moments were set to 0, except that we suspect the error to be minimal at $u_{x,1}=1$ and $u_{y,1}=1$.
-
-\input{ord1_varying_ux1_uy1_differing_ux2_uy2_ux3_uy3_1_1_1_1/tex.tex}
-
-The plots confirm our suspiction: the error is indeed minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ -- it is even 0.
-
-\clearpage{}
-
-\section{Error terms for order 2}
-\label{sec:stiffness-analyis-ord-2}
-
-We will now examine the error plots for order 2. Remember from table \ref{tab:basis-functions-for-low-degrees} that we now have 6 basis functions $\phi_1,\dots,\phi_6$. Besides making the approximation more complicated, this gives rise to 12 plots (we have the errors in $x$ momentum and in $y$ momentum for each of the basis functions).
-
-Similar to before, we will use only one plot for several error plots if they all look the same.
-
-\subsection{Standard values}
-\label{sec:stiffness-analyiss-ord2-default}
-
-\subsubsection{\texorpdfstring{Varying $h_1$}{Varying h1}}
-\label{sec:stiffness-analysis-ord2-default-var-h1}
-
-Again, we start out by using the default values, setting all heights to 10 (except $h_1$ which will be our axis variable) and all momentums will be set to 0. We can see the resulting plots in figure \ref{fig:ord2_varying_h1_default}.
-
-\input{ord2_varying_h1_default/tex.tex}
-
-As one can see, we always have a parabola-like shape (except for the $x$ momentum of the 5th and the $y$ momentum of the 3rd basis function that are both 0). The error is at most at 1.6 (for $SE_x^2$). We observe that the error is always minimal (in fact even 0) for $h_1=10$. The results of $SE_x^5$ and $SE_y^3$ are a natural consequence of $\pd{\phi_5}{x}=\pd{\phi_3}{y}=0$, analogous to the order 1 case.
-
-\subsubsection{\texorpdfstring{Varying $u_{x,1}$}{Varying ux1}}
-\label{sec:stiffness-analysis-ord2-default-var-ux1}
-
-Next we choose $u_{x,1}$ to be the axis variable. We set all other momentums to 0 and all height values to 10. If we do so, we obtain the plots shown in figure \ref{fig:ord2_varying_ux_1}.
-
-\input{ord2_varying_ux_1/tex.tex}
-
-One can see there\todo{Kein 'one'} that the error for all $y$ momentums is zero. Moreover, the error is zero for the $x$ momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
+We can see there that the error for all $y$ momentums is zero. Moreover, the error is zero for the $x$ momentum of the 5th basis function. The error becomes zero at $u_{x,1}=0$, i.e. if $u_{x,1}$ is the same as all other momentums.
 
 For the most part, the plots all look parabola-like which is traceable since the error term contains $\widehat{u}_x^2$, which itself contains $u_{x,1}^2$. Thus, we can explain the parabola-like shape.
 
@@ -2174,10 +2106,10 @@ With these two identities and $\widehat{h}=\sum_{j=1}^n \left(h_j \phi_j\right)$
 
 That means, we can simplify the above to 0, thereby explaining the result: If all heights are equal, and all $x$ momentums are 0, then the error for \emph{all} $y$ momentums will be 0.
 
-\subsection{Non-standard values}
+\subsection{Order 2 --- Non-standard values}
 \label{sec:stiffness-analysis-ord2-nondefault}
 
-\todo{Was sind non-standard values?}We will now alter some values and see how this affects our error plots. We will do similar alterations to the ones used in section \ref{sec:stiffness-analysis-ord1-non-std-values} and see if we have a similar behavior to before.
+Similar to order 1, we will now alter some values and see how this affects our error plots. We will do similar alterations to the ones used in section \ref{sec:stiffness-analysis-ord1-non-std-values} and see if we have a similar behavior to before.
 
 \subsubsection{Altering heights}
 \label{sec:stiffness-analysis-ord2-nondefault-altering-heights}
@@ -2194,7 +2126,7 @@ This is traceable, since we use second order approximations for $h, u_x$ and $u_
 
 While in the first order case, we saw that the error was minimal roughly at the average values of the fixed heights (at least if we altered only one height value to 11), this does not hold true anymore. Trying to derive the local minima analytically is made too difficult because of the absolute value used in the integrand.
 
-As expected from our computations\todo{calculus?} in section \ref{sec:stiffness-analysis-ord2-default-var-ux1} and \ref{sec:basis-functions-other-properties}, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0. For a detailed computation\todo{calculus?}, refer to section \ref{sec:stiffness-analysis-ord2-default-var-ux1}.
+As expected from our computations in section \ref{sec:stiffness-analysis-ord2-altering-momentums} and \ref{sec:basis-functions-other-properties}, the errors for the $y$ momentum of the 3rd basis function and the $x$ momentum of the 5th basis function is still 0. For a detailed computation, refer to section \ref{sec:stiffness-analysis-ord2-altering-momentums}.
 
 \paragraph{\texorpdfstring{Altering $h_3$}{Altering h3}}
 
@@ -2210,7 +2142,7 @@ What we can see from these plots is that it has a significant influence which of
 
 \paragraph{Altering all height values}
 
-We now set all heights $h_2$ to $h_6$ to the value 11. We do so, because we hope \todo{Hoffen kann man in der Kriche. Hier koennte man z. B. "to examine..." schreiben} to see that we now again obtain parabola-like shapes (as in the case where all heights were set to 10). The results are shown in figure \ref{fig:ord2_varying_h1_h2-h6_11} and confirm our expectations: We have parabola-like shapes, whose minima are without exception at $h_1=11$.
+We now set all heights $h_2$ to $h_6$ to the value 11. We do so, because we want to examine if we now again obtain parabola-like shapes (as in the case where all heights were set to 10). The results are shown in figure \ref{fig:ord2_varying_h1_h2-h6_11} and confirm our expectations: We have parabola-like shapes, whose minima are without exception at $h_1=11$.
 
 \input{ord2_varying_h1_h2-h6_11/tex.tex}
 
@@ -2222,7 +2154,7 @@ Up to now we examined what happens if all heights are equal or at most one heigh
 
 \input{ord2_varying_h1_h2-h3_11_h4-h6_9/tex.tex}
 
-Now we have the first time where some plots look drastically\todo{evtl. strongly} different than before.
+Now we have the first time where some plots look strongly different than before.
 
 \clearpage{}
 
@@ -2247,9 +2179,9 @@ The plots look quite similar to the ones where we changed $u_{x,2}$, even if the
 
 \paragraph{\texorpdfstring{Altering $u_{y,2}$}{Altering uy2}}
 
-Let us now inspect what happens \todo{what happens kommt sehr oft vor. Besser verhindern und anders schreiben.} if we do not change the $x$ momentum but the $y$ momentum. As a showcase example, we will use $u_{y,2}=1$ and leave all other momentums at 0 (-- all heights are still 10).
+We will now not change the $x$ momentum but the $y$ momentum. As a showcase example, we will use $u_{y,2}=1$ and leave all other momentums at 0 (-- all heights are still 10).
 
-The plots are shown in figure \ref{fig:ord2_varying_ux1_uy2_1} and are likely to surprise \todo{Ueberaschungseier gibt es im Supermarkt :-). 'are likely to show important features' waere evtl. eine bessere Wahl} us. Because these plots are likely to surprise us, we split them up into the errors for the $x$ momentums and the errors for the $y$ momentums.
+The plots are shown in figure \ref{fig:ord2_varying_ux1_uy2_1} and are likely to show important features. Because these plots are quite insightful, we split them up into the errors for the $x$ momentums and the errors for the $y$ momentums.
 
 The errors for the $x$ momentums are shown in figure \ref{fig:ord2_varying_ux1_uy2_1}, the ones for the $y$ momentums in figure \ref{fig:ord2_varying_ux1_uy2_1__ycomponent}.
 
@@ -2367,7 +2299,7 @@ We saw that changing an $y$ momentum can result in drastically changed shapes of
 
 \paragraph{Setting all $x$ momentums to 1}
 
-We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We expect \todo{Was ihr erwartet, spielt keine Rolle sondern nur harte Fakten. Wenn man Sachen erwartet stellt sich oft die Frage, warum man das ueberhaupt getestet hat wenn man das Ergebnis schon erwartet hat.} parabolae with minima at $u_{x,1}=1$ (since all other $x$ momentums are 1). We can see the plots in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
+We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We obtain parabolae with minima at $u_{x,1}=1$ (since all other $x$ momentums are 1) that are shown in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
 
 \input{ord2_varying_ux1_ux2-ux6_1/tex.tex}
 
