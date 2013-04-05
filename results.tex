@@ -1822,20 +1822,28 @@ We will do so for illustrating some simple cases.
 \subsubsection{Order 1}
 \label{sec:stiffness-analysis-singluarities-ord-1}
 
-Let us\todo{Let's fetz sollte in Ausarbeitungen vermieden werden. Besser waere: Next, we consider order 1 by setting..., oder so aehnlich.} start out ba trying order 1, and setting $h_2=h_3=10$. We then obtain the following (by substituting $\phi_1$ to $\phi_3$ as defined in table \ref{tab:basis-functions-for-low-degrees}):
+Next, we consider order 1 and set $h_2=h_3=10$. We then obtain the following (by substituting $\phi_1$ to $\phi_3$ as defined in table \ref{tab:basis-functions-for-low-degrees}):
 
 \begin{equation*}
   h_1 = \frac{20y}{-1+2y}
 \end{equation*}
 
-We can now -- for example -- ``try''\todo{kein try :-)} $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means:\todo{E.g. this leads to...} For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot\todo{Log scaling wird normalerweise nur kurz in der Beschreibung des Plots gegeben}
+We can now -- for example -- set $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. This leads to the following fact: For the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to ``generate'' a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 \emph{strongly} deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values might be huge). I.e. we plot\todo{Log scaling wird normalerweise nur kurz in der Beschreibung des Plots gegeben}\done{Mag sein, aber ich schätze, bei uns würde es das nur verkomplizieren, da bei uns weder $x$- noch $y$-Achse log-skaliert ist, sondern nur die $z$-Achse. Würde es daher lassen.}
 \begin{equation*}
 \log_{10}\frac{20y}{-1+2y}.
 \end{equation*}
 
 We then examine the results of this term.
 
-We can see the ``graph'' (more precisely a heatmap\todo{auch das wird normalerweise in der plot beschreibung erwaehnt}) for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows: Everything that is red resp. green denotes values above 1.2 resp. below 0.7. Yellow denotes values between 0.7 and 1.2\todo{Das entspricht nicht der Legende}. White area is either undefined or out of the triangle.
+We can see the ``graph'' 
+%(more precisely a heatmap\todo{auch das wird normalerweise in der plot beschreibung erwaehnt}) 
+for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows:
+
+\begin{itemize}
+\item Red denotes values in $\left( -\infty, 0.7 \right] \cup \left[ 1.2, \infty \right)$ %Everything that is red resp. green denotes values above 1.2 resp. below 0.7.
+\item Yellow denotes values in $\left[ 0.7, 1.2 \right]$ between 0.7 and 1.2\todo{Das entspricht nicht der Legende}\done{Eigentlich doch schon, oder?}.
+\item White area is either undefined or out of the triangle.
+\end{itemize}
 
 As we can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only red and green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1} --- no yellow at all). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
 
@@ -1862,7 +1870,7 @@ We now examine the same thing for order 2. Again, we solve equation (\ref{eq:sti
 
 Again, we could test specific values for $(x,y)$, such as e.g. $(0.5, 0.25)$. If we did so, we would obtain $h_1=-90$ --- a very unlikely setting for $h_1$ if all other heights are 10.
 
-Have\todo{Keine Aufforderung an den Leser} a look at figure \ref{fig:stiffness-analysis-log-singularities-ord-2} and observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle --- very unlikely\todo{very unlikely oder muesste das auch beruecksichtigt werden? :-)}.
+Figure \ref{fig:stiffness-analysis-log-singularities-ord-2} shows a plot for $\log_{10} h_1$. We observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle --- very unlikely\todo{very unlikely oder muesste das auch beruecksichtigt werden? -- Gute Frage.}.
 
 \section{Error terms for order 1}
 \label{sec:stiffness-analysis-first-touch}
