@@ -81,6 +81,7 @@
 % Titelblatt: Gestaltung von der TUM-Informatik-Homepage genommen.
 \makeatletter
 \begin{titlepage}
+\vspace*{\fill}
 \begin{center}
   \includegraphics[scale=0.75]{TUM.pdf}
 
@@ -113,6 +114,7 @@
     \draw[black](0,-.8) -- (0,1.2);
   \end{tikzpicture}
 \end{center}
+\vspace*{\fill}
 \end{titlepage}
 \makeatother
 
@@ -1480,9 +1482,9 @@ When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized 
 \section{Conclusions}
 \label{sec:conslusions}
 
-We have seen in the plots that the errors in height and impulse show two very different behaviours.
-This was expected, with the height being a polynomial, while the impulse being a rational function.
-The impulse can vary strongly, both in shape and in scale, when adjusting the height values, while the impulse values have a minor impact only.
+We have seen that the height error is zero in the scenarios under consideration. Moreover, the error in impulse shows quite a non-predictable behaviour.
+%This was expected, since the impulse error is a rational function -- and thus not easy to imagine.
+It can vary strongly, both in shape and in scale, when adjusting the height values, while the impulse values have a minor impact only.
 
 Moreover, we can clearly observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets.
 This is good for any practical application, since that is usually the case.
@@ -1532,8 +1534,11 @@ While deriving the equations necessary for our computations, we introduced sever
   & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray}
 
-\todo{Hier wuerde ich noch kurz die Approximation beschreiben. Was passiert hier genau?}
-The equation for the $u_y$ component was analogous:
+\todo{Hier wuerde ich noch kurz die Approximation beschreiben. Was passiert hier genau?}\done[Philipp]{Passt das dann so?}
+
+Remember that we originally approximated as follows: $(h, u_x, u_y)^T \approx \sum_{i=1}^n (h_i, u_{x,i}, u_{y,i}) \cdot \phi_i(x,y)$ (see section \ref{sec:matrix-extraction}). While we approximate in the above equation as well, the transition from (\ref{eq:third-integral-second-line-1-analysis-part}) to (\ref{eq:third-integral-second-line-2-analysis-part}) uses a \emph{point-wise sampling approximation}, as it is computationally intensive for numerical simulations to determine the exact value for a continuous area if we used the original approximation (that would result in an integration of a rational function).
+
+The equation for the $u_y$ component is analogous:
 
 \begin{eqnarray*}
   \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
@@ -1589,7 +1594,7 @@ We will introduce this notation to refer to the approximated integrand:
 
 As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and focus on analyzing its validity.
 
-We do so by exemplary examining the third component and compute its exact value:
+We do so by exemplary examining the third component and compute its ``exact value'' (i.e. we use our original approximatino introduced in section \ref{sec:matrix-extraction}):
 
 \begin{eqnarray*}
   \int_T F_2\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
@@ -1607,8 +1612,6 @@ We do so by exemplary examining the third component and compute its exact value:
   \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{x} + \\
   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
 \end{eqnarray*}
-
-While we approximate here as well, it is the point-wise sampling approximation and is used in both cases, as it is computationally intensive for numerical simulations to determine the exact value for a continuous area.
 
 These terms become huge and difficult to handle manually, as well as expensive to compute automatically. We will introduce three shorthand notations for the three components of $\mathbf{q}$:
 
@@ -1639,14 +1642,14 @@ Analogously, we define this for the second component:
 
 \subsection{Comparison of exact and approximative solution}
 
-We have now derived an exact solution\todo{Vorsicht!!! Ist das eine exakte Loesung? Was ist mit den Ableitungen? Wenn ihr diese mit Maple auswertet, solltet ihr das Beschreiben.} ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L^1$ norm\todo{Warum nur L1? z. B. weil diese auch "andere" zum Vergleich nutzen}, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
+We have now derived an ``exact solution'' (i.e. the solution that is obtained by our original approximation $\mathbf{q}=\sum_{i=1}^n \mathbf{q}_i\phi_i$ from section \ref{sec:matrix-extraction})\todo{Vorsicht!!! Ist das eine exakte Loesung? Was ist mit den Ableitungen? Wenn ihr diese mit Maple auswertet, solltet ihr das Beschreiben.}\remark{Ableitungen mit Maple? Ableitungen sollten alle exakt sein.} ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L^1$ norm\todo{Warum nur L1? z. B. weil diese auch "andere" zum Vergleich nutzen}, as we did in the previous part. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
 
 \begin{eqnarray*}
   SE_x := \int_T \left| \overline{F}_2(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi \right| \, dT\\
   SE_y := \int_T \left| \overline{F}_3(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi \right| \, dT
 \end{eqnarray*}
 
-These terms could be simplified a bit further (for example by factoring out $\nabla \phi$), but since the terms are rather complicated anyway, we omit such manual simplifications and delegate tasks of this kind to Maple (or any equivalent computer algebra system)\todo{Bitte bei dem bleiben, was ihr wirklich gemacht habt oder allgemein schreiben: "We delegated this to a computer algebra system, in our case Maple". Das haette ich bei der genauen Integration schon vorher erwartet}.
+These terms could be simplified a bit further (for example by factoring out $\nabla \phi$). But since the terms are rather complicated anyway, we delegated this to a computer algebra system, in our case Maple.
 
 As we can see, computing these terms involves the terms $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That means we get these two error terms ($SE_x$, $SE_y$) for \emph{each} basis function. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i= \left(SE_x^i, SE_y^i\right)^T$ is the error term for basis function $\phi_i$.
 
