@@ -1649,7 +1649,7 @@ We have now derived an ``exact solution'' (i.e. the solution that is obtained by
   SE_y := \int_T \left| \overline{F}_3(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi \right| \, dT
 \end{eqnarray*}
 
-These terms could be simplified a bit further (for example by factoring out $\nabla \phi$), but since the terms are rather complicated anyway, we omit such manual simplifications and delegate tasks of this kind to Maple (or any equivalent computer algebra system)\todo{Bitte bei dem bleiben, was ihr wirklich gemacht habt oder allgemein schreiben: "We delegated this to a computer algebra system, in our case Maple". Das haette ich bei der genauen Integration schon vorher erwartet}.
+These terms could be simplified a bit further (for example by factoring out $\nabla \phi$). But since the terms are rather complicated anyway, we delegated this to a computer algebra system, in our case Maple.
 
 As we can see, computing these terms involves the terms $\phi$ that acts as a representative for \emph{one} of the basis functions $\phi_1,\dots,\phi_n$. That means we get these two error terms ($SE_x$, $SE_y$) for \emph{each} basis function. To distinguish these two, we add superscript indices to indicate the underlying basis function: $SE^i= \left(SE_x^i, SE_y^i\right)^T$ is the error term for basis function $\phi_i$.
 
