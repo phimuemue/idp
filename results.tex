@@ -1534,8 +1534,11 @@ While deriving the equations necessary for our computations, we introduced sever
   & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray}
 
-\todo{Hier wuerde ich noch kurz die Approximation beschreiben. Was passiert hier genau?}
-The equation for the $u_y$ component was analogous:
+\todo{Hier wuerde ich noch kurz die Approximation beschreiben. Was passiert hier genau?}\done[Philipp]{Passt das dann so?}
+
+Remember that we originally approximated as follows: $(h, u_x, u_y)^T \approx \sum_{i=1}^n (h_i, u_{x,i}, u_{y,i}) \cdot \phi_i(x,y)$ (see section \ref{sec:matrix-extraction}). While we approximate in the above equation as well, the transition from (\ref{eq:third-integral-second-line-1-analysis-part}) to (\ref{eq:third-integral-second-line-2-analysis-part}) uses a \emph{point-wise sampling approximation}, as it is computationally intensive for numerical simulations to determine the exact value for a continuous area if we used the original approximation (that would result in an integration of a rational function).
+
+The equation for the $u_y$ component is analogous:
 
 \begin{eqnarray*}
   \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
@@ -1591,7 +1594,7 @@ We will introduce this notation to refer to the approximated integrand:
 
 As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and focus on analyzing its validity.
 
-We do so by exemplary examining the third component and compute its exact value:
+We do so by exemplary examining the third component and compute its ``exact value'' (i.e. we use our original approximatino introduced in section \ref{sec:matrix-extraction}):
 
 \begin{eqnarray*}
   \int_T F_2\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
@@ -1609,8 +1612,6 @@ We do so by exemplary examining the third component and compute its exact value:
   \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{x} + \\
   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
 \end{eqnarray*}
-
-While we approximate here as well, it is the point-wise sampling approximation and is used in both cases, as it is computationally intensive for numerical simulations to determine the exact value for a continuous area.
 
 These terms become huge and difficult to handle manually, as well as expensive to compute automatically. We will introduce three shorthand notations for the three components of $\mathbf{q}$:
 
