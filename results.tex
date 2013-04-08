@@ -83,7 +83,7 @@
 \begin{titlepage}
 \begin{center}
   \includegraphics[scale=0.75]{TUM.pdf}
-  
+
   \vspace{.5cm}
   \textsc{ \Large Fakultät für Informatik\\\vspace{.2cm}
     \large der Technischen Universität München}
@@ -105,7 +105,7 @@
     Advisor: & Dipl.-Inf. Martin Schreiber \\
     Submission date: & \today
   \end{tabular}
-  
+
   \vspace{1cm}
 
   \begin{tikzpicture}
@@ -1560,11 +1560,11 @@ We will introduce this notation to refer to the approximated integrand:
 
 \begin{equation}
   \label{eq:point-wise-approx-result-second-line}
-  \overline{F}_2(\mathbf{q}) % \cdot \nabla \phi 
+  \overline{F}_2(\mathbf{q}) % \cdot \nabla \phi
   =
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
-    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j 
+    \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j
   \end{pmatrix}
   % \cdot
   % \begin{pmatrix}
@@ -1665,7 +1665,7 @@ Consider the two functions $f_1(x,y)=(x-1)^2$ and $f_2(x,y)=(y-1)^2$. We want to
   \int_T \left| f_i - g \right| \, dT, \quad i \in \{1,2 \}
 \end{equation*}
 
-We can compute that 
+We can compute that
 \begin{equation*}
   \int_T \left| f_1 - g \right| \, dT = \int_T \left| f_2 - g \right| \, dT = \frac{1}{4}.
 \end{equation*}
@@ -1881,8 +1881,8 @@ We can now -- for example -- set $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 
 
 We then examine the results of this term.
 
-We can see the ``graph'' 
-%(more precisely a heatmap\todo{auch das wird normalerweise in der plot beschreibung erwaehnt}) 
+We can see the ``graph''
+%(more precisely a heatmap\todo{auch das wird normalerweise in der plot beschreibung erwaehnt})
 for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows:
 
 \begin{itemize}
@@ -1931,7 +1931,7 @@ If we have two symmetric basis funcions $\phi_i$ and $\phi_j$ and consider $SE^i
   SE^i(h, u_x, u_y) = SE^j(h, u_y, u_x)
 \end{equation*}
 
-This equation follows directly from equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others 
+This equation follows directly from equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others
 %(in fact they might even be equal)
 . This will later enable us to use some plots for multiple situations.
 
@@ -2074,14 +2074,14 @@ As we can see in figure \ref{fig:ord1_differing_h2_h3_12_8}, the error is still 
 
 \paragraph{Conclusion}
 
-%What one can guess\todo{anders, neutraler formulieren} from the things \todo{a thingy can also be a swimming pool} seen so far is that 
+%What one can guess\todo{anders, neutraler formulieren} from the things \todo{a thingy can also be a swimming pool} seen so far is that
 
 What we can conclude from the plots seen so far is that -- if we leave all $u_{x,i}=u_{y,i}=0$ ($i=1\dots n$) and take $h_1$ as axis variable -- the error seems to be minimal if $h_1\approx \frac{h_2+h_3}{2}$.
 
 Of course, it is an interesting question if this can be proven (or even disproven) analytically. To examine this, we take -- as an example -- the error in the $x$ momentum of the third basis function and set all $u_{x,i}=u_{y,i}=0$.
 
 However, this does not hold true.
-%Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values\todo{Ist das nicht ein Gegenbeweis?}. 
+%Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values\todo{Ist das nicht ein Gegenbeweis?}.
 To illustrate this, we consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
 
 \input{ord1_differing_h2_h3_164/tex.tex}
@@ -2423,22 +2423,26 @@ We will now come back to only modifying the $x$ momentums. We will set them all 
 \subsection{Minimizing the error}
 \label{sec:stiffness-analysis-concl-error-0}
 
-If we have a situation, where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components. For the respective computations, refer to the previous sections.
+If we have a situation where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components. For the respective computations, refer to the previous sections.
 
-The error can become 0 even for other combinations, but it is very difficult to derive a simple pattern that must be fulfilled by the parameters. Moreover, as we saw, it can become zero if certain basis functions have a derivative that is 0 (as seen e.g. in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
+The error can become zero for other combinations as well, but deriving a pattern is a non-trivial task and not generally useful, as it relies on a large number of parameters. Moreover it can become zero if certain basis functions have a zero derivative (as seen e.g. in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
 
-As a rule of thumb, one can deduce the following from the plot: The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error (roughly)\todo{Was ist roughly? In most circumstances?}. This is advantageous since in practice it is very unlikely that the values will differ like we assumed in some extreme scenarios\todo{Was ist mit Schockfronten?}.
-
-%The sierpi framework uses height values around 10 and momentums whose absolute value might grow up to 4\todo{Aeh, nein. Auf freiem Meer sind es auch mal 5000 und mehr Meter :-). Ich wuerde auch den folgenden Satz einfach weglassen.}. The difference in height is almost always very small (say less han 0.5), while the difference in momentums might grow up to 1 --- even if that is not too often the case.
-
-That means, that even if we produce an error, it will probably be so small that it has no influence on the realism of the simulation.
-
-It is hard to make accurate claims because the $L^1$ norm absorbs some information that might be useful. However, since the approximations shown in this paper are actually used in software (and the software looks good), the error seems small enough to be negligible.
+The general pattern, which is observable in every plot, is that the error is proportional to the overall deviation of the various components. The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error, except for a few detailed plots which differ in localized areas, but still exhibit the same overall shape. That speaks in favor of the approximation, because the values generally tend to be close together, even more so the smaller the chosen triangles are. However, this is still a point to consider when the simulation can contain extreme scenarios, such as shockwaves, or if the chosen triangle size is not small enough due to concerns for efficiency.
 
 \subsection{Higher orders}
 \label{sec:stiffness-analysis-conclusion-higher-order}
 
-We also examined the situation for order 3. While the plots look similar in shape to the plots we have seen so far, the error value is larger. The explanations for these plots are analogous to the ones we have given for order 1 and order 2, even if the computations are more expensive and lengthy.
+We also examined the situation for higher orders. While the plots look similar in shape to the plots we have seen so far, the error value is larger. Conversely, for order 1 the error disappears, which makes sense, as the approximation we used can be shown to be exact for order 0.
+
+While the error increases with order, the explanations for these plots are analogous to the ones we have given for order 1 and order 2, even if the computations are more expensive and lengthy. For that same reason, we did not exhaustively test higher orders, but enough to confirm the relation with orders 1 and 2 in the shape of the error plots.
+
+\subsection{Assessment}
+
+It is difficult to make accurate claims of how well the appromixation holds up in practice based on the data gathered here, because the $L^1$ norm absorbs some information that might be useful and what we end up with is just a norm, not an accurate measure.
+
+However, getting such a measure is impossible without actually trying it on a large-scale data set with a full implementation and a powerful architecture to compute the non-approximated version, both of which go beyond the scope of this project. It can still be used to make qualitative observations on the data, which suggest that the used approximations hold up for values within a certain range of each other, which, as stated above, is usually the case. The only exceptions to that are radical sample occurances like shock waves, which have to be handled with specific care because of this. For example, on an adaptive grid, this could be done by further dividing the triangles further at that point, to reduce the height differences within each of them.
+
+The practical merits of this approximation are already established, as it has been used in various software packages up to this point. However, an empirical study on the exact effects of the approximation would be useful in determining the precise accuracy, which could be a deciding factor on which method to use in a simulation framework, especially considering factors that go beyond the theory presented here and apply to a live implementation.
 
 \clearpage
 
