@@ -713,9 +713,10 @@ This means that we need $\frac{1}{2} \cdot (d+2) \cdot (d+1)$ basis functions to
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
 
-As mentioned before, we construct the basis functions with the help of some support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing support points cannot be done at random. If the points are in a certain pattern, it will result in a singular matrix and impossible to invert. There are several methods to pick the suppor points to avoid singular or otherwise malconditioned matrices, and we will choose the Gaussian quadrature points, as we will also use the same quadrature to integrate over the domain.\remark{Etwas umgeschrieben, siehe Kommentar fuer Original und einen remark.}
+As mentioned before, we construct the basis functions with the help of some support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing support points cannot be done at random. If the points are in a certain pattern, it will result in a singular matrix and impossible to invert. There are several methods to pick the suppor points to avoid singular or otherwise malconditioned matrices, and we will choose the Gaussian quadrature points, as we will also use the same quadrature to integrate over the domain.
 
-%we will will lead to a malconditioned matrix, which provides a malconditioned inverted matrix (if an inversion is even possible in that case), resulting in inaccurate basis functions\todo{Diese Info haben wir vom Martin. Wie am besten referenzieren? Martin an alle: Ihr koennt z. B. schreiben, dass unterschiedliche Stuetzstellen existieren (Verweis auf Nodal DG methods). Diesbezueglich wurden die Gauss Integrationsstuetzstellen verwendet da aehnliche Vor- und Nachteile unter dem Aspekt der exakten Integration angenommen wurden.}. Since we will use Gaussian quadrature over these points, we will want support points that provide the best results for those. Thus, we choose support points such they coincide with support points for Gaussian quadrature.\done[Philipp]{Passt das?}\remark[Stjepan]{Ich weiss nicht, hoert sich noch immer etwas merkwuerdig an. Wieso gibt das die best results?}
+%we will will lead to a malconditioned matrix, which provides a malconditioned inverted matrix (if an inversion is even possible in that case), resulting in inaccurate basis functions
+\todo{Diese Info haben wir vom Martin. Wie am besten referenzieren? Martin an alle: Ihr koennt z. B. schreiben, dass unterschiedliche Stuetzstellen existieren (Verweis auf Nodal DG methods). Diesbezueglich wurden die Gauss Integrationsstuetzstellen verwendet da aehnliche Vor- und Nachteile unter dem Aspekt der exakten Integration angenommen wurden.}. Since we will use Gaussian quadrature over these points, we will want support points that provide the best results for those. Thus, we choose support points such they coincide with support points for Gaussian quadrature.\done[Philipp]{Passt das?}\remark[Stjepan]{Ich weiss nicht, hoert sich noch immer etwas merkwuerdig an. Wieso gibt das die best results?}
 
 For low degree polynomials, we choose specific distribution of the support points within the triangle:
 \begin{description}
@@ -1505,7 +1506,7 @@ This may be a problem to consider for extreme situations, such as shock waves, w
 \part{Stiffness matrix accuracy analysis for SWE}
 \label{part:stiffness-matrix}
 
-\emph{Remark:} To give a short overview of the following mathematical symbols, we refer readers to appendix \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.\done{Satz vom Martin. Passt das?}
+\emph{Remark:} To give a short overview of the following mathematical symbols, we refer readers to appendix \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.
 
 \section{Sum approximation vs. exact solution}
 \label{sec:point-wise-appr-vs-exact-solution-intro}
@@ -1535,8 +1536,6 @@ While deriving the equations necessary for our computations, we introduced sever
   & = & \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
   & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray}
-
-\todo{Hier wuerde ich noch kurz die Approximation beschreiben. Was passiert hier genau?}\done[Philipp]{Passt das dann so?}\remark[Stjepan]{Hab das hier geaendert, da stand point-wise approximation fuer die obige Gleichung da, was ja nicht stimmt. Die point-wise approximation war die Summe ueber die einzelnen Punkte.}
 
 Remember that we originally approximated the following (see section \ref{sec:matrix-extraction} for further reference):  $(h, u_x, u_y)^T \approx \sum_{i=1}^n (h_i, u_{x,i}, u_{y,i}) \cdot \phi_i(x,y)$. This is the point-wise sampling approximation and is a necessity, since we cannot compute the values for every point on a continuous domain. While we approximate in the above equation as well, the transition from (\ref{eq:third-integral-second-line-1-analysis-part}) to (\ref{eq:third-integral-second-line-2-analysis-part}) uses an approximation of the function by extracting the sum from a product and division. This helps immensely simplify the computations, which is especially desirable at higher order calculations.
 
@@ -1598,25 +1597,42 @@ We will introduce this notation to refer to the approximated integrand:
 
 As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and focus on analyzing its validity.
 
-We do so by exemplary examining the third component and compute its exact value (i.e. we use our original approximation introduced in section \ref{sec:matrix-extraction}):
+We do so by exemplary examining the second component and compute its exact value (more precisely: we use our original approximation introduced in section \ref{sec:matrix-extraction}):
 
-\remark[Stjepan]{Wieso third? Second wuerde mehr Sinn machen imo}
 \begin{eqnarray*}
-  \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
+  \int_T F_2\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
   \int_T
   \begin{pmatrix}
-    \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+    \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
   \end{pmatrix}
   \cdot \nabla \phi_i \, dT \\
   & \approx & \int_T
   \begin{pmatrix}
-    \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \\ \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2
+    \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \\
+    \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} 
   \end{pmatrix}
   \cdot \nabla \phi_i \, dT = \\
   & = &
-  \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{x} + \\
-  & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
+   \left( \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{x} + \\
+  & & \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y} 
 \end{eqnarray*}
+
+% \begin{eqnarray*}
+%   \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
+%   \int_T
+%   \begin{pmatrix}
+%     \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+%   \end{pmatrix}
+%   \cdot \nabla \phi_i \, dT \\
+%   & \approx & \int_T
+%   \begin{pmatrix}
+%     \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \\ \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2
+%   \end{pmatrix}
+%   \cdot \nabla \phi_i \, dT = \\
+%   & = &
+%   \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{x} + \\
+%   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
+% \end{eqnarray*}
 
 These terms become very large and difficult to handle manually, as well as expensive to compute automatically. We will introduce three shorthand notations for the three components of $\mathbf{q}$:
 
@@ -1630,19 +1646,19 @@ These terms become very large and difficult to handle manually, as well as expen
 Similarily to the previous steps, we can introduce a hat notation to signal the summation of the individual components, only this time we define it for the entire integrand. In this way, we can simplify the above term:
 
 \begin{equation}
-  \label{eq:stiffness-analysis-third-line-exact-approx-simple}
-  \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi=
-  \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{x} +
-  \left( \frac{\widehat{u}_y^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{y}
-\end{equation}
-
-Analogously, we define this for the second component:
-
-\begin{equation}
   \label{eq:stiffness-analysis-second-line-exact-approx-simple}
   \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi =
   \left( \frac{\widehat{u}_x^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{x} +
   \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{y}
+\end{equation}
+
+Analogously, we define this for the third component:
+
+\begin{equation}
+  \label{eq:stiffness-analysis-third-line-exact-approx-simple}
+  \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi=
+  \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{x} +
+  \left( \frac{\widehat{u}_y^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{y}
 \end{equation}
 
 \subsection{Comparison of exact and approximative solution}
@@ -1693,7 +1709,9 @@ While integrating in the one-dimensional case can be approximated by the rectang
 
 However, it is not difficult to extend the rectangle method to the two-dimensional case. Since we are interested in an integral over a triangle $T$, and $T$ is a right triangle with cathetus length 1, we divide the triangle into smaller right triangles such that all triangles together cover the original triangle $T$.
 
-Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can approximate this volume by comprising it out of smaller parts. We decided to use prisms \todo{Bezieht euch hierbei auf bereits angewandte Verfeinerungen in diesem Bereich. Eine fuer mich coole Sache ist z. B. die Triangulierung des DWD: www.dwd.de Diese verwenden fuer ihre Triangulierung auch die Verfeinerung wie ihr diese beschrieben habt.}\done{Sorry, keine Ahnung, was hier gemeint ist. Habe auch auf der Internetseite nichts passendes gefunden. Hab dann bissl was anderes als Alibi rein.}\remark[Stjepan]{Auch keinen Plan was gemeint ist, denke das passt so.} to approximate that volume.
+Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can approximate this volume by comprising it out of smaller parts. We decided to use prisms 
+%\todo{Bezieht euch hierbei auf bereits angewandte Verfeinerungen in diesem Bereich. Eine fuer mich coole Sache ist z. B. die Triangulierung des DWD: www.dwd.de Diese verwenden fuer ihre Triangulierung auch die Verfeinerung wie ihr diese beschrieben habt.}\done{Sorry, keine Ahnung, was hier gemeint ist. Habe auch auf der Internetseite nichts passendes gefunden. Hab dann bissl was anderes als Alibi rein.}\remark[Stjepan]{Auch keinen Plan was gemeint ist, denke das passt so.} 
+to approximate that volume.
 
 We chose this approximation since it is a straightforward extension of the one-dimensional midpoint rule. Even after extensive research, we were not able to find a paper that deals specifically with numerically evaluating a double integral over a triangle (there are many papers that describe double integrals over rectangles such as e.g. \cite{lang1987double}).
 
@@ -1821,7 +1839,7 @@ Here, the factor $\frac{1}{2\cdot 4} = \frac{1}{8}$ denotes the area of one sing
 Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
 We noticed that $L=5$ (i.e. using 25 triangles) sufficed for high accuracy results. Higher values for $r$ very rarely resulted in visible changes to the plots and when that was the case it was never enough to make even a slight impact on the interpretation of the results.
-\todo{Ich halte es hier fuer unbedingt erforderlich, hervorzuheben, warum ihr keine fertigen Integrationsmoelichkeiten von Maple/python verwendet habt.}\done{Reicht das was jetzt kommt?}\remark[Stjepan]{Ich verstehe ehrlich gesagt nicht, wieso das so schlimm ist, hat weder lange gedauert, noch war es kompliziert. Haette wohl laenger gedauert uns in Numpy einzulesen deswegen... Aber wir koennten auch das folgende Argument nehmen:}
+%\todo{Ich halte es hier fuer unbedingt erforderlich, hervorzuheben, warum ihr keine fertigen Integrationsmoelichkeiten von Maple/python verwendet habt.}\done{Reicht das was jetzt kommt?}\remark[Stjepan]{Ich verstehe ehrlich gesagt nicht, wieso das so schlimm ist, hat weder lange gedauert, noch war es kompliziert. Haette wohl laenger gedauert uns in Numpy einzulesen deswegen... Aber wir koennten auch das folgende Argument nehmen:}
 
 Similar to the situation from section \ref{sec:how-to-eval-I}, we considered several options to compute $SE$. However, we experienced similar problems evaluating the integrals exactly, which is why we chose a numerical integration. We decided to implement this method ourselves, since it was a simple implementation and was easy to integrate into our parser, which works with the provided equations before it pipes the result through to Gnuplot.%Unfortunately, we could not find any suitable Gaussian quadrature (or any equivalent numerical integration scheme) for this kind of functions, so we chose the technique described above.
 
@@ -1882,7 +1900,8 @@ Next, we consider order 1 and set $h_2=h_3=10$. We then obtain the following (by
   h_1 = \frac{20y}{-1+2y}
 \end{equation*}
 
-We can now -- for example -- set $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means that for the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to create a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 strongly deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values can be extremely high). This is merely a measure to transform the values to make them easier to plot and does not affect the $x$ and $y$ scaling at all. I.e. we plot\todo{Log scaling wird normalerweise nur kurz in der Beschreibung des Plots gegeben}\done{Mag sein, aber ich schätze, bei uns würde es das nur verkomplizieren, da bei uns weder $x$- noch $y$-Achse log-skaliert ist, sondern nur die $z$-Achse. Würde es daher lassen.}\remark[Stjepan]{Dito}
+We can now -- for example -- set $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means that for the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to create a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 strongly deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values can be extremely high). This is merely a measure to transform the values to make them easier to plot and does not affect the $x$ and $y$ scaling at all. I.e. we plot
+% \todo{Log scaling wird normalerweise nur kurz in der Beschreibung des Plots gegeben}\done{Mag sein, aber ich schätze, bei uns würde es das nur verkomplizieren, da bei uns weder $x$- noch $y$-Achse log-skaliert ist, sondern nur die $z$-Achse. Würde es daher lassen.}\remark[Stjepan]{Dito}
 \begin{equation*}
 \log_{10}\frac{20y}{-1+2y}.
 \end{equation*}
@@ -1891,11 +1910,12 @@ We can see the graph for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-l
 
 \begin{itemize}
 \item Red denotes values in $\left( -\infty, 0.7 \right] \cup \left[ 1.2, \infty \right)$
-\item Yellow denotes values in $\left[ 0.7, 1.2 \right]$ between 0.7 and 1.2.\todo{Das entspricht nicht der Legende}\done{Eigentlich doch schon, oder?}\remark[Stjepan]{Auch dito}
+\item Yellow denotes values in $\left[ 0.7, 1.2 \right]$ between 0.7 and 1.2.
+  % \todo{Das entspricht nicht der Legende}\done{Eigentlich doch schon, oder?}\remark[Stjepan]{Auch dito}
 \item White area is either undefined or out of the triangle.
 \end{itemize}
 
-As we can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only red and green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}, but no yellow at all \remark[Stjepan]{Kein green im Bild :) Einfach weglassen? Oder gruen nochmal extra erwaehnen?}). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
+As we can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only red in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}, but no yellow at all). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
 
 The white area is undefined or out of the triangle. If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative, wich is also not a reasonable value for $h_1$ if all other heights are 10.
 
@@ -1922,7 +1942,7 @@ Again, we could test specific values for $(x,y)$, such as e.g. $(0.5, 0.25)$. If
 
 Figure \ref{fig:stiffness-analysis-log-singularities-ord-2} shows a plot for $\log_{10} h_1$. We observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle, which is very unlikely for small waves, but possible for a sudden increase in height (which may be a valid consideration, for example in the case of shockwaves). Thus, evaluating the integral may become inaccurate under certain circumstances.
 
-\todo{very unlikely oder muesste das auch beruecksichtigt werden? \remark{ -- Gute Frage.}}\done{Passt das, was ich da geschrieben habe?}\remark[Stjepan]{Passt, aber sollen wir uns noch darauf beziehen, dass das nicht an unserer Approximation liegt? Die Singularity taucht ja auch in der eigentlichen Gleichung auf.}
+\todo{very unlikely oder muesste das auch beruecksichtigt werden? \remark{ -- Gute Frage.}}\done{Passt das, was ich da geschrieben habe?}\remark[Stjepan]{Passt, aber sollen wir uns noch darauf beziehen, dass das nicht an unserer Approximation liegt? Die Singularity taucht ja auch in der eigentlichen Gleichung auf.}\remark[Philipp]{Finde ich eine gute Idee.}
 
 \section{Error terms for order 1}
 \label{sec:stiffness-analysis-first-touch}
@@ -2072,7 +2092,7 @@ We will now inspect what it looks like if we set $h_2=12$ and $h_1=10$.
 
 The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10}. The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two. This makes sense when examining the equations, which we will cover later.
 
-\todo{Wg. der symmetrie? Dann solltet ihr das als Voraus-Haeppchen fuer den Leser hier nennen}\done{Ist aber nicht wg. Symm. glaube ich.}\done[Stjepan]{Agreed. Das liegt daran, das + kommutativ ist, und es egal is ob wir $h_2 \cdot bla$+$h_3 \cdot bla$ oder $h_3 \cdot bla$+$h_2 \cdot bla$ rechnen.}
+%\todo{Wg. der symmetrie? Dann solltet ihr das als Voraus-Haeppchen fuer den Leser hier nennen}\done{Ist aber nicht wg. Symm. glaube ich.}\done[Stjepan]{Agreed. Das liegt daran, das + kommutativ ist, und es egal is ob wir $h_2 \cdot bla$+$h_3 \cdot bla$ oder $h_3 \cdot bla$+$h_2 \cdot bla$ rechnen.}
 
 We now inspect the following scenario: We set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$.
 
