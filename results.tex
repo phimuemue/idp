@@ -1909,13 +1909,13 @@ We can now -- for example -- set $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 
 We can see the graph for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows:
 
 \begin{itemize}
-\item Red denotes values in $\left( -\infty, 0.7 \right] \cup \left[ 1.2, \infty \right)$
-\item Yellow denotes values in $\left[ 0.7, 1.2 \right]$ between 0.7 and 1.2.
+\item Green denotes values in $\left( -\infty, 0.7 \right] \cup \left[ 1.2, \infty \right)$. We colored these values green since they represent kind of the ``safe'' values. Remember that we are considering the logarithm (base 10), thus we can consider the interval $\left[ 10^{0.7}, 10^{1.2} \right] \approx \left[ 5, 15\right]$. These are values that may represent a non-shock wave.
+\item Yellow denotes values in $\left[ 0.7, 1.2 \right]$ between 0.7 and 1.2. These represent dangerous values, since if we lie within this interval, we get a singularity even if we have non-shock waves.
   % \todo{Das entspricht nicht der Legende}\done{Eigentlich doch schon, oder?}\remark[Stjepan]{Auch dito}
 \item White area is either undefined or out of the triangle.
 \end{itemize}
 
-As we can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only red in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}, but no yellow at all). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
+As we can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}, but no red at all). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
 
 The white area is undefined or out of the triangle. If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative, wich is also not a reasonable value for $h_1$ if all other heights are 10.
 
