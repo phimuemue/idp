@@ -713,10 +713,7 @@ This means that we need $\frac{1}{2} \cdot (d+2) \cdot (d+1)$ basis functions to
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
 
-As mentioned before, we construct the basis functions with the help of some support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing support points cannot be done at random. If the points are in a certain pattern, it will result in a singular matrix and impossible to invert. There are several methods to pick the suppor points to avoid singular or otherwise malconditioned matrices, and we will choose the Gaussian quadrature points, as we will also use the same quadrature to integrate over the domain.
-
-%we will will lead to a malconditioned matrix, which provides a malconditioned inverted matrix (if an inversion is even possible in that case), resulting in inaccurate basis functions
-\todo{Diese Info haben wir vom Martin. Wie am besten referenzieren? Martin an alle: Ihr koennt z. B. schreiben, dass unterschiedliche Stuetzstellen existieren (Verweis auf Nodal DG methods). Diesbezueglich wurden die Gauss Integrationsstuetzstellen verwendet da aehnliche Vor- und Nachteile unter dem Aspekt der exakten Integration angenommen wurden.}. Since we will use Gaussian quadrature over these points, we will want support points that provide the best results for those. Thus, we choose support points such they coincide with support points for Gaussian quadrature.\done[Philipp]{Passt das?}\remark[Stjepan]{Ich weiss nicht, hoert sich noch immer etwas merkwuerdig an. Wieso gibt das die best results?}
+As mentioned before, we construct the basis functions with the help of the same number of support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing those should not be done at random. If the points are in a certain pattern, it will result in a singular matrix and be impossible to invert. And while the probability for that is low, the matrix can still be malconditioned if the points are chosen arbitrarily. There are several methods to pick the suppor points to avoid singular or otherwise malconditioned matrices, and we will choose the Gaussian quadrature points, as we will also use the same quadrature to integrate over the domain.
 
 For low degree polynomials, we choose specific distribution of the support points within the triangle:
 \begin{description}
@@ -1609,12 +1606,12 @@ We do so by exemplary examining the second component and compute its exact value
   & \approx & \int_T
   \begin{pmatrix}
     \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \\
-    \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} 
+    \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j}
   \end{pmatrix}
   \cdot \nabla \phi_i \, dT = \\
   & = &
    \left( \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{x} + \\
-  & & \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y} 
+  & & \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y}
 \end{eqnarray*}
 
 % \begin{eqnarray*}
@@ -1709,8 +1706,8 @@ While integrating in the one-dimensional case can be approximated by the rectang
 
 However, it is not difficult to extend the rectangle method to the two-dimensional case. Since we are interested in an integral over a triangle $T$, and $T$ is a right triangle with cathetus length 1, we divide the triangle into smaller right triangles such that all triangles together cover the original triangle $T$.
 
-Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can approximate this volume by comprising it out of smaller parts. We decided to use prisms 
-%\todo{Bezieht euch hierbei auf bereits angewandte Verfeinerungen in diesem Bereich. Eine fuer mich coole Sache ist z. B. die Triangulierung des DWD: www.dwd.de Diese verwenden fuer ihre Triangulierung auch die Verfeinerung wie ihr diese beschrieben habt.}\done{Sorry, keine Ahnung, was hier gemeint ist. Habe auch auf der Internetseite nichts passendes gefunden. Hab dann bissl was anderes als Alibi rein.}\remark[Stjepan]{Auch keinen Plan was gemeint ist, denke das passt so.} 
+Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can approximate this volume by comprising it out of smaller parts. We decided to use prisms
+%\todo{Bezieht euch hierbei auf bereits angewandte Verfeinerungen in diesem Bereich. Eine fuer mich coole Sache ist z. B. die Triangulierung des DWD: www.dwd.de Diese verwenden fuer ihre Triangulierung auch die Verfeinerung wie ihr diese beschrieben habt.}\done{Sorry, keine Ahnung, was hier gemeint ist. Habe auch auf der Internetseite nichts passendes gefunden. Hab dann bissl was anderes als Alibi rein.}\remark[Stjepan]{Auch keinen Plan was gemeint ist, denke das passt so.}
 to approximate that volume.
 
 We chose this approximation since it is a straightforward extension of the one-dimensional midpoint rule. Even after extensive research, we were not able to find a paper that deals specifically with numerically evaluating a double integral over a triangle (there are many papers that describe double integrals over rectangles such as e.g. \cite{lang1987double}).
@@ -1942,7 +1939,7 @@ Again, we could test specific values for $(x,y)$, such as e.g. $(0.5, 0.25)$. If
 
 Figure \ref{fig:stiffness-analysis-log-singularities-ord-2} shows a plot for $\log_{10} h_1$. We observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle, which is very unlikely for small waves, but possible for a sudden increase in height (which may be a valid consideration, for example in the case of shockwaves). Thus, evaluating the integral may become inaccurate under certain circumstances.
 
-\todo{very unlikely oder muesste das auch beruecksichtigt werden? \remark{ -- Gute Frage.}}\done{Passt das, was ich da geschrieben habe?}\remark[Stjepan]{Passt, aber sollen wir uns noch darauf beziehen, dass das nicht an unserer Approximation liegt? Die Singularity taucht ja auch in der eigentlichen Gleichung auf.}\remark[Philipp]{Finde ich eine gute Idee.}
+It is worthy to note at this point, that this singularity is not because of the approximation. It happens because of the sum of heights in the denominator of $\widehat{F}_2\left(\mathbf{q}\right)$ (in the term $\widehat{h}$). Our approximations do multiply the possible number of singularities because of our piece-wise integration of the triangle, however this is only of relevance in interpreting the plots if they happen to contain any of those singularities. This is not the case for us, since even the additional singularities are close to exact singularities, which are outside of the relevant height range for these calculations. That means this has no impact on our interpretation of the results, it is merely something to consider when simulating problematic scenarios.
 
 \section{Error terms for order 1}
 \label{sec:stiffness-analysis-first-touch}
