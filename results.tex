@@ -1875,12 +1875,12 @@ We will illustrate that for some simple cases.
 
 \begin{figure}[ht]
   \centering
-  \subfigure[Heat map for first order singularities. Plot shows $\log_{10} h_1 = \log_{10}\frac{20y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
+  \subfigure[Heat map for first order singularities. Plot shows $h_1 = \frac{20y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-1}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o1.pdf}
   }
   \hspace{.5cm}
-  \subfigure[Heat map for second order singularities. Plot shows $\log_{10} h_1 = \log_{10} \frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
+  \subfigure[Heat map for second order singularities. Plot shows $h_1 = \frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
         \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-2}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o2.pdf}
@@ -1897,22 +1897,24 @@ Next, we consider order 1 and set $h_2=h_3=10$. We then obtain the following (by
   h_1 = \frac{20y}{-1+2y}
 \end{equation*}
 
-We can now -- for example -- set $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means that for the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to create a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 strongly deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values can be extremely high). This is merely a measure to transform the values to make them easier to plot and does not affect the $x$ and $y$ scaling at all. I.e. we plot
+We can now -- for example -- set $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means that for the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to create a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 strongly deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot. 
+%However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values can be extremely high). This is merely a measure to transform the values to make them easier to plot and does not affect the $x$ and $y$ scaling at all. I.e. we plot
 % \todo{Log scaling wird normalerweise nur kurz in der Beschreibung des Plots gegeben}\done{Mag sein, aber ich schätze, bei uns würde es das nur verkomplizieren, da bei uns weder $x$- noch $y$-Achse log-skaliert ist, sondern nur die $z$-Achse. Würde es daher lassen.}\remark[Stjepan]{Dito}
 \begin{equation*}
 \log_{10}\frac{20y}{-1+2y}.
 \end{equation*}
 
-We can see the graph for $\log_{10} h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. We chose the coloring as follows:
+We can see the graph for $h_1$ in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}. Note that the scaling is logarithmic. We chose the coloring as follows:
 
 \begin{itemize}
-\item Green denotes values in $\left( -\infty, 0.7 \right] \cup \left[ 1.2, \infty \right)$. We colored these values green since they represent kind of the ``safe'' values. Remember that we are considering the logarithm (base 10), thus we can consider the interval $\left[ 10^{0.7}, 10^{1.2} \right] \approx \left[ 5, 15\right]$. These are values that may represent a non-shock wave.
-\item Yellow denotes values in $\left[ 0.7, 1.2 \right]$ between 0.7 and 1.2. These represent dangerous values, since if we lie within this interval, we get a singularity even if we have non-shock waves.
+\item Green denotes values in $\left( -\infty, 5 \right] \cup \left[ 15, \infty \right)$. We colored these values green since they represent kind of the ``safe'' values. Remember that we are considering the case where all heights except $h_1$ are set to 10. Thus, we consider the range $\left[ 5, 15 \right]$, whose midpoint is 10.
+
+\item Red denotes values in $\left[ 5, 15 \right]$. These represent dangerous values, since if we lie within this interval, we get a singularity even if we have non-shock waves.
   % \todo{Das entspricht nicht der Legende}\done{Eigentlich doch schon, oder?}\remark[Stjepan]{Auch dito}
-\item White area is either undefined or out of the triangle.
+\item White area is either undefined (i.e. it is not possible to draw on logarithmic scale, corresponding to a negative value of $h_1$) or out of the triangle.
 \end{itemize}
 
-As we can see, the value for $\log_{10}\frac{1-2x+24y}{-1+2y}$ is either 0 or below, or 1.25 or above (since there is only green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}, but no red at all). If we go back, we can conclude that either $h_1 \leq 10^{0.7} = 5$ or $h_1\geq 10^{1.2} \approx 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
+As we can see, the value for $\frac{1-2x+24y}{-1+2y}$ is either 5 or below, or 15 or above (since there is only green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}, but no red at all). If we go back, we can conclude that either $h_1 \leq 5$ or $h_1 \geq 15$. We can conclude that -- for the assignment $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
 
 The white area is undefined or out of the triangle. If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative, wich is also not a reasonable value for $h_1$ if all other heights are 10.
 
@@ -1937,7 +1939,7 @@ We now examine the same thing for order 2. Again, we solve equation (\ref{eq:sti
 
 Again, we could test specific values for $(x,y)$, such as e.g. $(0.5, 0.25)$. If we did so, we would obtain $h_1=-90$ --- a very unlikely setting for $h_1$ if all other heights are 10.
 
-Figure \ref{fig:stiffness-analysis-log-singularities-ord-2} shows a plot for $\log_{10} h_1$. We observe that for order 2, the value $\log_{10} h_1$ ranges from 1.5 to about 5.5 within our triangle, which means that $10^{1.5} \leq h_1 \leq 10^{5.5}$. This means that $h_1$ (roughly) has to lie within the range $\left[ 31, 100000 \right]$ to provoke a singularity within the triangle, which is very unlikely for small waves, but possible for a sudden increase in height (which may be a valid consideration, for example in the case of shockwaves). Thus, evaluating the integral may become inaccurate under certain circumstances.
+Figure \ref{fig:stiffness-analysis-log-singularities-ord-2} shows a plot for $h_1$. We observe that for order 2, the value $h_1$ does not range from 5 to about 15 within our triangle. This means that $h_1$ (roughly) has to lie within the one of the ranges $\left[ -\infty, 5 \right]$ and $\left[ 15, \infty \right]$ to provoke a singularity within the triangle, which is very unlikely for small waves, but possible for a sudden increase in height (which may be a valid consideration, for example in the case of shockwaves). Thus, evaluating the integral may become inaccurate under certain circumstances.
 
 It is worthy to note at this point, that this singularity is not because of the approximation. It happens because of the sum of heights in the denominator of $\widehat{F}_2\left(\mathbf{q}\right)$ (in the term $\widehat{h}$). Our approximations do multiply the possible number of singularities because of our piece-wise integration of the triangle, however this is only of relevance in interpreting the plots if they happen to contain any of those singularities. This is not the case for us, since even the additional singularities are close to exact singularities, which are outside of the relevant height range for these calculations. That means this has no impact on our interpretation of the results, it is merely something to consider when simulating problematic scenarios.
 
