@@ -367,8 +367,8 @@ We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. T
 \label{sec:matrix-extraction}
 
 To actually compute equation \ref{eq:shallow-water-weak-form-div-applied-approximation}, we need to approximate the status vector $\mathbf{q}$, as it's impossible to derive an accurate representation for this value that changes continuously over the doman.
-We do that by applying the Gaussian quadrature over the previously mentioned support points.
-We obtain the vector of the approximated status values over the support points, weighted by the basis functions:
+We do that by applying the Gaussian quadrature over the previously mentioned support points. That is, we ``recycle'' the support points as integration points.
+We obtain the vector of the approximated status values over the integration points, weighted by the basis functions:
 
 \begin{equation}
   \label{eq:support-point-approximation}
@@ -576,7 +576,7 @@ Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because
 \end{equation}
 where $m$ is the number of integration points and $w_k$ denotes the Gauss weight for point $p_k^e$ for an arbitrary edge $e$ as the weight is determined normalized in one dimension, and as such is the same for all edges. This also contains the edge length (which was normalized to 1, but the hypotenuse still has length $\sqrt{2}$ in that case), which is why it has to be stored separately for every edge. Similar to the previous examples, the values $\phi_i\left(p_k^e\right) \cdot w_k$ can be precomputed for every edge as well, and added onto the term $F^e\left(p_k^e\right)$ when required. $F^e\left(p_k^e\right)$ itself is called the \emph{numerical flux} and can be computed in different ways, which we will get to in part \ref{part:polynomial-comparison}.
 
-The abscissal values and weights of the support points for Gaussian quadrature are summed up in table \ref{tab:x-coordinates-gauss-quadrature} and can be found in any book on the topic (i.e.\,\cite{hans2009schwarz}). They can be derived from the zeroes of the Legendre polynomials (see \cite{abramowitzstegun1964handbook}). We show these values for the one dimensional case, but they can easily been projected onto the two dimensional case using linear interpolation.
+The abscissal values and weights of the integration points for Gaussian quadrature are summed up in table \ref{tab:x-coordinates-gauss-quadrature} and can be found in any book on the topic (i.e.\,\cite{hans2009schwarz}). They can be derived from the zeroes of the Legendre polynomials (see \cite{abramowitzstegun1964handbook}). We show these values for the one dimensional case, but they can easily been projected onto the two dimensional case using linear interpolation.
 
 \begin{table}[ht]
   \renewcommand\arraystretch{1.5}
@@ -588,7 +588,7 @@ The abscissal values and weights of the support points for Gaussian quadrature a
     3 & $-\frac{1}{10}\cdot \sqrt{15}+\frac{1}{2} ,\  0.5,\  \frac{1}{10}\cdot \sqrt{15}+\frac{1}{2}$ & $\frac{5}{9}, \frac{8}{9}, \frac{5}{9}$ \\
     \hline
   \end{tabular}
-  \caption{$x$-coordinates of support points for Gauss-Quadrature if we integrate within the range $\left[ 0,1 \right]$. Coordinates can be scaled to an arbitrary interval and be transformed onto any line using linear interpolation.}
+  \caption{$x$-coordinates of integration points for Gauss-Quadrature if we integrate within the range $\left[ 0,1 \right]$. Coordinates can be scaled to an arbitrary interval and be transformed onto any line using linear interpolation.}
   \label{tab:x-coordinates-gauss-quadrature}
 \end{table}
 
@@ -688,7 +688,7 @@ We have to keep in mind that equation (\ref{eq:swe-euler-step-solution}) is actu
 \section{Quadrature data for the discontinuous Galerkin method}
 \label{sec:basis-functions-choice}
 
-So far we have explained what the discontinuous Galerkin method is and how it is applied to derive the equations needed to compute water simulation for one time step with the given information. We will now see that the accuracy of the model depends on the choice of support points and basis functions.
+So far we have explained what the discontinuous Galerkin method is and how it is applied to derive the equations needed to compute water simulation for one time step with the given information. We will now see that the accuracy of the model depends on the choice of integration points and basis functions.
 
 \subsection{Choice of basis functions}
 \label{sec:basis-functions-choice-polynomial}
@@ -842,7 +842,7 @@ While we might be able to evaluate the Lax-Friedrichs flux exactly, the involved
 
 On the other hand, approximations through various numerical methods can speed this process up significantly. We analyze what kind of accuracy loss that implies and if it is a suitable method for realistic computation.
 
-We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own flux function for every component (height $h$ and impulse $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates.
+We have two adjacent triangles called $R$ and $L$ respectively, sharing a common edge $E$. Each triangle has its own flux function for every component (height $h$ and momentum $u$), evaluated over coordinates on the triangle. While the original problem arises in two dimensions, we can reduce it to one dimension by parametrizing the relevant coordinates.
 
 After parametrization along the edge $E$, this results in a function $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four functions (see section \ref{sec:original-situation-2D problem} for more detailed information regarding the parametrization).
 
@@ -900,10 +900,10 @@ Depending on how $\alpha$ is handled, it results in different methods. Sometimes
 \label{sec:original-situation-2D problem}
 
 The original problem arises when two adjacent triangles share one edge.
-Each triangle has several support points which are interpolated to obtain a polynomial for the corresponding triangle.
+Each triangle has several integration points which are interpolated to obtain a polynomial for the corresponding triangle.
 
-Figure \ref{fig:two-triangles-and-some-support-points} shows two adjacent triangles and exemplary positions of the support points.
-In the case shown we would use six support points, resulting in a two-variable polynomial of degree 2. We could use more support points, thereby increasing the degree of the resulting polynomial.
+Figure \ref{fig:two-triangles-and-some-support-points} shows two adjacent triangles and exemplary positions of the integration points.
+In the case shown we would use six integration points, resulting in a two-variable polynomial of degree 2. We could use more integration points, thereby increasing the degree of the resulting polynomial.
 
 \begin{figure}[ht]
   \centering
@@ -928,7 +928,7 @@ In the case shown we would use six support points, resulting in a two-variable p
       \draw[fill=black] (0,0.5) circle (0.02);
     \end{scope}
   \end{tikzpicture}
-  \caption{Two adjacent triangles with support points}
+  \caption{Two adjacent triangles with integration points}
   \label{fig:two-triangles-and-some-support-points}
 \end{figure}
 
@@ -939,7 +939,7 @@ Since we are interested in the situation along the adjacent edges, which is a li
 
 As stated in the introduction, we have to construct $p^L$ and $p^R$, the polynomials describing the height and momentum of the right and left triangle. We construct these polynomials by interpolating certain points.
 
-We do so for the left and the right triangle, and for the height and the momentum. We call the points we have chosen the \emph{support points} for the left and right triangle.
+We do so for the left and the right triangle, and for the height and the momentum. We call the points we have chosen the \emph{support points} (or integration points) for the left and right triangle.
 For convenience, we have decided to use a naming convention for these points.
 Assume that we have $n$ points for each triangle.
 We denote the components of the points of the left triangle
@@ -968,7 +968,7 @@ Eventually we will need to integrate over the resulting function, which is numer
 We examine two settings for our support points that are used to construct the polynomials:
 
 \begin{description}
-\item[Support points according to Gaussian quadrature] Since we eventually need to integrate over the edge (using Gaussian quadrature), it is convenient to choose the same support points to construct the polynomials. So we choose our support points to coincide with them for easier computation. The corresponding results for this choice are summed up in section \ref{sec:results}.
+\item[Support points according to Gaussian quadrature] Since we eventually need to integrate over the edge (using Gaussian quadrature), it is convenient to choose the same integration points to construct the polynomials. So we choose our integration points to coincide with them for easier computation. The corresponding results for this choice are summed up in section \ref{sec:results}.
 \item[Equidistant support points] However, we also investigated the situation for an equidistant distribution of support points. We show the corresponding results, as well as a short explanation of why this setting may be useful, in section \ref{sec:equidistant-distribution-of-support-points}.
 \end{description}
 
@@ -1007,9 +1007,9 @@ As was mentioned in section \ref{sec:flux-function-intro} $p^L$ and $p^R$ are ac
 We first analyze the difference between the following two ways to compute the flux based updates:
 
 \begin{description}
-\item[Exact solution] We supply the polynomials $p^L$ and $p^R$ (depending on $x$) into the Lax-Friedrichs flux, and compute its exact value. The resulting values are rational functions depending on $x$. We call these functions $N\left(x\right)$ (a vector which has a polynomial function for the height as its first component, while the second component is a rational function, representing the momentum).
+\item[Exact solution] We apply the Lax-Friedrichs flux directly to the polynomials $p^L$ and $p^R$ (depending on $x$), and compute its exact value. The resulting values are rational functions depending on $x$. We call these functions $N\left(x\right)$ (a vector which has a polynomial function for the height as its first component, while the second component is a rational function, representing the momentum).
 
-\item[Approximate solution] We supply the support points into the Lax-Friedrichs flux directly, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
+\item[Approximate solution] We apply the Lax-Friedrichs flux to the support points, and compute the resulting values, i.e.\,we compute the following for $i \in \{1 \dots n\}$:
   \begin{equation*}
     F_{LF}\left(
       \begin{pmatrix}
@@ -1062,7 +1062,7 @@ Both of these terms, however, are the same in exactly $n$ points.
 With the fundamental theorem of algebra, we can conclude that both polynomials are the same, which means the error will be exactly 0.
 
 This means we can ignore the resulting error for the height component, as it will be 0 regardless of how we choose the other variables.
-That is why, for the rest of this part, we will only display error plots for the impulse component of $I$ and omit the plots for the height error.
+That is why, for the rest of this part, we will only display error plots for the momentum component of $I$ and omit the plots for the height error.
 
 \subsection{\texorpdfstring{How to evaluate $I$}{How to evaluate I}}
 \label{sec:how-to-eval-I}
@@ -1169,7 +1169,7 @@ Analytically deriving a general formula for the occurance of such singularities 
 \section{\texorpdfstring{Visualizing the error term $I$}{Visualizing the error term I}}
 \label{sec:making-the-whole-thing-interactive}
 
-We are now going to plot the impulse component of the term $I$ as described in equation (\ref{eq:integral-norm-definition}).
+We are now going to plot the momentum component of the term $I$ as described in equation (\ref{eq:integral-norm-definition}).
 First, we have to devise a strategy to compactly but efficiently visualize such a complicated term.
 Afterwards, we present our tool, developed to simplify plotting as much as possible in order to offer more insight to the quadrature errors.
 
@@ -1483,11 +1483,11 @@ When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized 
 \section{Conclusions}
 \label{sec:conslusions}
 
-We have seen that the height error is zero in the scenarios under consideration. Moreover, the error in impulse shows quite a non-predictable behaviour.
-%This was expected, since the impulse error is a rational function -- and thus not easy to imagine.
-It can vary strongly, both in shape and in scale, when adjusting the height values, while the impulse values have a minor impact only.
+We have seen that the height error is zero in the scenarios under consideration. Moreover, the error in momentum shows quite a non-predictable behaviour.
+%This was expected, since the momentum error is a rational function -- and thus not easy to imagine.
+It can vary strongly, both in shape and in scale, when adjusting the height values, while the momentum values have a minor impact only.
 
-Moreover, we can clearly observe that the closer the height and impulse values of the support points are chosen, the smaller the error gets.
+Moreover, we can clearly observe that the closer the height and momentum values of the support points are chosen, the smaller the error gets.
 This is good for any practical application, since that is usually the case.
 The very idea is to make triangles small enough, to be restricted to a very specific region of the domain.
 The smaller the triangle, the more unlikely it is, that the height values differ strongly.
@@ -1496,7 +1496,7 @@ However, trying to determine an exact formula for the deviation is impractical d
 
 Additionally, we saw that singularities do not play a significant role in our computations since they only occur for unrealistic scenarios.
 This is highly advantageous since we then can be sure that the integral exists and quadrature methods give meaningful results.
-However, the singularities do exist, even without using any quadrature, as variables appear in the denominator of the impulse flux term.
+However, the singularities do exist, even without using any quadrature, as variables appear in the denominator of the momentum flux term.
 This may be a problem to consider for extreme situations, such as shock waves, which could potentially result in significant height value differences within one triangle.
 
 \clearpage{}
@@ -2154,7 +2154,7 @@ We now generalize the previous experiments by altering both $x$ momentums and $y
 
 To visualize these settings, we will revisit three-dimensional plots that have two axis variables. Refer to figure \ref{fig:standardwerte_nach_ux1_ux2_ord1} for the original situation (i.e.\,heights are 10, momentums are 0), where we always had a minimal error at $u_{x,1}=u_{y,1}=0$. From now on, since the plots tend to be highly symmetric, we will omit some of them, stating which plots we omitted and why.
 
-Remember that if we only changed either the $x$ or the $y$ impulse values, the error (depending on the only non-fixed $x$ or $y$ momentum) reached its minimum roughly at the average of the other two $x$ or $y$ momentums respectively, as long as they did not differ too strongly.
+Remember that if we only changed either the $x$ or the $y$ momentum values, the error (depending on the only non-fixed $x$ or $y$ momentum) reached its minimum roughly at the average of the other two $x$ or $y$ momentums respectively, as long as they did not differ too strongly.
 
 We start by setting $u_{x,2}=u_{y,2}=1$. The resulting plots can be seen in figure \ref{fig:ord1_varying_ux1_uy1_differing_ux2_uy2_1_1}.
 
@@ -2482,6 +2482,9 @@ While the error increases with order, the explanations for these plots are analo
 It is difficult to make accurate claims of how well the appromixation holds up in practice based on the data gathered here, because the $L^1$ norm absorbs some information that might be useful and what we end up with is just a norm, not an accurate measure.
 
 However, getting such a measure is impossible without actually trying it on a large-scale data set with a full implementation and a powerful architecture to compute the non-approximated version, both of which go beyond the scope of this project. It can still be used to make qualitative observations on the data, which suggest that the used approximations hold up for values within a certain range of each other, which, as stated above, is usually the case. The only exceptions to that are radical sample occurances like shock waves, which have to be handled with specific care because of this. For example, on an adaptive grid, this could be done by further dividing the triangles further at that point, to reduce the height differences within each of them.
+
+Moreover, our experiments have shown that there are situations in wich the approximate solution is equal to the exact solution. Moreover we saw that it is quite hard to predict how 
+the curves will behave without actually plotting them.
 
 The practical merits of this approximation are already established, as it has been used in various software packages up to this point. However, an empirical study on the exact effects of the approximation would be useful in determining the precise accuracy, which could be a deciding factor on which method to use in a simulation framework, especially considering factors that go beyond the theory presented here and apply to a live implementation.
 
