@@ -6,8 +6,8 @@
   %   \includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/x_y_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0f0}}}  
   %   \includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/x_y_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0f1}}}  
   % }
-  \subfigure[Impulse error for $p_2^L$ resp. $p_2^R$] {
-    \label{subfig:p2-height-impulse-three-points-p1-impulse-verringert}
+  \subfigure[Momentum error for $p_2^L$ resp. $p_2^R$] {
+    \label{subfig:p2-height-momentum-three-points-p1-momentum-verringert}
     % \begin{tikzpicture}
     %   \node at (0,0) {\includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/-1.0_10.0_0.0_10.0_x_y_0.0_10.0_0.0_10.0_0.0_10.0f0}}}  };
     %   \fill[white] (.8,1.2) rectangle (1.75,1.5);
@@ -16,11 +16,11 @@
     \begin{tikzpicture}
       \node at (0,0) {\includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/-1.0_10.0_0.0_10.0_x_y_0.0_10.0_0.0_10.0_0.0_10.0f1}}}  };
       \fill[white] (.8,1.2) rectangle (1.75,1.5);
-      \node[align=right, text width=3cm] at (.2,1.33) {\textsf{\tiny{Impulse error}}};
+      \node[align=right, text width=3cm] at (.2,1.33) {\textsf{\tiny{Momentum error}}};
     \end{tikzpicture}
   }
-  \subfigure[Impulse error for $p_3^L$,$p_3^R$ resp. $p_1^R$] {
-    \label{subfig:p3-height-impulse-three-points-p1-impulse-verringert}
+  \subfigure[Momentum error for $p_3^L$,$p_3^R$ resp. $p_1^R$] {
+    \label{subfig:p3-height-momentum-three-points-p1-momentum-verringert}
     % \begin{tikzpicture}
     %   \node at (0,0) {\includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/-1.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_x_y_0.0_10.0f0}}}  };
     %   \fill[white] (.8,1.2) rectangle (1.75,1.5);
@@ -29,10 +29,10 @@
     \begin{tikzpicture}
       \node at (0,0) {\includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/-1.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_x_y_0.0_10.0f1}}}  };
       \fill[white] (.8,1.2) rectangle (1.75,1.5);
-      \node[align=right, text width=3cm] at (.2,1.33) {\textsf{\tiny{Impulse error}}};
+      \node[align=right, text width=3cm] at (.2,1.33) {\textsf{\tiny{Momentum error}}};
     \end{tikzpicture}
   }
-  % \subfigure[Impulse error for $p_1^R$] {
+  % \subfigure[Momentum error for $p_1^R$] {
   %   % \begin{tikzpicture}
   %   %   \node at (0,0) {\includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/-1.0_10.0_x_y_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0f0}}}  };
   %   %   \fill[white] (.8,1.2) rectangle (1.75,1.5);
@@ -41,7 +41,7 @@
   %   \begin{tikzpicture}
   %     \node at (0,0) {\includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/-1.0_10.0_x_y_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0f1}}}  };
   %     \fill[white] (.8,1.2) rectangle (1.75,1.5);
-  %     \node[align=right, text width=3cm] at (.2,1.33) {\textsf{\tiny{Impulse error}}};
+  %     \node[align=right, text width=3cm] at (.2,1.33) {\textsf{\tiny{Momentum error}}};
   %   \end{tikzpicture}
   % }
   % \subfigure[Height and velocity for $p_2^R$] {
@@ -53,7 +53,7 @@
   %   \includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/-1.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_x_yf0}}}  
   %   \includegraphics[scale=\zoomfactor]{{{3_punkte_1_impuls_verringert/-1.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_0.0_10.0_x_yf1}}}  
   % }
-  \caption{Three points for each triangle. All points except $p_1$ have height 10, impulse 0. Point $p_1$ is set to $(10,-1)$. Surprisingly, changing the impulse results in  another error concerning the height component more than changing the height component. Subfigure \ref{subfig:p2-height-impulse-three-points-p1-impulse-verringert} shows the height and impulse errors as well for $p_2^L$ and $p_2^R$ since the plots (at least) look so similar that they can't be distinguished with the naked eye. Moreover we sum up the plots for points $p_3^L$ and $p_3^R$ in subfigure \ref{subfig:p3-height-impulse-three-points-p1-impulse-verringert} for the same reason.
+  \caption{Three points for each triangle. All points except $p_1$ have height 10, momentum 0. Point $p_1$ is set to $(10,-1)$. Surprisingly, changing the momentum results in  another error concerning the height component more than changing the height component. Subfigure \ref{subfig:p2-height-momentum-three-points-p1-momentum-verringert} shows the height and momentum errors as well for $p_2^L$ and $p_2^R$ since the plots (at least) look so similar that they can't be distinguished with the naked eye. Moreover we sum up the plots for points $p_3^L$ and $p_3^R$ in subfigure \ref{subfig:p3-height-momentum-three-points-p1-momentum-verringert} for the same reason.
 }
   \label{fig:three-points-u1-}
 \end{figure}
