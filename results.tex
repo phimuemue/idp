@@ -1504,6 +1504,8 @@ This may be a problem to consider for extreme situations, such as shock waves, w
 \part{Stiffness matrix accuracy analysis for SWE}
 \label{part:stiffness-matrix}
 
+Recall that we introduced the \emph{stiffness matrix} in section \ref{sec:stiffness-matrix} and explained the basic steps of computing it. We will now in more detail examine how we approximate this matrix and how this approximation deviates from the exact computation. We will then -- similar to part \ref{part:polynomial-comparison} where we considered the Lax-Friedrichs-Flux -- compare the exact and approximate solution for the stiffness matrix.
+
 \emph{Remark:} To give a short overview of the following mathematical symbols, we refer readers to appendix \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.
 
 \section{Sum approximation vs. exact solution}
@@ -1535,7 +1537,7 @@ While deriving the equations necessary for our computations, we introduced sever
   & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
 \end{eqnarray}
 
-Remember that we originally approximated the following (see section \ref{sec:matrix-extraction} for further reference):  $(h, u_x, u_y)^T \approx \sum_{i=1}^n (h_i, u_{x,i}, u_{y,i}) \cdot \phi_i(x,y)$. This is the point-wise sampling approximation and is a necessity, since we cannot compute the values for every point on a continuous domain. While we approximate in the above equation as well, the transition from (\ref{eq:third-integral-second-line-1-analysis-part}) to (\ref{eq:third-integral-second-line-2-analysis-part}) uses an approximation of the function by extracting the sum from a product and division. This helps immensely simplify the computations, which is especially desirable at higher order calculations.
+Remember that we originally approximated the following (see section \ref{sec:matrix-extraction} for further reference):  $(h, u_x, u_y)^T \approx \sum_{i=1}^n (h_i, u_{x,i}, u_{y,i}) \cdot \phi_i(x,y)$. This discretization error is a necessity, since we cannot compute the values for every point on a continuous domain. While we approximate in the above equation as well, the transition from (\ref{eq:third-integral-second-line-1-analysis-part}) to (\ref{eq:third-integral-second-line-2-analysis-part}) uses an approximation of the function by extracting the sum from a product and division. This helps immensely simplify the computations, which is especially desirable at higher order calculations.
 
 As the point-wise sampling approximation is not a choice and has to be featured, we will take it as a given and whenever we refer to the comparison of the "exact" versus the "approximate" solution, one has to remember that even the exact solution uses an approximation. This is merely to simplify the naming designation between the two values we are trying to compare.
 
@@ -1610,9 +1612,9 @@ We do so by exemplary examining the second component and compute its exact value
     \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j}
   \end{pmatrix}
   \cdot \nabla \phi_i \, dT = \\
-  & = &
+  & = & \int_T
    \left( \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{x} + \\
-  & & \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y}
+  & & \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
 % \begin{eqnarray*}
@@ -1632,7 +1634,20 @@ We do so by exemplary examining the second component and compute its exact value
 %   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
 % \end{eqnarray*}
 
-These terms become very large and difficult to handle manually, as well as expensive to compute automatically. We will introduce three shorthand notations for the three components of $\mathbf{q}$:
+Let us shortly contrast the two different approximation methods. Equations \eqref{eq:contrast-exact-solution} and \eqref{eq:contrast-approx-solution} show the exact and the approximative solution, respectively.
+
+\begin{eqnarray}
+  \label{eq:contrast-approx-solution}
+  \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j}  + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT 
+  \hspace{-.3cm} & + & \hspace{-.3cm} \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT \\
+  \label{eq:contrast-exact-solution}
+  \int_T \left( \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \pd{\phi_i}{x} 
+  \hspace{-.3cm} & + & \hspace{-.3cm} \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y}\ dT
+\end{eqnarray}
+
+Note that equation \eqref{eq:contrast-exact-solution} is significantly more complex than \eqref{eq:contrast-approx-solution}.
+
+These terms (especially equation \eqref{eq:contrast-exact-solution}) become very large and difficult to handle manually, as well as expensive to compute automatically. We will introduce three shorthand notations for the three components of $\mathbf{q}$:
 
 \begin{equation}
   \label{eq:substitutions-for-all-components-with-hat}
