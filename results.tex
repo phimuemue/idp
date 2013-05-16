@@ -138,8 +138,12 @@ Based on the shallow water equations, this work aims to explain the derivation o
 \tableofcontents{}
 
 \newpage
-\part{Theory of water simulation}
+\part{Overview of the simulation approach}
 \label{part:introduction}
+
+This project deals with the issue of water simulation, especially tsunami simulation.
+The aim is to describe the steps in deriving the equations necessary for water simulation, as well as analyze accuracy losses by certain approximations used as a trade-off for increases in simulation speed.
+Eventually, we will present the results and judge the methods employed by our observations.
 
 When trying to simulate wave propagation over a certain domain, several limitations have to be considered.
 Over time, various equations that deal with problems of this kind have been derived, each set suited for different situations.
@@ -153,13 +157,154 @@ Along with that, we will provide an analysis of the discretization problem, as w
 We will not discretize the domain ourselves, but instead work with a framework developed at the TUM, Sierpinski.
 This framework uses an adaptive triangle grid to discretize the domain.
 However, adaptivity will not be relevant to us, as we will only examine communication between at most two neighboring triangles which share the same edge.
-As such, our results can be applied for non-adaptive grids as well.
+As such, our results can be applied to both adaptive and non-adaptive grids.
+
+\section{Shallow water equations}
+\label{sec:shallow-water-equations}
+
+A set of equations dealing specifically with wave propagation are the so-called shallow water equations. However, contrary to their name, they can be applied to arbitrary-depth scenarios, as long as the horizontal scale is significantly greater than the vertical scale. This makes them suitable for wave simulation over a greater domain, which is of specific interest for tsunami simulation.
+
+The essence of the equations is based on the conservation law (with regards to mass and impulse conservation) as presented in the general continuity equation.
+In its differential form it looks like this:
+
+\begin{equation}
+  \label{eq:general-continuity-equation}
+  \pd{\mathbf{q}}{t} + \nabla \cdot F(\mathbf{q}) = S
+\end{equation}
+
+\begin{itemize}
+\item[$\mathbf{q}$] The state vector, containing all relevant information for any given point in space.
+\item[$F$] The flux function, applied to $\mathbf{q}$ it results in a vector describing the spatial transport of the quantities stored in $\mathbf{q}$.
+\item[$S$] A source term, which is used to offset the computed quantities. What this quantity means can differ depending on the situation. In the context of water simulation, it represents the bathymetry, which will be set to 0 for this project, meaning we only consider constant bathymetry.
+\end{itemize}
+
+The shallow water equations can be applied to the general continuity equation by choosing appropriate variables. For the state vector $\mathbf{q}$ we use the following:
+
+\begin{eqnarray*}
+  \mathbf{q} =
+  \begin{pmatrix}
+    h \\ h v_x \\ h v_y
+  \end{pmatrix}
+\end{eqnarray*}
+
+Here $h$ is the height of the water at that point, which is proportional to the mass of the domain. $v_x$ and $v_y$ are the velocities in the $x$ and $y$ direction. We will use $\mathbf{v}$ to denote the two-dimensional vector consisting of $\left( v_x, v_y \right)^T$. The flux function can be defined as follows:
+
+\begin{eqnarray*}
+  F(\mathbf{q}) =
+  \begin{pmatrix}
+    h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
+  \end{pmatrix}
+\end{eqnarray*}
+
+This takes into account gravitational effects for the respective $x$ and $y$ components. This is accomplished by $e_x$ and $e_y$, which are $\left(1, 0\right)^T$ and $\left(0, 1\right)^T$ respectively, thus only adding the gravitational terms where necessary.
+
+As was mentioned before, the source term will be set to zero throughout this project, which represents constant bathymetry, hence $r=\mathbf{0}$.
+
+Having defined those terms to suit our purpose, we can rewrite the above as follows:
+
+\begin{eqnarray}
+  \label{eqn:shallow-water-flux}
+  \mathbf{q} =
+  \begin{pmatrix}
+    h \\ u_x \\ u_y
+  \end{pmatrix} \quad
+  F(\mathbf{q}) =
+  \begin{pmatrix}
+    \mathbf{u} \\ \frac{u_x}{h}\mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h}\mathbf{u} + \frac{1}{2} g h^2 e_y
+  \end{pmatrix}
+\end{eqnarray}
+
+Here we replaced the velocity $\mathbf{v}$ by the momentum $\mathbf{u}$, which, similarly, consists of two dimensions, one in each direction (referred to by $u_x$ and $u_y$). Occasionally we will need only the $x$ components (or $y$ components) from that vector, for which we will write $F^x$ (and $F^y$ respectively):
+
+\begin{eqnarray*}
+  F^x(\mathbf{q}) =
+  \begin{pmatrix}
+    u_x \\ \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+  \end{pmatrix}
+  \quad
+  F^y(\mathbf{q}) =
+  \begin{pmatrix}
+    u_y \\ \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
+  \end{pmatrix}
+\end{eqnarray*}
+
+\section{Discontinuous Galerkin}
+\label{sec:discontinuous-galerkin}
+
+The numerical method we are using to solve the shallow water equations on our grid is the discontinuous Galerkin method (DG). It combines ideas from the finite element method and the finite volume method. The first suggests computing solutions for each element locally, which is what the DG method also does. However, it lets adjacent elements communicate relevant information with each other by numerically computing a flux function, which determines how much of each stored quantity is passed along between elements, which is a method borrowed from finite volume schemes.
+
+Similar to the finite element method, we multiply the equation (in this case the shallow water equations) by a test function, then integrate over the entire domain. This can be done with more than one function as well, and we will later use several, depending on the degree of the functions we use. The functions we choose for that will be called \emph{basis functions}, as they represent a nodal basis in the corresponding polynomial space. Details of what they look like and how we will derive them are explained in section \ref{sec:basis-functions-choice}. What we obtain is the following (with $\phi_i$ being the $i$th basis function), called the weak form:
+
+\begin{equation}
+  \label{eq:general-continuity-equation-discontinuous-galerkin}
+  \int_\Omega \pd{\mathbf{q}}{t} \phi_i \,d\Omega + \int_\Omega \nabla \cdot F(\mathbf{q}) \phi_i \,d\Omega = \int_\Omega r \phi \,d\Omega
+\end{equation}
+
+With the bathymetry at zero, this leads to:
+
+\begin{equation}
+  \label{eq:general-continuity-equation-discontinuous-galerkin-no-bathymetrity}
+  \int_\Omega \pd{\mathbf{q}}{t} \phi_i \,d\Omega + \int_\Omega \nabla \cdot F(\mathbf{q}) \phi_i \,d\Omega = 0
+\end{equation}
+
+The operator $\nabla \cdot$ is the divergence operator, computing the sum of the $x$ derivative of the first component and the $y$ derivative of the second component. Using the operator $\nabla$ and applying the Gaussian divergence theorem, we can transform the equation given above to
+
+\begin{equation}
+  \label{eq:shallow-water-weak-form-div-applied}
+  \int_\Omega \pd {\mathbf{q}}{t} \phi \, d\Omega +
+  \int_{\partial \Omega} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds -
+  \int_\Omega F(\mathbf{q}) \cdot \nabla \phi \, d\Omega = 0.
+\end{equation}
+
+Note at this point, that these are actually three equations, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates.
+The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result.
+The last integral contains the symbol $\nabla$.
+This operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
+
+\section{Discretization}
+\label{sec:discretization}
+
+Since we will need to discretize the space eventually, we will have to work on a disjunct set of polygons, together incorporating the entire simulation space.
+In our case, this will be a triangle grid, so we will use triangles to simplify the equations further.
+
+We can apply the discontinuous Galerkin method for every triangle individually, meaning we will use a single triangle as the integration domain in our calculations.
+Given that, we can use the previous equation (\ref{eq:general-continuity-equation-discontinuous-galerkin-no-bathymetrity}) with regards to our triangle's space (here denoted by $T$ instead of $\Omega$):
+
+\begin{equation}
+  \label{eq:shallow-water-weak-form-div-applied-triangle}
+  \int_T \pd {\mathbf{q}}{t} \phi \, dT +
+  \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds -
+  \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0.
+\end{equation}
+
+The second integral in that equation is an integral over the boundary of one triangle.
+The $\mathbf{n}$ in there denotes the outward facing normal at that point.
+We write $ds$ to denote integration over the $(x,y)$ values along the border.
+Since it is a boundary integral of a triangles, we can split it up into several integrals, one for each edge.
+This also implies a normal vector $\mathbf{n}_e$ per edge.
+
+\begin{equation}
+  \label{eq:boundary-integral-sum}
+  \int_{\partial P} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds = \sum_{e \in E} \int_{e} F(\mathbf{q}) \cdot \mathbf{n}_e \, \phi \, ds = \sum_{e \in E} \int_{e} F^e \phi \, ds =: \text{Boundary integral}
+\end{equation}
+
+We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the polygon neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a uniform reference space, so they can all be computed the same way, regardless of position (described in detail below). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
+
+\begin{equation}
+  \label{eq:shallow-water-weak-form-div-applied-approximation}
+  \int_P \pd {\mathbf{q}}{t} \phi_i \, dP +
+  \sum_{e \in E} \int_{e} F^e \phi_i \, ds  -
+  \int_P F(\mathbf{q}) \cdot \nabla \phi_i \, dP = 0
+  \quad \forall i \in {1 \dots n}
+\end{equation}
 
 \section{Reference space}
 \label{sec:reference-space}
 
-Using a triangle grid, as mentioned before, we can simplify a few steps in the computation process.
-With a suitable library for coordinate projection, we can rotate triangles and edges into a space that is relevant for us.
+The actual triangulization method employed will be irrelevant to us, as we will only analyze behavior between two triangles at a time, or even just within one triangle.
+The usual approach is either to use a uniform grid for the entire domain, or an adaptive grid, which introduces a few implementation challenges but allows for fine-grain control of simulation parameters, usually improving the accuracy-to-performance ratio.
+
+The advantage of using a uniform space is that with a suitable library for coordinate projection, we can rotate triangles and edges into a space that is relevant for us.
 Instead of applying different directional cell update rules for each individual triangle, we apply a transformation to the triangles, which allows us to apply one one set of update rules to all cells.
 
 In addition to rotating, we can also scale the edges of the triangles to always be of a certain length.
@@ -181,7 +326,6 @@ Our reference space assumes a cathetus of length 1 and consequently the hypothen
 
 The domain of the entire triangle is given by $T$ (the set of all points on the triangle), and the set of edges $E$, enumerated with $e_i$, $\forall i \in {1,2,3}$.
 Points on the triangle (both on the edge and inside) will be denoted by $p$.
-%In the implementation we will be referring to the edges \texttt{left}, \texttt{hyp} and \texttt{right} by $e_1$, $e_2$ and $e_3$ respectively.
 
 \begin{figure}[ht]
   \centering
@@ -240,134 +384,15 @@ The higher polynomial degree we operate on, the more support points we will have
 Another set of points are Gaussian quadrature points along an edge, which we will later use to approximate integrals along the edges.
 Accordingly, they will also be located on the respective edges. They will be explained in more detail in section \ref{sec:boundary-integral}.
 
-\section{Discontinuous Galerkin}
-\label{sec:discontinuous-galerkin}
-
-The numerical method we are using to solve the shallow water equations on our grid is the discontinuous Galerkin method (DG). It combines ideas from the finite element method and the finite volume method. The first suggests computing solutions for each element locally, which is what the DG method also does. However, it lets adjacent elements communicate relevant information with each other by numerically computing a flux function, which determines how much of each stored quantity is passed along between elements, which is a method borrowed from finite volume schemes. We can apply this to the general continuity equation, which looks like this in its differential form:
-
-\begin{equation}
-  \label{eq:general-continuity-equation}
-  \pd{\mathbf{q}}{t} + \nabla \cdot F(\mathbf{q}) = S
-\end{equation}
-
-\begin{itemize}
-\item[$\mathbf{q}$] The state vector, containing all relevant information for any given point in space.
-\item[$F$] The flux function, applied to $\mathbf{q}$ it results in a vector describing the spatial transport of the quantities stored in $\mathbf{q}$.
-\item[$S$] A source term, which is used to offset the computed quantities. What this quantity means can differ depending on the situation. In the context of water simulation, it represents the bathymetry, which will be set to 0 for this project, meaning we only consider constant bathymetry.
-\end{itemize}
-
-Similar to the finite element method, we multiply the equation by a test function, then integrate over the entire domain. This can be done with more than one function as well, and we will later use several, depending on the degree of the functions we use. The functions we choose for that will be called \emph{basis functions}. Details of what they look like and how we will derive them are explained in section \ref{sec:basis-functions-choice}. What we obtain is the following (with $\phi_i$ being the $i$th basis function), called the weak form:
-
-\begin{equation}
-  \label{eq:general-continuity-equation-discontinuous-galerkin}
-  \int_\Omega \pd{\mathbf{q}}{t} \phi_i \,d\Omega + \int_\Omega \nabla \cdot F(\mathbf{q}) \phi_i \,d\Omega = \int_\Omega r \phi \,d\Omega
-\end{equation}
-
-\section{Shallow water equations}
-\label{sec:shallow-water-equations}
-
-The shallow water equations can be applied to the general continuity equation by choosig appropriate variables. For the state vector $\mathbf{q}$ we use the following:
-
-\begin{eqnarray*}
-  \mathbf{q} =
-  \begin{pmatrix}
-    h \\ h v_x \\ h v_y
-  \end{pmatrix}
-\end{eqnarray*}
-
-Here $h$ is the height of the water at that point, which is proportional to the mass of the domain. $v_x$ and $v_y$ are the velocities in the $x$ and $y$ direction. We will use $\mathbf{v}$ to denote the two-dimensional vector consisting of $\left( v_x, v_y \right)^T$. The flux function can be defined as follows:
-
-\begin{eqnarray*}
-  F(\mathbf{q}) =
-  \begin{pmatrix}
-    h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
-  \end{pmatrix}
-\end{eqnarray*}
-
-This takes into account gravitic effects for the respective $x$ and $y$ components. This is accomplished by $e_x$ and $e_y$, which are $\left(1, 0\right)^T$ and $\left(0, 1\right)^T$ respectively, thus only adding the gravitational terms where necessary.
-
-As was mentioned before, the source term will be set to zero throughout this project, which represents constant bathymetry, hence $r=\mathbf{0}$.
-
-Having defined those terms to suit our purpose, we can rewrite the above as follows:
-
-\begin{eqnarray}
-  \label{eqn:shallow-water-flux}
-  \mathbf{q} =
-  \begin{pmatrix}
-    h \\ u_x \\ u_y
-  \end{pmatrix} \quad
-  F(\mathbf{q}) =
-  \begin{pmatrix}
-    \mathbf{u} \\ \frac{u_x}{h}\mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h}\mathbf{u} + \frac{1}{2} g h^2 e_y
-  \end{pmatrix}
-\end{eqnarray}
-
-Here we replaced the velocity $\mathbf{v}$ by the momentum $\mathbf{u}$, which, similarly, consists of two dimensions, one in each direction (referred to by $u_x$ and $u_y$). Occasionally we will need only the $x$ components (or $y$ components) from that vector, for which we will write $F^x$ (and $F^y$ respectively):
-
-\begin{eqnarray*}
-  F^x(\mathbf{q}) =
-  \begin{pmatrix}
-    u_x \\ \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
-  \end{pmatrix}
-  \quad
-  F^y(\mathbf{q}) =
-  \begin{pmatrix}
-    u_y \\ \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
-  \end{pmatrix}
-\end{eqnarray*}
-
-At this point we apply the discontinuous Galerkin method as mentioned above.
-
-\section{Discretization}
-\label{sec:discretization}
-
-We obtain the following, called the weak form:
-
-\begin{equation}
-  \label{eq:shallow-water-weak-form}
-  \int_T \pd{\mathbf{q}}{t} \phi \,dT + \int_T \nabla \cdot F(\mathbf{u}) \phi \,dT = 0
-\end{equation}
-
-The operator $\nabla \cdot$ is the divergence operator, computing the sum of the $x$ derivative of the first component and the $y$ derivative of the second component. Using the operator $\nabla$ and applying the Gaussian divergence theorem, we can transform the equation given above to
-
-\begin{equation}
-  \label{eq:shallow-water-weak-form-div-applied}
-  \int_T \pd {\mathbf{q}}{t} \phi \, dT +
-  \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds -
-  \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0.
-\end{equation}
-
-Note at this point, that these are actually three equations, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates.
-The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result.
-The last integral contains the symbol $\nabla$.
-his operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
-
-The second integral in that equation is an integral on the boundary of our triangle.
-The $\mathbf{n}$ in there denotes the outward facing normal at that point.
-We write $ds$ to denote integration over the $(x,y)$ values along the border.
-Since it is a boundary integral of a triangle, we can split it up into three integrals, one for each edge of the triangle.
-This also implies three normal vectors $\mathbf{n}_e$, one for each edge.
-
-\begin{equation}
-  \label{eq:boundary-integral-sum}
-  \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi \, ds = \sum_{e \in E} \int_{e} F(\mathbf{q}) \cdot \mathbf{n}_e \, \phi \, ds = \sum_{e \in E} \int_{e} F^e \phi \, ds =: \text{Boundary integral}
-\end{equation}
-
-We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. This term denotes the quantities given or received from the triangle neighboring on the edge $e$. The normal will not pose a problem for us, as we rotate the edges into a reference space, so they can all be computed the same way, regardless of position (this process is described in section \ref{sec:reference-space}). As was mentioned in \ref{sec:discontinuous-galerkin}, we apply this method for every basis function at our disposal. Since we have one for each support point, it will run from 1 through $n$, named $\phi_i$ accordingly:
-
-\begin{equation}
-  \label{eq:shallow-water-weak-form-div-applied-approximation}
-  \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
-  \sum_{e \in E} \int_{e} F^e \phi_i \, ds  -
-  \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
-  \quad \forall i \in {1 \dots n}
-\end{equation}
-
-\section{Gaussian quadrature}
+\section{Dealing with integrals}
 \label{sec:matrix-extraction}
 
-To actually compute equation \ref{eq:shallow-water-weak-form-div-applied-approximation}, we need to approximate the status vector $\mathbf{q}$, as it's impossible to derive an accurate representation for this value that changes continuously over the doman.
-We do that by applying the Gaussian quadrature over the previously mentioned support points. That is, we ``recycle'' the support points as integration points.
+Several pitfalls make the computation of the derived terms in equation \ref{eq:shallow-water-weak-form-div-applied-approximation} difficult.
+In general, integrals are rarely easy to calculate, even less so when dealing with rational functions, as they appear in our equation.
+
+To actually compute it, we need to approximate the status vector $\mathbf{q}$, as it's impossible to derive an accurate representation for this value that changes continuously over the domain.
+We do that by applying the Gaussian quadrature over the previously mentioned support points.
+For that we will use the support points as integration points.
 We obtain the vector of the approximated status values over the integration points, weighted by the basis functions:
 
 \begin{equation}
@@ -378,6 +403,8 @@ We obtain the vector of the approximated status values over the integration poin
 The values $\mathbf{q}_i$ are the $\mathbf{q}$ values at the corresponding support points. This helps our computation significantly, since those values do not depend on the position within the domain. That allows us to move them out of the integrals, leaving integrals over various combinations of basis functions. Since these don't depend on $\mathbf{q}$, they can be precomputed and applied to all cells in the domain without a need for individual computation.
 
 Recall that $\mathbf{q}$ (and all $\mathbf{q}_i$) contain three components, the height $h$, the momentum in the $x$ direction $u_x$ and the $y$ momentum $u_y$. This means, equation (\ref{eq:support-point-approximation}) yields three equations (one for each of the components).
+
+Having approximated $\mathbf{q}$ now, there are various matrices we can extract that help us compute the integrals.
 
 \subsection{Mass matrix}
 \label{sec:mass-matrix}
@@ -718,7 +745,7 @@ As mentioned before, we construct the basis functions with the help of the same 
 
 For low degree polynomials, we choose specific distribution of the support points within the triangle:
 \begin{description}
-\item[Degree 0] We choose the support point at the center of the triangle (at $\left(\frac{1}{3}, \frac{1}{3}\right)$).
+\item[Degree 0] We choose the support point at the center of the triangle at $\left(\frac{1}{3}, \frac{1}{3}\right)^T$.
 \item[Degree 1] We choose the support points at the center of each edge.
 \item[Degree 2] We choose the support points at the triangle corners and at the center of each edge.
 \end{description}
@@ -1638,10 +1665,10 @@ Let us shortly contrast the two different approximation methods. Equations \eqre
 
 \begin{eqnarray}
   \label{eq:contrast-approx-solution}
-  \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j}  + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT 
+  \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j}  + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT
   \hspace{-.3cm} & + & \hspace{-.3cm} \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT \\
   \label{eq:contrast-exact-solution}
-  \int_T \left( \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \pd{\phi_i}{x} 
+  \int_T \left( \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \pd{\phi_i}{x}
   \hspace{-.3cm} & + & \hspace{-.3cm} \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y}\ dT
 \end{eqnarray}
 
@@ -2483,7 +2510,7 @@ It is difficult to make accurate claims of how well the appromixation holds up i
 
 However, getting such a measure is impossible without actually trying it on a large-scale data set with a full implementation and a powerful architecture to compute the non-approximated version, both of which go beyond the scope of this project. It can still be used to make qualitative observations on the data, which suggest that the used approximations hold up for values within a certain range of each other, which, as stated above, is usually the case. The only exceptions to that are radical sample occurances like shock waves, which have to be handled with specific care because of this. For example, on an adaptive grid, this could be done by further dividing the triangles further at that point, to reduce the height differences within each of them.
 
-Moreover, our experiments have shown that there are situations in wich the approximate solution is equal to the exact solution. Moreover we saw that it is quite hard to predict how 
+Moreover, our experiments have shown that there are situations in wich the approximate solution is equal to the exact solution. Moreover we saw that it is quite hard to predict how
 the curves will behave without actually plotting them.
 
 The practical merits of this approximation are already established, as it has been used in various software packages up to this point. However, an empirical study on the exact effects of the approximation would be useful in determining the precise accuracy, which could be a deciding factor on which method to use in a simulation framework, especially considering factors that go beyond the theory presented here and apply to a live implementation.
