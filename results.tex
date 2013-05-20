@@ -308,7 +308,7 @@ The advantage of using a uniform space is that with a suitable library for coord
 Instead of applying different directional cell update rules for each individual triangle, we apply a transformation to the triangles, which allows us to apply one one set of update rules to all cells.
 
 In addition to rotating, we can also scale the edges of the triangles to always be of a certain length.
-Our reference space assumes a cathetus of length 1 and consequently the hypothenuse of length $\sqrt{2}$.
+Our reference space assumes a leg of length 1 and consequently the hypothenuse of length $\sqrt{2}$.
 
 \begin{figure}[ht]
   \centering
@@ -320,7 +320,7 @@ Our reference space assumes a cathetus of length 1 and consequently the hypothen
     \end{scope}
 
   \end{tikzpicture}
-  \caption{A sample triangle rotated into normal space and scaled down to cathetus length 1.}
+  \caption{A sample triangle rotated into normal space and scaled down to leg length 1.}
   \label{fig:triangle-projection}
 \end{figure}
 
@@ -1747,7 +1747,7 @@ The terms $SE_x$ and $SE_y$ contain rational functions and are computationally i
 
 While integrating in the one-dimensional case can be approximated by the rectangle method, the two-dimensional case (i.e.\,integrating something like $\int_{0}^1 \int_0^{1-x} f(x,y)\, dy\, dx$) requires a more sophisticated approach. Instead of lines we now need to divide the area in smaller areas to sample, but at the same time make sure not to exceed the bounds. Since we are dealing with a triangle, we cannot use rectangle shapes for that.
 
-However, it is not difficult to extend the rectangle method to the two-dimensional case. Since we are interested in an integral over a triangle $T$, and $T$ is a right triangle with cathetus length 1, we divide the triangle into smaller right triangles such that all triangles together cover the original triangle $T$.
+However, it is not difficult to extend the rectangle method to the two-dimensional case. Since we are interested in an integral over a triangle $T$, and $T$ is a right triangle with leg length 1, we divide the triangle into smaller right triangles such that all triangles together cover the original triangle $T$.
 
 Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the function $f(x,y)$, bounded by the borders given by our triangle $T$. This, however, means that we can approximate this volume by comprising it out of smaller parts. We decided to use prisms to approximate that volume.
 
