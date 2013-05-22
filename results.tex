@@ -256,10 +256,12 @@ The operator $\nabla \cdot$ is the divergence operator, computing the sum of the
   \int_\Omega F(\mathbf{q}) \cdot \nabla \phi \, d\Omega = 0.
 \end{equation}
 
+As we can see, the second integral is now over $\partial \Omega$ and $ds$, which describes the integral over the border of that domain.
 Note at this point, that these are actually three equations, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates.
 The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result.
 The last integral contains the symbol $\nabla$.
 This operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
+\todo{Gradient?}
 
 \section{Discretization}
 \label{sec:discretization}
@@ -280,8 +282,8 @@ Given that, we can use the previous equation (\ref{eq:general-continuity-equatio
 The second integral in that equation is an integral over the boundary of one triangle.
 The $\mathbf{n}$ in there denotes the outward facing normal at that point.
 We write $ds$ to denote integration over the $(x,y)$ values along the border.
-Since it is a boundary integral of a triangles, we can split it up into several integrals, one for each edge.
-This also implies a normal vector $\mathbf{n}_e$ per edge.
+Since it is a boundary integral of a triangle, we can split it up into several integrals, one for each edge.
+This also implies a normal vector $\mathbf{n}_e$ per edge of the set of edges $E = \{e_1, e_2, e_3\}$.
 
 \begin{equation}
   \label{eq:boundary-integral-sum}
