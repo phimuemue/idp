@@ -149,7 +149,7 @@ When trying to simulate wave propagation over a certain domain, several limitati
 Over time, various equations that deal with problems of this kind have been derived, each set suited for different situations.
 The main problem for computer simulation is that computers cannot represent the full continuous domain perfectly, and so the entire domain has to be discretized.
 This discretization is commonly done with a set of cells that contain several fields of information (such as mass/height, velocity, etc.).
-Beside the domain discretization, also accurate simulation of the wave propagation itself is a challenging task, making the simulation even more computationally complex and intensive.
+Aside from the domain discretization, accurate simulation of the wave propagation itself is also a challenging task, making the simulation even more computationally complex and expensive.
 Especially in tsunami-related environments even non-local factors like bathymetry information, tidal forces and the coriolis effect have to be considered to get accurate results.
 
 In this work we focus on computations based on the shallow water equations with the discontinuous Galerkin method, both of which will be described below.
@@ -173,9 +173,9 @@ In its differential form it looks like this:
 \end{equation}
 
 \begin{itemize}
-\item[$\mathbf{q}$] The state vector, containing all relevant information for any given point in space.
-\item[$F$] The flux function, applied to $\mathbf{q}$ it results in a vector describing the spatial transport of the quantities stored in $\mathbf{q}$.
-\item[$S$] A source term, which is used to offset the computed quantities. What this quantity means can differ depending on the situation. In the context of water simulation, it represents the bathymetry, which will be set to 0 for this project, meaning we only consider constant bathymetry.
+\item[$\mathbf{q}$] The state vector. It contains all relevant information for any given point in space.
+\item[$F$] The flux function. Applied to $\mathbf{q}$ it results in a vector describing the spatial transport of the quantities stored in $\mathbf{q}$.
+\item[$S$] A source term. This is used as an offset for the computed quantities. What this quantity means can differ depending on the situation. In the context of water simulation, it represents the bathymetry, which will be set to 0 for this project, meaning we only consider constant bathymetry. In reality this value does not follow a formula, but is derived through empirical measurements for every point in the domain.
 \end{itemize}
 
 The shallow water equations can be applied to the general continuity equation by choosing appropriate variables. For the state vector $\mathbf{q}$ we use the following:
@@ -198,7 +198,7 @@ Here $h$ is the height of the water at that point, which is proportional to the 
 
 This takes into account gravitational effects for the respective $x$ and $y$ components. This is accomplished by $e_x$ and $e_y$, which are $\left(1, 0\right)^T$ and $\left(0, 1\right)^T$ respectively, thus only adding the gravitational terms where necessary.
 
-As was mentioned before, the source term will be set to zero throughout this project, which represents constant bathymetry, hence $r=\mathbf{0}$.
+As was mentioned before, the source term will be set to zero throughout this project, which represents constant bathymetry, hence $S=\mathbf{0}$.
 
 Having defined those terms to suit our purpose, we can rewrite the above as follows:
 
@@ -214,7 +214,7 @@ Having defined those terms to suit our purpose, we can rewrite the above as foll
   \end{pmatrix}
 \end{eqnarray}
 
-Here we replaced the velocity $\mathbf{v}$ by the momentum $\mathbf{u}$, which, similarly, consists of two dimensions, one in each direction (referred to by $u_x$ and $u_y$). Occasionally we will need only the $x$ components (or $y$ components) from that vector, for which we will write $F^x$ (and $F^y$ respectively):
+Here we replaced the velocity component $\mathbf{v}h$ by a momentum component $\mathbf{u}$, which, similarly, consists of two dimensions, one in each direction (referred to by $u_x$ and $u_y$). Occasionally we will need only the $x$ components (or $y$ components) from that vector, for which we will write $F^x$ (and $F^y$ respectively):
 
 \begin{eqnarray*}
   F^x(\mathbf{q}) =
@@ -237,17 +237,17 @@ Similar to the finite element method, we multiply the equation (in this case the
 
 \begin{equation}
   \label{eq:general-continuity-equation-discontinuous-galerkin}
-  \int_\Omega \pd{\mathbf{q}}{t} \phi_i \,d\Omega + \int_\Omega \nabla \cdot F(\mathbf{q}) \phi_i \,d\Omega = \int_\Omega r \phi \,d\Omega
+  \int_\Omega \pd{\mathbf{q}}{t} \phi_i \,d\Omega + \int_\Omega \nabla \cdot F(\mathbf{q}) \phi_i \,d\Omega = \int_\Omega S \phi \,d\Omega
 \end{equation}
 
-With the bathymetry at zero, this leads to:
+With the bathymetry (our source term, $S$) at zero, this leads to:
 
 \begin{equation}
   \label{eq:general-continuity-equation-discontinuous-galerkin-no-bathymetrity}
   \int_\Omega \pd{\mathbf{q}}{t} \phi_i \,d\Omega + \int_\Omega \nabla \cdot F(\mathbf{q}) \phi_i \,d\Omega = 0
 \end{equation}
 
-The operator $\nabla \cdot$ is the divergence operator, computing the sum of the $x$ derivative of the first component and the $y$ derivative of the second component. Using the operator $\nabla$ and applying the Gaussian divergence theorem, we can transform the equation given above to
+The operator $\nabla \cdot$ is the divergence operator, computing the sum of the $x$ derivative of the first component and the $y$ derivative of the second component. Using the operator $\nabla$ and applying the Gaussian divergence theorem, we can transform the equation \ref{eq:general-continuity-equation-discontinuous-galerkin-no-bathymetrity} above to
 
 \begin{equation}
   \label{eq:shallow-water-weak-form-div-applied}
