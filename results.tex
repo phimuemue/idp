@@ -133,9 +133,19 @@ It occurs when computing how much of the relevant quantities are passed from one
 Based on the shallow water equations, this work aims to explain the derivation of the discretization, the necessary equations for computing those quantities, and gives insight to the quadrature error by comparing the analytical solution to the approximate solution using Gaussian quadrature employed at various points.
 \end{abstract}
 
+\hypersetup{
+    colorlinks=false,
+    pdfborder={0 0 0},
+}
+
 \newpage
 \setcounter{tocdepth}{2}
 \tableofcontents{}
+
+\hypersetup{
+    colorlinks=false,
+    pdfborder={0 0 1},
+}
 
 \newpage
 \part{Overview of the simulation approach}
@@ -868,7 +878,7 @@ From this -- and using the fundamental theorem of algebra -- we can conclude tha
 % Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
 \newpage
-\part{Comparing the exact and approximate solution of the Lax-\-Friedrichs flux}
+\part{Comparing the exact and approximate solution of the Lax-Fried\-richs flux}
 \label{part:polynomial-comparison}
 
 In the next sections, we will examine an aspect of wave propagation between two triangles, namely the quality of the approximation employed by the Lax-Friedrichs flux.
