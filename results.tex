@@ -259,9 +259,8 @@ The operator $\nabla \cdot$ is the divergence operator, computing the sum of the
 As we can see, the second integral is now over $\partial \Omega$ and $ds$, which describes the integral over the border of that domain.
 Note at this point, that these are actually three equations, one for each component of $\mathbf{q}$, each of which contains two-dimensional vectors for the two space coordinates.
 The dot product here signifies a scalar product, i.e.\,multiply the components by row and add up the result.
-The last integral contains the symbol $\nabla$.
+The last integral contains the symbol $\nabla$, which denotes the gradient of $\phi$.
 This operator takes a function and creates a vector from it containing the derivatives for $x$ and $y$ in the respective components.
-\todo{Gradient?}
 
 \section{Discretization}
 \label{sec:discretization}
@@ -297,7 +296,7 @@ We also combined the terms $F(\mathbf{q})$ and $\mathbf{n}$ to one term $F^e$. T
   \int_P \pd {\mathbf{q}}{t} \phi_i \, dP +
   \sum_{e \in E} \int_{e} F^e \phi_i \, ds  -
   \int_P F(\mathbf{q}) \cdot \nabla \phi_i \, dP = 0
-  \quad \forall i \in {1 \dots n}
+  \quad \forall i \in \{1, \dots, n\}
 \end{equation}
 
 \section{Reference space}
@@ -326,7 +325,7 @@ Our reference space assumes a leg of length 1 and consequently the hypothenuse o
   \label{fig:triangle-projection}
 \end{figure}
 
-The domain of the entire triangle is given by $T$ (the set of all points on the triangle), and the set of edges $E$, enumerated with $e_i$, $\forall i \in {1,2,3}$.
+The domain of the entire triangle is given by $T$ (the set of all points on the triangle), and the set of edges $E$, enumerated with $e_i$, $\forall i \in \{1,2,3\}$.
 Points on the triangle (both on the edge and inside) will be denoted by $p$.
 
 \begin{figure}[ht]
@@ -371,20 +370,23 @@ Points on the triangle (both on the edge and inside) will be denoted by $p$.
       \draw[fill=black] (0.310352451033784, 0.053145049844817) circle (0.01);
     \end{tikzpicture}
   }
-  \caption{Triangles containing a support points for polynomial degrees 0 through 3.}
+  \caption{Triangles containing support points for polynomial degrees 0 through 3.}
   \label{fig:triangle-support-points-var-degrees}
 \end{figure}
 
-We will choose certain points to represent the domain of the triangle called \emph{support points}. The number of support points depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}. As it is uncommon to compute the propagation exactly due to its computational complexity, we need to find a numerical approximation.
-
-This will be done with the Discontinuous Galerkin method explained in section \ref{sec:discontinuous-galerkin} which requires a certain number of \emph{test functions} relating to points in the domain. However, for each test function used for the method we will need one point in the triangle to save the computed information to. They can be regarded as sample points that are representative for the values within the triangle.
+We will choose certain points to represent the domain of the triangle called \emph{support points}.
+The number of support points depends on the degree of the test functions, as will be discussed in section \ref{sec:basis-functions-choice}.
+We will require several such functions for the discontinuous Galerkin method, which is the numerical method we use in this project.
+For each test function used for the method we will need one point in the triangle to save the computed information to.
+They can be regarded as sample points that are representative for the values within the triangle.
 
 In our case, the test functions will be polynomials of a certain degree.
+The higher polynomial degree we operate on, the more support points we will have.
+While this increases accuracy, it also makes the involved equations more complex and complicates (or even disallows) certain simplifications, so a proper balance is desired.
 
-The higher polynomial degree we operate on, the more support points we will have. While this increases accuracy, it also makes the involved equations more complex and complicates (or even disallows) certain simplifications, so a proper balance is desired.
-
-Another set of points are Gaussian quadrature points along an edge, which we will later use to approximate integrals along the edges.
-Accordingly, they will also be located on the respective edges. They will be explained in more detail in section \ref{sec:boundary-integral}.
+Another set of points are Gaussian quadrature points, which we will later use to approximate integrals along the edges.
+Accordingly, they will also be located on the respective edges.
+They will be explained in more detail in section \ref{sec:boundary-integral}.
 
 \section{Dealing with integrals}
 \label{sec:matrix-extraction}
