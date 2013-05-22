@@ -122,11 +122,11 @@
 \clearpage
 
 \begin{abstract}
-  The question how to simulate waves on a computer is subject to many difficulties. At several points in the process of transferring continous to discrete formulations, approximations have to be made.
+  The question how to simulate waves on a computer is subject to many difficulties. At several points in the process of transferring continuous to discrete formulations, approximations have to be made.
 One of those points is the discretization of the continuous space into finite segments.
 Yet another point is not as obvious, and occurs when trying to compute an integral. The complexity is of such degree that it is usually not feasible to compute exactly, and for that another approximation-error is introduced.
 
-Despite all of this, the accuracy loss can normally be minized by sacrificing computing time.
+Despite all of this, the accuracy loss can normally be minimized by sacrificing computing time.
 However, the specific approximation of an integrated fractional function using Gaussian quadrature has to be analyzed separately.
 It occurs when computing how much of the relevant quantities are passed from one segment to another, which, due discontinuities along the separating lines, has to be handled in a way that preserves as much accuracy as possible.
 
@@ -150,7 +150,7 @@ Over time, various equations that deal with problems of this kind have been deri
 The main problem for computer simulation is that computers cannot represent the full continuous domain perfectly, and so the entire domain has to be discretized.
 This discretization is commonly done with a set of cells that contain several fields of information (such as mass/height, velocity, etc.).
 Aside from the domain discretization, accurate simulation of the wave propagation itself is also a challenging task, making the simulation even more computationally complex and expensive.
-Especially in tsunami-related environments even non-local factors like bathymetry information, tidal forces and the coriolis effect have to be considered to get accurate results.
+Especially in tsunami-related environments even non-local factors like bathymetry information, tidal forces and the Coriolis effect have to be considered to get accurate results.
 
 In this work we focus on computations based on the shallow water equations with the discontinuous Galerkin method, both of which will be described below.
 Along with that, we will provide an analysis of the discretization problem, as well as explore some numerical solutions for it.
@@ -265,7 +265,7 @@ This operator takes a function and creates a vector from it containing the deriv
 \section{Discretization}
 \label{sec:discretization}
 
-Since we will need to discretize the space eventually, we will have to work on a disjunct set of polygons, together incorporating the entire simulation space.
+Since we will need to discretize the space eventually, we will have to work on a disjoint set of polygons, together incorporating the entire simulation space.
 In our case, this will be a triangle grid, so we will use triangles to simplify the equations further.
 
 We can apply the discontinuous Galerkin method for every triangle individually, meaning we will use a single triangle as the integration domain in our calculations.
@@ -309,7 +309,7 @@ The advantage of using a uniform space is that with a suitable library for coord
 Instead of applying different directional cell update rules for each individual triangle, we apply a transformation to the triangles, which allows us to apply one one set of update rules to all cells.
 
 In addition to rotating, we can also scale the edges of the triangles to always be of a certain length.
-Our reference space assumes a leg of length 1 and consequently the hypothenuse of length $\sqrt{2}$.
+Our reference space assumes a leg of length 1 and consequently the hypotenuse of length $\sqrt{2}$.
 
 \begin{figure}[ht]
   \centering
@@ -675,9 +675,9 @@ Given an equation of the form
 \end{eqnarray}
 we want to have a compute $x(t)$ (as shown in \cite{schwaiger08adaptive}).
 
-This is evaluated iteratively by considering a certain timestep size, $\tau$. The smaller the timestep size, the more accurately the resulting values will approximate the exact solution. However, the timestep is left variable because it can be adjusted to be lower when confronted with highly variable state vectors (for example large observed velocities on a small grid), whereas it can be left higher during phases with little variation or similar velocities to save computation time. The new time is computed simply by adding the variable timestep on the current time: $t_{k+1} = t_k + \tau$.
+This is evaluated iteratively by considering a certain time step size, $\tau$. The smaller the time step size, the more accurately the resulting values will approximate the exact solution. However, the time step is left variable because it can be adjusted to be lower when confronted with highly variable state vectors (for example large observed velocities on a small grid), whereas it can be left higher during phases with little variation or similar velocities to save computation time. The new time is computed simply by adding the variable time step on the current time: $t_{k+1} = t_k + \tau$.
 
-The state vector for the next timestep is based on the same vector in the current timestep. It can be regarded as taking a small timestep in the direction of the development of the state vector, where the direction is given by $\pd{x(t)}{t}$. We obtain the final term for the new state variable $x$:
+The state vector for the next time step is based on the same vector in the current time step. It can be regarded as taking a small time step in the direction of the development of the state vector, where the direction is given by $\pd{x(t)}{t}$. We obtain the final term for the new state variable $x$:
 
 \begin{equation}
   \label{eq:euler-step-solution}
@@ -747,7 +747,7 @@ In section \ref{sec:choice-support-points}, we will see what the basis functions
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
 
-As mentioned before, we construct the basis functions with the help of the same number of support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing those should not be done at random. If the points are in a certain pattern, it will result in a singular matrix and be impossible to invert. And while the probability for that is low, the matrix can still be malconditioned if the points are chosen arbitrarily. There are several methods to pick the support points to avoid singular or otherwise malconditioned matrices. 
+As mentioned before, we construct the basis functions with the help of the same number of support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing those should not be done at random. If the points are in a certain pattern, it will result in a singular matrix and be impossible to invert. And while the probability for that is low, the matrix can still be ill-conditioned if the points are chosen arbitrarily. There are several methods to pick the support points to avoid singular or otherwise ill-conditioned matrices. 
 
 and we will choose the Gaussian quadrature points, as we will also use the same quadrature to integrate over the domain.
 
@@ -793,11 +793,11 @@ As can be seen in table \ref{tab:basis-functions-for-low-degrees}, there are som
 
 \paragraph{Order 1}
 
-Here we see that the third and the first basis function look somewhat similar and are inversed w.r.t,\,their arguments: $\phi_1(x,y)=\phi_3(y,x)$. This same symmetry also holds for their respective derivatives. In that sense, the second basis function can be considered symmetric to itself.
+Here we see that the third and the first basis function look somewhat similar and are reversed w.r.t,\,their arguments: $\phi_1(x,y)=\phi_3(y,x)$. This same symmetry also holds for their respective derivatives. In that sense, the second basis function can be considered symmetric to itself.
 
 \paragraph{Order 2}
 
-Analogously to the first order, we notice argument-inversed symmetries involving all basis functions:
+Analogously to the first order, we notice argument-reversed symmetries involving all basis functions:
 
 \begin{eqnarray*}
   \phi_2(x,y) & = & \phi_6(y,x) \\
@@ -868,7 +868,7 @@ From this -- and using the fundamental theorem of algebra -- we can conclude tha
 % Thus, we can conclude equation (\ref{eq:sum-basis-functions-is-1}).
 
 \newpage
-\part{Comparing the exact and approximate solution of the Lax-\-Friedrichs-\-Flux}
+\part{Comparing the exact and approximate solution of the Lax-\-Friedrichs flux}
 \label{part:polynomial-comparison}
 
 In the next sections, we will examine an aspect of wave propagation between two triangles, namely the quality of the approximation employed by the Lax-Friedrichs flux.
@@ -1123,8 +1123,8 @@ This is why we consider three other possibilities for computing the error term:
 
   % However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
 
-  The downside of this method is that is computationally infeasible for a detailed analysis of higher order due to the increasingly complex formulae.
-\item[Exact integration betwee certain points] $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
+  The downside of this method is that is computationally infeasible for a detailed analysis of higher order due to the increasingly complex formulas.
+\item[Exact integration between certain points] $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
   \begin{equation*}
     N\left(x_i^F\right) = N^\prime\left(x_i^F\right) \text{ resp. } N\left( x_i^F \right) - N^\prime\left( x_i^F \right) = 0 \quad , \forall i \in \{1 \dots n\}.
   \end{equation*}
@@ -1175,7 +1175,7 @@ We tried these computations for other scenarios, including a variation in suppor
 
 However, it is still important to note that these singularities do in fact occur. While they did not interfere with our computations, similar application with largely differing sample values may encounter a challenge at this point.
 
-Analytically deriving a general formula for the occurance of such singularities is a difficult task due to the large number of variables. This is further complicated by the fact that the number of variables itself is not static but depends on the number of support points. We even encountered problems computing the exact $x$ values for the singularities for four support points, due to the complexity of the term, although they could still be found visually once the function was evaluated and plotted, coinciding with our previously computed results.
+Analytically deriving a general formula for the occurrence of such singularities is a difficult task due to the large number of variables. This is further complicated by the fact that the number of variables itself is not static but depends on the number of support points. We even encountered problems computing the exact $x$ values for the singularities for four support points, due to the complexity of the term, although they could still be found visually once the function was evaluated and plotted, coinciding with our previously computed results.
 
 \newcommand{\fracsumme}{\mathtt{approx\_int}}
 
@@ -1252,7 +1252,7 @@ The problem now is that we cannot plot all our variables at once, essentially gi
 \end{itemize}
 
 As the number of parameters increases, the number of possibilities for plotting grows with it.
-Since we can have a large number of variables, this is what we will do as well, leave one or two variables variable, while fixing the remaining variables and plotting the one-dimensional or two-dimenional result respectively.
+Since we can have a large number of variables, this is what we will do as well, leave one or two variables variable, while fixing the remaining variables and plotting the one-dimensional or two-dimensional result respectively.
 
 \subsection{\texorpdfstring{Interpreting $I$ as a function of support points}{Interpreting I as a function of support points}}
 \label{sec:some-considerations}
@@ -1314,7 +1314,7 @@ We implemented a program that is capable of doing the following:
 \item Export plots and generate a proper TeX-file.
 \end{itemize}
 
-The implementation turned out to be very useful and easier to maintain and handle than any equivalent Maple solution. Figure \ref{fig:plotting-tool} shows what the tool looks like\footnote{Since the program undergoes (sometimes heavy) changes, the screenshot shown in figure \ref{fig:plotting-tool} might not show the most up-to-date version of our tool.}.
+The implementation turned out to be very useful and easier to maintain and handle than any equivalent Maple solution. Figure \ref{fig:plotting-tool} shows what the tool looks like\footnote{Since the program undergoes (sometimes heavy) changes, the screen shot shown in figure \ref{fig:plotting-tool} might not show the most up-to-date version of our tool.}.
 
 \begin{figure}[ht]
   \centering
@@ -1330,18 +1330,18 @@ The implementation turned out to be very useful and easier to maintain and handl
   \label{fig:plotting-tool}
 \end{figure}
 
-Subfigure \ref{subfig:plotting-tool-variables} shows the page that is used to adjust the variables. As we can see, the tool has detected variables \texttt{u\_1}, \texttt{h\_1}, \texttt{U\_1}, and so on. Moreover we can see that e.g.\, the parameter \texttt{u\_2} is set to a value of 3.2, while \texttt{u\_1} is set to 0.0.
+Figure \ref{subfig:plotting-tool-variables} shows the page that is used to adjust the variables. As we can see, the tool has detected variables \texttt{u\_1}, \texttt{h\_1}, \texttt{U\_1}, and so on. Moreover we can see that e.g.\, the parameter \texttt{u\_2} is set to a value of 3.2, while \texttt{u\_1} is set to 0.0.
 
-The radio buttons determine which variables are used as axes. In subfigure \ref{subfig:plotting-tool-variables}, in the first option row, the column for \texttt{u\_1} is selected, while in the second row, we chose \texttt{h\_1}. This means that the plotter uses \texttt{u\_1} as $x$ axis, and \texttt{h\_1} as $y$ axis for the 3D plot.
+The radio buttons determine which variables are used as axes. In figure \ref{subfig:plotting-tool-variables}, in the first option row, the column for \texttt{u\_1} is selected, while in the second row, we chose \texttt{h\_1}. This means that the plotter uses \texttt{u\_1} as $x$ axis, and \texttt{h\_1} as $y$ axis for the 3D plot.
 
-Subfigure \ref{subfig:plotting-tool-gnuplot} shows exemplary settings for plotting. ``Samples'' and ``Isosamples'' are gnuplot-specific parameters that determine how fine-grained gnuplot is plotting the curve. A hundred samples and ten isosamples have shown to be a fitting balance between an accurate graph and an acceptable computation time. The settings for lower and upper $x$ and $y$ values determine the range that is plotted by gnuplot.
+Configure \ref{subfig:plotting-tool-gnuplot} shows exemplary settings for plotting. ``Samples'' and ``Isosamples'' are gnuplot-specific parameters that determine how fine-grained gnuplot is plotting the curve. A hundred samples and ten isosamples have shown to be a fitting balance between an accurate graph and an acceptable computation time. The settings for lower and upper $x$ and $y$ values determine the range that is plotted by gnuplot.
 
 The parameter ``stripes'' determines how many stripes are used to numerically evaluate the integral $I$. After trying some values we found out that using less than five stripes is noticeably inaccurate. However, using more than five stripes does not significantly affect the result.
 
 \subsection{How to interpret the graphs}
 \label{sec:how-to-interpret-graphs}
 
-All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N^\prime\left(x\right)$. The tool generates a plot representing the error in the $u$ component (impule).
+All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N^\prime\left(x\right)$. The tool generates a plot representing the error in the $u$ component (momentum).
 
 To understand how our plots work, we can take a look at figure \ref{fig:two-points-all-the-same}. In this example, we used 2 points on each triangle and edge. That is, we have four (relevant) points in total, two of which we have plotted here. This is why figure \ref{fig:two-points-all-the-same} has two sub-figures.
 
@@ -1368,7 +1368,7 @@ To plot $u$ and $h$ we need to know their respective ranges as well. This is not
 
 % Looking back at the caption of the subfigure, which had ``1/0.04'' in the latter part (subfigure \ref{subfig:fixing-p2-in-first-example}). This tells us the range of the values of $I$ (i.e.\,the ``$z$ axis''). To be precise, the firs part tells us that the maximal plotted value for the h component is 1, while the maximal $u$ component value is 0.04. A single number indicates a range between 0 and that number, while an explicit range indicates the given range (for an example, see \ref{subfig:example-with-range}, where the $h$ component plot range goes from 0.25 to 0.55, and the $u$ component from 0 to 0.03).
 
-Since we are visualizing norms of (i.e. integrals over) absolute error terms, it is difficult to tell wich results are ``good'' and ``bad''. But we can see which results are better than others, and -- of course -- generally smaller values are better then big ones. That is, we can compare two errors and determine the better of both, but -- due to the nature of the integral -- we can not tell \emph{by how much} one is better than the other.
+Since we are visualizing norms of (i.e. integrals over) absolute error terms, it is difficult to tell which results are ``good'' and ``bad''. But we can see which results are better than others, and -- of course -- generally smaller values are better then big ones. That is, we can compare two errors and determine the better of both, but -- due to the nature of the integral -- we can not tell \emph{by how much} one is better than the other.
 
 \section{Distribution of support points according to Gaussian quadrature}
 \label{sec:results}
@@ -1378,12 +1378,12 @@ The support points for this section can be extracted from table \ref{tab:x-coord
 \subsection{Setting all support points to the same value}
 \label{sec:setting-all-support-points-to-the-same-value}
 
-First we set all support points to one single value ensuring homogenous height and momentum. Then, we tackle each point individually and let their values range over a certain domain.
+First we set all support points to one single value ensuring homogeneous height and momentum. Then, we tackle each point individually and let their values range over a certain domain.
 
 \input{2_punkte_alles_10_0/tex.tex}
 
-Figure \ref{fig:two-points-all-the-same} shows the case for two points on each adjacent edge. Each subfigure shows what happens if we fix all but one specific support point. For example, subfigure \ref{subfig:fixing-p2-in-first-example} shows constant values of all support points except $p_2^L$ (containing the variables $h_2^L$ and $u_2^L$) and variable $h_2^L$ in the range from 8 to 12 and $u_2^L$ from $-4$ to 4.
-The left part of subfigure \ref{subfig:fixing-p2-in-first-example} shows the error in the $h$ component\footnote{Computed as described in equation (\ref{eq:integral-norm-definition}).}, while the right half depicts the error in the $u$ component.
+Figure \ref{fig:two-points-all-the-same} shows the case for two points on each adjacent edge. Each figure shows what happens if we fix all but one specific support point. For example, figure \ref{subfig:fixing-p2-in-first-example} shows constant values of all support points except $p_2^L$ (containing the variables $h_2^L$ and $u_2^L$) and variable $h_2^L$ in the range from 8 to 12 and $u_2^L$ from $-4$ to 4.
+The left part of figure \ref{subfig:fixing-p2-in-first-example} shows the error in the $h$ component\footnote{Computed as described in equation (\ref{eq:integral-norm-definition}).}, while the right half depicts the error in the $u$ component.
 The error in the $h$ component is always zero in the range depicted here (about $10^{-15}$ to be precise, which can be interpreted as numerical error). We will generally omit plots that show no error similar to that.
 
 As the plot shows, the error for the $h$ component ranges up to 2.5.
@@ -1406,7 +1406,7 @@ Figure \ref{fig:two-points-p1-wider-range} shows a plot that was created using t
 \subsection{One point variation}
 \label{sec:one-point-variation}
 
-So far we saw what the plots look like if all points have the same value. We are now goint to inspect what happens if the single points have different values.
+So far we saw what the plots look like if all points have the same value. We are now going to inspect what happens if the single points have different values.
 
 \subsubsection{\texorpdfstring{Decreasing the height of $p_1^L$}{Decreasing the height of p1L}}
 \label{sec:decreasing-height-p1}
@@ -1450,7 +1450,7 @@ The cases we have examined so far were just sample cases to show a qualitative c
 \subsubsection{Two random points}
 \label{sec:two-random-points}
 
-We start out with two random points. The results of random assignment of values can be seen in figure \ref{fig:two-points-random}. There are heavy structural differences discernable compared to previous plots.
+We start out with two random points. The results of random assignment of values can be seen in figure \ref{fig:two-points-random}. There are heavy structural differences discernible compared to previous plots.
 
 \input{2_random_new/tex.tex}
 
@@ -1473,7 +1473,7 @@ One suspicion that could explain that intuition is due to the functions $N\left(
 
 One way to prevent this is would be to choose the support points such that there are points at 0 and 1 (the borders of $[0,1]$) and the remaining support points are equidistant within this interval. When we choose the points according to this strategy, 0 and 1 are support points and we can be sure that $N\left(x\right)$ and $N^\prime\left(x\right)$ coincide at the values 0 and 1 (i.e.\,$N\left(0\right)=N^\prime\left(0\right)$ and $N\left(1\right)=N^\prime\left(1\right)$). This prevents $N(x)$ and $N^\prime(x)$ from diverging at the border of $[0,1]$ (possibly at the price of increasing the difference within this interval).
 
-We now examine this setting and conduct some experiments. Along the way, note that if we use two or three support points, using equidistant support points corresponds to mapping the support points obtained by the gaussian quadrature onto the interval $[0,1]$ such that the leftmost resp. rightmost support point becomes 0 resp. 1.
+We now examine this setting and conduct some experiments. Along the way, note that if we use two or three support points, using equidistant support points corresponds to mapping the support points obtained by the Gaussian quadrature onto the interval $[0,1]$ such that the leftmost resp. rightmost support point becomes 0 resp. 1.
 
 \subsection{Two fixed support points}
 \label{sec:equidist-two-fixed}
@@ -1519,7 +1519,7 @@ When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized 
 \section{Conclusions}
 \label{sec:conslusions}
 
-We have seen that the height error is zero in the scenarios under consideration, which we derived in section \ref{sec:height-error-p2}. Moreover, the error in momentum shows quite a non-predictable behaviour.
+We have seen that the height error is zero in the scenarios under consideration, which we derived in section \ref{sec:height-error-p2}. Moreover, the error in momentum shows quite a non-predictable behavior.
 %This was expected, since the momentum error is a rational function -- and thus not easy to imagine.
 It can vary strongly, both in shape and in scale. When adjusting the height values, it appears to be parabola-shaped, while the momentum values have a minor impact only.
 
@@ -1697,7 +1697,7 @@ These terms (especially equation \eqref{eq:contrast-exact-solution}) become very
   \widehat{u}_x := \sum_{j=1}^n \phi_j u_{x,j}
 \end{equation}
 
-Similarily to the previous steps, we can introduce a hat notation to signal the summation of the individual components, only this time we define it for the entire integrand. In this way, we can simplify the above term:
+Similarly to the previous steps, we can introduce a hat notation to signal the summation of the individual components, only this time we define it for the entire integrand. In this way, we can simplify the above term:
 
 \begin{equation}
   \label{eq:stiffness-analysis-second-line-exact-approx-simple}
@@ -1767,7 +1767,7 @@ Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the functio
 
 We chose this approximation since it is a straightforward extension of the one-dimensional midpoint rule. Even after extensive research, we were not able to find a paper that deals specifically with numerically evaluating a double integral over a triangle (there are many papers that describe double integrals over rectangles such as e.g.\,\cite{lang1987double}).
 
-In principle, we devide the triangle in a way such that we cut the catheti (of length 1) into smaller pieces of length $\frac{1}{L}$. The integer $L$ denotes the parameter for our integral approximation. Then, we can generate the centers of the resulting triangles by first computing a set of all possible centers:
+In principle, we divide the triangle in a way such that we cut the legs (of length 1) into smaller pieces of length $\frac{1}{L}$. The integer $L$ denotes the parameter for our integral approximation. Then, we can generate the centers of the resulting triangles by first computing a set of all possible centers:
 
 \begin{equation*}
   \mathtt{POSSIBLE\_CENTERS} = \left\{
@@ -1797,7 +1797,7 @@ If we use this definition, we obtain $L^2$ triangles of equal size.
     \end{scope}
   }
   \centering
-  \subfigure[One trianglev($L=1$)]{
+  \subfigure[One triangle($L=1$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
     \end{tikzpicture}
@@ -1971,7 +1971,7 @@ We can see the graph for $h_1$ in figure \ref{fig:stiffness-analysis-log-singula
 
 As we can see, the value for $\frac{1-2x+24y}{-1+2y}$ is either 5 or below, or 15 or above (since there is only green in figure \ref{fig:stiffness-analysis-log-singularities-ord-1}, but no red at all). If we go back, we can conclude that either $h_1 \leq 5$ or $h_1 \geq 15$. We can conclude that -- for the values $h_2=h_3=10$ -- the only values for $h_1$ that could provoke a singularity are strongly different from 10.
 
-The white area is undefined or out of the triangle. If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative, wich is also not a reasonable value for $h_1$ if all other heights are 10.
+The white area is undefined or out of the triangle. If the logarithm of $h_1$ is undefined, this means, that the value for $h_1$ was negative, which is also not a reasonable value for $h_1$ if all other heights are 10.
 
 We also did experiments for other assignments of $h_2$ and $h_3$ and observed similar behavior.
 
@@ -1994,7 +1994,7 @@ We now examine the same thing for order 2. Again, we solve equation (\ref{eq:sti
 
 Again, we could test specific values for $(x,y)$, such as e.g.\,$(0.5, 0.25)$. If we did so, we would obtain $h_1=-90$ --- a very unlikely setting for $h_1$ if all other heights are 10.
 
-Figure \ref{fig:stiffness-analysis-log-singularities-ord-2} shows a plot for $h_1$. We observe that for order 2, the value $h_1$ does not range from 5 to about 15 within our triangle. This means that $h_1$ (roughly) has to lie within the one of the ranges $\left[ -\infty, 5 \right]$ and $\left[ 15, \infty \right]$ to provoke a singularity within the triangle, which is very unlikely for small waves, but possible for a sudden increase in height (which may be a valid consideration, for example in the case of shockwaves). Thus, evaluating the integral may become inaccurate under certain circumstances.
+Figure \ref{fig:stiffness-analysis-log-singularities-ord-2} shows a plot for $h_1$. We observe that for order 2, the value $h_1$ does not range from 5 to about 15 within our triangle. This means that $h_1$ (roughly) has to lie within the one of the ranges $\left[ -\infty, 5 \right]$ and $\left[ 15, \infty \right]$ to provoke a singularity within the triangle, which is very unlikely for small waves, but possible for a sudden increase in height (which may be a valid consideration, for example in the case of shock waves). Thus, evaluating the integral may become inaccurate under certain circumstances.
 
 It is worthy to note at this point, that this singularity is not because of the approximation. It happens because of the sum of heights in the denominator of $\widehat{F}_2\left(\mathbf{q}\right)$ (in the term $\widehat{h}$). Our approximations do multiply the possible number of singularities because of our piece-wise integration of the triangle, however this is only of relevance in interpreting the plots if they happen to contain any of those singularities. This is not the case for us, since even the additional singularities are close to exact singularities, which are outside of the relevant height range for these calculations. That means this has no impact on our interpretation of the results, it is merely something to consider when simulating problematic scenarios.
 
@@ -2005,7 +2005,7 @@ We continue our analysis by investigating the case for basis functions of order 
 
 Consider e.g.\,the term $SE_x^i = \int_T \left| \left(\overline{F}_2(\mathbf{q})-\widehat{F}_2(\mathbf{q})\right) \cdot \nabla\phi_i(x,y) \right|$. The terms $\overline{F}_2(\mathbf{q})$ and $\widehat{F}_2(\mathbf{q})$ depend on the height and momentum values of the single support points (i.e.\,on the values $h_1,\dots,h_3$, $u_{x,1},\dots,u_{x,3}$ and $u_{y,1},\dots,u_{y,3}$).
 
-If we have two symmetric basis funcions $\phi_i$ and $\phi_j$ and consider $SE^i$, we can compute the following:
+If we have two symmetric basis functions $\phi_i$ and $\phi_j$ and consider $SE^i$, we can compute the following:
 
 \begin{equation*}
   SE^i(h, u_x, u_y) = SE^j(h, u_y, u_x)
@@ -2092,7 +2092,7 @@ Moreover, it is again noteworthy that the minimum error occurs for $u_{x,1}=0$ s
 
 \subsubsection{\texorpdfstring{Varying $u_{y,1}$}{Varying uy1}}
 
-In the last section, the $x$ momentum of the second and third basis function were the most interesting terms to look at. We now focus on what happens if we choose $u_{y,1}$ as varying comopnent.
+In the last section, the $x$ momentum of the second and third basis function were the most interesting terms to look at. We now focus on what happens if we choose $u_{y,1}$ as varying component.
 
 \input{standardwerte_nach_uy_ord1/tex.tex}
 
@@ -2217,7 +2217,7 @@ To examine this suspicion a bit, we now choose $u_{x,1}=u_{x,2}=u_{y,2}=u_{y,3}=
 
 \input{ord1_varying_ux1_uy1_differing_ux2_uy2_ux3_uy3_1_1_1_1/tex.tex}
 
-The plots confirm our suspiction: the error is indeed minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ -- it is even 0.
+The plots confirm our suspicion: the error is indeed minimal for our suspected values of $u_{x,1}$ and $u_{y,1}$ -- it is even 0.
 
 \clearpage{}
 
@@ -2509,7 +2509,7 @@ If we have a situation where all heights are the same, all $x$ momentums are the
 
 The error can become zero for other combinations as well, but deriving a pattern is a non-trivial task and not generally useful, as it relies on a large number of parameters. Moreover it can become zero if certain basis functions have a zero derivative (as seen e.g.\,in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
 
-The general pattern, which is observable in every plot, is that the error is proportional to the overall deviation of the various components. The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error, except for a few detailed plots which differ in localized areas, but still exhibit the same overall shape. That speaks in favor of the approximation, because the values generally tend to be close together, even more so the smaller the chosen triangles are. However, this is still a point to consider when the simulation can contain extreme scenarios, such as shockwaves, or if the chosen triangle size is not small enough due to concerns for efficiency.
+The general pattern, which is observable in every plot, is that the error is proportional to the overall deviation of the various components. The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error, except for a few detailed plots which differ in localized areas, but still exhibit the same overall shape. That speaks in favor of the approximation, because the values generally tend to be close together, even more so the smaller the chosen triangles are. However, this is still a point to consider when the simulation can contain extreme scenarios, such as shock waves, or if the chosen triangle size is not small enough due to concerns for efficiency.
 
 \subsection{Higher orders}
 \label{sec:stiffness-analysis-conclusion-higher-order}
@@ -2520,11 +2520,11 @@ While the error increases with order, the explanations for these plots are analo
 
 \subsection{Assessment}
 
-It is difficult to make accurate claims of how well the appromixation holds up in practice based on the data gathered here, because the $L^1$ norm absorbs some information that might be useful and what we end up with is just a norm, not an accurate measure.
+It is difficult to make accurate claims of how well the approximation holds up in practice based on the data gathered here, because the $L^1$ norm absorbs some information that might be useful and what we end up with is just a norm, not an accurate measure.
 
-However, getting such a measure is impossible without actually trying it on a large-scale data set with a full implementation and a powerful architecture to compute the non-approximated version, both of which go beyond the scope of this project. It can still be used to make qualitative observations on the data, which suggest that the used approximations hold up for values within a certain range of each other, which, as stated above, is usually the case. The only exceptions to that are radical sample occurances like shock waves, which have to be handled with specific care because of this. For example, on an adaptive grid, this could be done by further dividing the triangles further at that point, to reduce the height differences within each of them.
+However, getting such a measure is impossible without actually trying it on a large-scale data set with a full implementation and a powerful architecture to compute the non-approximated version, both of which go beyond the scope of this project. It can still be used to make qualitative observations on the data, which suggest that the used approximations hold up for values within a certain range of each other, which, as stated above, is usually the case. The only exceptions to that are radical sample occurrences like shock waves, which have to be handled with specific care because of this. For example, on an adaptive grid, this could be done by further dividing the triangles further at that point, to reduce the height differences within each of them.
 
-Moreover, our experiments have shown that there are situations in wich the approximate solution is equal to the exact solution. Moreover we saw that it is quite hard to predict how
+Moreover, our experiments have shown that there are situations in which the approximate solution is equal to the exact solution. Moreover we saw that it is quite hard to predict how
 the curves will behave without actually plotting them.
 
 The practical merits of this approximation are already established, as it has been used in various software packages up to this point. However, an empirical study on the exact effects of the approximation would be useful in determining the precise accuracy, which could be a deciding factor on which method to use in a simulation framework, especially considering factors that go beyond the theory presented here and apply to a live implementation.
@@ -2611,7 +2611,7 @@ The practical merits of this approximation are already established, as it has be
       \left( \frac{\widehat{u}_y^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right)
     }$ & Exact solution for second component of flux \\
 
-    $\mypmatrix{A \\ B} \cdot \nabla\phi$ & $A \cdot \pd{\phi}{x} + B \cdot \pd{\phi}{y}$ & Needed, since each line of flux has two ``sublines'' that have to be combined into one\\
+    $\mypmatrix{A \\ B} \cdot \nabla\phi$ & $A \cdot \pd{\phi}{x} + B \cdot \pd{\phi}{y}$ & Needed, since each line of flux has two ``sub lines'' that have to be combined into one\\
 
     $SE_x^i$ & $\int_T \left| \left( \overline{F}_2(\mathbf{q}) - \widehat{F}_2(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $x$ momentum for $i$th basis function \\
 
