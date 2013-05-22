@@ -2550,7 +2550,7 @@ The practical merits of this approximation are already established, as it has be
     Symbol & Definition & Notes \\
     \midrule{}
 
-    $\phi_i(x,y)$ & & $i$-th basis function, simpler notation: $\phi_i$ \\
+    $\phi_i(x,y)$ & & $i$th basis function, simpler notation: $\phi_i$ \\
 
     $\int_\Omega (\cdot)\, d\Omega$ & & simpler notation for 2-dimensional integration over area $\Omega$ \\
 
@@ -2565,7 +2565,7 @@ The practical merits of this approximation are already established, as it has be
 
     $\mathbf{q}_i$ & $\mypmatrix{
       h_i \\ u_{x,i} \\ u_{y,i}
-    }$ & Same as before, but for $i$-th support point  \\
+    }$ & Same as before, but for $i$th support point  \\
 
     $F(\mathbf{q})$ &
     $\mypmatrix{ \mathbf{u} \\ \frac{u_x}{h}\mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h}\mathbf{u} + \frac{1}{2} g h^2 e_y }$ &
@@ -2601,9 +2601,9 @@ The practical merits of this approximation are already established, as it has be
 
     $\mypmatrix{A \\ B} \cdot \nabla\phi$ & $A \cdot \pd{\phi}{x} + B \cdot \pd{\phi}{y}$ & Needed, since each line of flux has two ``sublines'' that have to be combined into one\\
 
-    $SE_x^i$ & $\int_T \left| \left( \overline{F}_2(\mathbf{q}) - \widehat{F}_2(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $x$ momentum for $i$-th basis function \\
+    $SE_x^i$ & $\int_T \left| \left( \overline{F}_2(\mathbf{q}) - \widehat{F}_2(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $x$ momentum for $i$th basis function \\
 
-    $SE_y^i$ & $\int_T \left| \left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $y$ momentum for $i$-th basis function \\
+    $SE_y^i$ & $\int_T \left| \left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT$ & Error term for $y$ momentum for $i$th basis function \\
 
     $SE$ & $\mypmatrix{SE_x \\ SE_y}$ & \\
 
