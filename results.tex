@@ -164,7 +164,7 @@ As such, our results can be applied to both adaptive and non-adaptive grids.
 
 A set of equations dealing specifically with wave propagation are the so-called shallow water equations. However, contrary to their name, they can be applied to arbitrary-depth scenarios, as long as the horizontal scale is significantly greater than the vertical scale. This makes them suitable for wave simulation over a greater domain, which is of specific interest for tsunami simulation.
 
-The essence of the equations is based on the conservation law \cite{leveque2002finite} (with regards to mass and impulse conservation) as presented in the general continuity equation.
+The essence of the equations is based on the conservation law \cite{leveque2002finite} (with regards to mass and momentum conservation) as presented in the general continuity equation.
 In its differential form it looks like this:
 
 \begin{equation}
@@ -598,7 +598,7 @@ The third line is computationally equivalent to the previous, with the respectiv
 
 We again observe the stiffness matrices $S^x$ resp. $S^y$.
 
-\subsection{Inspecting the boundary integral}
+\subsection{Boundary integral: Gaussian quadrature}
 \label{sec:boundary-integral}
 
 Evaluating $\sum_{e \in E} \int_{e} F^e \phi_i \, ds$ poses a challenge, because the term $F^e$ is located and evaluated on the edge, and hence cannot be moved out of the integral, so the same techniques employed with the previous two integrals will not work here. Instead, we employ a Gaussian quadrature and integrate numerically. To do that we substitute the integral as follows:
@@ -721,7 +721,7 @@ We have to keep in mind that equation (\ref{eq:swe-euler-step-solution}) is actu
 
 So far we have explained what the discontinuous Galerkin method is and how it is applied to derive the equations needed to compute water simulation for one time step with the given information. We will now see that the accuracy of the model depends on the choice of integration points and basis functions.
 
-\subsection{Choice of basis functions}
+\subsection{Construction of basis functions}
 \label{sec:basis-functions-choice-polynomial}
 
 For our project, we restricted ourselves to polynomial basis functions (depending on two variables $x$ and $y$) of variable degree $d$. The variables $x$ and $y$ represent coordinates within our triangle.
@@ -742,10 +742,14 @@ Generalizing this scheme we observe that if we want to use polynomials of degree
 Since $k$ can range from 0 to $d$, and for every k, there's $k+1$ possibilities for $a$ and $b$, we can derive all possible combinations with a simple sum: $\sum_{k = 0}^d k+1 = \frac{1}{2} \cdot (d+2) \cdot (d+1)$ combinations in total.
 This means that we need $\frac{1}{2} \cdot (d+2) \cdot (d+1)$ basis functions to span the function space containing all the polynomials up to degree $d$.
 
+In section \ref{sec:choice-support-points}, we will see what the basis functions will look like if we choose a certain set of support points.
+
 \subsection{Choice of support points}
 \label{sec:choice-support-points}
 
-As mentioned before, we construct the basis functions with the help of the same number of support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing those should not be done at random. If the points are in a certain pattern, it will result in a singular matrix and be impossible to invert. And while the probability for that is low, the matrix can still be malconditioned if the points are chosen arbitrarily. There are several methods to pick the suppor points to avoid singular or otherwise malconditioned matrices, and we will choose the Gaussian quadrature points, as we will also use the same quadrature to integrate over the domain.
+As mentioned before, we construct the basis functions with the help of the same number of support points. However, arbitrarily choosing those can lead to some disadvantages for the basis functions as described above. As the basis functions are derived from the support points by a matrix inversion, choosing those should not be done at random. If the points are in a certain pattern, it will result in a singular matrix and be impossible to invert. And while the probability for that is low, the matrix can still be malconditioned if the points are chosen arbitrarily. There are several methods to pick the support points to avoid singular or otherwise malconditioned matrices. 
+
+and we will choose the Gaussian quadrature points, as we will also use the same quadrature to integrate over the domain.
 
 For low degree polynomials, we choose specific distribution of the support points within the triangle:
 \begin{description}
@@ -877,14 +881,16 @@ We have two adjacent triangles called $R$ and $L$ respectively, sharing a common
 
 After parametrization along the edge $E$, this results in a function $[0,1]\rightarrow\reals$ for each component and each triangle, resulting in four functions (see section \ref{sec:original-situation-2D problem} for more detailed information regarding the parametrization).
 
-To approximate the result numerically, we will take a number of sample points along the edge and evaluate the flux functions at those places. This is the prevalent method employed in this field (\cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive}) and is also used by the Sierpinski framework. Recall from section \ref{sec:matrix-extraction} that it uses a Gaussian quadrature to compute this integral. This introduces an error, since we have a rational function, for which polynomial Gaussian quadrature may not produce exact results anymore.
+To approximate the result numerically, we will take a number of sample points along the edge and evaluate the flux functions at those places. This is the prevalent method employed in this field \cite{castro07high-order-ader-fv-dg-numerical-methods,schwaiger08adaptive} and is also used by the Sierpinski framework. Recall from section \ref{sec:matrix-extraction} that it uses a Gaussian quadrature to compute this integral. This introduces an error, since we have a rational function, for which polynomial Gaussian quadrature may not produce exact results anymore.
 
 To analyze the severity of the error, we will compare the two resulting terms in the form of the $L^1$-norm.
 
 \section{Numerical flux}
 \label{sec:numerical-flux}
 
-The exchange of inforamtion between adjacent triangles is called the flux. We compute the numerical flux by sampling the edge at certain points. There are several possibilities to compute the numerical flux, and we focus on one of them: the Lax-Friedrichs flux.
+The flux is a physical quantity that describes the exchange of information between adjacent cells (e.g. in Discontinuous Galerkin and Finite Volume methods).
+
+We compute the numerical flux by sampling the edge at certain points. There are several possibilities to compute the numerical flux, and we focus on one of them: the Lax-Friedrichs flux.
 
 \subsection{Flux function}
 \label{sec:flux-function-intro}
@@ -931,9 +937,9 @@ Depending on how $\alpha$ is handled, it results in different methods. Sometimes
 \label{sec:original-situation-2D problem}
 
 The original problem arises when two adjacent triangles share one edge.
-Each triangle has several integration points which are interpolated to obtain a polynomial for the corresponding triangle.
+Each triangle has several quadrature points which are interpolated to obtain a polynomial for the corresponding triangle.
 
-Figure \ref{fig:two-triangles-and-some-support-points} shows two adjacent triangles and exemplary positions of the integration points.
+Figure \ref{fig:two-triangles-and-some-support-points} shows two adjacent triangles and exemplary positions of the quadrature points.
 In the case shown we would use six integration points, resulting in a two-variable polynomial of degree 2. We could use more integration points, thereby increasing the degree of the resulting polynomial.
 
 \begin{figure}[ht]
@@ -941,25 +947,22 @@ In the case shown we would use six integration points, resulting in a two-variab
   \begin{tikzpicture}[scale=2]
     \begin{scope}[xshift=-.1em,yshift=-.1em]
       \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
-      \draw[fill=black] (0,0) circle (0.02);
-      \draw[fill=black] (0.5,0) circle (0.02);
-      \draw[fill=black] (1,0) circle (0.02);
+      %\draw[fill=black] (0,0) circle (0.02);
+      %\draw[fill=black] (0.5,0) circle (0.02);
+      \draw[fill=black] (0.79,0.21) circle (0.02);
       \draw[fill=black] (0.5,0.5) circle (0.02);
-      \draw[fill=black] (0,1) circle (0.02);
-      \draw[fill=black] (0,0.5) circle (0.02);
+      \draw[fill=black] (0.21,0.79) circle (0.02);
+      %\draw[fill=black] (0,0.5) circle (0.02);
     \end{scope}
     \draw[->,thick] (0,1.075) -- node[right]{$\lambda$} (1.075,0);
     \begin{scope}[xshift=1.15cm,yshift=1.15cm,rotate=180]
-      \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
-      \draw[fill=black] (0,0) circle (0.02);
-      \draw[fill=black] (0.5,0) circle (0.02);
-      \draw[fill=black] (1,0) circle (0.02);
+      \draw[fill=black] (0.79,0.21) circle (0.02);
       \draw[fill=black] (0.5,0.5) circle (0.02);
-      \draw[fill=black] (0,1) circle (0.02);
-      \draw[fill=black] (0,0.5) circle (0.02);
+      \draw[fill=black] (0.21,0.79) circle (0.02);
+      \draw (0,0) -- (0,1) -- (1,0) -- (0,0);
     \end{scope}
   \end{tikzpicture}
-  \caption{Two adjacent triangles with integration points}
+  \caption{Two adjacent triangles with quadrature points}
   \label{fig:two-triangles-and-some-support-points}
 \end{figure}
 
@@ -1110,7 +1113,7 @@ This is why we consider three other possibilities for computing the error term:
 \begin{description}
 \item[Numerical integration in Maple] Another approach was to use Maple's numerical integration facilities. If we tell Maple to
   \begin{center}
-    \texttt{evalf(Int(abs(N(x)-N(x)),x=0..1))},
+    \texttt{evalf(Int(abs(N(x)-N'(x)),x=0..1))},
   \end{center}
   we get a good result.
 
@@ -1365,6 +1368,8 @@ To plot $u$ and $h$ we need to know their respective ranges as well. This is not
 
 % Looking back at the caption of the subfigure, which had ``1/0.04'' in the latter part (subfigure \ref{subfig:fixing-p2-in-first-example}). This tells us the range of the values of $I$ (i.e.\,the ``$z$ axis''). To be precise, the firs part tells us that the maximal plotted value for the h component is 1, while the maximal $u$ component value is 0.04. A single number indicates a range between 0 and that number, while an explicit range indicates the given range (for an example, see \ref{subfig:example-with-range}, where the $h$ component plot range goes from 0.25 to 0.55, and the $u$ component from 0 to 0.03).
 
+Since we are visualizing norms of (i.e. integrals over) absolute error terms, it is difficult to tell wich results are ``good'' and ``bad''. But we can see which results are better than others, and -- of course -- generally smaller values are better then big ones. That is, we can compare two errors and determine the better of both, but -- due to the nature of the integral -- we can not tell \emph{by how much} one is better than the other.
+
 \section{Distribution of support points according to Gaussian quadrature}
 \label{sec:results}
 
@@ -1514,19 +1519,24 @@ When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized 
 \section{Conclusions}
 \label{sec:conslusions}
 
-We have seen that the height error is zero in the scenarios under consideration. Moreover, the error in momentum shows quite a non-predictable behaviour.
+We have seen that the height error is zero in the scenarios under consideration, which we derived in section \ref{sec:height-error-p2}. Moreover, the error in momentum shows quite a non-predictable behaviour.
 %This was expected, since the momentum error is a rational function -- and thus not easy to imagine.
-It can vary strongly, both in shape and in scale, when adjusting the height values, while the momentum values have a minor impact only.
+It can vary strongly, both in shape and in scale. When adjusting the height values, it appears to be parabola-shaped, while the momentum values have a minor impact only.
+
+We can (theoretically) make the error arbitrarily large by adjusting the height values such that they differ extremely. This, on the other hand, implies that the error is not bounded.
+
+Furthermore, we saw that it had no significant impact which height or momentum value was differing from the other ones. They all had similar impact, even if the shape was different.
 
 Moreover, we can clearly observe that the closer the height and momentum values of the support points are chosen, the smaller the error gets.
 This is good for any practical application, since that is usually the case.
 The very idea is to make triangles small enough, to be restricted to a very specific region of the domain.
 The smaller the triangle, the more unlikely it is, that the height values differ strongly.
+In practice, it is more likely that the relative height difference between points is rather small in comparison. Similarly, the momentum within the triangle does not vary much, because one triangle represents one location within the domain, which is unlikely to move in different directions.
 
 However, trying to determine an exact formula for the deviation is impractical due to the amount of variables that all interact with each other, and may even be impossible.
 
 Additionally, we saw that singularities do not play a significant role in our computations since they only occur for unrealistic scenarios.
-This is highly advantageous since we then can be sure that the integral exists and quadrature methods give meaningful results.
+This is highly advantageous since we can be sure that the integral exists and quadrature methods give meaningful results.
 However, the singularities do exist, even without using any quadrature, as variables appear in the denominator of the momentum flux term.
 This may be a problem to consider for extreme situations, such as shock waves, which could potentially result in significant height value differences within one triangle.
 
@@ -1535,7 +1545,7 @@ This may be a problem to consider for extreme situations, such as shock waves, w
 \part{Stiffness matrix accuracy analysis for SWE}
 \label{part:stiffness-matrix}
 
-Recall that we introduced the \emph{stiffness matrix} in section \ref{sec:stiffness-matrix} and explained the basic steps of computing it. We will now in more detail examine how we approximate this matrix and how this approximation deviates from the exact computation. We will then -- similar to part \ref{part:polynomial-comparison} where we considered the Lax-Friedrichs-Flux -- compare the exact and approximate solution for the stiffness matrix.
+Recall that we introduced the \emph{stiffness matrix} in section \ref{sec:stiffness-matrix} and explained the basic steps of computing it. We will now in more detail examine how we approximate this matrix and how this approximation deviates from the exact computation. We will then -- similar to part \ref{part:polynomial-comparison} where we considered the Lax-Friedrichs flux -- compare the exact and approximate solution for the stiffness matrix.
 
 \emph{Remark:} To give a short overview of the following mathematical symbols, we refer readers to appendix \ref{sec:cheat-sheet-stiffn} on page \pageref{sec:cheat-sheet-stiffn}.
 
