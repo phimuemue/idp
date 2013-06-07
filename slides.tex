@@ -127,12 +127,12 @@
 
 %%% end of my own formatting
 
-\AtBeginPart{
-  \begin{frame}
-    \frametitle{Overview}
-    \tableofcontents[currentpart]
-  \end{frame}
-}
+% \AtBeginPart{
+%   \begin{frame}
+%     \frametitle{Overview}
+%     \tableofcontents[currentpart]
+%   \end{frame}
+% }
 
 % \documentclass{beamer}
 
@@ -149,6 +149,7 @@
 \usepackage{comment}
 
 \usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{arrows}
 \usetikzlibrary{decorations.pathmorphing}
 
 \newcommand{\todo}[1]{
@@ -167,7 +168,7 @@
 \renewcommand{\zoomfactor}{0.3}
 \renewcommand{\autozoomfactor}{0.075}
 
-\title[]{Approximation Analysis of the Lax-Friedrichs Flux in the Context of Shallow Water Equations}
+\title[]{Approximation Analysis of the Stiffness Term in the Context of Shallow Water Equations}
 
 \subtitle{Interdisciplinary project in Mathematics}
 \author[S. Bakrac, P. Müller]{Stjepan Bakrac \and Philipp Müller}
@@ -191,26 +192,25 @@
 
 \begin{document}
 
-\part{Short Introduction to Shallow Water Equations}
-\label{part:introduction}
+\frame{\titlepage}
 
 \section{Motivation}
-
-\frame{\titlepage}
 
 \begin{frame}
   \frametitle{Introduction}
   \begin{itemize}
-  \item Hyperbolic wave simulation
+  \item Wave simulation based upon hyperbolic equations
+  \item Discontinuous Galerkin method
   \item 
-    %(Adaptive) 
+    % (Adaptive) 
     Triangulation of the whole area
-  \item How can we calculate the flux between triangles?
-  \item Model continuous equations within these triangles
+    % \item How can we calculate the flux between triangles?
   \item Problem: Discontinuous due to spatial discretization
+  \item Last time:  Computations along the edges of triangles
+  \item Now: Computations within cells (numerical approximation)
   \end{itemize}
   \begin{center}
-    \includegraphics[scale=1.5]{sample-screenshot2.png}
+    \includegraphics[scale=1.25]{sample-screenshot2.png}
   \end{center}
 \end{frame}
 
@@ -218,6 +218,7 @@
 
 \begin{frame}
   \frametitle{Shallow Water Equations}
+  \note{homogenous form}
   \vspace{-.3cm}
   \begin{equation}
     \label{eq:shallow-water-basic}
@@ -282,18 +283,41 @@
 
   \begin{equation}
     \label{eq:shallow-water-dg}
-    \int_T \pd {\mathbf{q}}{t} \phi \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi \, ds -
-    \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
+    \int_T \pd {\mathbf{q}}{t} \phi \, dT 
+    - \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT 
+    + \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi \, ds 
+    = 0
   \end{equation}
 
-  \begin{itemize}
-  \item $T$ is a single triangle
-  \item Whole domain $\Omega$ is represented by finite set of disjunct triangles
-  \item Goal: Find solution for $\mathbf{q}$ $\forall \left(x,y\right) \in \Omega$
-  \end{itemize}
+  \begin{columns}
+    \begin{column}{.6\textwidth}
+      \begin{itemize}
+      \item $T$ is a single triangle
+      \item Whole domain $\Omega$ is represented by finite set of disjunct triangles
+      \item Goal: Find solution for $\mathbf{q}$ $\forall \left(x,y\right) \in \Omega$
+      \end{itemize}
+    \end{column}
+    \begin{column}{.4\textwidth}
+      \centering{}
+      \begin{tikzpicture}[scale=2]
+        \draw (0,0) -- (1,0) -- (0.6,0.3) -- (0,0);
+        \begin{scope}[yshift=.5cm]
+          \draw (0,0) -- (1,0) -- (0.6,0.3) -- (0,0);
+        \end{scope}
+        \draw (0,0) -- (0,0.5);
+        \draw (1,0) -- (1,0.5);
+        \draw (.6,0.3) -- (.6,.8);
+        \draw[>=latex, ->] (0.5,0.65) -- (1.2,1.) node[right]{\small$\begin{pmatrix}u_x\\u_y\end{pmatrix}$};
+        \draw[xshift=.1cm,decorate, decoration={brace, amplitude=3pt}]  
+        (1,0.5) -- node[right]{$h$} (1, 0);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
 
+  
 \end{frame}
+
+\newcommand{\qapprox}{\hat{\mathbf{q}}}
 
 \begin{frame}
   \frametitle{Discontinuous Galerkin -- Remarks}
@@ -307,7 +331,7 @@
   \item Sample values at $n$ support points
   \item A basis function $\phi_i$ for each support point $\rightarrow$ nodal basis
   \item Approximate
-    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$
+    $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y) =: \qapprox$
     \begin{itemize}
     \item Introduces error since flux function not linear 
     \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
@@ -317,9 +341,10 @@
 
   \begin{equation}
     \label{eq:shallow-water-phi-i}
-    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi_i \, ds -
-    \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
+    \int_T \pd {\qapprox}{t} \phi_i \, dT 
+    - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT 
+    + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds 
+    = 0
   \end{equation}
 \end{frame}
 
@@ -374,9 +399,10 @@
   \frametitle{Overview: Matrices}
   \vspace{-.3cm}
   \begin{equation*}
-    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi_i \, ds -
-    \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
+    \int_T \pd {\qapprox}{t} \phi_i \, dT 
+    - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
+    + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds
+    = 0
   \end{equation*}
   \begin{block}{\emph{Precomputable} matrices (independent of $x$ and $y$)}
     \begin{description}
@@ -397,30 +423,6 @@
         S^y = \int_T \phi_j \pd{\phi_i}{y}
       \end{equation}
     \end{description}
-  \end{block}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Using the Matrices}
-  We reformulate
-  \begin{equation*}
-    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
-    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi_i \, ds -
-    \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
-  \end{equation*}
-  to
-  \begin{equation*}
-    M \cdot \pd{\tilde{\mathbf{q}}}{t} +
-    \sum_{e \in E} \tilde{F}^e W^e -
-    \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
-      F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
-  \end{equation*}
-  \begin{block}{Explanations}
-    \begin{itemize}
-    \item $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ (remember: $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$)
-    \item $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$: $F^e$ is a function that handles communication between edges
-    \item $F^x$ resp. $F^y$: $x$ resp. $y$-components of $F$
-    \end{itemize}
   \end{block}
 \end{frame}
 
@@ -554,49 +556,52 @@
 %   \end{block}
 % \end{frame}
 
-\part{Stiffness matrix accuracy analysis}
-\label{part:stiffness-matrix-accuracy-analysis}
-
 \section{Big picture}
 \label{sec:stiffness-big-picture}
 
 \begin{frame}
   \frametitle{The big picture}
-  \begin{block}{Stiffness matrix accuracy analysis}
+  \begin{block}{Stiffness term accuracy analysis}
     \begin{itemize}
-    \item Stiffness matrix computation involves integrals
+    \item Stiffness term computation involves integrals
 
       \dots over fractional functions
+      % :
+      % \begin{equation*}
+      %   \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
+      % \end{equation*}
 
       $\rightarrow$ quite complicated and expensive to compute
     \item Solution: Use approximation
 
       $\rightarrow$ \alert<2>{Question: How good is this approximation?}
-    \item We will showcase error in $x$ momentums, $y$ momentums similar (symmetric etc.)
+    \item   Remark: Approximation exact for height 
+      
+      $\rightarrow$ only consider impulse error
     \end{itemize}
   \end{block}
 \end{frame}
 
-\section{Approximation vs. Exact Result}
+\section{Approximation vs. ``exact'' Result}
 \label{sec:stiffness-exact-approx}
 
 \begin{frame}
-  \frametitle{Stiffness matrix --- exact computation}
-  \begin{align*}
-    \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & =
+  \frametitle{Stiffness matrix --- ``exact'' computation}
+  \begin{eqnarray*}
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
     \int_T
     \begin{pmatrix}
       \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
     \end{pmatrix}
     \cdot \nabla \phi_i \, dT \\
-    & =
+    & \stackrel{\mathbf{q}\approx\qapprox}{=} &
     \int_T
     \begin{pmatrix}
       \frac{\left(\sum_{j=1}^n u_{x,j} \phi_j \right)^2}{\sum_{j=1}^n h_j \phi_j} + \frac{1}{2} g \left( \sum_{j=1}^n h_j \phi_j \right)^2 \\ \frac{\left( \sum_{j=1}^n u_{x,j} \phi_j \right) \left( \sum_{j=1}^n u_{y,j} \phi_j \right)}{\left( \sum_{j=1}^n h_{j} \phi_j \right)}
     \end{pmatrix}
     \cdot \nabla \phi_i \, dT \\
-    & =: \int_T \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
-  \end{align*}
+    & =: & \int_T \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
+  \end{eqnarray*}
   \begin{itemize}
   \item We integrate over $x$ and $y$ (variables of $\phi_j$)
 
@@ -606,17 +611,19 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Stiffness matrix --- approximation}
-  \begin{align}
-    \label{eq:third-integral-second-line-1-analysis-part}
-    \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & =
+  \frametitle{Stiffness matrix --- point-wise approximation}
+  \begin{eqnarray*}
+    %\label{eq:third-integral-second-line-1-analysis-part}
+    \hspace{-.2cm}
+    \setlength{\columnsep}{5cm}
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
     \int_T
     \begin{pmatrix}
       \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
     \end{pmatrix}
     \cdot \nabla \phi_i \, dT \\
-    \label{eq:third-integral-second-line-2-analysis-part}
-    & \approx
+    %\label{eq:third-integral-second-line-2-analysis-part}
+    & \approx &
     \int_T
     \begin{pmatrix}
       \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
@@ -627,17 +634,36 @@
       \pd{\phi_i}{x} \\
       \pd{\phi_i}{y}
     \end{pmatrix} dT \\
-    & =: \int_T \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
+    & =: & \int_T \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
     % \\
     % & =  \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
     % & {}  + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
-  \end{align}
+  \end{eqnarray*}
   \begin{itemize}
-  \item Equation \eqref{eq:third-integral-second-line-1-analysis-part} shows $x$ momentum
+  \item We show equations for $x$ momentum
 
     $\rightarrow$ analogous computation for $y$ momentum
-  \item Approximation introduces error $\rightarrow$ how big?
+  \item Point-wise approximation introduces error $\rightarrow$ how big?
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Comparison}
+  \begin{align*}
+    \int_T \widehat{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT = 
+    \int_T F_2 \left( \sum_{j=1}^n \mathbf{q}_j \cdot \phi_j \right) \cdot \nabla \phi_i\, dT
+  \end{align*}
+  
+  \begin{itemize}
+  \item Too expensive 
+
+    $\rightarrow$ Use point-wise approximation:
+  \end{itemize}
+  \begin{align*}
+    \int_T \overline{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT = 
+    \int_T \left( \sum_{j=1}^n F_2(\mathbf{q}_j) \cdot \phi_j \right) \cdot \nabla \phi_i\, dT
+  \end{align*}
+
 \end{frame}
 
 \begin{frame}
@@ -649,9 +675,10 @@
     SE_x^i = \int_T \left| \left( \widehat F_2 (\mathbf{q}) - \overline{F_2}(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT
   \end{equation}
 
+  Evaluation of error term:
   \begin{itemize}
   \item Exact integration too expensive
-  \item We approximate integral by two dimensional rectangle method
+  \item We approximate integral by two dimensional Riemann sums
   \end{itemize}
   \begin{center}
     \includegraphics[scale=0.15]{dreieck_weich.png}
@@ -662,14 +689,15 @@
 \begin{frame}
   \frametitle{Visualization}
   \begin{itemize}
+  \item Motivation: $3n=3\cdot(o+1)(o+2)/2$ variables for basis functions of order $o$ 
   \item $SE_x^i$ can be interpreted as a function of $h_1,\dots,h_n$, $u_{x,1},\dots,u_{x,n}$, $u_{y,1},\dots,u_{y,n}$
-  \item Visualization: Fix all but one variable, and plot!
+  \item Intuitive approach: Fix all but one variable, and plot!
   \end{itemize}
 
   \begin{exampleblock}{Example}
     \begin{columns}
       \begin{column}{.45\textwidth}
-    \includegraphics[scale=0.5]{{{ord2_varying_h1_default/y_10.0_10.0_10.0_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0f00}}}         
+    \includegraphics[scale=0.4]{{{ord2_varying_h1_default/y_10.0_10.0_10.0_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0f00}}}         
       \end{column}
       \begin{column}{.45\textwidth}
         \begin{eqnarray*}
@@ -694,9 +722,9 @@
 \begin{frame}
   \frametitle{Conclusion}
   \begin{itemize}
-  \item If all height values, all $x$ momentums and all $y$ momentums are the same, error is 0 (can be shown mathematically)
-  \item If heights, $x$ and $y$ momentums do not differ very strongly, the error is relatively small
-  \item Approximation used in practice --- works quite well
+  \item If all height values, all $x$ momentums and all $y$ momentums are the same, error is 0 (can be shown mathematically).
+  \item If heights, $x$ and $y$ momentums do not differ very strongly, the error is relatively small.
+  \item There was no observed difference in error terms for different water heights (i.e. only the height \emph{difference} was relevant).
   \end{itemize}
 \end{frame}
 
@@ -714,9 +742,8 @@
   % \end{block}
   \begin{block}{Related questions}
     \begin{itemize}
-    \item Other flux functions \todo{Beispiele?}
-    \item Different placement of support points
-    \item Bathymetry
+    \item Different placement of support points (we used placement according to Dunavant, other possibilities include Gauss-Lobatto)
+    \item Bathymetry (we used homogenous SWE, i.e. bathymetry 0)
     \item Exact quantitative results
     \end{itemize}
   \end{block}
@@ -897,6 +924,33 @@
     \item $p_k^e$: Support point with index $k$ on edge $e$
     \item $w_k$: corresponding quadrature weight
     \item $F^e$: Numerical flux function along that edge
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\section{Using the matrices}
+\label{sec:appendix-using-the-matrices}
+
+\begin{frame}
+  \frametitle{Using the Matrices}
+  We reformulate
+  \begin{equation*}
+    \int_T \pd {\mathbf{q}}{t} \phi_i \, dT +
+    \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi_i \, ds -
+    \int_T F(\mathbf{q}) \cdot \nabla \phi_i \, dT = 0
+  \end{equation*}
+  to
+  \begin{equation*}
+    M \cdot \pd{\tilde{\mathbf{q}}}{t} +
+    \sum_{e \in E} \tilde{F}^e W^e -
+    \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
+      F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
+  \end{equation*}
+  \begin{block}{Explanations}
+    \begin{itemize}
+    \item $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ (remember: $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)$)
+    \item $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$: $F^e$ is a function that handles communication between edges
+    \item $F^x$ resp. $F^y$: $x$ resp. $y$-components of $F$
     \end{itemize}
   \end{block}
 \end{frame}
@@ -1414,9 +1468,6 @@
   As you might know, Maple supports kind of ``dynamic plotting''. That is, you get a window containing one slider for each variable in a mathematical expression. You can then plot this expression
 
 \end{comment}
-
-\part{Comparing polynomials arising from exact and approximate solution of the Lax-Friedrichs Flux}
-\label{part:polynomialstuff}
 
 \section{A 1D problem}
 \label{sec:interpretation-as-1d-problem}
