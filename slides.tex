@@ -395,37 +395,6 @@
 %   \end{equation}
 % \end{frame}
 
-\begin{frame}
-  \frametitle{Overview: Matrices}
-  \vspace{-.3cm}
-  \begin{equation*}
-    \int_T \pd {\qapprox}{t} \phi_i \, dT 
-    - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
-    + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds
-    = 0
-  \end{equation*}
-  \begin{block}{\emph{Precomputable} matrices (independent of $x$ and $y$)}
-    \begin{description}
-    \item[Mass matrix]
-      \begin{equation}
-        \label{eq:mass-matrix-overview}
-        M = \int_T \phi_i \phi_j \ dT
-      \end{equation}
-    \item[Flux matrices] (one for each edge $e$) %$\forall e \in E$:
-      \begin{equation}
-        \label{eq:edge-matrices}
-        W^e = \phi_i\left(p_k^e\right) \cdot w_k
-      \end{equation}
-    \item[Stiffness matrices]
-      \begin{equation}
-        \label{eq:stiffness-matrix-overview}
-        S^x = \int_T \phi_j \pd{\phi_i}{x} \quad
-        S^y = \int_T \phi_j \pd{\phi_i}{y}
-      \end{equation}
-    \end{description}
-  \end{block}
-\end{frame}
-
 % \begin{frame}
 %   \frametitle{Rewriting Equations}
 %   Remember:
@@ -606,6 +575,8 @@
   \item We integrate over $x$ and $y$ (variables of $\phi_j$)
 
     $\rightarrow$ fractional function since $\phi_j$ occur in denominators
+    
+    $\rightarrow$ too expensive, not feasible
   \item Solution: Use point-wise approximation (see next slide)
   \end{itemize}
 \end{frame}
@@ -648,14 +619,46 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{Overview: Matrices}
+  \vspace{-.3cm}
+  \begin{equation*}
+    \int_T \pd {\qapprox}{t} \phi_i \, dT 
+    - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
+    + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds
+    = 0
+  \end{equation*}
+  \begin{block}{\emph{Precomputable} matrices (independent of $x$ and $y$)}
+    \begin{itemize}
+    \item Mass matrix
+      % \begin{equation}
+      %   \label{eq:mass-matrix-overview}
+      %   M = \int_T \phi_i \phi_j \ dT
+      % \end{equation}
+    \item Flux matrices (one for each edge $e$): last time %$\forall e \in E$:
+      % \begin{equation}
+      %   \label{eq:edge-matrices}
+      %   W^e = \phi_i\left(p_k^e\right) \cdot w_k
+      % \end{equation}
+    \item Stiffness matrices
+      \begin{equation}
+        \label{eq:stiffness-matrix-overview}
+        S^x = \int_T \phi_j \pd{\phi_i}{x} \quad
+        S^y = \int_T \phi_j \pd{\phi_i}{y}
+      \end{equation}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
   \frametitle{Comparison}
+  Exact analytic solution:
   \begin{align*}
     \int_T \widehat{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT = 
     \int_T F_2 \left( \sum_{j=1}^n \mathbf{q}_j \cdot \phi_j \right) \cdot \nabla \phi_i\, dT
   \end{align*}
   
   \begin{itemize}
-  \item Too expensive 
+  \item Too expensive / not feasible
 
     $\rightarrow$ Use point-wise approximation:
   \end{itemize}
@@ -663,6 +666,25 @@
     \int_T \overline{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT = 
     \int_T \left( \sum_{j=1}^n F_2(\mathbf{q}_j) \cdot \phi_j \right) \cdot \nabla \phi_i\, dT
   \end{align*}
+
+  \begin{eqnarray*}
+    \mathbf{q} =
+    \begin{pmatrix}
+      h \\ u_x \\ u_y
+    \end{pmatrix}, \quad F(\mathbf{q}) =
+    {
+      \renewcommand{\arraystretch}{1.2}
+      \begin{pmatrix}
+        \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
+        \frac{1}{2} g h^2 e_y
+      \end{pmatrix},\quad \text{ where } 
+      \mathbf{u}=
+      \begin{pmatrix}
+        u_x \\ u_y
+      \end{pmatrix}
+    }
+  \end{eqnarray*}
+
 
 \end{frame}
 
@@ -678,6 +700,9 @@
   Evaluation of error term:
   \begin{itemize}
   \item Exact integration too expensive
+  \item Maple's interactive functionality too restricted 
+    
+    $\rightarrow$ Own tool
   \item We approximate integral by two dimensional Riemann sums
   \end{itemize}
   \begin{center}
@@ -720,7 +745,7 @@
 \label{sec:stiffness-conclusion}
 
 \begin{frame}
-  \frametitle{Conclusion}
+  \frametitle{Results}
   \begin{itemize}
   \item If all height values, all $x$ momentums and all $y$ momentums are the same, error is 0 (can be shown mathematically).
   \item If heights, $x$ and $y$ momentums do not differ very strongly, the error is relatively small.
@@ -744,7 +769,7 @@
     \begin{itemize}
     \item Different placement of support points (we used placement according to Dunavant, other possibilities include Gauss-Lobatto)
     \item Bathymetry (we used homogenous SWE, i.e. bathymetry 0)
-    \item Exact quantitative results
+    \item Other norms
     \end{itemize}
   \end{block}
 \end{frame}
