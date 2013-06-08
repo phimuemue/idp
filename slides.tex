@@ -265,6 +265,15 @@
   % \begin{pmatrix}
   %   a \\ b
   % \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
+  \begin{center}
+    \begin{tikzpicture}
+      \draw[decorate, decoration={snake, amplitude=.25cm, segment length=.75cm}] (0,0) -- (2,0);
+      \draw[decorate, decoration={brace}] (1.8, -1) --node[left]{$h$} (1.8, .2);
+      \draw[>=latex, ->] (1.8,.2) -- (2.2, .2) node[right]{$\mathbf{u}$};      
+      \draw (0, -1) -- (2, -1);
+    \end{tikzpicture}
+  \end{center}
+
 \end{frame}
 
 \section{Discontinuous Galerkin}
