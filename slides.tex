@@ -757,23 +757,36 @@
 
 \begin{frame}[allowframebreaks]
   \frametitle{Results}
+  \setlength{\tabcolsep}{0pt}
   \begin{itemize}
   \item If all height values, all $x$ momentums and all $y$ momentums are the same, error is 0 (can be shown mathematically).
-    \framebreak
-  \item If heights, $x$ and $y$ momentums do not differ very strongly, the error is relatively small.
-    \begin{center}
-      \includegraphics[scale=\zoomfactor]{{{slides_difference_0/y_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}}
-      \includegraphics[scale=\zoomfactor]{{{slides_difference_1/y_12.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}}
-      \includegraphics[scale=\zoomfactor]{{{slides_difference_2/y_12.0_8.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}}
-    \end{center}
-    \framebreak
-  \item There was no observed difference in error terms for different water heights (i.e. only the height \emph{difference} was relevant).
-    \begin{center}
-      \includegraphics[scale=\zoomfactor]{{{slides_hrange_10/y_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}}
-      \includegraphics[scale=\zoomfactor]{{{slides_hrange_100/y_100.0_100.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}}
-      \includegraphics[scale=\zoomfactor]{{{slides_hrange_1000/y_1000.0_1000.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}}
-    \end{center}
   \end{itemize}
+  \framebreak
+  \begin{itemize}
+  \item If heights, $x$ and $y$ momentums do not differ very strongly, the error is relatively small.
+  \item Error minimum (if one height value is varying) often at average value of the remaining height values.
+  \end{itemize}
+  \begin{center}
+    \begin{tabular}{ccc}
+      \includegraphics[scale=\zoomfactor]{{{slides_difference_0/y_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}} &
+      \includegraphics[scale=\zoomfactor]{{{slides_difference_1/y_12.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}} &
+      \includegraphics[scale=\zoomfactor]{{{slides_difference_2/y_12.0_8.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}} \\
+      $h_2=h_3=10$ & $h_2=12, h_3=10$ & $h_2=12, h_3=8$
+    \end{tabular}
+  \end{center}
+  \framebreak
+  \begin{itemize}
+  \item There was no observed difference in error terms for different water heights (i.e. only the height \emph{difference} was relevant).
+  \end{itemize}
+  \begin{center}
+    \begin{tabular}{ccc}
+    \includegraphics[scale=\zoomfactor]{{{slides_hrange_10/y_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}} &
+    \includegraphics[scale=\zoomfactor]{{{slides_hrange_100/y_100.0_100.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}} &
+    \includegraphics[scale=\zoomfactor]{{{slides_hrange_1000/y_1000.0_1000.0_0.0_0.0_0.0_0.0_0.0_0.0f01}}} \\
+    $h_2=h_3=10$ & $h_2=h_3=100$ & $h_2=h_3=1000$
+  \end{tabular}
+
+  \end{center}
 \end{frame}
 
 \begin{frame}
