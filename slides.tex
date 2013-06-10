@@ -213,7 +213,7 @@
 
 \begin{frame}
   \frametitle{Shallow Water Equations}
-  \note{homogenous form}
+  \note{homogeneous form}
   \vspace{-.3cm}
   \begin{equation}
     \label{eq:shallow-water-basic}
@@ -265,7 +265,7 @@
     \int_T \pd {\mathbf{q}}{t} \phi \, dT + \int_T \nabla \cdot F(\mathbf{q}) \phi \, dT = 0
   \end{equation}
 
-  Transform using the gaussian divergence theorem:
+  Transform using the Gaussian divergence theorem:
 
   \begin{equation}
     \label{eq:shallow-water-dg}
@@ -583,7 +583,7 @@
   \begin{block}{Related questions}
     \begin{itemize}
     \item Different placement of support points (we used placement according to Dunavant, other possibilities include Gauss-Lobatto)
-    \item Bathymetry (we used homogenous SWE, i.e. bathymetry 0)
+    \item Bathymetry (we used homogeneous SWE, i.e. bathymetry 0)
     \item Other norms
     \end{itemize}
   \end{block}
@@ -781,7 +781,7 @@
     x(t_0) &=& x_0
   \end{eqnarray}
 
-  Timesteps with distance $\tau$: $t_{k+1} = t_k + \tau$.
+  Time steps with distance $\tau$: $t_{k+1} = t_k + \tau$.
 
   \begin{equation}
     \label{eq:euler-step-solution}
@@ -800,7 +800,7 @@
     I := \int\limits_{x=0}^1 | N(x) - N'(x) |\ dx
   \end{equation*}
   \begin{itemize}
-  \item Complicated analycital solution (absolute value/rational function)
+  \item Complicated analytic solution (absolute value/rational function)
   \item Possibility 1: Approximate $I$ by $\int\limits_{x=0}^1 N(x) - N'(x) \  dx$. Bad!
   \item Fact: $N(x_i) = N'(x_i)$
     $\rightarrow$ $N(x_i) - N'(x_i) = 0$
@@ -824,7 +824,7 @@
       \texttt{evalf(Int(abs(N(x)-N'(x)),x=0..1))}
     \end{center}
     works, but takes much too long for general parameters!
-  \item Old-school: Numerical integration using the ``Streifenmethode'' using $s$ stripes:
+  \item Old-school: Numerical integration using the ``Riemann sum'' using $s$ stripes:
     % \todo{Wie heißt das auf Englisch?} \todo{Im Skript diese Methode nachreichen!}
     % \begin{equation*}
     %   \int\limits_{x=0}^1 N(x)-N'(x)\,dx \approx \sum_{i=0}^{s-1} \left| N\left(\frac{1}{2s} + \frac{i}{s}\right) - N'\left(\frac{1}{2s} + \frac{i}{s}\right) \right| \cdot \frac{1}{s}
@@ -946,7 +946,7 @@
   \subsection{Setting all support points to the same value}
   \label{sec:setting-all-support-points-to-the-same-value}
 
-  First we set all support points to one single value ensuring homogenous height and impulse. Then, we tackle each point individually and let it's values range over a certain domain.
+  First we set all support points to one single value ensuring homogeneous height and impulse. Then, we tackle each point individually and let it's values range over a certain domain.
 
   \begin{figure}[ht]
     \centering
@@ -1021,7 +1021,7 @@
   We start off by using three points per edge, setting each point to $
   \begin{pmatrix}
     10 \\ 0
-  \end{pmatrix}$ except $p_1$ wich is set to $
+  \end{pmatrix}$ except $p_1$ which is set to $
   \begin{pmatrix}
     9 \\ 0
   \end{pmatrix}
@@ -1100,7 +1100,7 @@
     \label{fig:three-points-u1-}
   \end{figure}
 
-  Again, the plots for $p_2$, $p_3$ and $P_6$ differ in structure extremely from those depicted in figure \ref{fig:three-points-equal}. In this context it would be interesting to know what happens with the plot of the height of $p_3$ if the impulse grows bigger than 1, since it looks like the error goes down at the left end. We created a plot that shows the behaviour of the error when $p_3$ ranges. It is depicted in figure \ref{fig:examining-p3-three-points}. As you can see, it was just an ``optical illustion'' due to the particular ranges we chose for the $h$- and $u$- component. The error grows towards the borders.
+  Again, the plots for $p_2$, $p_3$ and $P_6$ differ in structure extremely from those depicted in figure \ref{fig:three-points-equal}. In this context it would be interesting to know what happens with the plot of the height of $p_3$ if the impulse grows bigger than 1, since it looks like the error goes down at the left end. We created a plot that shows the behavior of the error when $p_3$ ranges. It is depicted in figure \ref{fig:examining-p3-three-points}. As you can see, it was just an ``optical illusion'' due to the particular ranges we chose for the $h$- and $u$- component. The error grows towards the borders.
 
   \begin{figure}[ht]
     \centering
