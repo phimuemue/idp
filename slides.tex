@@ -168,7 +168,7 @@
 \renewcommand{\zoomfactor}{0.3}
 \renewcommand{\autozoomfactor}{0.075}
 
-\title[]{Approximation Analysis of the Stiffness Term in the Context of Shallow Water Equations}
+\title[]{Evaluation of Numerical Approximations of the Stiffness Term for Shallow Water Equations}
 
 \subtitle{Interdisciplinary project in Mathematics}
 \author[S. Bakrac, P. Müller]{Stjepan Bakrac \and Philipp Müller}
@@ -201,9 +201,9 @@
   \begin{itemize}
   \item Wave simulation based on hyperbolic equations
   \item Discontinuous Galerkin method
-  \item Triangulation of the whole area
+  \item Triangulation of the domain
   \item Problem: Discontinuous due to spatial discretization
-  \item Last time:  Computations along the edges of triangles
+  \item Last time: Computations along the edges of triangles
   \item Now: Computations within cells (numerical approximation)
   \end{itemize}
   \begin{center}
@@ -307,11 +307,6 @@
 
 \begin{frame}
   \frametitle{Discontinuous Galerkin -- Remarks}
-  % \begin{itemize}
-  % \item Analytical solution for realistic scenarios still not found
-
-  %   $\rightarrow$ numerical approximation
-  % \end{itemize}
   Nodal basis functions:
   \begin{itemize}
   \item Sample values at $n$ support points
@@ -334,183 +329,6 @@
   \end{equation}
 \end{frame}
 
-% \begin{frame}
-%   \frametitle{Numerical approximation for $\mathbf{q}$}
-%   \begin{equation*}
-%     \mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y)
-%     \quad \text{ resp. } \quad
-%     \begin{pmatrix}
-%       h \\ u_x \\ u_y
-%     \end{pmatrix} \approx
-%     \sum_{i=1}^n
-%     \begin{pmatrix}
-%       h_i \\ u_{x,i} \\ u_{y,i}
-%     \end{pmatrix}
-%     \phi_i(x,y)
-%   \end{equation*}
-%   \begin{itemize}
-%   \item Our basis functions: polynomials of a certain degree
-%     \begin{itemize}
-%     \item $\frac{(d+1)(d+2)}{2}$ support points needed for polynomials of degree $d$
-%     \item $\phi_i (x_j,y_j) = \delta_{i,j}$ ($(x_j,y_j)$ coordinates of $i$-th support point)
-%     \end{itemize}
-%   \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
-%   \end{itemize}
-% \end{frame}
-
-\section{Matrices}
-
-% \begin{frame}
-%   \frametitle{Simplifying Integrals}
-%   \todo{Sollen wir diese Folie vielleicht rauslassen?}
-%   \begin{equation*}
-%     \label{sec:first-integral}
-%     \int_T \pd {\mathbf{q}}{t} \phi_i \, dT \approx \sum_{j=1}^n \underbrace{\int_T \phi_i \phi_j \, dT}_{m_{ij}} \pd{\mathbf{q}_j}{t}
-%   \end{equation*}
-
-%   \begin{eqnarray*}
-%     \label{sec:third-integral}
-%     \int_T F_k(\mathbf{q}) \cdot \nabla \phi_i \, dT \approx &
-%     \sum_{j=1}^n F_k^x\left(\mathbf{q}_j\right) \underbrace{\int_T \phi_j \pd{\phi_i}{x} \, dT}_{s^x_{ij}} \\
-%     {} & + \sum_{j=1}^n F_k^y\left(\mathbf{q}_j\right) \underbrace{\int_T \phi_j \pd{\phi_i}{y} \, dT}_{s^y_{ij}}
-%   \end{eqnarray*}
-
-%   \begin{equation}
-%     \label{eq:second-integral}
-%     \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \, \phi_i \, ds = \sum_{e \in E} \sum_{k=0}^{m} F^e(p_k^e) \underbrace{\phi_i(p_k^e) \cdot w_k}_{w_{ik}^e}
-%   \end{equation}
-% \end{frame}
-
-% \begin{frame}
-%   \frametitle{Rewriting Equations}
-%   Remember:
-%   \begin{equation*}
-%     \int_T \pd {\mathbf{q}}{t} \phi \, dT +
-%     \int_{\partial T} F\left(\mathbf{q}\right) \cdot n \phi \, ds -
-%     \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT = 0
-%   \end{equation*}
-%   % Using vectors $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$, we can rewrite it using our matrix definitions:
-%   $\rightarrow$ Reformulate to:
-%   \begin{equation*}
-%     M \cdot \pd{\tilde{\mathbf{q}}}{t} +
-%     \sum_{e \in E} \tilde{F}^e W^e -
-%     \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
-%       F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
-%   \end{equation*}
-%   \begin{block}{Explanations}
-%     \begin{itemize}
-%     \item $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$
-%     \item $\tilde{F}^e=(F^e(p_1^e),\dots,F^e(p_n^e))$
-%     \item $F^x$ resp. $F^y$: $x$ resp. $y$-components of $F$
-%     \end{itemize}
-%   \end{block}
-% \end{frame}
-
-% \begin{frame}
-%   \frametitle{Solving the Equation}
-%   \begin{equation*}
-%     M \cdot \pd{\tilde{\mathbf{q}}}{t} +
-%     \sum_{e \in E} \tilde{F}^e W^e -
-%     \left(F^x(\tilde{\mathbf{q}}) \cdot S^x +
-%       F^y(\tilde{\mathbf{q}}) \cdot S^y\right) = 0
-%   \end{equation*}
-%   Rearrange and left-multiply with $M^{-1}$, afterwards explicit Euler:
-%   \begin{equation*}
-%     \pd{\tilde{\mathbf{q}}}{t} =
-%     M^{-1} \cdot \left(
-%       F^x(\tilde{\mathbf{q}}) \cdot S^x +
-%       F^y(\tilde{\mathbf{q}}) \cdot S^y -
-%       \sum_{e \in E} \tilde{F}^e W^e\right
-%     )
-%   \end{equation*}
-%   \begin{equation*}
-%     \Rightarrow \quad
-%     \tilde{\mathbf{q}}_{k+1} =
-%     \tilde{\mathbf{q}}_{k} \,+ \,
-%     \tau \cdot M^{-1} \cdot \left(
-%       F^x(\tilde{\mathbf{q}}) \cdot S^x +
-%       F^y(\tilde{\mathbf{q}}) \cdot S^y -
-%       \sum_{e \in E} \tilde{F}^e W^e\right
-%     ),
-%   \end{equation*}
-%   where $\tilde{\mathbf{q}} = (\mathbf{q}_1,\dots,\mathbf{q}_n)$ and $\tilde{\mathbf{q}}_k$ is the value of $\tilde{\mathbf{q}}$ at time $k$.
-% \end{frame}
-
-% \section{Basis Functions}
-% \label{sec:support-points-and-basis-functions}
-
-% \begin{frame}
-%   \frametitle{Choice of Support Points}
-%   \begin{block}{Goal: Well-conditioned mass matrix $M$}
-%     \begin{itemize}
-%     \item Low degree of basis functions: Choose specific support
-%       points
-%     \item Higher degree: points derived by Dunavant\todo{Warum nochmal genau die?}
-%     \end{itemize}
-%   \end{block}
-
-%   \begin{figure}[ht]
-%     \centering
-%     \subfigure[Degree 0]{
-%       \begin{tikzpicture}[scale=1.5]
-%         \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-%         \draw[fill=blue] (0.333, 0.333) circle (0.02);
-%       \end{tikzpicture}
-%     }
-%     \subfigure[Degree 1]{
-%       \begin{tikzpicture}[scale=1.5]
-%         \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-%         \draw[fill=blue] (0.5, 0) circle (0.02);
-%         \draw[fill=blue] (0, 0.5) circle (0.02);
-%         \draw[fill=blue] (0.5, 0.5) circle (0.02);
-%       \end{tikzpicture}
-%     }
-%     \subfigure[Degree 2]{
-%       \begin{tikzpicture}[scale=1.5]
-%         \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-%         \draw[fill=blue] (0.5, 0) circle (0.02);
-%         \draw[fill=blue] (0, 0.5) circle (0.02);
-%         \draw[fill=blue] (0.5, 0.5) circle (0.02);
-%         \draw[fill=blue] (0, 0) circle (0.02);
-%         \draw[fill=blue] (1, 0) circle (0.02);
-%         \draw[fill=blue] (0, 1) circle (0.02);
-%       \end{tikzpicture}
-%     }
-%     \subfigure[Degree 3]{
-%       \begin{tikzpicture}[scale=1.5]
-%         \draw[opacity=1] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
-%         \draw[fill=blue] (0.501, 0.249) circle (0.02);
-%         \draw[fill=blue] (0.249, 0.249) circle (0.02);
-%         \draw[fill=blue] (0.249, 0.501) circle (0.02);
-%         \draw[fill=blue] (0.873, 0.063) circle (0.02);
-%         \draw[fill=blue] (0.063, 0.063) circle (0.02);
-%         \draw[fill=blue] (0.063, 0.873) circle (0.02);
-%         \draw[fill=blue] (0.053, 0.310) circle (0.02);
-%         \draw[fill=blue] (0.310, 0.636) circle (0.02);
-%         \draw[fill=blue] (0.636, 0.053) circle (0.02);
-%         \draw[fill=blue] (0.310, 0.053) circle (0.02);
-%       \end{tikzpicture}
-%     }
-%   \end{figure}
-% \end{frame}
-
-% \begin{frame}
-%   \frametitle{Choice of Basis Functions $\phi_i$}
-%   \begin{block}{Polynomial basis functions}
-%     \begin{itemize}
-%     \item Polynomial functions that span the space of all polynomials up to a certain degree
-%     \item Construct function $\phi_i$ so that
-%       $\forall i,j \in \{1, \dots, n\}$:
-%       \begin{equation*}
-%         \phi_i(p_j) = \delta_{ij}
-%       \end{equation*}
-%       with $\delta_{ij}$ being the Kronecker delta function.
-%     \item Polynomials of degree $d$ $\rightarrow$
-%       $\frac{(d+1)\cdot(d+2)}{2}$ nodal basis functions
-%     \end{itemize}
-%   \end{block}
-% \end{frame}
-
 \section{Big picture}
 \label{sec:stiffness-big-picture}
 
@@ -521,12 +339,7 @@
     \item Stiffness term computation involves integrals
 
       \dots over fractional functions
-      % :
-      % \begin{equation*}
-      %   \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
-      % \end{equation*}
-
-      $\rightarrow$ quite complicated and expensive to compute
+      $\rightarrow$ very complicated and expensive to compute
     \item Solution: Use approximation
 
       $\rightarrow$ \alert<2>{Question: How good is this approximation?}
@@ -537,7 +350,7 @@
   \end{block}
 \end{frame}
 
-\section{Approximation vs. ``exact'' result}
+\section{Approximate vs. ``exact'' result}
 \label{sec:stiffness-exact-approx}
 
 \begin{frame}
@@ -563,14 +376,13 @@
     $\rightarrow$ fractional function since $\phi_j$ occur in denominators
 
     $\rightarrow$ too expensive, not feasible
-  \item Solution: Use point-wise approximation (see next slide)
+  \item Solution: Approximate function over the sum
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Stiffness matrix --- point-wise approximation}
+  \frametitle{Stiffness matrix --- sum approximation}
   \begin{eqnarray*}
-    %\label{eq:third-integral-second-line-1-analysis-part}
     \hspace{-.2cm}
     \setlength{\columnsep}{5cm}
     \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
@@ -579,7 +391,6 @@
       \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
     \end{pmatrix}
     \cdot \nabla \phi_i \, dT \\
-    %\label{eq:third-integral-second-line-2-analysis-part}
     & \approx &
     \int_T
     \begin{pmatrix}
@@ -588,15 +399,12 @@
     \end{pmatrix}
     \cdot \nabla \phi_i dT \\
     & =: & \int_T \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
-    % \\
-    % & =  \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
-    % & {}  + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
   \end{eqnarray*}
   \begin{itemize}
   \item We show equations for $x$ momentum
 
     $\rightarrow$ analogous computation for $y$ momentum
-  \item Point-wise approximation introduces error $\rightarrow$ how big?
+  \item Sum approximation introduces error $\rightarrow$ how big?
   \end{itemize}
 \end{frame}
 
@@ -642,7 +450,7 @@
   \begin{itemize}
   \item Too expensive / not feasible
 
-    $\rightarrow$ Use point-wise approximation:
+    $\rightarrow$ Use sum approximation:
   \end{itemize}
   \begin{align*}
     \int_T \overline{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT =
@@ -843,31 +651,6 @@
   \end{itemize}
 \end{frame}
 
-% \begin{frame}
-%   \frametitle{Intermezzo: Point-wise Approximation}
-%   \begin{itemize}
-%   \item   $\mathbf{q}\approx \sum_{i=1}^n \mathbf{q}_i \phi_i$, i.e.\,$
-%     \begin{pmatrix}
-%       h \\ u_x \\ u_y
-%     \end{pmatrix} = \sum_{i=1}^n
-%     \begin{pmatrix}
-%       h_i \\ u_{x,i} \\ u_{y,i}
-%     \end{pmatrix}
-%     \phi_i$
-%   \item   We would like to compute function value
-%     \begin{equation*}
-%       f(\mathbf{q}) \approx
-%       f\left(\sum_{i=1}^n h_i \phi_i,
-%         \sum_{i=1}^n u_{x,i} \phi_i,
-%         \sum_{i=1}^n u_{y,i} \phi_i\right),
-%     \end{equation*}
-%   \item   Too complex $\rightarrow$ compute the following:
-%     \begin{equation*}
-%       \sum_{i=1}^n f(h_i,u_{x,i},u_{y,i}) \phi_i.
-%     \end{equation*}
-%   \end{itemize}
-% \end{frame}
-%
 \begin{frame}
   \frametitle{Third Integral: Stiffness matrix -- $u_x$ component}
   \begin{eqnarray*}
@@ -897,7 +680,7 @@
     & {} & + \nonumber \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT
   \end{eqnarray*}
   \begin{itemize}
-  \item Point-wise approximation in the second line
+  \item Sum approximation in the second line
   \item Same stiffness matrices $S^x$ and $S^y$ as before $\rightarrow$ interpret as matrix multiplication
   \end{itemize}
 \end{frame}
