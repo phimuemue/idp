@@ -1127,12 +1127,6 @@ This is why we consider three other possibilities for computing the error term:
   \end{center}
   we get a good result.
 
-  %We experimented with random polynomials and tried a few of them out, comparing the \texttt{evalf}-result to the exact integration. We experienced that the \texttt{evalf}-result was always equal to the actual result within an error of 0.001.
-
-  % \todo{Kleine Studien, noch dazu mit Zufallswerten sind gut um die eigene Erkenntnis zu foerdern, ich wuerde diese aber in keine Ausarbeitung schreiben. Gleiches gilt fuer folgenden Absatz.}
-
-  % However, this approach works only if \emph{all} variables are \emph{numbers}, i.e.\,if all points are instantiated to concrete values. If we want to plot a graph for a range of values for one or more of the points' components, at least one variable will not be a number, but will range within a certain interval. Thus, the \texttt{evalf}-approach has its drawbacks as well.
-
   The downside of this method is that is computationally infeasible for a detailed analysis of higher order due to the increasingly complex formulas.
 \item[Exact integration between certain points] $N\left(x\right)$ and $N^\prime\left(x\right)$ intersect when supplied the support points, i.e.\,
   \begin{equation*}
@@ -1592,7 +1586,7 @@ While deriving the equations necessary for our computations, we introduced sever
 
 Remember that we originally approximated the following (see section \ref{sec:matrix-extraction} for further reference):  $(h, u_x, u_y)^T \approx \sum_{i=1}^n (h_i, u_{x,i}, u_{y,i}) \cdot \phi_i(x,y)$. This discretization error is a necessity, since we cannot compute the values for every point on a continuous domain. While we approximate in the above equation as well, the transition from (\ref{eq:third-integral-second-line-1-analysis-part}) to (\ref{eq:third-integral-second-line-2-analysis-part}) uses an approximation of the function by extracting the sum from a product and division. This helps immensely simplify the computations, which is especially desirable at higher order calculations.
 
-As the point-wise sampling approximation is not a choice and has to be featured, we will take it as a given and whenever we refer to the comparison of the "exact" versus the "approximate" solution, one has to remember that even the exact solution uses an approximation. This is merely to simplify the naming designation between the two values we are trying to compare.
+As the point-wise sampling approximation $\mathbf{q} = \sum_{j=0}^{n} \mathbf{q}_j \phi$ is not a choice and has to be employed, we will take it as a given and whenever we use the term ``exact'' solution, we mean exact except for the point-wise approximation. The approximation of interest to us is the sum approximation used to extract the sum from within the function call, and this will be subject of analysis in this part.
 
 The equation for the $u_y$ component is analogous:
 
@@ -1621,17 +1615,12 @@ We will introduce this notation to refer to the approximated integrand:
 
 \begin{equation}
   \label{eq:point-wise-approx-result-second-line}
-  \overline{F}_2(\mathbf{q}) % \cdot \nabla \phi
+  \overline{F}_2(\mathbf{q})
   =
   \begin{pmatrix}
     \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
     \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j
   \end{pmatrix}
-  % \cdot
-  % \begin{pmatrix}
-  %   \pd{\phi_i}{x} \\
-  %   \pd{\phi_i}{y}
-  % \end{pmatrix}
 \end{equation}
 
 \begin{equation}
@@ -1648,7 +1637,7 @@ We will introduce this notation to refer to the approximated integrand:
   \end{pmatrix}
 \end{equation}
 
-As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n \phi_j \cdot h_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and focus on analyzing its validity.
+As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rational function containing a product of sums. This approximation implies some loss of precision. We will now examine the difference between the exact\footnote{Exact in the sense that we substitute $h$ by $\sum_{j=1}^n h_j \phi_j$ and substitute $u_x$ and $u_y$ accordingly.} and our approximate solution and focus on analyzing its validity.
 
 We do so by exemplary examining the second component and compute its exact value (more precisely, we use our original approximation introduced in section \ref{sec:matrix-extraction}):
 
@@ -1670,24 +1659,7 @@ We do so by exemplary examining the second component and compute its exact value
   & & \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
-% \begin{eqnarray*}
-%   \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
-%   \int_T
-%   \begin{pmatrix}
-%     \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
-%   \end{pmatrix}
-%   \cdot \nabla \phi_i \, dT \\
-%   & \approx & \int_T
-%   \begin{pmatrix}
-%     \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \\ \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2
-%   \end{pmatrix}
-%   \cdot \nabla \phi_i \, dT = \\
-%   & = &
-%   \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{x} + \\
-%   & & \left( \frac{(\sum_{j=1}^n \phi_j u_{y,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{y}
-% \end{eqnarray*}
-
-Let us shortly contrast the two different approximation methods. Equations \eqref{eq:contrast-exact-solution} and \eqref{eq:contrast-approx-solution} show the exact and the approximative solution, respectively.
+Let us shortly contrast the two different approximation methods. Equations \eqref{eq:contrast-exact-solution} and \eqref{eq:contrast-approx-solution} show the exact and the approximate solution, respectively.
 
 \begin{eqnarray}
   \label{eq:contrast-approx-solution}
@@ -1727,9 +1699,37 @@ Analogously, we define this for the third component:
   \left( \frac{\widehat{u}_y^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{y}
 \end{equation}
 
-\subsection{Comparison of exact and approximative solution}
+\subsection{Notes on the height error}
+\label{sec:stiffness-height-error}
 
-We have now derived the exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L^1$ norm, as we did in the previous part. We chose the $L^1$ norm since it is a widely-used norm for comparing two functions with each other. Moreover, it can be naturally extended from the one dimensional case to the two dimensional case. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each component, hence we get these two terms called $SE_x$ and $SE_y$ respectively:
+We presented sample terms for the second and third components ($u_x$ and $u_y$ respectively), and these are indeed the only terms we will need to take into account for the analysis. The same approximation is applied to the height component, which looks like this:
+
+\begin{eqnarray*}
+  F_1(\mathbf{q}) =
+  \mathbf{u} =
+  \begin{pmatrix}
+    u_x \\
+    u_y
+  \end{pmatrix}
+\end{eqnarray*}
+
+In the previous section we discussed that the problem with approximating $F_2(\mathbf{q})$ and $F_3(\mathbf{q})$ were the multiplications and divisions of complicated sum terms. However, $F_1(\mathbf{q})$ now is a linear term as it only depends on the momentum for both the $x$ and $y$ component. Since there is no product or quotient to extract the sum from, it means that the approximation results in the same term again:
+
+\begin{eqnarray}
+  \label{eq:stiffness-height-error}
+  \overline{F}_1(\mathbf{q}) =
+  \begin{pmatrix}
+    \sum_{j=0}^{n} u_{x,j} \phi_j \\
+    \sum_{j=0}^{n} u_{y,j} \phi_j
+  \end{pmatrix} =
+  \widehat{F}_1(\mathbf{q})
+\end{eqnarray}
+
+This is a very helpful result, as it means that the method is perfectly accurate for one of the three components (disregarding the ubiquitous point-wise approximation). For this reason we will ignore the height error in our analysis and not consider it for future calculations. Instead, we will only look at the error in the second and third components and call them $SE_x$ and $SE_y$ respectively, as those are the $u_x$ and $u_y$ components of the shallow water equations. Note that for future reference that these will occasionally be called just $x$ and $y$, as it is unambiguous that these refer to the respective momentum components.
+
+\subsection{Comparison of exact and approximate solution}
+
+We have now derived the exact solution ($\widehat{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\widehat{F}_3(\mathbf{q}) \cdot \nabla \phi$) and one that uses an approximation for the rational fraction ($\overline{F}_2(\mathbf{q}) \cdot \nabla \phi$ and $\overline{F}_3(\mathbf{q}) \cdot \nabla \phi$ respectively). We now compare these two with the $L^1$ norm, as we did in the previous part. We chose the $L^1$ norm since it is a widely-used norm for comparing two functions with each other. Moreover, it can be naturally extended from the one dimensional case to the two dimensional case. For that we take the absolute value of the difference, and then integrate over the domain. We do this once for each momentum component, hence we get the two terms $SE_x$ and $SE_y$ respectively:
 
 \begin{eqnarray*}
   SE_x := \int_T \left| \overline{F}_2(\mathbf{q}) \cdot \nabla \phi - \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi \right| \, dT\\
@@ -2509,19 +2509,26 @@ We will now come back to only modifying the $x$ momentums. We will set them all 
 
 \input{ord2_varying_ux1_ux2-ux6_1/tex.tex}
 
-%\clearpage{}
-
 \section{Conclusion}
 \label{sec:stiffness-analysis-conclusion}
 
 \subsection{Minimizing the error}
 \label{sec:stiffness-analysis-concl-error-0}
 
-If we have a situation where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components. For the respective computations, refer to the previous sections.
+Of the three components, only the second and third ($u_x$ and $u_y$) were relevant to us, as the height error itself is always zero for this approximation, as explained in section \ref{sec:stiffness-height-error}.
+Furthermore, there was strong symmetry observed for error behavior in the $u_x$ and $u_y$ components.
+This means that the error can be assumed the same for both components, although the situations may be mirrored depending on the order of basis functions, i.e.\,the error in $u_x$ component will also appear in the $u_y$ component, but possibly for a different basis function.
 
-The error can become zero for other combinations as well, but deriving a pattern is a non-trivial task and not generally useful, as it relies on a large number of parameters. Moreover it can become zero if certain basis functions have a zero derivative (as seen e.g.\,in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
+If we have a situation where all heights are the same, all $x$ momentums are the same and all $y$ momentums are the same, the error becomes 0 for both components.
+For the respective computations, refer to the previous sections.
 
-The general pattern, which is observable in every plot, is that the error is proportional to the overall deviation of the various components. The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error, except for a few detailed plots which differ in localized areas, but still exhibit the same overall shape. That speaks in favor of the approximation, because the values generally tend to be close together, even more so the smaller the chosen triangles are. However, this is still a point to consider when the simulation can contain extreme scenarios, such as shock waves, or if the chosen triangle size is not small enough due to concerns for efficiency.
+The error can become zero for other combinations as well, but deriving a pattern is a non-trivial task and not generally useful, as it relies on a large number of parameters.
+Moreover it can become zero if certain basis functions have a zero derivative (as seen e.g.\,in section \ref{sec:stiffness-analysis-standard-values-var-h1}).
+
+The general pattern, which is observable in every plot, is that the error is proportional to the overall deviation of the various components.
+The lower the deviation of the heights, $x$ momentums and $y$ momentums is the lower the resulting error, except for a few detailed plots which differ in localized areas, but still exhibit the same overall shape.
+That speaks in favor of the approximation, because the values generally tend to be close together, even more so the smaller the chosen triangles are.
+However, this is still a point to consider when the simulation can contain extreme scenarios, such as shock waves, or if the chosen triangle size is not small enough due to concerns for efficiency.
 
 \subsection{Higher orders}
 \label{sec:stiffness-analysis-conclusion-higher-order}

@@ -199,12 +199,9 @@
 \begin{frame}
   \frametitle{Introduction}
   \begin{itemize}
-  \item Wave simulation based upon hyperbolic equations
+  \item Wave simulation based on hyperbolic equations
   \item Discontinuous Galerkin method
-  \item 
-    % (Adaptive) 
-    Triangulation of the whole area
-    % \item How can we calculate the flux between triangles?
+  \item Triangulation of the whole area
   \item Problem: Discontinuous due to spatial discretization
   \item Last time:  Computations along the edges of triangles
   \item Now: Computations within cells (numerical approximation)
@@ -213,8 +210,6 @@
     \includegraphics[scale=1.25]{sample-screenshot2.png}
   \end{center}
 \end{frame}
-
-%\section{Shallow Water Equations}
 
 \begin{frame}
   \frametitle{Shallow Water Equations}
@@ -227,17 +222,6 @@
     \end{pmatrix}
   \end{equation}
 
-  % \begin{eqnarray*}
-  %   \mathbf{q} =
-  %   \begin{pmatrix}
-  %     h \\ h v_x \\ h v_y
-  %   \end{pmatrix} \quad \Rightarrow \quad F(\mathbf{q}) =
-  %   \begin{pmatrix}
-  %     h \mathbf{v} \\ h v_x \mathbf{v} + \frac{1}{2} g h^2 e_x \\ h
-  %     v_y \mathbf{v} + \frac{1}{2} g h^2 e_y
-  %   \end{pmatrix}
-  % \end{eqnarray*}
-
   \begin{eqnarray*}
     \mathbf{q} =
     \begin{pmatrix}
@@ -248,31 +232,21 @@
       \begin{pmatrix}
         \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
         \frac{1}{2} g h^2 e_y
-      \end{pmatrix},\quad \text{ where } 
+      \end{pmatrix},\quad \text{ where }
       \mathbf{u}=
       \begin{pmatrix}
         u_x \\ u_y
       \end{pmatrix}
     }
   \end{eqnarray*}
-  % ,
-  % $\mathbf{v} =
-  % \begin{pmatrix}
-  %   v_x \\ v_y
-  % \end{pmatrix}$
-  % and $\mathbf{u} = h\mathbf{v}$
-  % $\nabla \cdot
-  % \begin{pmatrix}
-  %   a \\ b
-  % \end{pmatrix} = \pd{a}{x} + \pd{b}{y}$
   \begin{center}
     \begin{tikzpicture}
       \draw[decorate, decoration={snake, amplitude=.25cm, segment length=.75cm}] (0,0) -- (2,0);
-      \fill[fill=blue, fill opacity=0.2] (0, -1) -- (0,0) 
-      decorate[decoration={snake, amplitude=.25cm, segment length=.75cm}] {(0, 0) -- (2, 0)} 
+      \fill[fill=blue, fill opacity=0.2] (0, -1) -- (0,0)
+      decorate[decoration={snake, amplitude=.25cm, segment length=.75cm}] {(0, 0) -- (2, 0)}
       -- (2, -1) -- (0,-1);
       \draw[decorate, decoration={brace}] (1.8, -1) --node[left]{$h$} (1.8, .2);
-      \draw[>=latex, ->] (1.8,.2) -- (2.2, .2) node[right]{$\mathbf{u}$};      
+      \draw[>=latex, ->] (1.8,.2) -- (2.2, .2) node[right]{$\mathbf{u}$};
       \draw (0, -1) -- (2, -1);
     \end{tikzpicture}
   \end{center}
@@ -295,9 +269,9 @@
 
   \begin{equation}
     \label{eq:shallow-water-dg}
-    \int_T \pd {\mathbf{q}}{t} \phi \, dT 
-    - \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT 
-    + \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi \, ds 
+    \int_T \pd {\mathbf{q}}{t} \phi \, dT
+    - \int_T F(\mathbf{q}) \cdot \nabla \phi \, dT
+    + \int_{\partial T} F(\mathbf{q}) \cdot \mathbf{n} \phi \, ds
     = 0
   \end{equation}
 
@@ -320,13 +294,13 @@
         \draw (1,0) -- (1,0.5);
         \draw (.6,0.3) -- (.6,.8);
         \draw[>=latex, ->] (0.5,0.65) -- (1.2,1.) node[right]{\small$\begin{pmatrix}u_x\\u_y\end{pmatrix}$};
-        \draw[xshift=.1cm,decorate, decoration={brace, amplitude=3pt}]  
+        \draw[xshift=.1cm,decorate, decoration={brace, amplitude=3pt}]
         (1,0.5) -- node[right]{$h$} (1, 0);
       \end{tikzpicture}
     \end{column}
   \end{columns}
 
-  
+
 \end{frame}
 
 \newcommand{\qapprox}{\hat{\mathbf{q}}}
@@ -345,7 +319,7 @@
   \item Approximate
     $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y) =: \qapprox$
     \begin{itemize}
-    \item Introduces error since flux function not linear 
+    \item Introduces error since flux function not linear
     \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
     \item $\mathbf{q}_i$ independ of $x$ and $y$ $\rightarrow$ allows matrix formulations
     \end{itemize}
@@ -353,9 +327,9 @@
 
   \begin{equation}
     \label{eq:shallow-water-phi-i}
-    \int_T \pd {\qapprox}{t} \phi_i \, dT 
-    - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT 
-    + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds 
+    \int_T \pd {\qapprox}{t} \phi_i \, dT
+    - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
+    + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds
     = 0
   \end{equation}
 \end{frame}
@@ -556,8 +530,8 @@
     \item Solution: Use approximation
 
       $\rightarrow$ \alert<2>{Question: How good is this approximation?}
-    \item   Remark: Approximation exact for height 
-      
+    \item   Remark: Approximation exact for height
+
       $\rightarrow$ only consider impulse error
     \end{itemize}
   \end{block}
@@ -587,7 +561,7 @@
   \item We integrate over $x$ and $y$ (variables of $\phi_j$)
 
     $\rightarrow$ fractional function since $\phi_j$ occur in denominators
-    
+
     $\rightarrow$ too expensive, not feasible
   \item Solution: Use point-wise approximation (see next slide)
   \end{itemize}
@@ -612,11 +586,7 @@
       \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
       \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
     \end{pmatrix}
-    \cdot
-    \begin{pmatrix}
-      \pd{\phi_i}{x} \\
-      \pd{\phi_i}{y}
-    \end{pmatrix} dT \\
+    \cdot \nabla \phi_i dT \\
     & =: & \int_T \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
     % \\
     % & =  \nonumber \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \int_T \phi_j \pd{\phi_i}{x} \, dT \\
@@ -634,7 +604,7 @@
   \frametitle{Overview: Matrices}
   \vspace{-.3cm}
   \begin{equation*}
-    \int_T \pd {\qapprox}{t} \phi_i \, dT 
+    \int_T \pd {\qapprox}{t} \phi_i \, dT
     - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
     + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds
     = 0
@@ -665,17 +635,17 @@
   \frametitle{Comparison}
   Exact analytic solution:
   \begin{align*}
-    \int_T \widehat{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT = 
+    \int_T \widehat{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT =
     \int_T F_2 \left( \sum_{j=1}^n \mathbf{q}_j \cdot \phi_j \right) \cdot \nabla \phi_i\, dT
   \end{align*}
-  
+
   \begin{itemize}
   \item Too expensive / not feasible
 
     $\rightarrow$ Use point-wise approximation:
   \end{itemize}
   \begin{align*}
-    \int_T \overline{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT = 
+    \int_T \overline{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT =
     \int_T \left( \sum_{j=1}^n F_2(\mathbf{q}_j) \cdot \phi_j \right) \cdot \nabla \phi_i\, dT
   \end{align*}
 
@@ -689,7 +659,7 @@
       \begin{pmatrix}
         \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
         \frac{1}{2} g h^2 e_y
-      \end{pmatrix},\quad \text{ where } 
+      \end{pmatrix},\quad \text{ where }
       \mathbf{u}=
       \begin{pmatrix}
         u_x \\ u_y
@@ -712,8 +682,8 @@
   Evaluation of error term:
   \begin{itemize}
   \item Exact integration too expensive
-  \item Maple's interactive functionality too restricted 
-    
+  \item Maple's interactive functionality too restricted
+
     $\rightarrow$ Own tool
   \item We approximate integral by two dimensional Riemann sums
   \end{itemize}
@@ -725,7 +695,7 @@
 \begin{frame}
   \frametitle{Visualization}
   \begin{itemize}
-  \item Motivation: $3n=3\cdot(o+1)(o+2)/2$ variables for basis functions of order $o$ 
+  \item Motivation: $3n=3\cdot(o+1)(o+2)/2$ variables for basis functions of order $o$
   \item $SE_x^i$ can be interpreted as a function of $h_1,\dots,h_n$, $u_{x,1},\dots,u_{x,n}$, $u_{y,1},\dots,u_{y,n}$
   \item Intuitive approach: Fix all but one variable, and plot!
   \end{itemize}
@@ -733,14 +703,14 @@
   \begin{exampleblock}{Example}
     \begin{columns}
       \begin{column}{.45\textwidth}
-    \includegraphics[scale=0.4]{{{ord2_varying_h1_default/y_10.0_10.0_10.0_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0f00}}}         
+    \includegraphics[scale=0.4]{{{ord2_varying_h1_default/y_10.0_10.0_10.0_10.0_10.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0_0.0f00}}}
       \end{column}
       \begin{column}{.45\textwidth}
         \begin{eqnarray*}
           h_1 \text{ variable}, \\
           h_2 = 10, h_3 = 10 \\
           u_{x,1} = u_{x,2} = u_{x,3} = 0 \\
-          u_{y,1} = u_{y,2} = u_{y,3} = 0 
+          u_{y,1} = u_{y,2} = u_{y,3} = 0
         \end{eqnarray*}
       \end{column}
     \end{columns}
