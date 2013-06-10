@@ -186,11 +186,13 @@
 
 \DeclareMathOperator{\divergence}{div}
 
-\AtBeginPart{\frame{\partpage}}
+%\AtBeginPart{\frame{\partpage}}
 
 \definecolor{lightgray}{rgb}{0.6,0.6,0.8}
 
 \begin{document}
+
+\part{Evaluation of Numerical Approximations of the Stiffness Term for Shallow Water Equations}
 
 \frame{\titlepage}
 
@@ -239,18 +241,28 @@
       \end{pmatrix}
     }
   \end{eqnarray*}
-  \begin{center}
-    \begin{tikzpicture}
-      \draw[decorate, decoration={snake, amplitude=.25cm, segment length=.75cm}] (0,0) -- (2,0);
-      \fill[fill=blue, fill opacity=0.2] (0, -1) -- (0,0)
-      decorate[decoration={snake, amplitude=.25cm, segment length=.75cm}] {(0, 0) -- (2, 0)}
-      -- (2, -1) -- (0,-1);
-      \draw[decorate, decoration={brace}] (1.8, -1) --node[left]{$h$} (1.8, .2);
-      \draw[>=latex, ->] (1.8,.2) -- (2.2, .2) node[right]{$\mathbf{u}$};
-      \draw (0, -1) -- (2, -1);
-    \end{tikzpicture}
-  \end{center}
-
+  \begin{columns}
+    \begin{column}{.3\textwidth}
+      \begin{flushright}
+        \begin{tikzpicture}
+          \draw[decorate, decoration={snake, amplitude=.25cm, segment length=.75cm}] (0,0) -- (2,0);
+          \fill[fill=blue, fill opacity=0.2] (0, -1) -- (0,0)
+          decorate[decoration={snake, amplitude=.25cm, segment length=.75cm}] {(0, 0) -- (2, 0)}
+          -- (2, -1) -- (0,-1);
+          \draw[decorate, decoration={brace}] (1.8, -1) --node[left]{$h$} (1.8, .2);
+          \draw[>=latex, ->] (1.8,.2) -- (2.2, .2) node[right]{$\mathbf{u}$};
+          \draw (0, -1) -- (2, -1);
+        \end{tikzpicture}
+      \end{flushright}
+    \end{column}
+    \begin{column}{.6\textwidth}
+      \begin{itemize}
+      \item $h$: Water height
+      \item $\mathbf{u}$: Momentums in $x$ and $y$ direction
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
 \section{Discontinuous Galerkin}
@@ -286,13 +298,14 @@
     \begin{column}{.4\textwidth}
       \centering{}
       \begin{tikzpicture}[scale=2]
-        \draw (0,0) -- (1,0) -- (0.6,0.3) -- (0,0);
+        \draw (0,0) -- (1,0);
+        \draw[dotted] (1,0) -- (0.6,0.3) -- (0,0);
         \begin{scope}[yshift=.5cm]
           \draw (0,0) -- (1,0) -- (0.6,0.3) -- (0,0);
         \end{scope}
         \draw (0,0) -- (0,0.5);
         \draw (1,0) -- (1,0.5);
-        \draw (.6,0.3) -- (.6,.8);
+        \draw[dotted] (.6,0.3) -- (.6,.8);
         \draw[>=latex, ->] (0.5,0.65) -- (1.2,1.) node[right]{\small$\begin{pmatrix}u_x\\u_y\end{pmatrix}$};
         \draw[xshift=.1cm,decorate, decoration={brace, amplitude=3pt}]
         (1,0.5) -- node[right]{$h$} (1, 0);
@@ -311,11 +324,13 @@
   \begin{itemize}
   \item Sample values at $n$ support points
   \item A basis function $\phi_i$ for each support point $\rightarrow$ nodal basis
+    \begin{itemize}
+    \item Basis functions $\phi_i$: (two dimensional) Lagrange polynomials
+    \end{itemize}
   \item Approximate
     $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y) =: \qapprox$
     \begin{itemize}
     \item Introduces error since flux function not linear
-    \item Basis functions $\phi_i$: (two dimensional) Lagrange polynomials
     \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
     \item $\mathbf{q}_i$ independent of $x$ and $y$ (in contrast to $F(\mathbf{q})$) $\rightarrow$ allows matrix formulations/simplifications
     \end{itemize}
@@ -589,8 +604,12 @@
   \end{block}
 \end{frame}
 
+\AtBeginPart{\frame{\partpage}}
+
 \beginbackup
-\appendix{}
+%\appendix{}
+
+\part{Deferred Explanations}
 
 \frame{
   \frametitle{Deferred Explanations}
@@ -790,6 +809,12 @@
 
 \end{frame}
 
+\part{From our previous presentation}
+
+\begin{frame}
+  \frametitle{From our previous presentation}
+  \tableofcontents
+\end{frame}
 
 \section{Thoughts on how to evaluate $I$}
 \label{sec:appendix-evaluate-I}
