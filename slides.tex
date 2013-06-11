@@ -324,22 +324,26 @@
   \begin{itemize}
   \item Sample values at $n$ support points
   \item A basis function $\phi_i$ for each support point $\rightarrow$ nodal basis
-    \begin{itemize}
-    \item Basis functions $\phi_i$: (two dimensional) Lagrange polynomials
-    \end{itemize}
+    % \begin{itemize}
+    % \item Basis functions $\phi_i$: (two dimensional) Lagrange polynomials
+    % \end{itemize}
   \item Approximate
     $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y) =: \qapprox$
     \begin{itemize}
-    \item Introduces error since flux function not linear
+    \item Introduces error (w.r.t. reality) since flux function not linear
+    \item For this presentation, we call this approximation \emph{``exact analytic solution''}
     \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
-    \item $\mathbf{q}_i$ independent of $x$ and $y$ (in contrast to $F(\mathbf{q})$) $\rightarrow$ allows matrix formulations/simplifications
+    \item $\mathbf{q}_i$ independent of $x$ and $y$ $\rightarrow$
+      %(in contrast to $F(\mathbf{q})$) $\rightarrow$ 
+      allows matrix formulations
     \end{itemize}
   \end{itemize}
 
   \begin{equation}
     \label{eq:shallow-water-phi-i}
     \int_T \pd {\qapprox}{t} \phi_i \, dT
-    - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
+    - \underbrace {\int_T F(\qapprox) \cdot \nabla \phi_i \, dT}
+    _{\text{stiffness term}}
     + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds
     = 0
   \end{equation}
@@ -361,7 +365,7 @@
       $\rightarrow$ \alert<2>{Question: How good is this approximation?}
     \item   Remark: Approximation exact for height
 
-      $\rightarrow$ only consider impulse error
+      $\rightarrow$ only consider momentum error
     \end{itemize}
   \end{block}
 \end{frame}
@@ -370,62 +374,56 @@
 \label{sec:stiffness-exact-approx}
 
 \begin{frame}
-  \frametitle{Stiffness matrix --- ``exact'' computation}
+  \frametitle{Stiffness term --- sum approximation}
+  \vspace{-.5cm}
   \begin{eqnarray*}
-    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
-    \int_T
+    \mathbf{q} =
     \begin{pmatrix}
-      \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
-    \end{pmatrix}
-    \cdot \nabla \phi_i \, dT \\
-    & \stackrel{\mathbf{q}\approx\qapprox}{=} &
-    \int_T
-    \begin{pmatrix}
-      \frac{\left(\sum_{j=1}^n u_{x,j} \phi_j \right)^2}{\sum_{j=1}^n h_j \phi_j} + \frac{1}{2} g \left( \sum_{j=1}^n h_j \phi_j \right)^2 \\ \frac{\left( \sum_{j=1}^n u_{x,j} \phi_j \right) \left( \sum_{j=1}^n u_{y,j} \phi_j \right)}{\left( \sum_{j=1}^n h_{j} \phi_j \right)}
-    \end{pmatrix}
-    \cdot \nabla \phi_i \, dT \\
-    & =: & \int_T \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
+      h \\ u_x \\ u_y
+    \end{pmatrix}, F(\mathbf{q}) =
+    {
+      \renewcommand{\arraystretch}{1.2}
+      \begin{pmatrix}
+        \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
+        \frac{1}{2} g h^2 e_y
+      \end{pmatrix} 
+      =
+      \begin{pmatrix}
+        F_1(\mathbf{q}) \\
+        F_2(\mathbf{q}) \\
+        F_3(\mathbf{q})
+      \end{pmatrix}
+      , \text{ where }
+      \mathbf{u}=
+      \begin{pmatrix}
+        u_x \\ u_y
+      \end{pmatrix}
+    }
   \end{eqnarray*}
+  Exact analytic solution:
+  \begin{align*}
+    \int_T F_2(\widehat{\mathbf{q}}) \cdot \nabla \phi_i\, dT = 
+    \int_T F_2 \left( \sum_{j=1}^n \mathbf{q}_j \cdot \phi_j \right) \cdot \nabla \phi_i\, dT 
+    % =:
+    % \int_T \widehat{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT 
+  \end{align*}
+
   \begin{itemize}
-  \item We integrate over $x$ and $y$ (variables of $\phi_j$)
+  \item Above computation too expensive (integral over fractional function)
 
-    $\rightarrow$ fractional function since $\phi_j$ occur in denominators
-
-    $\rightarrow$ too expensive, not feasible
-  \item Solution: Approximate function over the sum
+    $\rightarrow$ Use sum approximation:
   \end{itemize}
+  \begin{align*}
+    \int_T \left( \sum_{j=1}^n F_2(\mathbf{q}_j) \cdot \phi_j \right) \cdot \nabla \phi_i\, dT 
+    =
+    \sum_{j=1}^n  F_2(\mathbf{q}_j) \cdot \left( \int_T \phi_j \cdot \nabla \phi_i\, dT \right) 
+    % =:
+    % \int_T \overline{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT 
+  \end{align*}  
 \end{frame}
 
 \begin{frame}
-  \frametitle{Stiffness matrix --- sum approximation}
-  \begin{eqnarray*}
-    \hspace{-.2cm}
-    \setlength{\columnsep}{5cm}
-    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
-    \int_T
-    \begin{pmatrix}
-      \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
-    \end{pmatrix}
-    \cdot \nabla \phi_i \, dT \\
-    & \approx &
-    \int_T
-    \begin{pmatrix}
-      \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
-      \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
-    \end{pmatrix}
-    \cdot \nabla \phi_i dT \\
-    & =: & \int_T \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
-  \end{eqnarray*}
-  \begin{itemize}
-  \item We show equations for $x$ momentum
-
-    $\rightarrow$ analogous computation for $y$ momentum
-  \item Sum approximation introduces error $\rightarrow$ how big?
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Overview: Matrices}
+  \frametitle{Short excursion: matrices}
   \vspace{-.3cm}
   \begin{equation*}
     \int_T \pd {\qapprox}{t} \phi_i \, dT
@@ -456,58 +454,28 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Comparison}
-  Exact analytic solution:
-  \begin{align*}
-    \int_T F_2 \left( \sum_{j=1}^n \mathbf{q}_j \cdot \phi_j \right) \cdot \nabla \phi_i\, dT =:
-    \int_T \widehat{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT 
-  \end{align*}
-
-  \begin{itemize}
-  \item Above computation too expensive / not feasible
-
-    $\rightarrow$ Use sum approximation:
-  \end{itemize}
-  \begin{align*}
-    \int_T \left( \sum_{j=1}^n F_2(\mathbf{q}_j) \cdot \phi_j \right) \cdot \nabla \phi_i\, dT =:
-    \int_T \overline{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT 
-  \end{align*}
-
-  \begin{eqnarray*}
-    \mathbf{q} =
-    \begin{pmatrix}
-      h \\ u_x \\ u_y
-    \end{pmatrix}, \quad F(\mathbf{q}) =
-    {
-      \renewcommand{\arraystretch}{1.2}
-      \begin{pmatrix}
-        \mathbf{u} \\ \frac{u_x}{h} \mathbf{u} + \frac{1}{2} g h^2 e_x \\ \frac{u_y}{h} \mathbf{u}+
-        \frac{1}{2} g h^2 e_y
-      \end{pmatrix},\quad \text{ where }
-      \mathbf{u}=
-      \begin{pmatrix}
-        u_x \\ u_y
-      \end{pmatrix}
-    }
-  \end{eqnarray*}
-
-
-\end{frame}
-
-\begin{frame}
   \frametitle{Error term}
   Error is measured by two dimensional $L_1$ norm:
 
-  \begin{equation}
-    \label{eq:SE-definition}
-    SE_x^i = \int_T \left| \left( \widehat F_2 (\mathbf{q}) - \overline{F_2}(\mathbf{q}) \right) \cdot \nabla \phi_i \right| \,dT
-  \end{equation}
-
+  \begin{center}
+    \begin{tikzpicture}
+      \node at (0,0) {$\displaystyle SE_x^i = 
+        \int_T \left| \left( 
+            {F_2\left( \sum_{j=1}^n \mathbf{q}_j \cdot \phi_j \right)}
+            -
+            {\sum_{j=1}^n F_2\left( \mathbf{q}_j \right) \cdot \phi_j}
+          \right) \cdot \nabla \phi_i \right| \,dT$};
+      \draw[decorate, decoration=brace] (2.8,-.7)
+      --node[below,yshift=-.075cm]{\scriptsize approximate} (0.4,-.7);
+      \draw[decorate, decoration=brace] (-.1,-.7)
+      --node[below,yshift=-.1cm]{\scriptsize exact} (-2.7,-.7);
+    \end{tikzpicture}
+  \end{center}
+  \vspace{-.5cm}
   Evaluation of error term:
   \begin{itemize}
   \item Exact integration too expensive
   \item Maple's interactive functionality too restricted
-
     $\rightarrow$ Own tool
   \item We approximate integral by two dimensional Riemann sums
   \end{itemize}
@@ -553,6 +521,7 @@
   \frametitle{Results}
   \setlength{\tabcolsep}{0pt}
   \begin{itemize}
+  \item Error in height component: 0
   \item If all height values, all $x$ momentums and all $y$ momentums are the same, error is 0 (can be shown mathematically).
   \end{itemize}
   \framebreak
@@ -760,6 +729,64 @@
     \item $F^e$: Numerical flux function along that edge
     \end{itemize}
   \end{block}
+\end{frame}
+
+\section{Approximate vs. ``exact'' result --- details}
+\label{sec:appendix-approx-vs-exact-details}
+
+\begin{frame}
+  \frametitle{Stiffness term --- ``exact'' computation}
+  \begin{eqnarray*}
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
+    \int_T
+    \begin{pmatrix}
+      \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    & \stackrel{\mathbf{q}\approx\qapprox}{=} &
+    \int_T
+    \begin{pmatrix}
+      \frac{\left(\sum_{j=1}^n u_{x,j} \phi_j \right)^2}{\sum_{j=1}^n h_j \phi_j} + \frac{1}{2} g \left( \sum_{j=1}^n h_j \phi_j \right)^2 \\ \frac{\left( \sum_{j=1}^n u_{x,j} \phi_j \right) \left( \sum_{j=1}^n u_{y,j} \phi_j \right)}{\left( \sum_{j=1}^n h_{j} \phi_j \right)}
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    & =: & \int_T \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
+  \end{eqnarray*}
+  \begin{itemize}
+  \item We integrate over $x$ and $y$ (variables of $\phi_j$)
+
+    $\rightarrow$ fractional function since $\phi_j$ occur in denominators
+
+    $\rightarrow$ too expensive, not feasible
+  \item Solution: Approximate function over the sum
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Stiffness term --- sum approximation}
+  \begin{eqnarray*}
+    \hspace{-.2cm}
+    \setlength{\columnsep}{5cm}
+    \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
+    \int_T
+    \begin{pmatrix}
+      \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
+    \end{pmatrix}
+    \cdot \nabla \phi_i \, dT \\
+    & \approx &
+    \int_T
+    \begin{pmatrix}
+      \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
+      \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
+    \end{pmatrix}
+    \cdot \nabla \phi_i dT \\
+    & =: & \int_T \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_i \,dT
+  \end{eqnarray*}
+  \begin{itemize}
+  \item We show equations for $x$ momentum
+
+    $\rightarrow$ analogous computation for $y$ momentum
+  \item Sum approximation introduces error $\rightarrow$ how big?
+  \end{itemize}
 \end{frame}
 
 \section{Using the matrices}
