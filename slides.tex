@@ -331,7 +331,7 @@
     $\mathbf{q} \approx \sum_{i=1}^n \mathbf{q}_i \phi_i(x,y) =: \qapprox$
     \begin{itemize}
     \item Introduces error (w.r.t. reality) since flux function not linear
-    \item For this presentation, we call this approximation \emph{``exact analytic solution''}
+    %\item For this presentation, we call this approximation \emph{``exact analytic solution''}
     \item $\mathbf{q}_i$ contains height and momentums for $i$-th support point
     \item $\mathbf{q}_i$ independent of $x$ and $y$ $\rightarrow$
       %(in contrast to $F(\mathbf{q})$) $\rightarrow$ 
@@ -347,6 +347,39 @@
     + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds
     = 0
   \end{equation}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Short excursion: matrices}
+  \vspace{-.3cm}
+  \begin{equation*}
+    \underbrace{\int_T \pd {\qapprox}{t} \phi_i \, dT}_{\text{mass term}}
+    - 
+    \underbrace{\int_T F(\qapprox) \cdot \nabla \phi_i \, dT}_{\text{stiffness term}}
+    + 
+    \underbrace{\int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds}_{\text{flux term}}
+    = 0
+  \end{equation*}
+  \begin{block}{\emph{Precomputable} matrices (independent of $x$ and $y$)}
+    \begin{itemize}
+    \item Mass matrix
+      % \begin{equation}
+      %   \label{eq:mass-matrix-overview}
+      %   M = \int_T \phi_i \phi_j \ dT
+      % \end{equation}
+    \item Flux matrices (one for each edge $e$): last time %$\forall e \in E$:
+      % \begin{equation}
+      %   \label{eq:edge-matrices}
+      %   W^e = \phi_i\left(p_k^e\right) \cdot w_k
+      % \end{equation}
+    \item Stiffness matrices
+      \begin{equation}
+        \label{eq:stiffness-matrix-overview}
+        S^x = \int_T \phi_j \pd{\phi_i}{x} \quad
+        S^y = \int_T \phi_j \pd{\phi_i}{y}
+      \end{equation}
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \section{Big picture}
@@ -420,37 +453,6 @@
     % =:
     % \int_T \overline{F}_2 \left( \mathbf{q} \right)\cdot \nabla \phi_i \, dT 
   \end{align*}  
-\end{frame}
-
-\begin{frame}
-  \frametitle{Short excursion: matrices}
-  \vspace{-.3cm}
-  \begin{equation*}
-    \int_T \pd {\qapprox}{t} \phi_i \, dT
-    - \int_T F(\qapprox) \cdot \nabla \phi_i \, dT
-    + \int_{\partial T} F(\qapprox) \cdot \mathbf{n} \phi_i \, ds
-    = 0
-  \end{equation*}
-  \begin{block}{\emph{Precomputable} matrices (independent of $x$ and $y$)}
-    \begin{itemize}
-    \item Mass matrix
-      % \begin{equation}
-      %   \label{eq:mass-matrix-overview}
-      %   M = \int_T \phi_i \phi_j \ dT
-      % \end{equation}
-    \item Flux matrices (one for each edge $e$): last time %$\forall e \in E$:
-      % \begin{equation}
-      %   \label{eq:edge-matrices}
-      %   W^e = \phi_i\left(p_k^e\right) \cdot w_k
-      % \end{equation}
-    \item Stiffness matrices
-      \begin{equation}
-        \label{eq:stiffness-matrix-overview}
-        S^x = \int_T \phi_j \pd{\phi_i}{x} \quad
-        S^y = \int_T \phi_j \pd{\phi_i}{y}
-      \end{equation}
-    \end{itemize}
-  \end{block}
 \end{frame}
 
 \begin{frame}
