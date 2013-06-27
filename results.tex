@@ -35,7 +35,7 @@
 
 \usetikzlibrary{decorations.pathmorphing}
 
-\geometry{margin=3.5cm, bottom=2cm, top=2cm}
+\geometry{margin=3.5cm}%, bottom=2cm, top=2cm}
 
 \newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
 \newcommand{\done}[2][]{\textcolor{green!50!black}{DONE\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
@@ -2488,17 +2488,17 @@ Probably most interesting is $SE_y^5$, which is now constant and almost zero. Th
 We already see here that $u_{x,1}$ is not present, and since all other variables are set to specific values, that implies that the resulting value must be a constant. Seeing how all $h_j$ are 10, we can treat them as a constant $h$ and factor them out of both sums, where they eliminate each other, simplifying the term to this:
 
 \begin{eqnarray*}
-  SE_y^5 & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\widehat{u}_y^2}{\widehat{h}} \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
-  {} & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n h\phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
+  SE_y^5 & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\widehat{u}_y^2}{\widehat{h}} \right) \cdot \left(\pd{\phi_5}{y}\right) \right|\, dT \\
+  {} & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n h\phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right|\, dT \\
 \end{eqnarray*}
 
 Using that $\sum_{j=1}^n \phi_j = 1$ and that all $u_{y,j} = 0$ for $j \neq 2$, we finally obtain:
 
 \begin{eqnarray*}
-  SE_y^5 & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n h\phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
-  {} & = & \int_T \left| \left( \frac{1}{h} \sum_{j=1}^n u_{y,j}^2 \phi_j - \frac{1}{h} \cdot \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n \phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
-{} & = & \int_T \left| \left( \frac{1}{h} u_{y,2}^2 \phi_2 - \frac{1}{h} \left(u_{y,2}\phi_2\right)^2 \right) \cdot \left(\pd{\phi_5}{y}\right) \right| \\
-	{} & = & \int_T \left| \left( \frac{u_{y,2}^2 \phi_2}{h} \left( 1 - \phi_2\right) \right) \cdot \left(\pd{\phi_5}{y}\right) \right|
+  SE_y^5 & = & \int_T \left| \left( \sum_{j=1}^n \frac{u_{y,j}^2}{h} \phi_j - \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n h\phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right|\, dT \\
+  {} & = & \int_T \left| \left( \frac{1}{h} \sum_{j=1}^n u_{y,j}^2 \phi_j - \frac{1}{h} \cdot \frac{\left(\sum_{j=1}^n u_{y,j}\phi_j\right)^2}{\sum_{j=1}^n \phi_j} \right) \cdot \left(\pd{\phi_5}{y}\right) \right|\, dT \\
+{} & = & \int_T \left| \left( \frac{1}{h} u_{y,2}^2 \phi_2 - \frac{1}{h} \left(u_{y,2}\phi_2\right)^2 \right) \cdot \left(\pd{\phi_5}{y}\right) \right|\, dT \\
+	{} & = & \int_T \left| \left( \frac{u_{y,2}^2 \phi_2}{h} \left( 1 - \phi_2\right) \right) \cdot \left(\pd{\phi_5}{y}\right) \right|\, dT
 \end{eqnarray*}
 
 We saw that changing an $y$ momentum can result in drastically changed shapes of the error plots,  which is something we did not expect. We examined several other assignments for $u_{y,i}$ while leaving the heights and $x$ momentums as they were in this experiment and observed similar piecewise linear function plots for $SE_y^i$.
@@ -2556,7 +2556,7 @@ The practical merits of this approximation are already established, as it has be
 \appendix
 
 \clearpage{}
-%\newgeometry{margin=1.5cm}
+\newgeometry{top=1cm}
 \part{Appendix}
 \label{part:cheat-sheet}
 
@@ -2575,6 +2575,7 @@ The practical merits of this approximation are already established, as it has be
   \end{meine}
 }
 
+%\enlargethispage{2cm}
 \begin{center}
   \begin{longtable}[ht!]{ccp{8cm}}
     \toprule
