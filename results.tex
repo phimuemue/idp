@@ -2233,12 +2233,12 @@ The plots confirm our suspicion: the error is indeed minimal for our suspected v
 
 \clearpage{}
 
-\section{Order 1 --- Different orders of magnitude}
+\subsection{Order 1 --- Different orders of magnitude}
 \label{sec:ord1-different-orders-magnitude}
 
 We have seen so far that the more the heights resp. momentums differ, the bigger the error grows. We now research whether the \emph{difference} in heights resp. momentums is the \emph{only} thing that affects the error. I.e. we research what happens if the \emph{difference} of heights resp. momentums stays the same, but the order of magnitude is another.
 
-\subsection{Standard values}
+\subsubsection{Standard values}
 \label{sec:ord1-diff-ord-magnitude-std-values}
 
 First we exemplary consider two cases using default values in two different orders of magnitude.
@@ -2254,7 +2254,7 @@ Please note that the \emph{difference} in heights resp. momentums is the same fo
 
 Figure \ref{fig:magnitude_comparison_default} compares the two scenarios described above (for the $x$ momentum of the 2nd basis function --- similar effects can be seen for all basis functions and components). We see two plots that look identical. Thus, we might be tempted to conjecture that only the \emph{difference} of the heights and momentums affects the error.
 
-\subsection{Differing height values}
+\subsubsection{Differing height values}
 \label{sec:ord1-magnitude-non-std-values1}
 
 We will now slightly alter the above scenario to the following:
@@ -2270,7 +2270,7 @@ We ensured again that the \emph{difference} in heights resp. momentums is the sa
 
 Again, these plots look the same. We conducted further experiments only adjusting the height values accordingly and experienced same plots for different orders of magnitude.
 
-\subsection{Differing momentums}
+\subsubsection{Differing momentums}
 \label{sec:ord1-magnitude-differing-momentums}
 
 One thing remains to be done: We want to compare what happens if we not only change the height values, but also the momentums.
@@ -2286,7 +2286,7 @@ Therefore, we consider the following two scenarios:
 
 The resulting plots can be seen in figure \ref{fig:magnitude_comp_momentums}. Unexpectedly, we see different behaviour for the two plots. Even more surprising, we see that the error can be zero for the second case (where the height values are around 1000), and does not reach zero for the case for the first case (height values around 10).
 
-\subsection{Differing heights and momentums}
+\subsubsection{Differing heights and momentums}
 \label{sec:ord1-magnitude-differing-heights-momentums}
 
 We now do research a combination of differing heights and momentums. The two cases we consider are as follows:
