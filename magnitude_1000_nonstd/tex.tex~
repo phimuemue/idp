@@ -1,0 +1,14 @@
+% 9 variables in here:
+% h_1 = 1000.0, h_2 = 1002.0, h_3 = 997.0, ux_1 = 0.0, ux_2 = 0.0, ux_3 = 0.0, uy_1 = 0.0, uy_2 = 0.0, uy_3 = 0.0
+\begin{figure}[h!]
+\centering
+  \subfigure[] {
+    \includegraphics[scale=\zoomfactor]{{{magnitude_1000_nonstd/y_1002.0_997.0_0.0_0.0_0.0_0.0_0.0_0.0f02}}}
+  }
+\caption{}
+\label{fig:magnitude_1000_nonstd}
+\end{figure}
+
+%%% Local Variables:
+%%% TeX-master: "../results.tex"
+%%% End:
