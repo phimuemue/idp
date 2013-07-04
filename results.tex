@@ -12,7 +12,7 @@
 \DeclareCaptionFormat{myformat}{#1#2#3\hrulefill}
 %\captionsetup[figure]{format=myformat}
 \usepackage{tikz}
-\usepackage{subfigure}
+\usepackage{subfig}
 \usepackage{geometry}
 \usepackage{ifthen}
 \usepackage{cite}
@@ -344,13 +344,13 @@ Points on the triangle (both on the edge and inside) will be denoted by $p$.
 
 \begin{figure}[ht]
   \centering
-  \subfigure[Degree 0]{
+  \subfloat[Degree 0]{
     \begin{tikzpicture}[scale=2]
       \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
       \draw[fill=black] (0.33333333, 0.3333333333) circle (0.01);
     \end{tikzpicture}
   }
-  \subfigure[Degree 1]{
+  \subfloat[Degree 1]{
     \begin{tikzpicture}[scale=2]
       \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
       \draw[fill=black] (0.5, 0) circle (0.01);
@@ -358,7 +358,7 @@ Points on the triangle (both on the edge and inside) will be denoted by $p$.
       \draw[fill=black] (0.5, 0.5) circle (0.01);
     \end{tikzpicture}
   }
-  \subfigure[Degree 2]{
+  \subfloat[Degree 2]{
     \begin{tikzpicture}[scale=2]
       \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
       \draw[fill=black] (0.5, 0) circle (0.01);
@@ -369,7 +369,7 @@ Points on the triangle (both on the edge and inside) will be denoted by $p$.
       \draw[fill=black] (0, 1) circle (0.01);
     \end{tikzpicture}
   }
-  \subfigure[Degree 3]{
+  \subfloat[Degree 3]{
     \begin{tikzpicture}[scale=2]
       \draw[opacity=0.5] (0,0) -- node[left]{$e_3$} (0,1) -- node[right]{$e_2$} (1,0) -- node[below]{$e_1$} (0,0);
       \draw[fill=black] (0.501426509658179, 0.24928674517091) circle (0.01);
@@ -1239,10 +1239,10 @@ We compare the two methods in figure \ref{fig:simple-parametric-functions}. Note
 
 \begin{figure}[ht]
   \centering
-  \subfigure[Choosing particular values for $a$]{
+  \subfloat[Choosing particular values for $a$]{
     \includegraphics[scale=0.5]{simple_parametric_2d.pdf}
   }
-  \subfigure[A three dimensional plot]{
+  \subfloat[A three dimensional plot]{
     \includegraphics[scale=0.5]{simple_parametric_3d.pdf}
   }
   \caption{Plotting simple parametric functions using different approaches.}
@@ -1326,11 +1326,11 @@ The implementation turned out to be very useful and easier to maintain and handl
 
 \begin{figure}[ht]
   \centering
-  \subfigure[Adjusting variables and axes]{
+  \subfloat[Adjusting variables and axes]{
     \label{subfig:plotting-tool-variables}
     \includegraphics[scale=0.5]{simpleplotter_screen1.png}
   } \hspace{.3cm}
-  \subfigure[Gnuplot settings/Settings for numerical integration]{
+  \subfloat[Gnuplot settings/Settings for numerical integration]{
     \label{subfig:plotting-tool-gnuplot}
     \includegraphics[scale=0.5]{simpleplotter_screen2.png}
   }
@@ -1822,12 +1822,12 @@ If we use this definition, we obtain $L^2$ triangles of equal size.
     \end{scope}
   }
   \centering
-  \subfigure[One triangle($L=1$)]{
+  \subfloat[One triangle($L=1$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
     \end{tikzpicture}
   }
-  \subfigure[Four triangles ($L=2$)]{
+  \subfloat[Four triangles ($L=2$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.5}{0}{0};
@@ -1835,7 +1835,7 @@ If we use this definition, we obtain $L^2$ triangles of equal size.
       \mytriangle{.5}{1}{0};
     \end{tikzpicture}
   }
-  \subfigure[Nine triangles ($L=3$)]{
+  \subfloat[Nine triangles ($L=3$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.3333}{0}{0};
@@ -1846,7 +1846,7 @@ If we use this definition, we obtain $L^2$ triangles of equal size.
       \mytriangle{.3333}{1}{1};
     \end{tikzpicture}
   }
-  \subfigure[Sixteen triangles ($L=4$)]{
+  \subfloat[Sixteen triangles ($L=4$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.25}{0}{0};
@@ -1861,7 +1861,7 @@ If we use this definition, we obtain $L^2$ triangles of equal size.
       \mytriangle{.25}{2}{1};
     \end{tikzpicture}
   }
-  \subfigure[Twenty-five triangles ($L=5$)]{
+  \subfloat[Twenty-five triangles ($L=5$)]{
     \begin{tikzpicture}
       \mytriangle{1}{0}{0};
       \mytriangle{.2}{0}{0};
@@ -1954,12 +1954,12 @@ We will illustrate that for some simple cases.
 
 \begin{figure}[ht]
   \centering
-  \subfigure[Heat map for first order singularities. Plot shows $h_1 = \frac{20y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
+  \subfloat[Heat map for first order singularities. Plot shows $h_1 = \frac{20y}{-1+2y}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-1}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o1.pdf}
   }
   \hspace{.5cm}
-  \subfigure[Heat map for second order singularities. Plot shows $h_1 = \frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
+  \subfloat[Heat map for second order singularities. Plot shows $h_1 = \frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
         \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}$. White area is either undefined or not within the triangle $T$.]{
     \label{fig:stiffness-analysis-log-singularities-ord-2}
     \includegraphics[scale=0.5]{stiffness_analysis_log_sing_o2.pdf}
