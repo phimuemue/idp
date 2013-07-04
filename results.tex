@@ -1916,9 +1916,8 @@ Here, the factor $\frac{1}{2\cdot 4} = \frac{1}{8}$ denotes the area of one sing
 Using this technique, one can -- just as in the one-dimensional case -- adjust the number of triangles to take into account. The more triangles are used, the more accurate the approximation of the integral gets.
 
 We noticed that $L=5$ (i.e.\,using 25 triangles) sufficed for high accuracy results. Higher values for $r$ very rarely resulted in visible changes to the plots and when that was the case it was never enough to make even a slight impact on the interpretation of the results.
-%\todo{Ich halte es hier fuer unbedingt erforderlich, hervorzuheben, warum ihr keine fertigen Integrationsmoelichkeiten von Maple/python verwendet habt.}\done{Reicht das was jetzt kommt?}\remark[Stjepan]{Ich verstehe ehrlich gesagt nicht, wieso das so schlimm ist, hat weder lange gedauert, noch war es kompliziert. Haette wohl laenger gedauert uns in Numpy einzulesen deswegen... Aber wir koennten auch das folgende Argument nehmen:}
 
-Similar to the situation from section \ref{sec:how-to-eval-I}, we considered several options to compute $SE$. However, we experienced similar problems evaluating the integrals exactly, which is why we chose a numerical integration. We decided to implement this method ourselves, since it was a simple implementation and was easy to integrate into our parser, which works with the provided equations before it pipes the result through to Gnuplot.%Unfortunately, we could not find any suitable Gaussian quadrature (or any equivalent numerical integration scheme) for this kind of functions, so we chose the technique described above.
+Similar to the situation from section \ref{sec:how-to-eval-I}, we considered several options to compute $SE$. However, we experienced similar problems evaluating the integrals exactly, which is why we chose a numerical integration. We decided to implement this method ourselves, since it was a simple implementation and was easy to integrate into our parser, which works with the provided equations before it pipes the result through to Gnuplot.
 
 \subsection{\texorpdfstring{Singularities in $SE$}{Singularities in SE}}
 \label{sec:stiffness-analysis-singularities}
@@ -1978,8 +1977,7 @@ Next, we consider order 1 and set $h_2=h_3=10$. We then obtain the following (by
 \end{equation*}
 
 For example, we can set $x=y=0.25$ and obtain $  h_1 = \frac{1-20\cdot 0.25}{-1+2\cdot 0.25} = -8$. That means that for the point within the triangle located at $(0.25, 0.25)$ we would need a height of -8 to create a singularity. If we then take into account that $h_2=h_3=10$ we see that the value -8 strongly deviates from these values and can be considered very unlikely. Since it would be very tedious to try all values for $x$ and $y$ lying within our triangle, we can use a simple plot.
-%However, we chose not to plot the term directly, but instead apply the logarithm to it (since the resulting values can be extremely high). This is merely a measure to transform the values to make them easier to plot and does not affect the $x$ and $y$ scaling at all. I.e. we plot
-% \todo{Log scaling wird normalerweise nur kurz in der Beschreibung des Plots gegeben}\done{Mag sein, aber ich schätze, bei uns würde es das nur verkomplizieren, da bei uns weder $x$- noch $y$-Achse log-skaliert ist, sondern nur die $z$-Achse. Würde es daher lassen.}\remark[Stjepan]{Dito}
+
 \begin{equation*}
 \log_{10}\frac{20y}{-1+2y}.
 \end{equation*}
@@ -1990,7 +1988,6 @@ We can see the graph for $h_1$ in figure \ref{fig:stiffness-analysis-log-singula
 \item Green denotes values in $\left( -\infty, 5 \right] \cup \left[ 15, \infty \right)$. We colored these values green since they represent kind of the ``safe'' values. Remember that we are considering the case where all heights except $h_1$ are set to 10. Thus, we consider the range $\left[ 5, 15 \right]$, whose midpoint is 10.
 
 \item Red denotes values in $\left[ 5, 15 \right]$. These represent dangerous values, since if we lie within this interval, we get a singularity even if we have non-shock waves.
-  % \todo{Das entspricht nicht der Legende}\done{Eigentlich doch schon, oder?}\remark[Stjepan]{Auch dito}
 \item White area is either undefined (i.e.\,it is not possible to draw on logarithmic scale, corresponding to a negative value of $h_1$) or out of the triangle.
 \end{itemize}
 
@@ -2171,8 +2168,6 @@ We will now inspect what it looks like if we set $h_2=12$ and $h_1=10$.
 
 The resulting plots are shown in figure \ref{fig:stiffneses-analysis-ord1-h2-12-h3-10}. The minimum error is again at $h_1\approx 11$. That means, we can conjecture that it does not matter which of the other heights does differ, but only the difference between the two. This makes sense when examining the equations, which we will cover later.
 
-%\todo{Wg. der symmetrie? Dann solltet ihr das als Voraus-Haeppchen fuer den Leser hier nennen}\done{Ist aber nicht wg. Symm. glaube ich.}\done[Stjepan]{Agreed. Das liegt daran, das + kommutativ ist, und es egal is ob wir $h_2 \cdot bla$+$h_3 \cdot bla$ oder $h_3 \cdot bla$+$h_2 \cdot bla$ rechnen.}
-
 In the next scenario, we set $h_2=12$ and $h_3=8$. We would expect the resulting plots to show the minimal error at $h_1=10$.
 
 \input{ord1_differing_h2_h3_12_8/tex.tex}
@@ -2181,14 +2176,11 @@ As we can see in figure \ref{fig:ord1_differing_h2_h3_12_8}, the error is still 
 
 \paragraph{Conclusion}
 
-%What one can guess\todo{anders, neutraler formulieren} from the things \todo{a thingy can also be a swimming pool} seen so far is that
-
 What we can conclude from the plots seen so far is that -- if we leave all $u_{x,i}=u_{y,i}=0$ ($i=1\dots n$) and take $h_1$ as axis variable -- the error seems to be minimal if $h_1\approx \frac{h_2+h_3}{2}$.
 
 Of course, it is an interesting question if this can be proven (or even disproven) analytically. To examine this, we take -- as an example -- the error in the $x$ momentum of the third basis function and set all $u_{x,i}=u_{y,i}=0$.
 
 However, this does not hold true.
-%Unfortunately, we were not able to verify this result. The reason for that is that it does not hold true for all input values\todo{Ist das nicht ein Gegenbeweis?}.
 To illustrate this, we consider an (admittedly extreme) example where we choose $h_2=16$ and $h_3=4$.
 
 \input{ord1_differing_h2_h3_164/tex.tex}
@@ -2286,7 +2278,7 @@ Again, these plots look the same. We conducted further experiments only adjustin
 \subsubsection{Differing momentums}
 \label{sec:ord1-magnitude-differing-momentums}
 
-The last scenario to examine is varying momentum values. We will use the same values as above, only with non-zero momentums.
+The next scenario to examine is varying momentum values. We will use the same values as above, only with non-zero momentums.
 
 Therefore, we consider the following two scenarios:
 
@@ -2351,14 +2343,6 @@ For the most part, the plots all look parabola-like which is traceable since the
 
 The fact that all $y$ momentum errors are zero deserves a special attention. However, we will explain this fact in a more generalized setting --- we will not restrict ourselves to second order and will assume that all heights are equal (not exactly 10).
 
-% Imagine we have a basis function $\phi_X$ whose $y$-derivative is 0, and one basis function $\phi_Y$ whose $y$-derivative is 0. We can see in table \ref{tab:basis-functions-for-low-degrees} that this is actually the case sometimes.
-
-% Mathematically, we have then
-% \begin{align*}
-%   \pd{\phi_X}{x} &= 0 \\
-%   \pd{\phi_Y}{y} &= 0
-% \end{align*}
-
 We start out by examining the error of the $y$ momentum for the basis function $\phi_X$. To do so, we define $\mathtt{DIFFY}:=\left( \overline{F}_3(\mathbf{q}) - \widehat{F}_3(\mathbf{q}) \right)$. That makes $\mathtt{DIFFY}$ a two-component vector containing an $x$ and an $y$ coordinate.
 
 \begin{align*}
@@ -2382,8 +2366,6 @@ If we choose all momentums to be 0 (which is what we are doing in this scenario)
 \begin{equation*}
   \left( \sum_{j=1}^n \left(\frac{1}{2} g h_j^2\right) \phi_j \right) - \left( \frac{1}{2} g \widehat{h}^2\right)
 \end{equation*}
-
-%For second order, we have $n=6$.
 
 We have $\sum_{i=1}^n \phi(x,y)=1$ and  $(\sum_{i=1}^n a \phi(x,y))^2 = a^2$ as computed in section \ref{sec:basis-functions-other-properties}.
 
@@ -2630,33 +2612,37 @@ Now we consider variable height values, but will leave the momentums zeroed stil
 
 Figure \ref{fig:ord2_magnitude_comparison_momentums} compares the two scenarios. Again we cannot discern a difference between the two, which leads to the conclusion that with only differing height the error does not increase with magnitude.
 
-subsubsection{Differing heights and momentums}
+\subsubsection{Differing heights and momentums}
 \label{sec:ord2-magnitude-differing-heights-momentums}
 
 We now do research a combination of differing heights and momentums. The two cases we consider are as follows:
 
 \begin{itemize}
-\item In the first case, we leave $h_2=12, h_3=7, h_4=15, h_5=11, h_6=9$ and $u_{x,i}=u_{y,i}=(-1)^i \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
-\item In the second case, we leave $h_2=1002, h_3=7, h_4=1015, h_5=1011, h_6=999$ and $u_{x,i}=(-1)^i \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
+	\item In the first case, we leave $h_2=12, h_3=7, h_4=15, h_5=11, h_6=9$ and $u_{x,i}=(-1)^i \cdot i, u_{y,i}=(-1)^{i+1} \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
+\item In the second case, we leave $h_2=1002, h_3=7, h_4=1015, h_5=1011, h_6=999$ and $u_{x,i}=(-1)^i \cdot i, u_{y,i}=(-1)^{i+1} \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
 \end{itemize}
 
-\todo{Plots machen!}
-%\input{magnitude_comp_heights_momentums/tex}
+\input{ord2_magnitude_comparison_heights_momentums/tex}
 
-Figure
-\todo{Hier auch}
-%\ref{fig:magnitude_comp_heights_momentums}
-shows something\todo{Das hier ausfuellen mit Plot-Daten}.
+Figure \ref{fig:ord2_magnitude_comparison_heights_momentums} shows two cases, the $x$ and $y$ momentums of basis function 5.
+We can see that the $y$ momentum plots look almost the same, with only slightly different scaling, similar to our previous results from section \ref{sec:ord1-magnitude-differing-heights-momentums}.
+The $x$ momentum is interesting because it actually exhibits a different shape.
+That can be explained by looking at the basis function 5, because differentiated by $x$ it is zero.
+Since that value is multiplied onto a part of the equation (the $x$ part of $\overline{F}_2\left(\mathbf{q}\right)$ and $\widehat{F}_2\left(\mathbf{q}\right)$), parts of the error term are zeroed entirely which results in an overall small error.
+This also means that the error difference between the terms of different magnitudes are emphasized, which is why the plots look different.
+
+Aside from this case (and the $y$ momentum of basis function 3, for the same reason) the plots look very similar in shape and only differ in their scaling.
+Occasionally the error is even less with higher overall water depth, implying that the error introduced through magnitude isn't a monotone function in height, but depends on other variables and their distribution.
 
 \subsubsection{Conclusion}
 \label{sec:ord2-magnitude-differing-conclusion}
 
 From this we can conclude that in cases with varying momemtums (which are all realistic cases) the resulting error in the calculations will vary with height magnitude.
-However, not only does it not increase strongly, situationally it can even be lower.
-It depends on the actual values and setup of basis functions to determine the exact relation between different heights, making it impractical to determine for the general case.
-If that value is of interest, it will have to be examined with certain conditions predefined.
+However, not only does it not differ strongly, it is often also lower.
+This means that it's not a monotone error and will have very little practical relevance, as the it is significantly lower than the error introduced from other sources to not affect the end result.
 
-\todo{Ueberpruefen ob dieses Gelaber auch stimmt}\done{Scheint schon richtig zu sein.}
+The magnitude error also depends on the actual values and setup of basis functions to determine the exact relation between different heights, making it inpractical to determine for the general case.
+If that value is of interest, it will have to be examined within a certain scenario using known basis functions.
 
 \remark{Vielleicht mathematisch zeigen, dass Null-Impuls nichts am Term aendert?}
 
