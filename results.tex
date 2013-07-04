@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[a4paper]{article}
 
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
@@ -16,6 +16,10 @@
 \usepackage{geometry}
 \usepackage{ifthen}
 \usepackage{cite}
+\usepackage{chngcntr}
+
+\counterwithin{equation}{section}
+%\counterwithin{figure}{section}
 
 %\usepackage{todonotes}
 
@@ -35,7 +39,7 @@
 
 \usetikzlibrary{decorations.pathmorphing}
 
-\geometry{margin=3.5cm}%, bottom=2cm, top=2cm}
+\geometry{margin=3cm}%, bottom=2cm, top=2cm}
 
 \newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
 \newcommand{\done}[2][]{\textcolor{green!50!black}{DONE\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
@@ -76,8 +80,6 @@
 \DeclareMathOperator{\divergence}{div}
 
 \begin{document}
-
-\todo{Zwischen zwei nebeneinanderstehenden subfigures immer einheitlich viel Platz einfügen!}
 
 \thispagestyle{empty}
 % Titelblatt: Gestaltung von der TUM-Informatik-Homepage genommen.
@@ -1353,7 +1355,12 @@ To understand how our plots work, we can take a look at figure \ref{fig:two-poin
 
 Looking at sub-figure \ref{subfig:two-points-p1-height-momentum}, its caption says that point $p_1^L$ is varying. To be precise, its height and momentum vary along the plot axes.
 
-The first part of this caption tells us that we are fixing all points except $p_1^L$ to a specific value (in this case it was $\left(10, 0\right)^T$), so we are considering the term $I\left(\left(10, 0\right)^T, \left(h_2^R, u_2^R\right)^T, \left(10, 0\right)^T, \left(10, 0\right)^T\right)$.
+The first part of this caption tells us that we are fixing all points except $p_1^L$ to a specific value (in this case it was $\left(10, 0\right)^T$), so we are considering the term 
+
+\begin{equation*}
+  I\left(\left(10, 0\right)^T, \left(h_2^R, u_2^R\right)^T, \left(10, 0\right)^T, \left(10, 0\right)^T\right).
+\end{equation*}
+
 
 % In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3D plot showing this function. Remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
 
@@ -1527,7 +1534,9 @@ When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized 
 \section{Conclusions}
 \label{sec:conslusions}
 
-We have seen that the height error is zero in the scenarios under consideration, which we derived in section \ref{sec:height-error-p2}. Moreover, the error in momentum shows quite a non-predictable behavior.
+\paragraph{Behaviour of the error term}
+
+We have seen that the \emph{height} error is zero in the scenarios under consideration, which we derived in section \ref{sec:height-error-p2}. Moreover, the error in momentum shows quite a non-predictable behavior.
 %This was expected, since the momentum error is a rational function -- and thus not easy to imagine.
 It can vary strongly, both in shape and in scale. When adjusting the height values, it appears to be parabola-shaped, while the momentum values have a minor impact only.
 
@@ -1542,6 +1551,8 @@ The smaller the triangle, the more unlikely it is, that the height values differ
 In practice, it is more likely that the relative height difference between points is rather small in comparison. Similarly, the momentum within the triangle does not vary much, because one triangle represents one location within the domain, which is unlikely to move in different directions.
 
 However, trying to determine an exact formula for the deviation is impractical due to the amount of variables that all interact with each other, and may even be impossible.
+
+\paragraph{Singularities}
 
 Additionally, we saw that singularities do not play a significant role in our computations since they only occur for unrealistic scenarios.
 This is highly advantageous since we can be sure that the integral exists and quadrature methods give meaningful results.
@@ -2698,7 +2709,7 @@ The practical merits of this approximation are already established, as it has be
 \appendix
 
 \clearpage{}
-\newgeometry{top=1cm}
+\newgeometry{left=2.7cm, right=2.7cm, top=2cm}
 \part{Appendix}
 \label{part:cheat-sheet}
 
