@@ -77,6 +77,8 @@
 
 \begin{document}
 
+\todo{Zwischen zwei nebeneinanderstehenden subfigures immer einheitlich viel Platz einfügen!}
+
 \thispagestyle{empty}
 % Titelblatt: Gestaltung von der TUM-Informatik-Homepage genommen.
 \makeatletter
@@ -2599,13 +2601,9 @@ Again we consider two exemplary cases using default values in two different orde
 
 As before, the difference in heights and momentums within one scenario is the same for both cases, (4 units for $h_1$ and 0 units for all other variables) while the total differs by a factor of $10^2$. Once more we experience that the effects between basis functions were very similar, which is why we will only show selected representative plots.
 
-\todo{Plots machen!}
-%\input{ord2_magnitude_comparison_default/tex}
+\input{ord2_magnitude_comparison_default/tex}
 
-Figure
-\todo{Hier auch}
-%\ref{fig:ord2_magnitude_comparison_default}
-compares the two scenarios described above. There is no difference between the two, meaning that with one sole differing height value the error does not depend on the total magnitude.
+Figure \ref{fig:ord2_magnitude_comparison_default} compares the two scenarios described above. There is no difference between the two, meaning that with one sole differing height value the error does not depend on the total magnitude.
 
 \subsubsection{Differing height values}
 \label{sec:ord2-magnitude-non-std-values1}
@@ -2614,16 +2612,12 @@ Now we consider variable height values, but will leave the momentums zeroed stil
 
 \begin{itemize}
 \item In the first case, we leave $h_2=12, h_3=7, h_4=15, h_5=11, h_6=9$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
-\item In the second case, we leave $h_2=1002, h_3=7, h_4=1015, h_5=1011, h_6=999$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
+\item In the second case, we leave $h_2=1002, h_3=997, h_4=1015, h_5=1011, h_6=999$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
 \end{itemize}
 
-\todo{Plots machen!}
-%\input{ord2_magnitude_comparison_nonstd1/tex}
+\input{ord2_magnitude_comparison_nonstd1/tex}
 
-Figure
-\todo{Hier auch}
-%\ref{fig:ord2_magnitude_comparison_momentums}
-compares the two scenarios. Again we cannot discern a difference between the two, which leads to the conclusion that with only differing height the error does not increase with magnitude.
+Figure \ref{fig:ord2_magnitude_comparison_momentums} compares the two scenarios. Again we cannot discern a difference between the two, which leads to the conclusion that with only differing height the error does not increase with magnitude.
 
 subsubsection{Differing heights and momentums}
 \label{sec:ord2-magnitude-differing-heights-momentums}
@@ -2648,15 +2642,14 @@ shows something\todo{Das hier ausfuellen mit Plot-Daten}.
 
 From this we can conclude that in cases with varying momemtums (which are all realistic cases) the resulting error in the calculations will vary with height magnitude.
 However, not only does it not increase strongly, situationally it can even be lower.
-It depends on the actual values and setup of basis functions to determine the exact relation between different heights, making it inpractical to determine for the general case.
+It depends on the actual values and setup of basis functions to determine the exact relation between different heights, making it impractical to determine for the general case.
 If that value is of interest, it will have to be examined with certain conditions predefined.
 
-\todo{Ueberpruefen ob dieses Gelaber auch stimmt}
+\todo{Ueberpruefen ob dieses Gelaber auch stimmt}\done{Scheint schon richtig zu sein.}
 
 \remark{Vielleicht mathematisch zeigen, dass Null-Impuls nichts am Term aendert?}
 
 \clearpage{}
-\todo{clearpage, yay or nay?}
 
 \section{Conclusion}
 \label{sec:stiffness-analysis-conclusion}
