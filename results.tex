@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper, twoside]{article}
 
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
@@ -40,7 +40,8 @@
 
 \usetikzlibrary{decorations.pathmorphing}
 
-\geometry{margin=2.9cm}
+%\geometry{margin=3cm}
+\geometry{hmarginratio=1:1, inner=3cm, outer=2.8cm, top=3cm, bottom=3cm}
 
 \newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
 \newcommand{\done}[2][]{\textcolor{green!50!black}{DONE\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
@@ -1119,7 +1120,11 @@ That is why, for the rest of this part, we will only display error plots for the
 Evaluating the integral in equation (\ref{eq:integral-norm-definition}) is not a trivial task.
 Even if delegating most of the work to the symbolic math program Maple, we experienced some pitfalls while evaluating the term.
 
-The main challenge with exact integration is that Maple has to compute the zeroes of $\left|N\left(x\right)-N^\prime\left(x\right)\right|$, which can be a time consuming task, depending on the functions used.
+The main challenge with exact integration is that Maple has to compute the zeroes of
+\begin{equation*}
+\left|N\left(x\right)-N^\prime\left(x\right)\right|,
+\end{equation*}
+which can be a time consuming task, depending on the functions used.
 
 There are several possibilities to overcome this problem. The first that may come to mind is to use a Gaussian quadrature (or any equivalent quadrature scheme for rational functions). However, even after extensive research we could not find any suitable quadrature methods for rational functions.
 
@@ -2606,7 +2611,7 @@ Now we consider variable height values, but will leave the momentums zeroed stil
 
 \begin{itemize}
 \item In the first case, we leave $h_2=12, h_3=7, h_4=15, h_5=11, h_6=9$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
-\item In the second case, we leave $h_2=1002, h_3=997, h_4=1015, h_5=1011, h_6=999$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
+\item In the second case, we leave $h_2=1002, h_3=997, h_4=1005, h_5=1001, h_6=999$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
 \end{itemize}
 
 \input{ord2_magnitude_comparison_nonstd1/tex}
@@ -2620,7 +2625,7 @@ We now do research a combination of differing heights and momentums. The two cas
 
 \begin{itemize}
 	\item In the first case, we leave $h_2=12, h_3=7, h_4=15, h_5=11, h_6=9$ and $u_{x,i}=(-1)^i \cdot i, u_{y,i}=(-1)^{i+1} \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
-\item In the second case, we leave $h_2=1002, h_3=7, h_4=1015, h_5=1011, h_6=999$ and $u_{x,i}=(-1)^i \cdot i, u_{y,i}=(-1)^{i+1} \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
+\item In the second case, we leave $h_2=1002, h_3=997, h_4=1005, h_5=1001, h_6=999$ and $u_{x,i}=(-1)^i \cdot i, u_{y,i}=(-1)^{i+1} \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
 \end{itemize}
 
 \input{ord2_magnitude_comparison_heights_momentums/tex}
@@ -2644,8 +2649,6 @@ This means that it's not a monotone error and will have very little practical re
 
 The magnitude error also depends on the actual values and setup of basis functions to determine the exact relation between different heights, making it impractical to determine for the general case.
 If that value is of interest, it will have to be examined within a certain scenario using known basis functions.
-
-\remark{Vielleicht mathematisch zeigen, dass Null-Impuls nichts am Term aendert?}
 
 \clearpage{}
 
@@ -2696,7 +2699,7 @@ The practical merits of this approximation are already established, as it has be
 \appendix
 
 \clearpage{}
-\newgeometry{left=2.7cm, right=2.7cm, top=2cm}
+\newgeometry{left=2.7cm, right=2.7cm, top=2cm, bottom=3cm}
 \part{Appendix}
 \label{part:cheat-sheet}
 
