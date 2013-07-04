@@ -2236,23 +2236,23 @@ The plots confirm our suspicion: the error is indeed minimal for our suspected v
 \subsection{Order 1 --- Different orders of magnitude}
 \label{sec:ord1-different-orders-magnitude}
 
-We have seen so far that the more the heights resp. momentums differ, the bigger the error grows. We now research whether the \emph{difference} in heights resp. momentums is the \emph{only} thing that affects the error. I.e. we research what happens if the \emph{difference} of heights resp. momentums stays the same, but the order of magnitude is another.
+So far we have seen that the more the heights and momentums differ the larger the error grows. We will now examine whether the \emph{difference} in heights and momentums is the only thing that affects the error, i.e. if the difference of stays the same, but the order of magnitude varies.
 
 \subsubsection{Standard values}
 \label{sec:ord1-diff-ord-magnitude-std-values}
 
-First we exemplary consider two cases using default values in two different orders of magnitude.
+First we consider two exemplary cases using default values in two different orders of magnitude.
 
 \begin{itemize}
 \item In the first case, we leave $h_2=h_3=10$ and $u_{x,1}=u_{x,2}=u_{x,3}=u_{y,1}=u_{y,2}=u_{y,3}=0$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
 \item In the second case, we leave $h_2=h_3=1000$ and $u_{x,1}=u_{x,2}=u_{x,3}=u_{y,1}=u_{y,2}=u_{y,3}=0$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
 \end{itemize}
 
-Please note that the \emph{difference} in heights resp. momentums is the same for both cases. However, the order of magnitude is another. We will restrict ourselves to errors for certain basis functions. The effects experienced here are similar for other basis functions.
+The difference in heights and momentums is the same for both cases, (4 units for $h_1$ and 0 units for all other variables). However, the total differs by a factor of $10^2$. We will restrict ourselves to errors for certain basis functions, as the effects experienced there are similar for other basis functions.
 
 \input{magnitude_comparison_default/tex}
 
-Figure \ref{fig:magnitude_comparison_default} compares the two scenarios described above (for the $x$ momentum of the 2nd basis function --- similar effects can be seen for all basis functions and components). We see two plots that look identical. Thus, we might be tempted to conjecture that only the \emph{difference} of the heights and momentums affects the error.
+Figure \ref{fig:magnitude_comparison_default} compares the two scenarios described above (for the $x$ momentum of the 2nd basis function --- similar effects can be seen for all basis functions and components). We see two plots that look identical. This could lead to the conclusion that only the difference of the heights and momentums affects the error instead of the absolute values. However, that is not the case as we will see below.
 
 \subsubsection{Differing height values}
 \label{sec:ord1-magnitude-non-std-values1}
@@ -2260,11 +2260,11 @@ Figure \ref{fig:magnitude_comparison_default} compares the two scenarios describ
 We will now slightly alter the above scenario to the following:
 
 \begin{itemize}
-\item In the first case, we leave $h_2=12, =h_3=7$ and $u_{x,1}=u_{x,2}=u_{x,3}=u_{y,1}=u_{y,2}=u_{y,3}=0$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
+\item In the first case, we leave $h_2=12, h_3=7$ and $u_{x,1}=u_{x,2}=u_{x,3}=u_{y,1}=u_{y,2}=u_{y,3}=0$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
 \item In the second case, we leave $h_2=1002, h_3=997$ and $u_{x,1}=u_{x,2}=u_{x,3}=u_{y,1}=u_{y,2}=u_{y,3}=0$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
 \end{itemize}
 
-We ensured again that the \emph{difference} in heights resp. momentums is the same for both cases. We show two resulting plots for the $x$ momentum of the second basis function in figure \ref{fig:magnitude_comparison_differing_heights}. Similar behaviour is seen for all other basis functions aswell. 
+We ensured again that the \emph{difference} in heights and momentums is the same for both cases. We show two resulting plots for the $x$ momentum of the second basis function in figure \ref{fig:magnitude_comparison_differing_heights}. Similar behaviour is seen for all other basis functions aswell.
 
 \input{magnitude_comp_nonstd1/tex}
 
@@ -2273,7 +2273,7 @@ Again, these plots look the same. We conducted further experiments only adjustin
 \subsubsection{Differing momentums}
 \label{sec:ord1-magnitude-differing-momentums}
 
-One thing remains to be done: We want to compare what happens if we not only change the height values, but also the momentums.
+The last scenario to examine is varying momentum values. We will use the same values as above, only with non-zero momentums.
 
 Therefore, we consider the following two scenarios:
 
@@ -2284,12 +2284,12 @@ Therefore, we consider the following two scenarios:
 
 \input{magnitude_comp_momentums/tex}
 
-The resulting plots can be seen in figure \ref{fig:magnitude_comp_momentums}. Unexpectedly, we see different behaviour for the two plots. Even more surprising, we see that the error can be zero for the second case (where the height values are around 1000), and does not reach zero for the case for the first case (height values around 10).
+The resulting plots can be seen in figure \ref{fig:magnitude_comp_momentums}. Contrary to before, we see different behavior for the two plots. Surprisingly, we see that the error can be zero for the second case (where the height values are around 1000), and does not reach zero in the first case (height values around 10).
 
 \subsubsection{Differing heights and momentums}
 \label{sec:ord1-magnitude-differing-heights-momentums}
 
-We now do research a combination of differing heights and momentums. The two cases we consider are as follows:
+We will now research a combination of differing heights and momentums. The two cases we consider are as follows:
 
 \begin{itemize}
 \item In the first case, we set $h_2=12, h_3=9$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[8, 12]$.
@@ -2300,9 +2300,9 @@ For both cases, we use $u_{x,1}=2, u_{x,2}= -2, u_{x,3}= 2, u_{y,1}= -2, u_{y,2}
 
 \input{magnitude_comp_heights_momentums/tex}
 
-Figure \ref{fig:magnitude_comp_heights_momentums} shows the error term of the $x$ momentum for the first basis function and the $x$ momentum for the second basis function. Surprisingly, these two scenarios yield different plots for the $x$ momentum of the first basis function. The error in the $x$ momentum for second basis function differ.
+Figure \ref{fig:magnitude_comp_heights_momentums} shows the error term of the $x$ momentum for the first basis function and the $x$ momentum for the second basis function. Surprisingly, these two scenarios yield different plots for the $x$ momentum of the first basis function. The error in the $x$ momentum for second basis function differ. \todo{Macht der Satz Sinn?}
 
-That shows that \emph{not only} the differences in height play a role for the error, but also the momentums. However, we still see that the errors do not differ too drastically for the different orders of magnitude.
+That shows that not only the difference in height values play a role for the total error, but also the momentums. However, we still see that the errors do not differ too strongly for the different orders of magnitude, meaning the actual error values can be approximated with results obtained from test cases with low water depth.
 
 \clearpage{}
 
@@ -2581,6 +2581,82 @@ We saw that changing an $y$ momentum can result in drastically changed shapes of
 We will now come back to only modifying the $x$ momentums. We will set them all to 1 and leave $u_{x,1}$ as axis variable. We obtain parabolae with minima at $u_{x,1}=1$ (since all other $x$ momentums are 1) that are shown in figure \ref{fig:ord2_varying_ux1_ux2-ux6_1}.
 
 \input{ord2_varying_ux1_ux2-ux6_1/tex.tex}
+
+\subsection{Order 2 --- Different orders of magnitude}
+\label{sec:ord2-different-orders-magnitude}
+
+As in the previous section, we will now analyze the behavior concerning different orders of magnitude and its effects on the error term.
+
+\subsubsection{Standard values}
+\label{sec:ord2-diff-ord-magnitude-std-values}
+
+Again we consider two exemplary cases using default values in two different orders of magnitude.
+
+\begin{itemize}
+\item In the first case, we leave $h_i=10$ for $i \in \{2,3,4,5,6\}$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
+\item In the second case, we leave $h_i=1000$ for $i \in \{2,3,4,5,6\}$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
+\end{itemize}
+
+As before, the difference in heights and momentums within one scenario is the same for both cases, (4 units for $h_1$ and 0 units for all other variables) while the total differs by a factor of $10^2$. Once more we experience that the effects between basis functions were very similar, which is why we will only show selected representative plots.
+
+\todo{Plots machen!}
+%\input{ord2_magnitude_comparison_default/tex}
+
+Figure
+\todo{Hier auch}
+%\ref{fig:ord2_magnitude_comparison_default}
+compares the two scenarios described above. There is no difference between the two, meaning that with one sole differing height value the error does not depend on the total magnitude.
+
+\subsubsection{Differing height values}
+\label{sec:ord2-magnitude-non-std-values1}
+
+Now we consider variable height values, but will leave the momentums zeroed still:
+
+\begin{itemize}
+\item In the first case, we leave $h_2=12, h_3=7, h_4=15, h_5=11, h_6=9$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
+\item In the second case, we leave $h_2=1002, h_3=7, h_4=1015, h_5=1011, h_6=999$ and $u_{x,i}=u_{y,i}=0$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
+\end{itemize}
+
+\todo{Plots machen!}
+%\input{ord2_magnitude_comparison_nonstd1/tex}
+
+Figure
+\todo{Hier auch}
+%\ref{fig:ord2_magnitude_comparison_momentums}
+compares the two scenarios. Again we cannot discern a difference between the two, which leads to the conclusion that with only differing height the error does not increase with magnitude.
+
+subsubsection{Differing heights and momentums}
+\label{sec:ord2-magnitude-differing-heights-momentums}
+
+We now do research a combination of differing heights and momentums. The two cases we consider are as follows:
+
+\begin{itemize}
+\item In the first case, we leave $h_2=12, h_3=7, h_4=15, h_5=11, h_6=9$ and $u_{x,i}=u_{y,i}=(-1)^i \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[10-2, 10+2]=[8,12]$.
+\item In the second case, we leave $h_2=1002, h_3=7, h_4=1015, h_5=1011, h_6=999$ and $u_{x,i}=(-1)^i \cdot i$ for $i \in \{1,2,3,4,5,6\}$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
+\end{itemize}
+
+\todo{Plots machen!}
+%\input{magnitude_comp_heights_momentums/tex}
+
+Figure
+\todo{Hier auch}
+%\ref{fig:magnitude_comp_heights_momentums}
+shows something\todo{Das hier ausfuellen mit Plot-Daten}.
+
+\subsubsection{Conclusion}
+\label{sec:ord2-magnitude-differing-conclusion}
+
+From this we can conclude that in cases with varying momemtums (which are all realistic cases) the resulting error in the calculations will vary with height magnitude.
+However, not only does it not increase strongly, situationally it can even be lower.
+It depends on the actual values and setup of basis functions to determine the exact relation between different heights, making it inpractical to determine for the general case.
+If that value is of interest, it will have to be examined with certain conditions predefined.
+
+\todo{Ueberpruefen ob dieses Gelaber auch stimmt}
+
+\remark{Vielleicht mathematisch zeigen, dass Null-Impuls nichts am Term aendert?}
+
+\clearpage{}
+\todo{clearpage, yay or nay?}
 
 \section{Conclusion}
 \label{sec:stiffness-analysis-conclusion}
