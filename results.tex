@@ -19,7 +19,8 @@
 \usepackage{chngcntr}
 
 \counterwithin{equation}{section}
-%\counterwithin{figure}{section}
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
 
 %\usepackage{todonotes}
 
@@ -39,7 +40,7 @@
 
 \usetikzlibrary{decorations.pathmorphing}
 
-\geometry{margin=3cm}%, bottom=2cm, top=2cm}
+\geometry{margin=2.9cm}
 
 \newcommand{\todo}[2][]{\textcolor{red}{TODO\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
 \newcommand{\done}[2][]{\textcolor{green!50!black}{DONE\ifthenelse{\equal{#1}{}}{}{[#1]}: #2}}
@@ -1534,7 +1535,7 @@ When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized 
 \section{Conclusions}
 \label{sec:conslusions}
 
-\paragraph{Behaviour of the error term}
+\paragraph{Behavior of the error term}
 
 We have seen that the \emph{height} error is zero in the scenarios under consideration, which we derived in section \ref{sec:height-error-p2}. Moreover, the error in momentum shows quite a non-predictable behavior.
 %This was expected, since the momentum error is a rational function -- and thus not easy to imagine.
@@ -2269,7 +2270,7 @@ We will now slightly alter the above scenario to the following:
 \item In the second case, we leave $h_2=1002, h_3=997$ and $u_{x,1}=u_{x,2}=u_{x,3}=u_{y,1}=u_{y,2}=u_{y,3}=0$. The variable $h_1$ is the non-fixed variable. The range for $h_1$ will be $[1000-2, 1000+2]=[998,1002]$.
 \end{itemize}
 
-We ensured again that the \emph{difference} in heights and momentums is the same for both cases. We show two resulting plots for the $x$ momentum of the second basis function in figure \ref{fig:magnitude_comparison_differing_heights}. Similar behaviour is seen for all other basis functions aswell.
+We ensured again that the \emph{difference} in heights and momentums is the same for both cases. We show two resulting plots for the $x$ momentum of the second basis function in figure \ref{fig:magnitude_comparison_differing_heights}. Similar behavior is seen for all other basis functions as well.
 
 \input{magnitude_comp_nonstd1/tex}
 
@@ -2305,9 +2306,9 @@ For both cases, we use $u_{x,1}=2, u_{x,2}= -2, u_{x,3}= 2, u_{y,1}= -2, u_{y,2}
 
 \input{magnitude_comp_heights_momentums/tex}
 
-Figure \ref{fig:magnitude_comp_heights_momentums} shows the error term of the $x$ momentum for the first basis function and the $x$ momentum for the second basis function. Surprisingly, these two scenarios yield different plots for the $x$ momentum of the first basis function. The error in the $x$ momentum for second basis function differ. \todo{Macht der Satz Sinn?}
+Figure \ref{fig:magnitude_comp_heights_momentums} shows the error term of the $x$ momentum for the first basis function and the $x$ momentum for the second basis function. Surprisingly, these two scenarios yield different plots for the $x$ momentum of the first basis function. The error in the $x$ momentum is overall a bit smaller for the case where all height values are about 1000 than in the case where all heights are about 10.
 
-That shows that not only the difference in height values play a role for the total error, but also the momentums. However, we still see that the errors do not differ too strongly for the different orders of magnitude, meaning the actual error values can be approximated with results obtained from test cases with low water depth.
+That shows that not only the difference in height values plays a role for the total error, but also the momentums. However, we still see that the errors do not differ too strongly for the different orders of magnitude, meaning the actual error values can be approximated with results obtained from test cases with low water depth.
 
 \clearpage{}
 
@@ -2637,11 +2638,11 @@ Occasionally the error is even less with higher overall water depth, implying th
 \subsubsection{Conclusion}
 \label{sec:ord2-magnitude-differing-conclusion}
 
-From this we can conclude that in cases with varying momemtums (which are all realistic cases) the resulting error in the calculations will vary with height magnitude.
+From this we can conclude that in cases with varying momentums (which are all realistic cases) the resulting error in the calculations will vary with height magnitude.
 However, not only does it not differ strongly, it is often also lower.
 This means that it's not a monotone error and will have very little practical relevance, as the it is significantly lower than the error introduced from other sources to not affect the end result.
 
-The magnitude error also depends on the actual values and setup of basis functions to determine the exact relation between different heights, making it inpractical to determine for the general case.
+The magnitude error also depends on the actual values and setup of basis functions to determine the exact relation between different heights, making it impractical to determine for the general case.
 If that value is of interest, it will have to be examined within a certain scenario using known basis functions.
 
 \remark{Vielleicht mathematisch zeigen, dass Null-Impuls nichts am Term aendert?}
