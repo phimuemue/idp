@@ -1673,8 +1673,8 @@ We do so by exemplary examining the second component and compute its exact value
   \end{pmatrix}
   \cdot \nabla \phi_i \, dT = \\
   & = & \int_T
-   \left( \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \cdot \pd{\phi_i}{x} + \\
-  & & \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y} \, dT
+   \left( \frac{ \left(\sum_{j=1}^n \phi_j u_{x,j}\right)^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g \left(\sum_{j=1}^n \phi_j h_j\right)^2 \right) \cdot \pd{\phi_i}{x} + \\
+  & & \frac{\left(\sum_{j=1}^n \phi_j u_{x,j}\right) \cdot \left(\sum_{j=1}^n \phi_j u_{y,j}\right)}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y} \, dT
 \end{eqnarray*}
 
 Let us shortly contrast the two different approximation methods. Equations \eqref{eq:contrast-exact-solution} and \eqref{eq:contrast-approx-solution} show the exact and the approximate solution, respectively.
@@ -1685,7 +1685,7 @@ Let us shortly contrast the two different approximation methods. Equations \eqre
   \hspace{-.3cm} & + & \hspace{-.3cm} \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \int_T \phi_j \pd{\phi_i}{y} \, dT \\
   \label{eq:contrast-exact-solution}
   \int_T \left( \frac{(\sum_{j=1}^n \phi_j u_{x,j})^2}{\sum_{j=1}^n \phi_j h_j} + \frac{1}{2} g (\sum_{j=1}^n \phi_j h_j)^2 \right) \pd{\phi_i}{x}
-  \hspace{-.3cm} & + & \hspace{-.3cm} \frac{(\sum_{j=1}^n \phi_j u_{x,j}) \cdot (\sum_{j=1}^n \phi_j u_{y,j})}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y}\ dT
+  \hspace{-.3cm} & + & \hspace{-.3cm} \frac{\left(\sum_{j=1}^n \phi_j u_{x,j}\right) \cdot \left(\sum_{j=1}^n \phi_j u_{y,j}\right)}{\sum_{j=1}^n \phi_j h_j} \cdot \pd{\phi_i}{y}\ dT
 \end{eqnarray}
 
 Note that equation \eqref{eq:contrast-exact-solution} is significantly more complex than \eqref{eq:contrast-approx-solution}.
@@ -1898,7 +1898,7 @@ We show how the division of the triangles works in figure \ref{fig:splitting-tri
 We can now sample the height at the centers and compute the appropriate volume of the corresponding prism. Therefore, we have to multiply the height by the base area of the respective triangle. The area of one triangle is $\frac{1}{2 L^2}$, resulting in the following equation.
 
 \begin{equation}
-  \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2L^2}
+  \int_T f(x,y)\, dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y) \cdot \frac{1}{2L^2}
 \end{equation}
 
 To clarify this, we consider some examples:
@@ -1916,7 +1916,7 @@ Naturally we need more triangles for an actual approximation. If we use four tri
 We can now approximate the integral as follows:
 
 \begin{equation*}
-  \int_T f(x,y) dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y)\cdot \frac{1}{2\cdot 4}
+  \int_T f(x,y)\, dT \approx \sum_{(x,y)\in\mathtt{CENTERS}} f(x,y)\cdot \frac{1}{2\cdot 4}
 \end{equation*}
 
 Here, the factor $\frac{1}{2\cdot 4} = \frac{1}{8}$ denotes the area of one single triangle.
