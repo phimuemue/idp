@@ -1357,18 +1357,15 @@ The parameter ``stripes'' determines how many stripes are used to numerically ev
 
 All the plots in this document are generated using our tool. We said that our tool reads two functions from a file and interprets them as the two components of $N\left(x\right)-N^\prime\left(x\right)$. The tool generates a plot representing the error in the $u$ component (momentum).
 
-To understand how our plots work, we can take a look at figure \ref{fig:two-points-all-the-same}. In this example, we used 2 points on each triangle and edge. That is, we have four (relevant) points in total, two of which we have plotted here. This is why figure \ref{fig:two-points-all-the-same} has two sub-figures.
+To understand how our plots work, we can take a look at figure \ref{fig:two-points-all-the-same}. In this example, we used 2 points on each triangle and edge. That is, we have four (relevant) points in total, two of which we have plotted here. This is why figure \ref{fig:two-points-all-the-same} itself consists of two figures detailing the plots for the two points.
 
-Looking at sub-figure \ref{subfig:two-points-p1-height-momentum}, its caption says that point $p_1^L$ is varying. To be precise, its height and momentum vary along the plot axes.
+Looking at figure \ref{subfig:two-points-p1-height-momentum}, its caption says that point $p_1^L$ is varying. To be precise, its height and momentum vary along the plot axes.
 
-The first part of this caption tells us that we are fixing all points except $p_1^L$ to a specific value (in this case it was $\left(10, 0\right)^T$), so we are considering the term 
+The first part of this caption tells us that we are fixing all points except $p_1^L$ to a specific value (in this case it was $\left(10, 0\right)^T$), so we are considering the term
 
 \begin{equation*}
   I\left(\left(10, 0\right)^T, \left(h_2^R, u_2^R\right)^T, \left(10, 0\right)^T, \left(10, 0\right)^T\right).
 \end{equation*}
-
-
-% In subfigure \ref{subfig:fixing-p2-in-first-example}, we deal with a function that has two variables (namely $h_2^R$ and $u_2^R$). Thus, we can create a 3D plot showing this function. Remember that $I$ was a \emph{vector} containing two components. This is why subfigure \ref{subfig:fixing-p2-in-first-example} contains two plots. The left plot stands for the $h$ component, while the right one represents the $u$ component.
 
 The orientation of the axes is displayed in figure \ref{fig:orientation-of-axes}.
 
@@ -1384,8 +1381,6 @@ The orientation of the axes is displayed in figure \ref{fig:orientation-of-axes}
 \end{figure}
 
 To plot $u$ and $h$ we need to know their respective ranges as well. This is noted in the caption of the whole figure. For example, in figure \ref{fig:two-points-all-the-same}, the values for $u$ are in $[8, 12]$ and the values for $h$ in $[-4,4]$.
-
-% Looking back at the caption of the subfigure, which had ``1/0.04'' in the latter part (subfigure \ref{subfig:fixing-p2-in-first-example}). This tells us the range of the values of $I$ (i.e.\,the ``$z$ axis''). To be precise, the firs part tells us that the maximal plotted value for the h component is 1, while the maximal $u$ component value is 0.04. A single number indicates a range between 0 and that number, while an explicit range indicates the given range (for an example, see \ref{subfig:example-with-range}, where the $h$ component plot range goes from 0.25 to 0.55, and the $u$ component from 0 to 0.03).
 
 Since we are visualizing norms (in the form of integrals over absolute error terms) and not actual physical quantities, we cannot make quantitative observations as to whether results are good or bad. Hence, when comparing two results we cannot determine how much one is better than the other. However, we can determine which result is better. And since the calculated values are error terms, the smaller the error term the better the result.
 
@@ -1542,13 +1537,17 @@ When compared to figure \ref{fig:three-points-u1-}, the shape can be recognized 
 
 \paragraph{Behavior of the error term}
 
-We have seen that the \emph{height} error is zero in the scenarios under consideration, which we derived in section \ref{sec:height-error-p2}. Moreover, the error in momentum shows quite a non-predictable behavior.
-%This was expected, since the momentum error is a rational function -- and thus not easy to imagine.
-It can vary strongly, both in shape and in scale. When adjusting the height values, it appears to be parabola-shaped, while the momentum values have a minor impact only.
+We have seen that the \emph{height} error is zero in the scenarios under consideration, which we derived in section \ref{sec:height-error-p2}.
+Moreover, the error in momentum shows quite a non-predictable behavior.
+It can vary strongly, both in shape and in scale.
+When adjusting the height values, it appears to be parabola-shaped, while the momentum values have a minor impact only.
 
-We can (theoretically) make the error arbitrarily large by adjusting the height values such that they differ extremely. This, on the other hand, implies that the error is not bounded.
+The error increases indefinitely with diverging height values between the points.
+This implies that the error is unbounded.
 
-Furthermore, we saw that it had no significant impact which height or momentum value was differing from the other ones. They all had similar impact, even if the shape was different.
+Furthermore, we saw that it had no significant impact which height or momentum value was differing from the other ones.
+They all had similar impact, even if the shape was different.
+This implies that individual points along one edge have no special meaning and can be regarded as equals.
 
 Moreover, we can clearly observe that the closer the height and momentum values of the support points are chosen, the smaller the error gets.
 This is good for any practical application, since that is usually the case.
@@ -1581,7 +1580,7 @@ While deriving the equations necessary for our computations, we introduced sever
 
 \begin{eqnarray}
   \label{eq:third-integral-second-line-1-analysis-part}
-  \int_T F_2(\mathbf{q}) \cdot \nabla \phi \, dT & = &
+  \int_T F_2(\mathbf{q}) \cdot \nabla \phi_i \, dT & = &
   \int_T
   \begin{pmatrix}
     \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
@@ -1610,7 +1609,7 @@ As the point-wise sampling approximation $\mathbf{q} = \sum_{j=0}^{n} \mathbf{q}
 The equation for the $u_y$ component is analogous:
 
 \begin{eqnarray*}
-  \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
+  \int_T F_3\left(\mathbf{q}\right) \cdot \nabla \phi_i \, dT & = &
   \int_T
   \begin{pmatrix}
     \frac{u_x u_y}{h} \\ \frac{u_y^2}{h} + \frac{1}{2} g h^2
@@ -1643,11 +1642,11 @@ We will introduce this notation to refer to the approximated integrand:
 \end{equation}
 
 \begin{equation}
-  \label{eq:point-wise-approx-result-third-line}
-  \overline{F}_3(\mathbf{q}) \cdot \nabla \phi =
+  \label{eq:point-wise-approx-result-second-line-phi}
+  \overline{F}_2(\mathbf{q}) \cdot \nabla \phi_i =
   \begin{pmatrix}
+    \sum_{j=1}^n \left(\frac{u_{x,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
     \sum_{j=1}^n \left(\frac{u_{x,j} u_{y,j}}{h_j}\right) \phi_j \\
-    \sum_{j=1}^n \left(\frac{u_{y,j}^2}{h_j} + \frac{1}{2} g h_j^2\right) \phi_j \\
   \end{pmatrix}
   \cdot
   \begin{pmatrix}
@@ -1661,7 +1660,7 @@ As mentioned in section \ref{sec:stiffness-second-line}, we approximated the rat
 We do so by exemplary examining the second component and compute its exact value (more precisely, we use our original approximation introduced in section \ref{sec:matrix-extraction}):
 
 \begin{eqnarray*}
-  \int_T F_2\left(\mathbf{q}\right) \cdot \nabla \phi \, dT & = &
+  \int_T F_2\left(\mathbf{q}\right) \cdot \nabla \phi_i \, dT & = &
   \int_T
   \begin{pmatrix}
     \frac{u_x^2}{h} + \frac{1}{2} g h^2 \\ \frac{u_x u_y}{h}
@@ -1704,7 +1703,7 @@ Similarly to the previous steps, we can introduce a hat notation to signal the s
 
 \begin{equation}
   \label{eq:stiffness-analysis-second-line-exact-approx-simple}
-  \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi =
+  \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_i =
   \left( \frac{\widehat{u}_x^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{x} +
   \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{y}
 \end{equation}
@@ -1713,7 +1712,7 @@ Analogously, we define this for the third component:
 
 \begin{equation}
   \label{eq:stiffness-analysis-third-line-exact-approx-simple}
-  \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi=
+  \widehat{F}_3(\mathbf{q}) \cdot \nabla \phi_i =
   \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{x} +
   \left( \frac{\widehat{u}_y^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{y}
 \end{equation}
@@ -1798,7 +1797,10 @@ Note that $\int_T f(x,y)\,dT$ can be interpreted as the volume under the functio
 
 We chose this approximation since it is a straightforward extension of the one-dimensional midpoint rule. Even after extensive research, we were not able to find a paper that deals specifically with numerically evaluating a double integral over a triangle (there are many papers that describe double integrals over rectangles such as e.g.\,\cite{lang1987double}).
 
-In principle, we divide the triangle in a way such that we cut the legs (of length 1) into smaller pieces of length $\frac{1}{L}$. The integer $L$ denotes the parameter for our integral approximation. Then, we can generate the centers of the resulting triangles by first computing a set of all possible centers:
+The idea is to divide the triangle in a way such that we cut the legs (of length 1) into smaller pieces of length $\frac{1}{L}$.
+The integer $L^2$ denotes the number of triangles we will divide the original triangle into.
+Hence, $L$ is the parameter for our integral approximation.
+Then, we can generate the centers of the resulting triangles by first computing a set of all possible centers:
 
 \begin{equation*}
   \mathtt{POSSIBLE\_CENTERS} = \left\{
@@ -1933,7 +1935,7 @@ Before we actually generate plots and interpret them, we consider consider the t
 This term ($SE_x$) depends on $\widehat{F_2}(\mathbf{q})$ and $\overline{F_2}(\mathbf{q})$. Moreover, as we remember, $\widehat{F_2}(\mathbf{q})$ is defined as follows:
 
 \begin{equation*}
-  \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi =
+  \widehat{F}_2(\mathbf{q}) \cdot \nabla \phi_i =
   \left( \frac{\widehat{u}_x^2}{\widehat{h}} + \frac{1}{2} g \widehat{h}^2 \right) \cdot \pd{\phi_i}{x} +
   \frac{\widehat{u}_x \cdot \widehat{u}_y }{\widehat{h}} \cdot \pd{\phi_i}{y}
 \end{equation*}
@@ -2008,13 +2010,6 @@ We also did experiments for other assignments of $h_2$ and $h_3$ and observed si
 
 We now examine the same thing for order 2. Again, we solve equation (\ref{eq:stiffness-analysis-singularities-h1}) for $h_1$. We do so by setting $h_2=\dots=h_6=10$.
 
-% \begin{equation*}
-%   h_1 = -\frac{\left(4\,h_{6}-2\,h_{5}\right)\,y^2+\left(\left(4\,h_{6}-4
-%  \,h_{4}+4\,h_{2}\right)\,x-4\,h_{6}+h_{5}\right)\,y+\left(4\,h_{2}-2
-%  \,h_{3}\right)\,x^2+\left(h_{3}-4\,h_{2}\right)\,x}{2\,y^2+\left(4\,
-%  x-3\right)\,y+2\,x^2-3\,x+1}
-% \end{equation*}
-
 \begin{equation*}
   h_1 = -\frac{20\,y^2+\left(40\,x-30\right)\,y+20\,x^2-30\,x}{2\,y^2+
     \left(4\,x-3\right)\,y+2\,x^2-3\,x+1}
@@ -2033,17 +2028,21 @@ We continue our analysis by investigating the case for basis functions of order 
 
 Consider e.g.\,the term $SE_x^i = \int_T \left| \left(\overline{F}_2(\mathbf{q})-\widehat{F}_2(\mathbf{q})\right) \cdot \nabla\phi_i(x,y) \right|$. The terms $\overline{F}_2(\mathbf{q})$ and $\widehat{F}_2(\mathbf{q})$ depend on the height and momentum values of the single support points (i.e.\,on the values $h_1,\dots,h_3$, $u_{x,1},\dots,u_{x,3}$ and $u_{y,1},\dots,u_{y,3}$).
 
-If we have two symmetric basis functions $\phi_i$ and $\phi_j$ and consider $SE^i$, we can compute the following:
+If we have two symmetric basis functions $\phi_i$ and $\phi_j$, their derivates w.r.t. the different variables are also the same:
+
+\begin{equation*}
+  \pd{\phi_i(x,y)}{x} = \pd{\phi_j(y,x)}{y}
+\end{equation*}
+
+Based on that we can compute the following when considering the term $SE^i$:
 
 \begin{equation*}
   SE^i(h, u_x, u_y) = SE^j(h, u_y, u_x)
 \end{equation*}
 
-This equation follows directly from equations \eqref{eq:point-wise-approx-result-second-line} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}. This symmetry results in the fact that some plots look extremely similar to some others
-%(in fact they might even be equal)
-. This will later enable us to use some plots for multiple situations.
-
-%This is especially useful when the $u_x$ and $u_y$-values are distributed in a way such that $u_{x,j}=u_{y,k}$ for $j=1..n$. In this case, we can completely omit the plots for the error of either the $y$- or the $x$ momentum since these plots can be constructed from their counterpart (i.e.\,the error in $x$ momentum for basis function $\phi_i$ is the same as the error in $y$ momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions).
+This equation follows directly from equations \eqref{eq:point-wise-approx-result-second-line-phi} and \eqref{eq:stiffness-analysis-second-line-exact-approx-simple}.
+This symmetry results in the fact that some plots look equivalent to certain others, i.e.\,the error in $x$ momentum for basis function $\phi_i$ is the same as the error in $y$ momentum for basis function $\phi_j$ if $\phi_i$ and $\phi_j$ are symmetric basis functions.
+In this case, we can completely omit the plots for the error of either the $y$ or the $x$ momentum.
 
 Following are reports of various scenarios we have tested, trying to find out any common behavior between the values. All the following graphs will show the computed error in the stiffness terms for both components, i.e.\,$SE^i = \left(SE_x^i, SE_y^i\right)$ for $i=1,\dots, n$.
 
